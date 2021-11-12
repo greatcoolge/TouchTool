@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AutoTouch</string>
+
+    <string name="home_menu_home">主页</string>
+    <string name="home_menu_apps">应用</string>
+    <string name="home_menu_setting">设置</string>
+
+</resources>
