@@ -6,6 +6,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import top.bogey.auto_touch.databinding.ActivityMainBinding;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         MainApplication.setActivity(this);
+        startService(new Intent(this, MainAccessibilityService.class));
     }
 
     @Override
@@ -31,4 +33,30 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         NavigationUI.setupWithNavController(binding.menuMain, controller);
     }
-}
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainApplication.setActivity(null);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController controller = Navigation.findNavController(this, R.id.con_view);
+        return controller.navigateUp() || super.onSupportNavigateUp();
+    }
+
+    public void showPlayView(String pkgName){
+//        binding.getRoot().post(() -> {
+//            if (playView != null) playView.dismiss();
+//            playView = new ConfigPlayView(this, pkgName, () -> playView = null);
+//            playView.show();
+//        });
+    }
+
+    public void dismissPlayView() {
+//        binding.getRoot().post(() -> {
+//            if (playView != null) playView.dismiss();
+//
+        }
+    }

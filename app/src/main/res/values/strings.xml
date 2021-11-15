@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">AutoTouch</string>
 
-    <string name="home_menu_home">主页</string>
-    <string name="home_menu_apps">应用</string>
-    <string name="home_menu_setting">设置</string>
+    <string name="home">主页</string>
+    <string name="apps">应用</string>
+    <string name="setting">设置</string>
+
+    <string name="dialog_title">重要提示</string>
+    <string name="dialog_enter">确认</string>
+    <string name="dialog_cancel">取消</string>
+
+    <string name="common_name">通用</string>
+    <string name="common_package_name">configs.common</string>
 
 </resources>
