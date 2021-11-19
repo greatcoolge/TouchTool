@@ -1,15 +1,23 @@
 package top.bogey.auto_touch.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 import android.text.TextUtils;
+
+import androidx.annotation.ColorInt;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.R;
 
 public class AppUtil {
+
+
     public static boolean isAccessibilityServiceOn(Context context){
         String serviceName = context.getPackageName() + "/" + MainAccessibilityService.class.getCanonicalName();
         boolean isEnabled = false;
@@ -36,13 +44,13 @@ public class AppUtil {
 
     public static void showSimpleDialog(Activity activity, int msg, SelectCallback callback){
         new AlertDialog.Builder(activity).setTitle(R.string.dialog_title).setMessage(msg)
-                .setPositiveButton(R.string.dialog_enter, (dialog, which) -> {
+                .setPositiveButton(R.string.enter, (dialog, which) -> {
                     dialog.dismiss();
                     if (callback != null){
                         callback.onEnter();
                     }
                 })
-                .setNegativeButton(R.string.dialog_cancel, (dialog, which) ->{
+                .setNegativeButton(R.string.cancel, (dialog, which) ->{
                     dialog.dismiss();
                     if (callback != null) {
                         callback.onCancel();
@@ -51,4 +59,35 @@ public class AppUtil {
                 .create().show();
     }
 
+    public static void showSimpleDialog(Activity activity, String msg, SelectCallback callback){
+        new AlertDialog.Builder(activity).setTitle(R.string.dialog_title).setMessage(msg)
+                .setPositiveButton(R.string.enter, (dialog, which) -> {
+                    dialog.dismiss();
+                    if (callback != null){
+                        callback.onEnter();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) ->{
+                    dialog.dismiss();
+                    if (callback != null) {
+                        callback.onCancel();
+                    }
+                })
+                .create().show();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public static Drawable getDrawable(Context context, ApplicationInfo info){
+        if (info == null){
+            return context.getDrawable(R.mipmap.ic_common);
+        }
+        PackageManager manager = context.getPackageManager();
+        return info.loadIcon(manager);
+    }
+
+    @ColorInt
+    public static int getGroupColor(Context context, int group){
+        int[] colors = {R.color.amber_500, R.color.red_500, R.color.blue_500, R.color.green_500};
+        return context.getResources().getColor(colors[group], null);
+    }
 }

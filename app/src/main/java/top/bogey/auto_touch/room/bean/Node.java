@@ -15,6 +15,11 @@ public class Node {
     public NodeType type = NodeType.WORD;
     private String value;
 
+    public Node() {}
+
+    public Node(String value){
+        this.value = value;
+    }
 
     public String getWord(){
         return value;

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@drawable/item_a"
+    android:layout_margin="5dp"
+    android:layout_gravity="center">
+
+    <RadioGroup
+        android:id="@+id/status_group"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:checkedButton="@id/closed_button"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/closed_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/radio_f"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/closed"
+            android:textColor="@color/check"
+            android:textSize="11sp" />
+
+        <RadioButton
+            android:id="@+id/auto_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/radio_m"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/auto"
+            android:textColor="@color/check"
+            android:textSize="11sp" />
+
+        <RadioButton
+            android:id="@+id/manual_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/radio_l"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/manual"
+            android:textColor="@color/check"
+            android:textSize="11sp" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="5dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/linear_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/status_group" />
+
+    <EditText
+        android:id="@+id/title_edit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="2"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toTopOf="@+id/title"
+        tools:ignore="LabelFor" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:focusable="true"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/number_text"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@drawable/corner"
+                android:backgroundTint="?attr/colorSecondary"
+                android:textColor="?attr/colorOnSecondary"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/group_1"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:foreground="@drawable/corner"
+                android:foregroundTint="@color/red_500" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/group_2"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:foreground="@drawable/corner"
+                android:foregroundTint="@color/blue_500" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/group_3"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:foreground="@drawable/corner"
+                android:foregroundTint="@color/green_500" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/delete"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:background="@drawable/corner"
+                app:icon="@drawable/delete"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="14dp" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

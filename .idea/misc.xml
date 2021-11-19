@@ -3,14 +3,36 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/apps.xml" value="0.3398148148148148" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/home.xml" value="0.3398148148148148" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/setting.xml" value="0.3398148148148148" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps.xml" value="0.2826086956521739" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_home.xml" value="0.28894927536231885" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_setting.xml" value="0.2826086956521739" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/add.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/delete.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/down.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/refresh.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/search.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/system.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/up.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/corner.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_a.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_f.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_l.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_m.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/radio.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/radio_f.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/radio_l.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/toggle.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/activity_main.xml" value="0.29347826086956524" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_actions.xml" value="0.33" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_actions_item.xml" value="0.29347826086956524" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_app_tasks.xml" value="0.29347826086956524" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps.xml" value="0.26132246376811596" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps_item.xml" value="0.5" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_home.xml" value="0.25679347826086957" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_setting.xml" value="0.25679347826086957" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_tasks.xml" value="0.33" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_tasks_item.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_main.xml" value="0.36614583333333334" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_search.xml" value="0.36614583333333334" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_tasks.xml" value="0.32546296296296295" />
       </map>
     </option>
   </component>
@@ -19,5 +41,8 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="SuppressKotlinCodeStyleNotification">
+    <option name="disableForAll" value="true" />
   </component>
 </project>

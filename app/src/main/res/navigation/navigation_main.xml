@@ -3,21 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_main"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/home_fragment">
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/home_fragment"
         android:name="top.bogey.auto_touch.ui.home.HomeFragment"
         android:label="@string/home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/appsFragment"
+        android:id="@+id/apps_fragment"
         android:name="top.bogey.auto_touch.ui.apps.AppsFragment"
         android:label="@string/apps"
-        tools:layout="@layout/fragment_apps" />
+        tools:layout="@layout/fragment_apps" >
+        <action
+            android:id="@+id/action_apps_fragment_to_tasks_fragment"
+            app:destination="@id/tasks_fragment" />
+    </fragment>
     <fragment
-        android:id="@+id/settingFragment"
+        android:id="@+id/setting_fragment"
         android:name="top.bogey.auto_touch.ui.setting.SettingFragment"
         android:label="@string/setting"
         tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/tasks_fragment"
+        android:name="top.bogey.auto_touch.ui.tasks.TasksFragment"
+        android:label="@string/tasks"
+        tools:layout="@layout/fragment_tasks" >
+        <argument
+            android:name="pkgName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_tasks_fragment_to_actions_fragment"
+            app:destination="@id/actions_fragment" />
+    </fragment>
+    <fragment android:id="@+id/actions_fragment"
+        android:name="top.bogey.auto_touch.ui.actions.ActionsFragment"
+        android:label="@string/actions"
+        tools:layout="@layout/fragment_actions" >
+        <argument android:name="task"
+            app:argType="top.bogey.auto_touch.room.bean.Task" />
+    </fragment>
 </navigation>

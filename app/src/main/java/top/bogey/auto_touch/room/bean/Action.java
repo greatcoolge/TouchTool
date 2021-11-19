@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import top.bogey.auto_touch.R;
 
@@ -26,7 +27,7 @@ public class Action implements Cloneable {
     // 执行时长
     public int time = 100;
 
-    public boolean checkSafeTime(){
+    public boolean checkTimeSafe(){
         return delay + Math.max(1, interval) * times + Math.max(1, time) * times <= 60 * 1000;
     }
 
@@ -48,19 +49,40 @@ public class Action implements Cloneable {
     public String getTitle(Context context){
         switch (actionMode) {
             case WORD:
-                return target.getWord();
+                if (time <= 100){
+                    return context.getString(R.string.word_title, target.getWord(), times);
+                } else {
+                    return context.getString(R.string.word_title_long, target.getWord(), times);
+                }
             case KEY:
                 String[] strings = context.getResources().getStringArray(R.array.keys);
-                return strings[Integer.parseInt(target.getWord()) - 1];
+                return context.getString(R.string.key_title, strings[Integer.parseInt(target.getWord()) - 1]);
             case GESTURE:
                 StringBuilder builder = new StringBuilder();
                 for (Pos pos : target.getPoses()) {
                     builder.append(pos.toString());
                 }
-                return builder.toString();
+                return context.getString(R.string.gesture_title, builder.toString(), times);
             case TASK:
-                return target.getTask().title;
+                return context.getString(R.string.gesture_title, target.getTask().title, times);
         }
         return "";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Action action = (Action) o;
+        return enable == action.enable && delay == action.delay &&
+                times == action.times && interval == action.interval &&
+                time == action.time && actionMode == action.actionMode &&
+                Objects.equals(keys, action.keys) && target.equals(action.target) &&
+                Objects.equals(stop, action.stop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(actionMode, enable, keys, target, stop, delay, times, interval, time);
     }
 }

@@ -35,6 +35,14 @@ public class TaskRunnable implements Runnable{
         this.callback = callback;
     }
 
+    public void stop() {
+        Thread.currentThread().interrupt();
+    }
+
+    public boolean isStopped(){
+        return !Thread.currentThread().isInterrupted();
+    }
+
     @Override
     public void run() {
         ArrayList<Integer> ids = new ArrayList<>();
@@ -50,7 +58,7 @@ public class TaskRunnable implements Runnable{
         }
 
         Action runAction = actions.remove(0);
-        while (runAction != null){
+        while (runAction != null && isStopped()){
             try {
                 Thread.sleep(runAction.delay);
             } catch (InterruptedException e) {
@@ -58,7 +66,7 @@ public class TaskRunnable implements Runnable{
             }
             int runTimes = 0;
             List<Integer> cacheIds = new ArrayList<>();
-            while (runTimes < runAction.times){
+            while (runTimes < runAction.times && isStopped()){
                 AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
                 if (checkWindow(nodeInfo, runAction)){
                     AccessibilityNodeInfo target = checkTarget(nodeInfo, runAction);

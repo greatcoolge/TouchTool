@@ -1,15 +1,40 @@
 <resources>
     <string name="app_name">AutoTouch</string>
+    <string name="service_des">自动执行点击任务</string>
 
     <string name="home">主页</string>
     <string name="apps">应用</string>
     <string name="setting">设置</string>
+    <string name="tasks">任务</string>
+    <string name="actions">动作</string>
 
     <string name="dialog_title">重要提示</string>
-    <string name="dialog_enter">确认</string>
-    <string name="dialog_cancel">取消</string>
+    <string name="enter">确认</string>
+    <string name="cancel">取消</string>
 
     <string name="common_name">通用</string>
     <string name="common_package_name">configs.common</string>
+
+    <string name="service_opened">服务已开启</string>
+    <string name="service_closed">服务已关闭</string>
+    <string name="service_open_tips">需要开启无障碍服务才能使用</string>
+
+    <string name="show_system">展示系统应用</string>
+    <string name="refresh">刷新</string>
+    <string name="search">搜索</string>
+
+    <string name="add">添加</string>
+
+    <string name="closed">关闭</string>
+    <string name="auto">自动</string>
+    <string name="manual">手动</string>
+    <string name="delete_task_tips">确定要删除任务%1$s吗？</string>
+    <string name="delete_action_tips">确定要删除这个动作吗？</string>
+
+    <string name="word_title">单击 %1$s %2$d次</string>
+    <string name="word_title_long">长按 %1$s %2$d次</string>
+    <string name="key_title">使用 %1$s</string>
+    <string name="gesture_title">手势 %1$s %2$d次</string>
+    <string name="task_title">执行任务 %1$s %2$d次</string>
 
 </resources>

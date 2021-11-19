@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRepository;
@@ -20,7 +19,7 @@ import top.bogey.auto_touch.util.CompleteCallback;
 public class MainAccessibilityService extends AccessibilityService {
     private final ExecutorService findService = Executors.newFixedThreadPool(2);
     private final ExecutorService configService = Executors.newFixedThreadPool(5);
-    private final List<Future<?>> futures = new ArrayList<>();
+    private final List<TaskRunnable> tasks = new ArrayList<>();
 
     private TaskRepository repository;
     private String currPkgName = "";
@@ -37,9 +36,7 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     @Override
-    public void onInterrupt() {
-
-    }
+    public void onInterrupt() { }
 
     @Override
     protected void onServiceConnected() {
@@ -56,7 +53,7 @@ public class MainAccessibilityService extends AccessibilityService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainApplication.setService(this);
-        if (repository != null){
+        if (repository == null){
             repository = new TaskRepository(getApplicationContext());
         }
         return super.onStartCommand(intent, flags, startId);
@@ -64,8 +61,9 @@ public class MainAccessibilityService extends AccessibilityService {
 
     public void runTask(Task task, CompleteCallback callback){
         if (enable){
-            Future<?> future = configService.submit(new TaskRunnable(this, task, callback));
-            futures.add(future);
+            TaskRunnable taskRunnable = new TaskRunnable(this, task, callback);
+            tasks.add(taskRunnable);
+            configService.submit(taskRunnable);
         } else {
             if (callback != null){
                 callback.onComplete();
@@ -99,11 +97,10 @@ public class MainAccessibilityService extends AccessibilityService {
                 // 同一个包在未切换过窗口时不会再执行新的任务
                 if (!(packageName.equals("null") || packageName.equals(currPkgName))){
                     // 取消所有非当前包下的任务
-                    for (Future<?> future : futures) {
-                        future.cancel(true);
-                        future.isCancelled();
+                    for (TaskRunnable task : tasks) {
+                        if (task.isStopped()) task.stop();
                     }
-                    futures.clear();
+                    tasks.clear();
 
                     currPkgName = packageName;
                     // APP自己不执行任何任务

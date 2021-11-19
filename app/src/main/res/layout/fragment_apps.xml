@@ -3,5 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:clipToPadding="false"
     android:background="?attr/backgroundColor"
-    tools:context=".ui.apps.AppsFragment"/>
+    tools:context=".ui.apps.AppsFragment"
+    tools:listitem="@layout/fragment_apps_item"/>

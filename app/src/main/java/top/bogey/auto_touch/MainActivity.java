@@ -23,12 +23,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         MainApplication.setActivity(this);
         startService(new Intent(this, MainAccessibilityService.class));
+
+        String extra = getIntent().getStringExtra("IsBackground");
+        if (extra != null && extra.equals("true")){
+            moveTaskToBack(true);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.homeFragment, R.id.appsFragment, R.id.settingFragment).build();
+        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home_fragment, R.id.apps_fragment, R.id.setting_fragment).build();
         NavController controller = Navigation.findNavController(this, R.id.con_view);
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         NavigationUI.setupWithNavController(binding.menuMain, controller);
