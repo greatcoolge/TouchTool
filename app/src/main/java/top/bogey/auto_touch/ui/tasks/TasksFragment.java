@@ -40,16 +40,17 @@ public class TasksFragment extends Fragment {
             PKG_NAME = getArguments().getString("pkgName");
             viewModel.getTasksLiveByPackageName(PKG_NAME).observe(getViewLifecycleOwner(), tasks -> {
                 if (tasks == null || tasks.isEmpty()){
-                    binding.include.numberText.setVisibility(View.INVISIBLE);
+                    binding.numberText.setVisibility(View.INVISIBLE);
                 } else {
-                    binding.include.numberText.setVisibility(View.VISIBLE);
-                    binding.include.numberText.setText(String.valueOf(tasks.size()));
+                    binding.numberText.setVisibility(View.VISIBLE);
+                    binding.numberText.setText(String.valueOf(tasks.size()));
                 }
                 adapter.setTasks(tasks);
             });
             AppInfo info = viewModel.getAppInfoByPkgName(PKG_NAME);
-            binding.include.appName.setText(info.appName);
-            binding.include.icon.setImageDrawable(AppUtil.getDrawable(requireContext(), info.info));
+            binding.appName.setText(info.appName);
+            binding.packageName.setText(info.packageName);
+            binding.icon.setImageDrawable(AppUtil.getDrawable(requireContext(), info.info));
         }
 
         return binding.getRoot();

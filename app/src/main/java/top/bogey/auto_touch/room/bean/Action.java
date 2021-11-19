@@ -58,13 +58,10 @@ public class Action implements Cloneable {
                 String[] strings = context.getResources().getStringArray(R.array.keys);
                 return context.getString(R.string.key_title, strings[Integer.parseInt(target.getWord()) - 1]);
             case GESTURE:
-                StringBuilder builder = new StringBuilder();
-                for (Pos pos : target.getPoses()) {
-                    builder.append(pos.toString());
-                }
-                return context.getString(R.string.gesture_title, builder.toString(), times);
+                List<Pos> poses = target.getPoses();
+                return context.getString(R.string.gesture_title, delay, times, interval + time);
             case TASK:
-                return context.getString(R.string.gesture_title, target.getTask().title, times);
+                return context.getString(R.string.task_title, target.getTask().title, times);
         }
         return "";
     }

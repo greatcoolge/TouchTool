@@ -1,9 +1,13 @@
 package top.bogey.auto_touch.ui.tasks;
 
+import android.content.Context;
 import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -136,18 +140,21 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 NavController controller = Navigation.findNavController(parent.requireActivity(), R.id.con_view);
                 controller.navigate(TasksFragmentDirections.actionTasksFragmentToActionsFragment(task));
             });
+
             layout.setOnLongClickListener(v -> {
                 title.setVisibility(View.INVISIBLE);
                 titleEdit.setVisibility(View.VISIBLE);
                 titleEdit.setText(title.getText());
                 titleEdit.setTextColor(title.getCurrentTextColor());
                 titleEdit.requestFocus();
+                InputMethodManager manager = (InputMethodManager) parent.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (manager != null) manager.showSoftInput(titleEdit, 0);
                 return true;
             });
 
-            titleEdit.setOnFocusChangeListener((v, hasFocus) -> {
-                Editable text = titleEdit.getText();
-                if (!hasFocus){
+            titleEdit.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    Editable text = titleEdit.getText();
                     if (text != null && text.length() > 0){
                         int index = getAdapterPosition();
                         Task task = tasks.get(index);
@@ -159,6 +166,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     titleEdit.setVisibility(View.INVISIBLE);
                     title.setVisibility(View.VISIBLE);
                 }
+                return true;
             });
 
             group.setOnCheckedChangeListener((group, checkedId) -> {
