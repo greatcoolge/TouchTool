@@ -1,3 +1,3 @@
 package top.bogey.auto_touch.room.bean;
 
-public enum NodeType {WORD, POS, TASK, IMAGE}
+public enum NodeType {NULL, BOOL, WORD, IMAGE, POS, TASK}

@@ -40,7 +40,7 @@
         android:name="top.bogey.auto_touch.ui.actions.ActionsFragment"
         android:label="@string/actions"
         tools:layout="@layout/fragment_actions" >
-        <argument android:name="task"
-            app:argType="top.bogey.auto_touch.room.bean.Task" />
+        <argument android:name="taskId"
+            app:argType="integer" />
     </fragment>
 </navigation>

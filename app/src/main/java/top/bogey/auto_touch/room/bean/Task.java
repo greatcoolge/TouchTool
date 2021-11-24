@@ -4,14 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Task implements Cloneable, Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class Task implements Cloneable {
     @PrimaryKey(autoGenerate = true)
     public int id;
     public String pkgName;

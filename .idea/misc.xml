@@ -4,13 +4,22 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/add.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/close.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/delete.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/down.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/image.xml" value="0.3764102564102564" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/pos.xml" value="0.3764102564102564" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/pos_picker.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/refresh.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/save.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/search.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/system.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/text.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/text_add.xml" value="0.3764102564102564" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/up.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/border.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/corner.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/ic_round_save_24.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_a.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_f.xml" value="0.3398148148148148" />
@@ -19,8 +28,15 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/radio.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/radio_f.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/radio_l.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/spinner.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/toggle.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/activity_main.xml" value="0.29347826086956524" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit.xml" value="0.5" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit_item.xml" value="0.5" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit_picker.xml" value="0.27355072463768115" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_image.xml" value="0.75" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_pos.xml" value="3.0" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_word.xml" value="2.0" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_actions.xml" value="0.33" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_actions_item.xml" value="0.29347826086956524" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_app_tasks.xml" value="0.29347826086956524" />

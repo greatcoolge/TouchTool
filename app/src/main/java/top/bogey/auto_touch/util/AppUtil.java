@@ -90,4 +90,12 @@ public class AppUtil {
         int[] colors = {R.color.amber_500, R.color.red_500, R.color.blue_500, R.color.green_500};
         return context.getResources().getColor(colors[group], null);
     }
+
+    public static String getIdentityCode(Object obj){
+        return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
+    }
+
+    public static int dp2px(Context context, int dp){
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
 }

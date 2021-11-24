@@ -21,6 +21,7 @@ import top.bogey.auto_touch.databinding.FragmentActionsItemBinding;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
+import top.bogey.auto_touch.ui.action.ActionEditDialogFragment;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
@@ -75,19 +76,19 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         return actions.size();
     }
 
-    public void setTasks(List<Action> newActions){
+    public void setActions(List<Action> newActions){
         if (newActions == null){
             int size = actions.size();
             actions.clear();
             notifyItemRangeRemoved(0, size);
             return;
         }
-        // 查找删除的 或 动作变更了的
+        // 查找删除的 或 变更了的
         for (int i = actions.size() - 1; i >= 0; i--) {
             Action action = actions.get(i);
             boolean flag = true;
-            for (Action newTask : newActions) {
-                if (action == newTask) {
+            for (Action newAction : newActions) {
+                if (action.equals(newAction)) {
                     flag = false;
                     break;
                 }
@@ -102,7 +103,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         for (Action newAction : newActions) {
             boolean flag = true;
             for (Action action : actions) {
-                if (action == newAction){
+                if (action.equals(newAction)){
                     flag = false;
                     break;
                 }
@@ -110,6 +111,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             if (flag){
                 actions.add(newAction);
                 notifyItemInserted(actions.size() - 1);
+                notifyItemChanged(Math.max(actions.size() - 2, 0));
             }
         }
     }
@@ -133,7 +135,12 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             delete = binding.deleteButton;
 
             layout.setOnClickListener(v -> {
-
+                int index = getAdapterPosition();
+                Action action = actions.get(index);
+                new ActionEditDialogFragment(task, action, () -> {
+                    notifyItemChanged(index);
+                    viewModel.saveTask(task);
+                }).show(parent.requireActivity().getSupportFragmentManager(), null);
             });
 
             enabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -176,7 +183,6 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         }
                     }
                     viewModel.saveTask(task);
-                    parent.updateActionCount();
                 }
 
                 @Override

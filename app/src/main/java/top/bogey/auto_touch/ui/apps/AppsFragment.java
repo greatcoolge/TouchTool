@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.Map;
 
@@ -30,7 +29,6 @@ public class AppsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAppsBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        binding.getRoot().setLayoutManager(new GridLayoutManager(requireContext(), 4));
         AppsRecyclerViewAdapter adapter = new AppsRecyclerViewAdapter(this);
         binding.getRoot().setAdapter(adapter);
         adapter.refreshList(viewModel.searchAppList(""));

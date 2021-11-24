@@ -16,6 +16,7 @@ import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.ActionMode;
 import top.bogey.auto_touch.room.bean.Node;
+import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
@@ -72,26 +73,32 @@ public class TaskRunnable implements Runnable{
                     AccessibilityNodeInfo target = checkTarget(nodeInfo, runAction);
                     if (target != null){
                         switch (runAction.actionMode){
-                            case WORD:
-                                if (runAction.time <= 100) target.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                else target.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                            case TOUCH:
+                                switch (runAction.target.type) {
+                                    case WORD:
+                                        if (runAction.time <= 100)
+                                            target.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                        else
+                                            target.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                                        break;
+                                    case POS:
+                                        Path path = getPath(runAction.target);
+                                        if (path != null){
+                                            service.dispatchGesture(
+                                                    new GestureDescription.Builder().addStroke(
+                                                            new GestureDescription.StrokeDescription(path, 0, runAction.time)
+                                                    ).build(), null, null);
+                                            try {
+                                                Thread.sleep(runAction.time);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        break;
+                                }
                                 break;
                             case KEY:
                                 service.performGlobalAction(Integer.parseInt(runAction.target.getWord()));
-                                break;
-                            case GESTURE:
-                                Path path = getPath(runAction.target);
-                                if (path != null){
-                                    service.dispatchGesture(
-                                            new GestureDescription.Builder().addStroke(
-                                                    new GestureDescription.StrokeDescription(path, 0, runAction.time)
-                                            ).build(), null, null);
-                                    try {
-                                        Thread.sleep(runAction.time);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
                                 break;
                             case TASK:
                                 List<Task> list = repository.getTasksById(runAction.target.getTask().id);
@@ -131,7 +138,7 @@ public class TaskRunnable implements Runnable{
     }
 
     private AccessibilityNodeInfo checkTarget(AccessibilityNodeInfo nodeInfo, Action action){
-        if (action.actionMode != ActionMode.WORD) return nodeInfo;
+        if (action.actionMode != ActionMode.TOUCH) return nodeInfo;
         List<AccessibilityNodeInfo> nodes = searchNodes(nodeInfo, action.target.getWord());
         return searchClickableNode(nodes);
     }

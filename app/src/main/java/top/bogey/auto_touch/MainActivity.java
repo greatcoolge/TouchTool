@@ -1,20 +1,28 @@
 package top.bogey.auto_touch;
 
+import android.content.Context;
+import android.content.Intent;
+import android.media.projection.MediaProjectionManager;
+import android.os.Bundle;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import top.bogey.auto_touch.databinding.ActivityMainBinding;
+import top.bogey.auto_touch.util.ResultCallback;
 
 public class MainActivity extends AppCompatActivity {
     static { System.loadLibrary("auto_touch"); }
 
     private ActivityMainBinding binding;
+    private ActivityResultLauncher<Intent> captureLauncher;
+    private ResultCallback callback;
+    private Intent captureIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,15 @@ public class MainActivity extends AppCompatActivity {
         if (extra != null && extra.equals("true")){
             moveTaskToBack(true);
         }
+
+        captureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK){
+                captureIntent = result.getData();
+                if (callback != null){
+                    callback.onResult(result.getResultCode(), captureIntent);
+                }
+            }
+        });
     }
 
     @Override
@@ -51,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
         return controller.navigateUp() || super.onSupportNavigateUp();
     }
 
+    public void launcherCapture(ResultCallback callback){
+        if (captureIntent != null){
+            callback.onResult(RESULT_OK, captureIntent);
+            return;
+        }
+        this.callback = callback;
+        MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        captureLauncher.launch(manager.createScreenCaptureIntent());
+    }
+
     public void showPlayView(String pkgName){
 //        binding.getRoot().post(() -> {
 //            if (playView != null) playView.dismiss();
@@ -63,5 +90,6 @@ public class MainActivity extends AppCompatActivity {
 //        binding.getRoot().post(() -> {
 //            if (playView != null) playView.dismiss();
 //
-        }
     }
+}
+

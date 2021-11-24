@@ -3,9 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     android:clipToPadding="false"
     android:background="?attr/backgroundColor"
+    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    app:spanCount="4"
     tools:context=".ui.apps.AppsFragment"
-    tools:listitem="@layout/fragment_apps_item"/>
+    tools:listitem="@layout/fragment_apps_item" />

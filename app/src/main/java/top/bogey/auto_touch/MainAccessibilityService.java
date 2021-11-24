@@ -59,15 +59,17 @@ public class MainAccessibilityService extends AccessibilityService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void runTask(Task task, CompleteCallback callback){
+    public TaskRunnable runTask(Task task, CompleteCallback callback){
         if (enable){
             TaskRunnable taskRunnable = new TaskRunnable(this, task, callback);
             tasks.add(taskRunnable);
             configService.submit(taskRunnable);
+            return taskRunnable;
         } else {
             if (callback != null){
                 callback.onComplete();
             }
+            return null;
         }
     }
 

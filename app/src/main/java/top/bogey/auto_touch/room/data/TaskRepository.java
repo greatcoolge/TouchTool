@@ -48,6 +48,10 @@ public class TaskRepository {
         return null;
     }
 
+    public LiveData<List<Task>> getTasksLiveById(int id){
+        return taskDao.getTasksLiveById(id);
+    }
+
     public LiveData<List<Task>> getTasksLiveByPackageName(String pkgName){
         return taskDao.getTasksLiveByPackageName(pkgName);
     }

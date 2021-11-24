@@ -121,8 +121,20 @@ public class MainViewModel extends AndroidViewModel {
         return repository.getTasksLiveByPackageName(pkgName);
     }
 
+    public LiveData<List<Task>> getTasksLiveById(int id){
+        return repository.getTasksLiveById(id);
+    }
+
     public List<Task> getTasksByPackageName(String pkgName){
         return repository.getTasksByPackageName(pkgName);
+    }
+
+    public Task getTasksById(int id){
+        List<Task> tasks = repository.getTasksById(id);
+        if (tasks != null && !tasks.isEmpty()){
+            return tasks.get(0);
+        }
+        return null;
     }
 
     public List<Task> getAllTasks(){

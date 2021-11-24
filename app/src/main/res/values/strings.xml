@@ -24,6 +24,7 @@
     <string name="search">搜索</string>
 
     <string name="add">添加</string>
+    <string name="save">保存</string>
 
     <string name="closed">关闭</string>
     <string name="auto">自动</string>
@@ -31,10 +32,37 @@
     <string name="delete_task_tips">确定要删除任务%1$s吗？</string>
     <string name="delete_action_tips">确定要删除这个动作吗？</string>
 
-    <string name="word_title">单击 %1$s %2$d次</string>
+    <string name="word_title">点击 %1$s %2$d次</string>
     <string name="word_title_long">长按 %1$s %2$d次</string>
-    <string name="key_title">使用 %1$s</string>
+    <string name="key_title">使用 %1$s %2$d次</string>
     <string name="gesture_title">延迟%1$d毫秒画手势%2$d次，每次%3$d毫秒</string>
+    <string name="image_title">点击图片 %1$d次</string>
+    <string name="image_title_long">长按图片 %1$d次</string>
+
     <string name="task_title">执行任务 %1$s %2$d次</string>
+
+    <string name="touch">点击</string>
+    <string name="keyboard">按键</string>
+    <string name="task">任务</string>
+
+    <string name="do_keys">执行条件</string>
+    <string name="delay">延迟</string>
+    <string name="time">时间</string>
+    <string name="interval">间隔</string>
+    <string name="times">次数</string>
+    <string name="target">目标</string>
+    <string name="stop_key">停止条件</string>
+
+    <string name="s">秒</string>
+    <string name="ms">毫秒</string>
+
+    <string name="word">文字</string>
+    <string name="image">图片</string>
+    <string name="pos">位置</string>
+
+    <string name="none">无</string>
+    <string name="success_once">成功\n一次</string>
+    <string name="exist_word">出现\n文字</string>
+    <string name="exist_image">出现\n图片</string>
 
 </resources>

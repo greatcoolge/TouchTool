@@ -138,7 +138,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 int index = getAdapterPosition();
                 Task task = tasks.get(index);
                 NavController controller = Navigation.findNavController(parent.requireActivity(), R.id.con_view);
-                controller.navigate(TasksFragmentDirections.actionTasksFragmentToActionsFragment(task));
+                controller.navigate(TasksFragmentDirections.actionTasksFragmentToActionsFragment(task.id));
             });
 
             layout.setOnLongClickListener(v -> {

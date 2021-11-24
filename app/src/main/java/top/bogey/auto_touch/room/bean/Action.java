@@ -11,7 +11,7 @@ import java.util.Objects;
 import top.bogey.auto_touch.R;
 
 public class Action implements Cloneable {
-    public ActionMode actionMode = ActionMode.WORD;
+    public ActionMode actionMode = ActionMode.TOUCH;
     public boolean enable = true;
 
     public List<Node> keys;
@@ -28,6 +28,10 @@ public class Action implements Cloneable {
     public int time = 100;
 
     public boolean checkTimeSafe(){
+        return checkTimeSafe(delay, time, interval, times);
+    }
+
+    public boolean checkTimeSafe(int delay, int time, int interval, int times){
         return delay + Math.max(1, interval) * times + Math.max(1, time) * times <= 60 * 1000;
     }
 
@@ -48,18 +52,27 @@ public class Action implements Cloneable {
 
     public String getTitle(Context context){
         switch (actionMode) {
-            case WORD:
-                if (time <= 100){
-                    return context.getString(R.string.word_title, target.getWord(), times);
-                } else {
-                    return context.getString(R.string.word_title_long, target.getWord(), times);
+            case TOUCH:
+                switch (target.type){
+                    case WORD:
+                        if (time <= 100){
+                            return context.getString(R.string.word_title, target.getWord(), times);
+                        } else {
+                            return context.getString(R.string.word_title_long, target.getWord(), times);
+                        }
+                    case POS:
+                        return context.getString(R.string.gesture_title, delay, times, interval + time);
+                    case IMAGE:
+                        if (time <= 100){
+                            return context.getString(R.string.image_title, times);
+                        } else {
+                            return context.getString(R.string.image_title_long, times);
+                        }
                 }
+                break;
             case KEY:
                 String[] strings = context.getResources().getStringArray(R.array.keys);
-                return context.getString(R.string.key_title, strings[Integer.parseInt(target.getWord()) - 1]);
-            case GESTURE:
-                List<Pos> poses = target.getPoses();
-                return context.getString(R.string.gesture_title, delay, times, interval + time);
+                return context.getString(R.string.key_title, strings[target.getTask().id - 1], times);
             case TASK:
                 return context.getString(R.string.task_title, target.getTask().title, times);
         }

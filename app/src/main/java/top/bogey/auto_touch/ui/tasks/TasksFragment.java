@@ -32,7 +32,6 @@ public class TasksFragment extends Fragment {
         binding = FragmentTasksBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-        binding.recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         TasksRecyclerViewAdapter adapter = new TasksRecyclerViewAdapter(this);
         binding.recyclerView.setAdapter(adapter);
 
