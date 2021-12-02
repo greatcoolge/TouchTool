@@ -1,5 +1,6 @@
 package top.bogey.auto_touch.ui.tasks;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,13 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentTasksBinding;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.ui.apps.AppInfo;
+import top.bogey.auto_touch.ui.record.TaskRecordDialog;
 import top.bogey.auto_touch.util.AppUtil;
 
 public class TasksFragment extends Fragment {
@@ -67,13 +68,19 @@ public class TasksFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.add) {
-            Task task = new Task();
-            task.title = "111";
-            task.pkgName = PKG_NAME;
-            viewModel.saveTask(task);
+        switch (item.getItemId()) {
+            case R.id.add:
+                Task task = new Task();
+                task.title = getString(R.string.task_default_title);
+                task.pkgName = PKG_NAME;
+                viewModel.saveTask(task);
+                break;
+            case R.id.record:
+                new TaskRecordDialog(requireContext(), PKG_NAME).show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

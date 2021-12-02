@@ -1,7 +1,11 @@
 package top.bogey.auto_touch;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -25,6 +29,9 @@ public class MainAccessibilityService extends AccessibilityService {
     private String currPkgName = "";
 
     public boolean enable = false;
+
+    private ServiceConnection serviceConnection;
+    public CaptureService.CaptureBinder binder;
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -59,6 +66,12 @@ public class MainAccessibilityService extends AccessibilityService {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopCaptureService();
+    }
+
     public TaskRunnable runTask(Task task, CompleteCallback callback){
         if (enable){
             TaskRunnable taskRunnable = new TaskRunnable(this, task, callback);
@@ -70,6 +83,36 @@ public class MainAccessibilityService extends AccessibilityService {
                 callback.onComplete();
             }
             return null;
+        }
+    }
+
+    public void startCaptureService(boolean moveBack, CompleteCallback callback){
+        if (binder == null){
+            serviceConnection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    binder = (CaptureService.CaptureBinder) service;
+                    if (callback != null) callback.onComplete();
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    binder = null;
+                }
+            };
+            Intent intent = new Intent(this, CaptureService.class);
+            intent.putExtra("MoveBack", moveBack);
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            if (callback != null) callback.onComplete();
+        }
+    }
+
+    public void stopCaptureService(){
+        if (serviceConnection != null){
+            unbindService(serviceConnection);
+            serviceConnection = null;
+            binder = null;
         }
     }
 
@@ -100,7 +143,7 @@ public class MainAccessibilityService extends AccessibilityService {
                 if (!(packageName.equals("null") || packageName.equals(currPkgName))){
                     // 取消所有非当前包下的任务
                     for (TaskRunnable task : tasks) {
-                        if (task.isStopped()) task.stop();
+                        if (task.isRunning()) task.stop();
                     }
                     tasks.clear();
 

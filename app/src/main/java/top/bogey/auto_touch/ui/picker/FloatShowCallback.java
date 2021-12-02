@@ -6,16 +6,21 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.lzf.easyfloat.EasyFloat;
+
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
+import top.bogey.auto_touch.ui.action.ActionEditDialog;
 
 public class FloatShowCallback extends FloatCallback{
     @Override
     public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
         super.createdResult(b, s, view);
-        MainActivity activity = MainApplication.getActivity();
-        if (activity != null){
-            activity.moveTaskToBack(true);
+        if (b){
+            MainActivity activity = MainApplication.getActivity();
+            if (activity != null){
+                activity.moveTaskToBack(true);
+            }
         }
     }
 

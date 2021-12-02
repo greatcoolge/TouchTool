@@ -19,6 +19,8 @@ public class Node implements Cloneable {
     public NodeType type = NodeType.WORD;
     private String value = "";
 
+    private transient Bitmap bitmap;
+
     public Node() {}
 
     public Node(String value){
@@ -51,12 +53,14 @@ public class Node implements Cloneable {
 
     public Bitmap getImage(){
         if (value.isEmpty()) return null;
-        Bitmap bitmap = null;
+        if (bitmap != null) return bitmap;
         try {
             byte[] bitmapArray;
             bitmapArray = Base64.decode(value, Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
-        } catch (IllegalArgumentException ignored){}
+        } catch (IllegalArgumentException ignored){
+            return null;
+        }
         return bitmap;
     }
 
@@ -104,6 +108,7 @@ public class Node implements Cloneable {
     }
 
     public void setImage(Bitmap bitmap){
+        this.bitmap = bitmap;
         type = NodeType.IMAGE;
         if (bitmap == null){
             value = "";

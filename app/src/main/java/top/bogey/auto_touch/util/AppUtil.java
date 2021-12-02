@@ -3,14 +3,22 @@ package top.bogey.auto_touch.util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 
 import androidx.annotation.ColorInt;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.R;
@@ -97,5 +105,50 @@ public class AppUtil {
 
     public static int dp2px(Context context, int dp){
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    public static void gotoAutostartSettingIntent(Activity activity){
+        String device = Build.MANUFACTURER;
+        List<String> list = PackagesInfo.getInstance().get(device.toLowerCase());
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (list != null){
+            ComponentName name = new ComponentName(list.get(0), list.get(1));
+            intent.setComponent(name);
+        } else {
+            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            intent.setData(Uri.fromParts("package", activity.getPackageName(), null));
+        }
+        try{
+            activity.startActivity(intent);
+        }catch (Exception ignored){}
+    }
+
+    private static class PackagesInfo extends HashMap<String, List<String>> {
+        private static PackagesInfo packagesInfo;
+
+        public PackagesInfo(){
+            put("xiaomi", Arrays.asList("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            put("blackshark", Arrays.asList("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            put("samsung", Arrays.asList("com.samsung.android.sm", "com.samsung.android.sm.app.dashboard.SmartManagerDashBoardActivity"));
+            put("huawei", Arrays.asList("com.huawei.systemmanager", "com.huawei.systemmanager.appcontrol.activity.StartupAppControlActivity"));
+            put("vivo", Arrays.asList("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
+            put("meizu", Arrays.asList("com.meizu.safe", "com.meizu.safe.permission.SmartBGActivity"));
+            put("oppo", Arrays.asList("com.coloros.oppoguardelf", "com.coloros.powermanager.fuelgaue.PowerUsageModelActivity"));
+            put("oneplus", Arrays.asList("com.oneplus.security", "com.oneplus.security.chainlaunch.view.ChainLaunchAppListActivity"));
+            put("360", Arrays.asList("com.yulong.android.coolsafe", "com.yulong.android.coolsafe.ui.activity.autorun.AutoRunListActivity"));
+            put("yulong", Arrays.asList("com.yulong.android.coolsafe", "com.yulong.android.coolsafe.ui.activity.autorun.AutoRunListActivity"));
+
+            put("zte", Arrays.asList("com.zte.heartyservice", "com.zte.heartyservice.autorun.AppAutoRunManager"));
+            put("smartisan", Arrays.asList("com.smartisanos.security", "com.smartisanos.security.invokeHistory.InvokeHistoryActivity"));
+            put("coolpad", Arrays.asList("com.yulong.android.security", "com.yulong.android.seccenter.tabbarmain"));
+            put("lenovo", Arrays.asList("com.lenovo.security", "com.lenovo.security.purebackground.PureBackgroundActivity"));
+            put("asus", Arrays.asList("com.asus.mobilemanager", "com.asus.mobilemanager.MainActivity"));
+        }
+
+        public static PackagesInfo getInstance(){
+            if (packagesInfo == null) packagesInfo = new PackagesInfo();
+            return packagesInfo;
+        }
     }
 }

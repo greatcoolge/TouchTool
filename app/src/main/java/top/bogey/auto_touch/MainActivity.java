@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.view.Gravity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -14,15 +15,18 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import top.bogey.auto_touch.databinding.ActivityMainBinding;
-import top.bogey.auto_touch.util.ResultCallback;
+import top.bogey.auto_touch.ui.play.TaskPlayerDialog;
+import top.bogey.auto_touch.util.PermissionResultCallback;
 
 public class MainActivity extends AppCompatActivity {
     static { System.loadLibrary("auto_touch"); }
 
     private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> captureLauncher;
-    private ResultCallback callback;
+    private PermissionResultCallback callback;
     private Intent captureIntent;
+
+    private TaskPlayerDialog playerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         MainApplication.setActivity(this);
+
         startService(new Intent(this, MainAccessibilityService.class));
 
         String extra = getIntent().getStringExtra("IsBackground");
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         return controller.navigateUp() || super.onSupportNavigateUp();
     }
 
-    public void launcherCapture(ResultCallback callback){
+    public void launcherCapture(PermissionResultCallback callback){
         if (captureIntent != null){
             callback.onResult(RESULT_OK, captureIntent);
             return;
@@ -79,17 +84,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPlayView(String pkgName){
-//        binding.getRoot().post(() -> {
-//            if (playView != null) playView.dismiss();
-//            playView = new ConfigPlayView(this, pkgName, () -> playView = null);
-//            playView.show();
-//        });
+        binding.getRoot().post(() -> {
+            if (playerDialog != null) playerDialog.dismiss();
+            playerDialog = new TaskPlayerDialog(this, pkgName, () -> playerDialog = null);
+            playerDialog.show(Gravity.END | Gravity.CENTER_VERTICAL, 0, 0);
+        });
     }
 
     public void dismissPlayView() {
-//        binding.getRoot().post(() -> {
-//            if (playView != null) playView.dismiss();
-//
+        binding.getRoot().post(() -> {
+            if (playerDialog != null) playerDialog.dismiss();
+        });
     }
 }
 

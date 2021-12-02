@@ -7,4 +7,11 @@
         android:icon="@drawable/add"
         android:title="@string/add"
         app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/record"
+        android:icon="@drawable/record"
+        android:title="@string/record"
+        app:showAsAction="always" />
 </menu>

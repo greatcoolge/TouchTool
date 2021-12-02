@@ -4,4 +4,13 @@
         <item>返回</item>
         <item>主页</item>
     </string-array>
+
+    <string-array name="node_type">
+        <item>无</item>
+        <item>一次</item>
+        <item>文本</item>
+        <item>图片</item>
+        <item>位置</item>
+        <item>任务</item>
+    </string-array>
 </resources>

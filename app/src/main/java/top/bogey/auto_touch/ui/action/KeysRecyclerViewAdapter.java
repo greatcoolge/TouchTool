@@ -1,6 +1,9 @@
 package top.bogey.auto_touch.ui.action;
 
+import android.graphics.Bitmap;
 import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -20,12 +22,13 @@ import java.util.List;
 import top.bogey.auto_touch.databinding.DialogFragmentActionEditItemBinding;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
+import top.bogey.auto_touch.ui.picker.ImagePicker;
 
 public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerViewAdapter.ViewHolder> {
-    private final ActionEditDialogFragment parent;
+    private final ActionEditDialog parent;
     private final List<Node> nodes = new ArrayList<>();
 
-    public KeysRecyclerViewAdapter(ActionEditDialogFragment parent, List<Node> nodes){
+    public KeysRecyclerViewAdapter(ActionEditDialog parent, List<Node> nodes){
         this.parent = parent;
         if (nodes != null) this.nodes.addAll(nodes);
     }
@@ -38,30 +41,23 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        if (position == nodes.size()){
-            holder.addLayout.setVisibility(View.VISIBLE);
-            holder.infoLayout.setVisibility(View.INVISIBLE);
+        Node node = nodes.get(position);
+        if (node.type == NodeType.WORD){
+            holder.editText.setVisibility(View.VISIBLE);
+            holder.iconImage.setVisibility(View.INVISIBLE);
+            holder.select.setVisibility(View.INVISIBLE);
+            holder.editText.setText(node.getWord());
         } else {
-            holder.addLayout.setVisibility(View.INVISIBLE);
-            holder.infoLayout.setVisibility(View.VISIBLE);
-            Node node = nodes.get(position);
-            if (node.type == NodeType.WORD){
-                holder.editText.setVisibility(View.VISIBLE);
-                holder.iconImage.setVisibility(View.INVISIBLE);
-                holder.select.setVisibility(View.INVISIBLE);
-                holder.editText.setText(node.getWord());
-            } else {
-                holder.editText.setVisibility(View.INVISIBLE);
-                holder.iconImage.setVisibility(View.VISIBLE);
-                holder.select.setVisibility(View.VISIBLE);
-                if (node.getImage() != null) holder.iconImage.setImageBitmap(node.getImage());
-            }
+            holder.editText.setVisibility(View.INVISIBLE);
+            holder.iconImage.setVisibility(View.VISIBLE);
+            holder.select.setVisibility(View.VISIBLE);
+            if (node.getImage() != null) holder.iconImage.setImageBitmap(node.getImage());
         }
     }
 
     @Override
     public int getItemCount() {
-        return nodes.size() + 1;
+        return nodes.size();
     }
 
     public List<Node> getNodes(){
@@ -83,41 +79,24 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         return realNodes;
     }
 
-    protected class ViewHolder extends RecyclerView.ViewHolder {
-        public final ConstraintLayout infoLayout;
-        public final ConstraintLayout addLayout;
+    public void addNewNode(NodeType nodeType){
+        nodes.add(new Node(nodeType));
+        notifyItemInserted(nodes.size() - 1);
+    }
 
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         public final Button delete;
         public final EditText editText;
         public final ImageView iconImage;
         public final Button select;
 
-        public final Button textButton;
-        public final Button imageButton;
-
 
         public ViewHolder(DialogFragmentActionEditItemBinding binding) {
             super(binding.getRoot());
-            textButton = binding.targetTextButton;
-            imageButton = binding.targetImageButton;
-
-            infoLayout = binding.infoBox;
-            addLayout = binding.addBox;
-
             editText = binding.editText;
             iconImage = binding.iconImage;
             delete = binding.deleteButton;
             select = binding.selectImageButton;
-
-            textButton.setOnClickListener(v -> {
-                nodes.add(new Node(NodeType.WORD));
-                notifyItemInserted(nodes.size() - 1);
-            });
-
-            imageButton.setOnClickListener(v -> {
-                nodes.add(new Node(NodeType.IMAGE));
-                notifyItemInserted(nodes.size() - 1);
-            });
 
             delete.setOnClickListener(v -> {
                 int index = getAdapterPosition();
@@ -125,22 +104,37 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 notifyItemRemoved(index);
             });
 
-            select.setOnClickListener(v -> {
+            select.setOnClickListener(v -> new ImagePicker(parent.getContext(), nodePicker -> {
+                ImagePicker imagePicker = (ImagePicker) nodePicker;
+                Bitmap bitmap = imagePicker.getBitmap();
+                iconImage.setImageBitmap(bitmap);
+                int index = getAdapterPosition();
+                Node node = nodes.get(index);
+                node.setImage(bitmap);
+            }).show(Gravity.START | Gravity.TOP, 0, 0));
 
-            });
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            editText.setOnEditorActionListener((v, actionId, event) -> {
-                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
                     Editable text = editText.getText();
                     int index = getAdapterPosition();
                     Node node = nodes.get(index);
                     if (text != null && text.length() > 0){
                         node.setWord(text.toString());
                     } else {
-                        editText.setText(node.getWord());
+                        node.setWord("");
                     }
                 }
-                return true;
             });
         }
     }

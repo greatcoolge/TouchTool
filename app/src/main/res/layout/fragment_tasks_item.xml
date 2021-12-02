@@ -16,14 +16,14 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:checkedButton="@id/closed_button"
+        android:checkedButton="@id/close_button"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/closed_button"
+            android:id="@+id/close_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"

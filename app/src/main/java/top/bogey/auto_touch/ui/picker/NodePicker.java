@@ -13,11 +13,10 @@ import com.lzf.easyfloat.enums.ShowPattern;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.util.AppUtil;
 
-public class NodePicker {
+public class NodePicker implements NodePickerInterface {
     protected final Context context;
     protected View layout;
 
-    protected boolean picking;
     protected PickerCallback pickerCallback;
     protected FloatCallback floatCallback;
 
@@ -25,40 +24,33 @@ public class NodePicker {
         this.context = context;
         layout = LayoutInflater.from(context).inflate(layoutId, null);
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatCallback();
+        floatCallback = new FloatPickerShowCallback();
     }
 
     protected NodePicker(Context context, View layout, PickerCallback pickerCallback) {
         this.context = context;
         this.layout = layout;
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatCallback();
+        floatCallback = new FloatPickerShowCallback();
     }
 
-    public int[] getLocation(){
-        int[] location = new int[2];
-        layout.getLocationOnScreen(location);
-        return location;
-    }
-
+    @Override
     public void show(int gravity, int x, int y){
         EasyFloat.with(MainApplication.getActivity())
                 .setLayout(layout)
                 .setShowPattern(ShowPattern.ALL_TIME)
                 .setTag(AppUtil.getIdentityCode(this))
-                .setDragEnable(true)
+                .setDragEnable(false)
                 .setImmersionStatusBar(true)
                 .setGravity(gravity, x, y)
+                .setMatchParent(true, true)
                 .registerCallbacks(floatCallback)
+                .setAnimator(null)
                 .show();
     }
 
+    @Override
     public void dismiss(){
         EasyFloat.dismiss(AppUtil.getIdentityCode(this));
-    }
-
-    public void setPicking(boolean picking){
-        this.picking = picking;
-        EasyFloat.dragEnable(picking, AppUtil.getIdentityCode(this));
     }
 }

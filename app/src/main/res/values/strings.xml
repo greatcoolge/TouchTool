@@ -19,19 +19,30 @@
     <string name="service_closed">服务已关闭</string>
     <string name="service_open_tips">需要开启无障碍服务才能使用</string>
 
+    <string name="capture_service_opened">录屏已开启</string>
+    <string name="capture_service_closed">录屏已关闭</string>
+    <string name="capture_service_open_tips">需要授予屏幕录制权限才能使用点击/比较图片的能力</string>
+
+    <string name="auto_start">自启动</string>
+    <string name="auto_start_tips">开启自启动权限使服务在后台稳定运行</string>
+    <string name="lock_task">锁定后台</string>
+    <string name="lock_task_tips">锁定后台使服务在后台稳定运行</string>
+
     <string name="show_system">展示系统应用</string>
     <string name="refresh">刷新</string>
     <string name="search">搜索</string>
 
     <string name="add">添加</string>
     <string name="save">保存</string>
+    <string name="record">录制</string>
 
     <string name="closed">关闭</string>
     <string name="auto">自动</string>
     <string name="manual">手动</string>
     <string name="delete_task_tips">确定要删除任务%1$s吗？</string>
-    <string name="delete_action_tips">确定要删除这个动作吗？</string>
+    <string name="task_default_title">默认任务标题\n长按修改</string>
 
+    <string name="delete_action_tips">确定要删除这个动作吗？</string>
     <string name="word_title">点击 %1$s %2$d次</string>
     <string name="word_title_long">长按 %1$s %2$d次</string>
     <string name="key_title">使用 %1$s %2$d次</string>
@@ -45,13 +56,13 @@
     <string name="keyboard">按键</string>
     <string name="task">任务</string>
 
-    <string name="do_keys">执行条件</string>
+    <string name="do_keys">条件</string>
     <string name="delay">延迟</string>
     <string name="time">时间</string>
     <string name="interval">间隔</string>
     <string name="times">次数</string>
     <string name="target">目标</string>
-    <string name="stop_key">停止条件</string>
+    <string name="stop_key">停止</string>
 
     <string name="s">秒</string>
     <string name="ms">毫秒</string>
@@ -64,5 +75,10 @@
     <string name="success_once">成功\n一次</string>
     <string name="exist_word">出现\n文字</string>
     <string name="exist_image">出现\n图片</string>
+
+    <string name="exist_empty_config">存在空配置项</string>
+    <string name="action_timeout">动作时长超过1分钟</string>
+    <string name="empty_target">目标为空</string>
+    <string name="empty_stop">停止条件为空</string>
 
 </resources>

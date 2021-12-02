@@ -1,6 +1,5 @@
 package top.bogey.auto_touch.ui.picker;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,7 +44,7 @@ public class ImagePickerView extends View {
         markPaint.setColor(Color.parseColor("#00000000"));
 
         vertexPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        vertexPaint.setColor(Color.parseColor("#ffc107"));
+        vertexPaint.setColor(Color.parseColor("#009688"));
 
         bitPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bitPaint.setFilterBitmap(true);
@@ -75,6 +74,7 @@ public class ImagePickerView extends View {
             super.draw(canvas);
             if (callback != null){
                 callback.onEnter();
+                callback = null;
             }
             return;
         }
@@ -101,71 +101,63 @@ public class ImagePickerView extends View {
         super.draw(canvas);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            int x = (int) event.getX();
-            int y = (int) event.getY();
-
-            if (isMarked) {
-                lastX = x;
-                lastY = y;
-                isDrag = false;
-                adjustMode = 0;
-                if (confirmArea.contains(lastX, lastY)){
-                    isComplete = true;
-                } else if (cancelArea.contains(lastX, lastY)){
-                    isMarked = false;
-                    markArea.set(0, 0, 0, 0);
-                    refreshButtonArea();
-                }else if (ltArea.contains(x, y)) {
-                    adjustMode = 1;
-                } else if (rbArea.contains(x, y)) {
-                    adjustMode = 2;
-                } else if (markArea.contains(x, y)) {
-                    isDrag = true;
-                }
-            } else {
-                startX = endX = lastX = x;
-                startY = endY = lastY = y;
-            }
-        }
-
-        postInvalidate();
-        return true;
-    }
-
-    public void onDrag(MotionEvent event){
+    public void onTouch(MotionEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                isDrag = false;
+                if (isMarked) {
+                    lastX = x;
+                    lastY = y;
+                    adjustMode = 0;
+                    if (confirmArea.contains(lastX, lastY)) {
+                        isComplete = true;
+                    } else if (cancelArea.contains(lastX, lastY)) {
+                        isMarked = false;
+                        markArea.set(0, 0, 0, 0);
+                        refreshButtonArea();
+                    } else if (ltArea.contains(x, y)) {
+                        adjustMode = 1;
+                    } else if (rbArea.contains(x, y)) {
+                        adjustMode = 2;
+                    } else if (markArea.contains(x, y)) {
+                        isDrag = true;
+                    }
+                } else {
+                    startX = endX = lastX = x;
+                    startY = endY = lastY = y;
+                }
+                break;
 
-        if (isMarked){
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                adjustMark(x, y);
-                lastX = x;
-                lastY = y;
-            }
-        } else {
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                endX = lastX = x;
-                endY = lastY = y;
-            }
-        }
-        postInvalidate();
-    }
+            case MotionEvent.ACTION_MOVE:
+                if (isMarked){
+                    adjustMark(x, y);
+                    lastX = x;
+                    lastY = y;
+                } else {
+                    endX = lastX = x;
+                    endY = lastY = y;
+                    isDrag = true;
+                }
+                break;
 
-    public void onDragEnd(){
-        if (isMarked){
-            isDrag = false;
-            adjustMode = 0;
-        } else {
-            markArea.set(Math.min(startX, endX), Math.min(startY, endY), Math.max(startX, endX), Math.max(startY, endY));
-            ltArea.set(markArea.left, markArea.top, markArea.left + vertexWidth, markArea.top + vertexWidth);
-            rbArea.set(markArea.right - vertexWidth, markArea.bottom - vertexWidth, markArea.right, markArea.bottom);
-            isMarked = true;
+            case MotionEvent.ACTION_UP:
+                if (isMarked){
+                    isDrag = false;
+                    adjustMode = 0;
+                } else {
+                    if (isDrag){
+                        markArea.set(Math.min(startX, endX), Math.min(startY, endY), Math.max(startX, endX), Math.max(startY, endY));
+                        ltArea.set(markArea.left - vertexWidth, markArea.top - vertexWidth, markArea.left, markArea.top);
+                        rbArea.set(markArea.right, markArea.bottom, markArea.right + vertexWidth, markArea.bottom + vertexWidth);
+                        isMarked = true;
+                        isDrag = false;
+                    }
+                }
+                refreshButtonArea();
+                break;
         }
-        refreshButtonArea();
         postInvalidate();
     }
 
@@ -190,8 +182,8 @@ public class ImagePickerView extends View {
             }
         }
         markArea.set(Math.min(startX, endX), Math.min(startY, endY), Math.max(startX, endX), Math.max(startY, endY));
-        ltArea.set(markArea.left, markArea.top, markArea.left + vertexWidth, markArea.top + vertexWidth);
-        rbArea.set(markArea.right - vertexWidth, markArea.bottom - vertexWidth, markArea.right, markArea.bottom);
+        ltArea.set(markArea.left - vertexWidth, markArea.top - vertexWidth, markArea.left, markArea.top);
+        rbArea.set(markArea.right, markArea.bottom, markArea.right + vertexWidth, markArea.bottom + vertexWidth);
     }
 
     private void refreshButtonArea(){
@@ -201,21 +193,16 @@ public class ImagePickerView extends View {
         endY = markArea.bottom;
 
         if (isMarked){
-            int left = Math.max(endX - vertexWidth * 2 - btnWidth * 2, 0);
-            int outLeft = left + vertexWidth;
+            int left = Math.max(endX - vertexWidth - btnWidth * 2, 0);
 
-            if (markArea.width() > btnWidth * 5 && markArea.height() > btnWidth * 5){
-                // 内部
-                confirmArea.set(left, endY - btnWidth - vertexWidth, left + btnWidth, endY - vertexWidth);
-                cancelArea.set(left + btnWidth + vertexWidth, endY - btnWidth - vertexWidth, left + btnWidth * 2 + vertexWidth, endY - vertexWidth);
-            } else if (startY > btnWidth * 3){
+            if (startY > btnWidth * 3){
                 // 顶部
-                confirmArea.set(outLeft, startY - btnWidth - vertexWidth, outLeft + btnWidth, startY - vertexWidth);
-                cancelArea.set(outLeft + btnWidth + vertexWidth, startY - btnWidth - vertexWidth, outLeft + btnWidth * 2 + vertexWidth, startY - vertexWidth);
+                confirmArea.set(left, startY - btnWidth - vertexWidth, left + btnWidth, startY - vertexWidth);
+                cancelArea.set(left + btnWidth + vertexWidth, startY - btnWidth - vertexWidth, left + btnWidth * 2 + vertexWidth, startY - vertexWidth);
             } else {
                 // 底部
-                confirmArea.set(outLeft, endY + vertexWidth, outLeft + btnWidth, endY + vertexWidth + btnWidth);
-                cancelArea.set(outLeft + btnWidth + vertexWidth, endY + vertexWidth, outLeft + btnWidth * 2 + vertexWidth, endY + vertexWidth + btnWidth);
+                confirmArea.set(left, endY + vertexWidth, left + btnWidth, endY + vertexWidth + btnWidth);
+                cancelArea.set(left + btnWidth + vertexWidth, endY + vertexWidth, left + btnWidth * 2 + vertexWidth, endY + vertexWidth + btnWidth);
             }
         }
     }

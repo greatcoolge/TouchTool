@@ -23,7 +23,7 @@ import top.bogey.auto_touch.util.AppUtil;
 
 public class MainViewModel extends AndroidViewModel {
     private static final String SAVE_PATH = "save";
-    private static final String SAVE_KEY = "ServiceEnable";
+    private static final String SERVICE_SAVE_KEY = "ServiceEnable";
     public final MutableLiveData<Boolean> serviceEnable = new MutableLiveData<>(false);
     public final MutableLiveData<Boolean> showSystem = new MutableLiveData<>(false);
     public LiveData<List<TaskGroup>> taskGroups;
@@ -41,18 +41,16 @@ public class MainViewModel extends AndroidViewModel {
 
     private void loadServiceEnable(){
         SharedPreferences sharedPreferences = getApplication().getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        String string = sharedPreferences.getString(SAVE_KEY, "false");
+        String string = sharedPreferences.getString(SERVICE_SAVE_KEY, "false");
         boolean result = false;
-        if (string != null){
-            result = string.equals("true");
-        }
+        if (string != null) result = string.equals("true");
         serviceEnable.setValue(result && AppUtil.isAccessibilityServiceOn(getApplication()));
     }
 
     public void saveServiceEnable(boolean enable){
         SharedPreferences sharedPreferences = getApplication().getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SAVE_KEY, String.valueOf(enable));
+        editor.putString(SERVICE_SAVE_KEY, String.valueOf(enable));
         editor.apply();
         loadServiceEnable();
     }

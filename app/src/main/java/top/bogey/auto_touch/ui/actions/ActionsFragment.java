@@ -32,7 +32,7 @@ import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.ui.MainViewModel;
-import top.bogey.auto_touch.ui.action.ActionEditDialogFragment;
+import top.bogey.auto_touch.ui.action.ActionEditDialog;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
@@ -160,7 +160,7 @@ public class ActionsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_tasks, menu);
+        inflater.inflate(R.menu.menu_actions, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -168,11 +168,11 @@ public class ActionsFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.add) {
             Action action = new Action();
-            new ActionEditDialogFragment(task, action, () -> {
+            new ActionEditDialog(requireContext(), task, action, () -> {
                 if (task.actions == null) task.actions = new ArrayList<>();
                 task.actions.add(action);
                 viewModel.saveTask(task);
-            }).show(requireActivity().getSupportFragmentManager(), null);
+            }).show();
         }
         return super.onOptionsItemSelected(item);
     }

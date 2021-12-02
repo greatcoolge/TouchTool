@@ -5,13 +5,15 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import top.bogey.auto_touch.util.CompleteCallback;
+
 public class FloatClickCallback extends FloatCallback{
-    private final NodePicker nodePicker;
+    private final CompleteCallback clickCallback;
     private boolean drag;
     private float lastX, lastY;
 
-    public FloatClickCallback(NodePicker nodePicker) {
-        this.nodePicker = nodePicker;
+    public FloatClickCallback(CompleteCallback clickCallback) {
+        this.clickCallback = clickCallback;
     }
 
     @Override
@@ -32,8 +34,8 @@ public class FloatClickCallback extends FloatCallback{
                 lastX = rawX;
                 lastY = rawY;
             case MotionEvent.ACTION_UP:
-                if (!drag && nodePicker.picking && nodePicker.pickerCallback != null){
-                    nodePicker.pickerCallback.call(nodePicker);
+                if (!drag && clickCallback != null){
+                    clickCallback.onComplete();
                 }
         }
     }

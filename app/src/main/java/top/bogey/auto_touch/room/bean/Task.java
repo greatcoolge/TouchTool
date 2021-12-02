@@ -15,7 +15,7 @@ public class Task implements Cloneable {
     public String title;
     public int groupId = 0;
     public List<Action> actions;
-    public TaskStatus taskStatus = TaskStatus.AUTO;
+    public TaskStatus taskStatus = TaskStatus.CLOSED;
 
     @NonNull
     @Override
