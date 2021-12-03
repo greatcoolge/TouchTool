@@ -3,7 +3,6 @@ package top.bogey.auto_touch.room.data;
 import android.accessibilityservice.GestureDescription;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
@@ -21,6 +20,7 @@ import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
+import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 public class TaskRunnable implements Runnable{
@@ -30,6 +30,8 @@ public class TaskRunnable implements Runnable{
     private final TaskRepository repository;
     private final CompleteCallback callback;
 
+    private boolean isRunning = true;
+
     public TaskRunnable(@NonNull MainAccessibilityService service, Task task, CompleteCallback callback) {
         this.service = service;
         this.task = task;
@@ -38,11 +40,11 @@ public class TaskRunnable implements Runnable{
     }
 
     public void stop() {
-        Thread.currentThread().interrupt();
+        isRunning = false;
     }
 
     public boolean isRunning(){
-        return !Thread.currentThread().isInterrupted();
+        return isRunning;
     }
 
     @Override
@@ -118,7 +120,7 @@ public class TaskRunnable implements Runnable{
                                 }
                                 break;
                         }
-                        Log.d("Action", "run: " + runAction.getTitle(service.getApplicationContext()));
+                        AppUtil.log("Action Run", runAction.getTitle(service.getApplicationContext()));
                         CheckResult stopResult = checkNode(runAction.stop, true);
                         if (stopResult != null && stopResult.result){
                             stop();

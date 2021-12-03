@@ -12,6 +12,34 @@
 #   public *;
 #}
 
+-keepclassmembers class top.bogey.auto_touch.room.bean.Task{
+    public int id;
+    public java.lang.String pkgName;
+    public java.lang.String title;
+    public int groupId;
+    public java.util.List actions;
+    public top.bogey.auto_touch.room.bean.TaskStatus taskStatus;
+}
+
+-keepclassmembers class top.bogey.auto_touch.room.bean.Action{
+    public top.bogey.auto_touch.room.bean.ActionMode actionMode;
+    public boolean enable;
+    public java.util.List keys;
+    public top.bogey.auto_touch.room.bean.Node target;
+    public top.bogey.auto_touch.room.bean.Node stop;
+    public int delay;
+    public int times;
+    public int interval;
+    public int time;
+}
+
+-keepclassmembers class top.bogey.auto_touch.room.bean.Node{
+    public top.bogey.auto_touch.room.bean.NodeType type;
+    private java.lang.String value;
+}
+
+-keep class top.bogey.auto_touch.util.MatchResult{*;}
+
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable

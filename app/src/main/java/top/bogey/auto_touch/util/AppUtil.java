@@ -13,9 +13,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.ColorInt;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,7 @@ import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.R;
 
 public class AppUtil {
-
+    public static List<String> strings = new ArrayList<>();
 
     public static boolean isAccessibilityServiceOn(Context context){
         String serviceName = context.getPackageName() + "/" + MainAccessibilityService.class.getCanonicalName();
@@ -122,6 +124,14 @@ public class AppUtil {
         try{
             activity.startActivity(intent);
         }catch (Exception ignored){}
+    }
+
+    public static void log(String tag, String msg){
+        Log.d(tag, msg);
+        strings.add(tag + ":" + msg);
+        if (strings.size() > 50){
+            strings = strings.subList(1, 50);
+        }
     }
 
     private static class PackagesInfo extends HashMap<String, List<String>> {

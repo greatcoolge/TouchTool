@@ -14,12 +14,12 @@ public class TaskRepository {
     private final TaskDao taskDao;
 
     public TaskRepository(Context context){
-        TaskDatabase database = TaskDatabase.getInstance(context);
+        TaskDatabase database = TaskDatabase.getInstance(context.getApplicationContext());
         taskDao = database.getTaskDao();
     }
 
     public List<Task> getAllTasks(){
-        Future<List<Task>> future = TaskDatabase.service.submit(this::getAllTasks);
+        Future<List<Task>> future = TaskDatabase.service.submit(taskDao::getAllTasks);
         try {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
@@ -34,8 +34,8 @@ public class TaskRepository {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return getTasksByPackageName(pkgName);
         }
-        return null;
     }
 
     public List<Task> getTasksById(int id){

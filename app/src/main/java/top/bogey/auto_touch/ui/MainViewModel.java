@@ -1,8 +1,6 @@
 package top.bogey.auto_touch.ui;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -19,12 +17,8 @@ import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskGroup;
 import top.bogey.auto_touch.room.data.TaskRepository;
 import top.bogey.auto_touch.ui.apps.AppInfo;
-import top.bogey.auto_touch.util.AppUtil;
 
 public class MainViewModel extends AndroidViewModel {
-    private static final String SAVE_PATH = "save";
-    private static final String SERVICE_SAVE_KEY = "ServiceEnable";
-    public final MutableLiveData<Boolean> serviceEnable = new MutableLiveData<>(false);
     public final MutableLiveData<Boolean> showSystem = new MutableLiveData<>(false);
     public LiveData<List<TaskGroup>> taskGroups;
     private final List<ApplicationInfo> allApps = new ArrayList<>();
@@ -33,30 +27,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public MainViewModel(Application application){
         super(application);
-        loadServiceEnable();
         repository = new TaskRepository(application);
         taskGroups = repository.getTaskGroupsLive();
         refreshAppList();
-    }
-
-    private void loadServiceEnable(){
-        SharedPreferences sharedPreferences = getApplication().getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        String string = sharedPreferences.getString(SERVICE_SAVE_KEY, "false");
-        boolean result = false;
-        if (string != null) result = string.equals("true");
-        serviceEnable.setValue(result && AppUtil.isAccessibilityServiceOn(getApplication()));
-    }
-
-    public void saveServiceEnable(boolean enable){
-        SharedPreferences sharedPreferences = getApplication().getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SERVICE_SAVE_KEY, String.valueOf(enable));
-        editor.apply();
-        loadServiceEnable();
-    }
-
-    public boolean isServiceEnable(){
-        return serviceEnable.getValue() != null && serviceEnable.getValue();
     }
 
     public void refreshAppList(){

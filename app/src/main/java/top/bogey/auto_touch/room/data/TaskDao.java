@@ -16,7 +16,7 @@ public interface TaskDao {
     @Query("select * from Task")
     List<Task> getAllTasks();
 
-    @Query("select * from Task where pkgName = :pkgName")
+    @Query("select * from Task where pkgName=:pkgName")
     List<Task> getTasksByPackageName(String pkgName);
 
     @Query("select * from Task where id = :id")
@@ -25,7 +25,7 @@ public interface TaskDao {
     @Query("select * from Task where id = :id")
     LiveData<List<Task>> getTasksLiveById(int id);
 
-    @Query("select * from Task where pkgName = :pkgName")
+    @Query("select * from Task where pkgName=:pkgName")
     LiveData<List<Task>> getTasksLiveByPackageName(String pkgName);
 
     @Query("select pkgName, count(*) as count from Task group by pkgName")

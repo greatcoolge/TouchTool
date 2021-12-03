@@ -3,42 +3,36 @@ package top.bogey.auto_touch.ui.home;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentHomeBinding;
-import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
-    private MainViewModel viewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
+        MainAccessibilityService accessibilityService = MainApplication.getService();
         binding.serviceToggle.setOnClickListener(v -> {
-            if (AppUtil.isAccessibilityServiceOn(requireActivity())){
-                boolean enable = viewModel.isServiceEnable();
-                viewModel.saveServiceEnable(!enable);
-                if (MainApplication.getService() != null){
-                    MainApplication.getService().enable = true;
-                }
+            MainAccessibilityService service = MainApplication.getService();
+            if (service != null && service.connected){
+                service.enable = !service.enable;
+                binding.serviceToggle.setChecked(service.enable);
             } else {
-                viewModel.saveServiceEnable(false);
+                binding.serviceToggle.setChecked(false);
                 AppUtil.showSimpleDialog(requireActivity(), R.string.service_open_tips, new SelectCallback() {
                     @Override
                     public void onEnter() {
@@ -51,7 +45,7 @@ public class HomeFragment extends Fragment {
                 });
             }
         });
-        viewModel.serviceEnable.observe(getViewLifecycleOwner(), aBoolean -> binding.serviceToggle.setChecked(aBoolean));
+        binding.serviceToggle.setChecked(accessibilityService != null && accessibilityService.connected && accessibilityService.enable);
 
         binding.captureServiceToggle.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
@@ -76,8 +70,7 @@ public class HomeFragment extends Fragment {
                 binding.captureServiceToggle.setChecked(false);
             }
         });
-        MainAccessibilityService service = MainApplication.getService();
-        binding.captureServiceToggle.setChecked(service != null && service.binder != null);
+        binding.captureServiceToggle.setChecked(accessibilityService != null && accessibilityService.binder != null);
 
         binding.tipsButton.setOnClickListener(v -> AppUtil.showSimpleDialog(requireActivity(), R.string.auto_start_tips, new SelectCallback() {
             @Override

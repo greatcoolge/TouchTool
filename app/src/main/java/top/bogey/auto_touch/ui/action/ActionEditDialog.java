@@ -435,6 +435,10 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
                 return;
             }
         }
-        spinner.setSelection(0);
+        if (spinnerAdapter.getCount() > 0){
+            spinner.setSelection(0);
+            AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
+            listener.onItemSelected(spinner, spinner.getSelectedView(), 0, spinnerAdapter.getItemId(0));
+        }
     }
 }

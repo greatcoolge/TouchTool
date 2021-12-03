@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -18,6 +17,7 @@ import java.util.concurrent.Executors;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRepository;
 import top.bogey.auto_touch.room.data.TaskRunnable;
+import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
@@ -29,6 +29,7 @@ public class MainAccessibilityService extends AccessibilityService {
     private String currPkgName = "";
 
     public boolean enable = false;
+    public boolean connected = false;
 
     private ServiceConnection serviceConnection;
     public CaptureService.CaptureBinder binder;
@@ -49,11 +50,13 @@ public class MainAccessibilityService extends AccessibilityService {
     protected void onServiceConnected() {
         super.onServiceConnected();
         MainApplication.setService(this);
+        connected = true;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
         MainApplication.setService(null);
+        connected = false;
         return super.onUnbind(intent);
     }
 
@@ -61,7 +64,7 @@ public class MainAccessibilityService extends AccessibilityService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainApplication.setService(this);
         if (repository == null){
-            repository = new TaskRepository(getApplicationContext());
+            repository = new TaskRepository(getApplication());
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -69,6 +72,8 @@ public class MainAccessibilityService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        connected = false;
+        MainApplication.setService(null);
         stopCaptureService();
     }
 
@@ -111,6 +116,7 @@ public class MainAccessibilityService extends AccessibilityService {
     public void stopCaptureService(){
         if (serviceConnection != null){
             unbindService(serviceConnection);
+            stopService(new Intent(this, CaptureService.class));
             serviceConnection = null;
             binder = null;
         }
@@ -148,23 +154,26 @@ public class MainAccessibilityService extends AccessibilityService {
                     tasks.clear();
 
                     currPkgName = packageName;
-                    // APP自己不执行任何任务
-                    if (packageName.equals(getPackageName())) return;
 
                     MainActivity activity = MainApplication.getActivity();
                     if (activity != null){
                         activity.dismissPlayView();
+                        AppUtil.log("Dismiss Dialog", "");
                     }
 
-                    Log.d("TAG", packageName);
+                    // APP自己不执行任何任务
+                    if (packageName.equals(getPackageName())) return;
+
+                    AppUtil.log("EnterApp", packageName);
 
                     boolean isCommon = false;
-                    List<Task> tasks = repository.getTasksByPackageName(packageName);
+                    List<Task> tasks = repository.getTasksByPackageName(currPkgName);
                     if (tasks == null || tasks.isEmpty()){
                         tasks = repository.getTasksByPackageName(getString(R.string.common_package_name));
                         isCommon = true;
                     }
                     if (tasks == null || tasks.isEmpty()) return;
+                    AppUtil.log("Handler tasks", "");
 
                     String pkgName = "";
                     for (Task task : tasks) {
@@ -180,6 +189,7 @@ public class MainAccessibilityService extends AccessibilityService {
                     if (!(isCommon || pkgName.isEmpty())){
                         if (activity != null){
                             activity.showPlayView(pkgName);
+                            AppUtil.log("Show Dialog", pkgName);
                         }
                     }
                 }

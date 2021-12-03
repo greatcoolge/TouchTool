@@ -130,7 +130,7 @@ public class ActionsFragment extends Fragment {
 
             ActionsRecyclerViewAdapter adapter = (ActionsRecyclerViewAdapter) binding.recyclerView.getAdapter();
             if (adapter != null){
-                adapter.setActions(task.actions);
+                adapter.setActions(task);
             }
 
             RadioGroup group = binding.include.statusGroup;

@@ -32,7 +32,7 @@ public class TaskPlayerItem extends FrameLayout {
 
         setTask(task);
 
-        binding.getRoot().setOnClickListener(v -> {
+        binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
             if (service != null && service.enable){
                 if (playing){
@@ -54,7 +54,7 @@ public class TaskPlayerItem extends FrameLayout {
 
     public void setTask(Task task){
         this.task = task;
-        binding.getRoot().setText(getPivotalTitle(task.title));
+        binding.playButton.setText(getPivotalTitle(task.title));
         playing = false;
         refreshButton(false);
     }
@@ -83,11 +83,11 @@ public class TaskPlayerItem extends FrameLayout {
             typedArray.recycle();
 
             if (playing){
-                binding.getRoot().setBackgroundResource(R.drawable.corner);
-                binding.getRoot().setTextColor(getResources().getColor(selectColor, null));
+                binding.playButton.setBackgroundResource(R.drawable.corner);
+                binding.playButton.setTextColor(getResources().getColor(selectColor, null));
             } else {
-                binding.getRoot().setBackgroundDrawable(null);
-                binding.getRoot().setTextColor(getResources().getColor(unselectColor, null));
+                binding.playButton.setBackgroundDrawable(null);
+                binding.playButton.setTextColor(getResources().getColor(unselectColor, null));
             }
         });
     }
