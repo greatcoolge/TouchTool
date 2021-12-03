@@ -52,6 +52,7 @@ public class ActionsFragment extends Fragment {
             int taskId = getArguments().getInt("taskId");
             task = viewModel.getTasksById(taskId);
             if (task != null){
+                if (task.actions == null) task.actions = new ArrayList<>();
                 adapter = new ActionsRecyclerViewAdapter(this, task);
                 binding.recyclerView.setAdapter(adapter);
 
@@ -131,6 +132,7 @@ public class ActionsFragment extends Fragment {
 
             ActionsRecyclerViewAdapter adapter = (ActionsRecyclerViewAdapter) binding.recyclerView.getAdapter();
             if (adapter != null){
+                if (task.actions == null) task.actions = new ArrayList<>();
                 adapter.setTask(task);
             }
 
@@ -170,7 +172,6 @@ public class ActionsFragment extends Fragment {
         if (item.getItemId() == R.id.add) {
             Action action = new Action();
             new ActionEditDialog(requireContext(), task, action, () -> {
-                if (task.actions == null) task.actions = new ArrayList<>();
                 task.actions.add(action);
                 if (adapter != null) adapter.notifyNew();
                 viewModel.saveTask(task);
