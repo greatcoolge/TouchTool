@@ -40,6 +40,7 @@ public class ActionsFragment extends Fragment {
     private FragmentActionsBinding binding;
     private MainViewModel viewModel;
     private Task task;
+    private ActionsRecyclerViewAdapter adapter;
 
     @Nullable
     @Override
@@ -51,7 +52,7 @@ public class ActionsFragment extends Fragment {
             int taskId = getArguments().getInt("taskId");
             task = viewModel.getTasksById(taskId);
             if (task != null){
-                ActionsRecyclerViewAdapter adapter = new ActionsRecyclerViewAdapter(this, task);
+                adapter = new ActionsRecyclerViewAdapter(this, task);
                 binding.recyclerView.setAdapter(adapter);
 
                 initTaskInfo();
@@ -130,7 +131,7 @@ public class ActionsFragment extends Fragment {
 
             ActionsRecyclerViewAdapter adapter = (ActionsRecyclerViewAdapter) binding.recyclerView.getAdapter();
             if (adapter != null){
-                adapter.setActions(task);
+                adapter.setTask(task);
             }
 
             RadioGroup group = binding.include.statusGroup;
@@ -171,6 +172,7 @@ public class ActionsFragment extends Fragment {
             new ActionEditDialog(requireContext(), task, action, () -> {
                 if (task.actions == null) task.actions = new ArrayList<>();
                 task.actions.add(action);
+                if (adapter != null) adapter.notifyNew();
                 viewModel.saveTask(task);
             }).show();
         }

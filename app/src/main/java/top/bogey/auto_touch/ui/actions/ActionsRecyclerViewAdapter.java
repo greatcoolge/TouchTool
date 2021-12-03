@@ -28,7 +28,7 @@ import top.bogey.auto_touch.util.SelectCallback;
 public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecyclerViewAdapter.ViewHolder> {
     private final ActionsFragment parent;
     private final MainViewModel viewModel;
-    private final List<Action> actions;
+    private List<Action> actions;
     private Task task;
 
     public ActionsRecyclerViewAdapter(ActionsFragment parent, Task task){
@@ -76,46 +76,14 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         return actions.size();
     }
 
-    public void setActions(Task task){
+    public void setTask(Task task){
         this.task = task;
-        List<Action> newActions = task.actions;
-        if (newActions == null){
-            int size = this.actions.size();
-            this.actions.clear();
-            notifyItemRangeRemoved(0, size);
-            return;
-        }
-        // 查找删除的 或 变更了的
-        for (int i = this.actions.size() - 1; i >= 0; i--) {
-            Action action = this.actions.get(i);
-            boolean flag = true;
-            for (Action newAction : newActions) {
-                if (action.equals(newAction)) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag){
-                this.actions.remove(i);
-                notifyItemRemoved(i);
-            }
-        }
+        actions = task.actions;
+    }
 
-        // 查找新增的
-        for (Action newAction : newActions) {
-            boolean flag = true;
-            for (Action action : this.actions) {
-                if (action.equals(newAction)){
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag){
-                this.actions.add(newAction);
-                notifyItemInserted(this.actions.size() - 1);
-                notifyItemChanged(Math.max(this.actions.size() - 2, 0));
-            }
-        }
+    public void notifyNew(){
+        notifyItemInserted(actions.size() - 1);
+        notifyItemChanged(actions.size() - 2);
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
