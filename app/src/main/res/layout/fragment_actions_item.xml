@@ -2,21 +2,25 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="40dp"
     android:layout_marginBottom="1dp"
-    android:background="@drawable/item_a">
+    android:background="@drawable/item_a"
+    android:backgroundTint="?attr/itemBackground">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/enabled_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ToggleButton
+        android:id="@+id/enabled_toggle"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginStart="10dp"
+        android:background="@drawable/toggle_switch"
+        android:textOff="@null"
+        android:textOn="@null"
+        android:stateListAnimator="@null"
+        android:checked="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TouchTargetSizeCheck" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/title_text"
@@ -24,26 +28,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:textSize="14sp"
+        android:textSize="11sp"
         android:maxLines="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linear_layout"
-        app:layout_constraintStart_toEndOf="@+id/enabled_switch"
+        app:layout_constraintStart_toEndOf="@+id/enabled_toggle"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginEnd="5dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/delete_button"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/up_button"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="40dp"
+            android:layout_width="20dp"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:insetTop="0dp"
@@ -51,12 +56,13 @@
             app:icon="@drawable/up"
             app:iconGravity="textTop"
             app:iconPadding="0dp"
+            app:iconSize="18dp"
             app:iconTint="?attr/colorPrimary" />
 
         <Button
             android:id="@+id/down_button"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="40dp"
+            android:layout_width="20dp"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:insetTop="0dp"
@@ -64,6 +70,7 @@
             app:icon="@drawable/down"
             app:iconGravity="textTop"
             app:iconPadding="0dp"
+            app:iconSize="18dp"
             app:iconTint="?attr/colorPrimary" />
 
     </LinearLayout>
@@ -71,8 +78,8 @@
     <Button
         android:id="@+id/delete_button"
         style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginEnd="10dp"
         android:insetTop="0dp"
         android:insetBottom="0dp"
@@ -80,6 +87,7 @@
         app:iconGravity="textEnd"
         app:iconPadding="0dp"
         app:iconTint="?attr/colorPrimary"
+        app:iconSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

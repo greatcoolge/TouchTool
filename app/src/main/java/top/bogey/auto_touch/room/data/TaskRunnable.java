@@ -3,6 +3,7 @@ package top.bogey.auto_touch.room.data;
 import android.accessibilityservice.GestureDescription;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
@@ -20,7 +21,6 @@ import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
-import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 public class TaskRunnable implements Runnable{
@@ -120,7 +120,7 @@ public class TaskRunnable implements Runnable{
                                 }
                                 break;
                         }
-                        AppUtil.log("Action Run", runAction.getTitle(service.getApplicationContext()));
+                        Log.d("Action Run", runAction.getTitle(service.getApplicationContext()));
                         CheckResult stopResult = checkNode(runAction.stop, true);
                         if (stopResult != null && stopResult.result){
                             stop();
@@ -169,9 +169,9 @@ public class TaskRunnable implements Runnable{
                 AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
                 List<AccessibilityNodeInfo> nodes = searchNodes(nodeInfo, node.getWord());
                 if (simpleResult){
-                    return new CheckResult(nodes != null);
+                    return new CheckResult(nodes != null && !nodes.isEmpty());
                 } else {
-                    return new CheckResult(nodes != null, searchClickableNode(nodes));
+                    return new CheckResult(nodes != null && !nodes.isEmpty(), searchClickableNode(nodes));
                 }
             case IMAGE:
                 if (service.binder != null){
@@ -219,46 +219,37 @@ public class TaskRunnable implements Runnable{
 
     private List<AccessibilityNodeInfo> searchNodes(AccessibilityNodeInfo nodeInfo, String key){
         if (nodeInfo == null) return null;
-        ArrayList<AccessibilityNodeInfo> identicalNodes = new ArrayList<>();
+        Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
+        Matcher matcher = pattern.matcher(key);
+        if (matcher.find()) {
+            String realKey = matcher.group(1);
+            if (realKey != null) {
+                int i = realKey.indexOf("id/");
+                if (i == 0){
+                    return nodeInfo.findAccessibilityNodeInfosByViewId(task.pkgName + ":" + realKey);
+                } else {
+                    return nodeInfo.findAccessibilityNodeInfosByText(realKey);
+                }
+            }
+        }
         ArrayList<AccessibilityNodeInfo> similarNodes = new ArrayList<>();
-        searchNodes(identicalNodes, similarNodes, nodeInfo, key);
-        identicalNodes.addAll(similarNodes);
-        return identicalNodes;
+        searchNodes(similarNodes, nodeInfo, key);
+        return similarNodes;
     }
 
-    private void searchNodes(List<AccessibilityNodeInfo> identicalNodes, List<AccessibilityNodeInfo> similarNodes, AccessibilityNodeInfo nodeInfo, String key){
+    private void searchNodes(List<AccessibilityNodeInfo> similarNodes, AccessibilityNodeInfo nodeInfo, String key){
         if (nodeInfo == null) return;
-        Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             AccessibilityNodeInfo child = nodeInfo.getChild(i);
             if (child != null){
                 String text = String.valueOf(child.getText());
                 String des = String.valueOf(child.getContentDescription());
                 String id = String.valueOf(child.getViewIdResourceName());
-                Matcher matcher = pattern.matcher(key);
-                boolean flag = true;
-                // 需要完全匹配的
-                if (matcher.find() && matcher.group(1) != null) {
-                    String realKey = matcher.group(1);
-                    if (text.equals(realKey) || des.equals(realKey) || id.equals(realKey)) {
-                        identicalNodes.add(child);
-                        flag = false;
-                    }
+                String lKey = key.toLowerCase();
+                if (text.toLowerCase().contains(lKey) || des.toLowerCase().contains(lKey) || id.toLowerCase().contains(lKey)) {
+                    similarNodes.add(child);
                 } else {
-                    //完全匹配
-                    if (text.equals(key) || des.equals(key) || id.equals(key)) {
-                        identicalNodes.add(child);
-                        flag = false;
-                    } else {
-                        String lKey = key.toLowerCase();
-                        if (text.toLowerCase().contains(lKey) || des.toLowerCase().contains(lKey) || id.toLowerCase().contains(lKey)) {
-                            similarNodes.add(child);
-                            flag = false;
-                        }
-                    }
-                }
-                if (flag) {
-                    searchNodes(identicalNodes, similarNodes, child, key);
+                    searchNodes(similarNodes, child, key);
                 }
             }
         }

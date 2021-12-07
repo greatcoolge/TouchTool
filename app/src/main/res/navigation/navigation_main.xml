@@ -32,15 +32,5 @@
         <argument
             android:name="pkgName"
             app:argType="string" />
-        <action
-            android:id="@+id/action_tasks_fragment_to_actions_fragment"
-            app:destination="@id/actions_fragment" />
-    </fragment>
-    <fragment android:id="@+id/actions_fragment"
-        android:name="top.bogey.auto_touch.ui.actions.ActionsFragment"
-        android:label="@string/actions"
-        tools:layout="@layout/fragment_actions" >
-        <argument android:name="taskId"
-            app:argType="integer" />
     </fragment>
 </navigation>

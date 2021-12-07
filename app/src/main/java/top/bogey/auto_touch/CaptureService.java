@@ -30,7 +30,6 @@ import androidx.core.app.NotificationCompat;
 
 import java.nio.ByteBuffer;
 
-import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.MatchResult;
 import top.bogey.auto_touch.util.NativeUtil;
 
@@ -144,7 +143,7 @@ public class CaptureService extends Service {
                 bitmap.copyPixelsFromBuffer(buffer);
                 MatchResult matchResult = NativeUtil.nativeMatchTemplate(bitmap, tempBitmap, 5);
                 bitmap.recycle();
-                AppUtil.log("MatchImage", "" + matchResult.value);
+                Log.d("MatchImage", "" + matchResult.value);
                 if (matchValue > matchResult.value) return null;
                 return new Rect(matchResult.x, matchResult.y, matchResult.x + tempBitmap.getWidth(), matchResult.y + tempBitmap.getHeight());
             } catch (Exception ignored){

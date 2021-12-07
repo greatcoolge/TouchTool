@@ -17,8 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -26,9 +24,11 @@ import java.util.List;
 
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentTasksItemBinding;
+import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.ui.MainViewModel;
+import top.bogey.auto_touch.ui.action.ActionEditDialog;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
@@ -55,7 +55,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         holder.group.check(child.getId());
         holder.title.setText(task.title);
         holder.title.setTextColor(AppUtil.getGroupColor(parent.requireContext(), task.groupId));
-        holder.number.setText(String.valueOf(task.actions != null ? task.actions.size() : 0));
+        holder.adapter.setTask(task);
 
         for (int i = 0; i < holder.groups.length; i++) {
             if (i == task.groupId - 1){
@@ -115,10 +115,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         public final RadioGroup group;
         public final TextView title;
         public final EditText titleEdit;
-        public final TextView number;
+        public final Button add;
         public final Button delete;
         public final LinearLayout linearLayout;
+        public final RecyclerView actionBox;
         public final Button[] groups = new Button[3];
+        public ActionsRecyclerViewAdapter adapter;
 
 
         public ViewHolder(FragmentTasksItemBinding binding) {
@@ -126,20 +128,17 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             layout = binding.getRoot();
             group = binding.statusGroup;
             title = binding.title;
-            number = binding.numberText;
             titleEdit = binding.titleEdit;
+            add = binding.add;
             delete = binding.delete;
             linearLayout = binding.linearLayout;
+            actionBox = binding.actionBox;
             groups[0] = binding.group1;
             groups[1] = binding.group2;
             groups[2] = binding.group3;
 
-            layout.setOnClickListener(v -> {
-                int index = getAdapterPosition();
-                Task task = tasks.get(index);
-                NavController controller = Navigation.findNavController(parent.requireActivity(), R.id.con_view);
-                controller.navigate(TasksFragmentDirections.actionTasksFragmentToActionsFragment(task.id));
-            });
+            adapter = new ActionsRecyclerViewAdapter(parent);
+            actionBox.setAdapter(adapter);
 
             layout.setOnLongClickListener(v -> {
                 title.setVisibility(View.INVISIBLE);
@@ -191,6 +190,17 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     @Override
                     public void onCancel() { }
                 });
+            });
+
+            add.setOnClickListener(v -> {
+                int index = getAdapterPosition();
+                Task task = tasks.get(index);
+                Action action = new Action();
+                new ActionEditDialog(parent.requireContext(), task, action, () -> {
+                    task.actions.add(action);
+                    adapter.notifyNew();
+                    viewModel.saveTask(task);
+                }).show();
             });
 
             for (Button button : groups) {

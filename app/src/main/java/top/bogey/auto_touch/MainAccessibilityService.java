@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -17,7 +18,6 @@ import java.util.concurrent.Executors;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRepository;
 import top.bogey.auto_touch.room.data.TaskRunnable;
-import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
@@ -158,13 +158,12 @@ public class MainAccessibilityService extends AccessibilityService {
                     MainActivity activity = MainApplication.getActivity();
                     if (activity != null){
                         activity.dismissPlayView();
-                        AppUtil.log("Dismiss Dialog", "");
                     }
 
                     // APP自己不执行任何任务
                     if (packageName.equals(getPackageName())) return;
 
-                    AppUtil.log("EnterApp", packageName);
+                    Log.d("EnterApp", packageName);
 
                     boolean isCommon = false;
                     List<Task> tasks = repository.getTasksByPackageName(currPkgName);
@@ -173,7 +172,6 @@ public class MainAccessibilityService extends AccessibilityService {
                         isCommon = true;
                     }
                     if (tasks == null || tasks.isEmpty()) return;
-                    AppUtil.log("Handler tasks", "");
 
                     String pkgName = "";
                     for (Task task : tasks) {
@@ -189,7 +187,6 @@ public class MainAccessibilityService extends AccessibilityService {
                     if (!(isCommon || pkgName.isEmpty())){
                         if (activity != null){
                             activity.showPlayView(pkgName);
-                            AppUtil.log("Show Dialog", pkgName);
                         }
                     }
                 }

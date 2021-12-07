@@ -1,14 +1,16 @@
-package top.bogey.auto_touch.ui.actions;
+package top.bogey.auto_touch.ui.tasks;
 
-
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,18 +28,13 @@ import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
 public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecyclerViewAdapter.ViewHolder> {
-    private final ActionsFragment parent;
+    private final TasksFragment parent;
     private final MainViewModel viewModel;
-    private List<Action> actions;
+    private List<Action> actions = new ArrayList<>();
     private Task task;
 
-    public ActionsRecyclerViewAdapter(ActionsFragment parent, Task task){
+    public ActionsRecyclerViewAdapter(TasksFragment parent){
         this.parent = parent;
-        this.task = task;
-        if (task.actions == null){
-            task.actions = new ArrayList<>();
-        }
-        actions = task.actions;
         viewModel = new ViewModelProvider(parent.requireActivity()).get(MainViewModel.class);
     }
 
@@ -51,16 +48,16 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         if (actions.size() == 1) {
             holder.layout.setBackgroundResource(R.drawable.item_a);
-            holder.up.setVisibility(View.INVISIBLE);
-            holder.down.setVisibility(View.INVISIBLE);
+            holder.up.setVisibility(View.GONE);
+            holder.down.setVisibility(View.GONE);
         } else if (position == 0) {
             holder.layout.setBackgroundResource(R.drawable.item_f);
-            holder.up.setVisibility(View.INVISIBLE);
+            holder.up.setVisibility(View.GONE);
             holder.down.setVisibility(View.VISIBLE);
         } else if (position == actions.size() - 1) {
             holder.layout.setBackgroundResource(R.drawable.item_l);
             holder.up.setVisibility(View.VISIBLE);
-            holder.down.setVisibility(View.INVISIBLE);
+            holder.down.setVisibility(View.GONE);
         } else {
             holder.layout.setBackgroundResource(R.drawable.item_m);
             holder.up.setVisibility(View.VISIBLE);
@@ -68,7 +65,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
         Action action = actions.get(position);
         holder.title.setText(action.getTitle(parent.requireContext()));
-        holder.enabledSwitch.setChecked(action.enable);
+        holder.enabledToggle.setChecked(action.enable);
+        holder.refreshSelectState(action.enable);
     }
 
     @Override
@@ -78,7 +76,9 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
     public void setTask(Task task){
         this.task = task;
+        if (task.actions == null) task.actions = new ArrayList<>();
         actions = task.actions;
+        notifyDataSetChanged();
     }
 
     public void notifyNew(){
@@ -88,7 +88,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         public final ConstraintLayout layout;
-        public final SwitchCompat enabledSwitch;
+        public final ToggleButton enabledToggle;
         public final TextView title;
         public final Button up;
         public final Button down;
@@ -98,7 +98,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         public ViewHolder(FragmentActionsItemBinding binding) {
             super(binding.getRoot());
             layout = binding.getRoot();
-            enabledSwitch = binding.enabledSwitch;
+            enabledToggle = binding.enabledToggle;
             title = binding.titleText;
             up = binding.upButton;
             down = binding.downButton;
@@ -113,10 +113,11 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 }).show();
             });
 
-            enabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            enabledToggle.setOnClickListener(v -> {
                 int index = getAdapterPosition();
                 Action action = actions.get(index);
-                action.enable = isChecked;
+                action.enable = !action.enable;
+                refreshSelectState(action.enable);
                 viewModel.saveTask(task);
             });
 
@@ -158,6 +159,20 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 @Override
                 public void onCancel() { }
             }));
+        }
+
+        public void refreshSelectState(boolean isChecked){
+            Context context = parent.requireContext();
+            if (isChecked){
+                enabledToggle.setBackgroundTintList(ColorStateList.valueOf(AppUtil.getGroupColor(context, task.groupId)));
+            } else {
+                int[] attrs = new int[] {R.attr.backgroundColor};
+                TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs);
+                int selectColor = typedArray.getResourceId(0, R.color.grey_300);
+                typedArray.recycle();
+
+                enabledToggle.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(selectColor, null)));
+            }
         }
     }
 }

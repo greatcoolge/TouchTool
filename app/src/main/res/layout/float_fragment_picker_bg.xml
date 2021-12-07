@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     android:background="#AA000000">
 
+    <FrameLayout
+        android:id="@+id/mark_box"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/close_button"
         style="@style/Widget.AppCompat.Button.Borderless"
