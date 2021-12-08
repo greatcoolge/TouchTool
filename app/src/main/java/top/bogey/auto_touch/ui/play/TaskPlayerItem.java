@@ -34,7 +34,7 @@ public class TaskPlayerItem extends FrameLayout {
 
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null && service.enable){
+            if (service != null && service.isEnable()){
                 if (playing){
                     if (taskRunnable != null && taskRunnable.isRunning()){
                         taskRunnable.stop();

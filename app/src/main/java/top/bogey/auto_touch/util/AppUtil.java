@@ -123,6 +123,14 @@ public class AppUtil {
         }catch (Exception ignored){}
     }
 
+    public static void openApp(Context context, String pkgName){
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(pkgName);
+        if (intent != null){
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            context.startActivity(intent);
+        }
+    }
+
     private static class PackagesInfo extends HashMap<String, List<String>> {
         private static PackagesInfo packagesInfo;
 

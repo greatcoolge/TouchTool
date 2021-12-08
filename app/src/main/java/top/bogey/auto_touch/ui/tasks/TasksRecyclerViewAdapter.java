@@ -172,8 +172,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 int selectIndex = group.indexOfChild(group.findViewById(checkedId));
                 int index = getAdapterPosition();
                 Task task = tasks.get(index);
-                task.taskStatus = TaskStatus.values()[selectIndex];
-                viewModel.saveTask(task);
+                TaskStatus status = TaskStatus.values()[selectIndex];
+                boolean b = task.taskStatus == status;
+                task.taskStatus = status;
+                if (!b) viewModel.saveTask(task);
             });
 
             delete.setOnClickListener(v -> {

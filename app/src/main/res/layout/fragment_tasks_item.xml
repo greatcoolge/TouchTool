@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_a"
-    android:layout_margin="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginBottom="5dp"
     android:layout_gravity="center">
 
     <RadioGroup
@@ -16,7 +17,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:checkedButton="@id/close_button"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -179,18 +179,24 @@
             android:layout_height="20dp"
             android:layout_weight="1">
 
+            <FrameLayout
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/corner"
+                android:backgroundTint="?attr/colorSecondary"/>
+
             <Button
                 android:id="@+id/add"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:background="@drawable/corner"
                 android:focusable="false"
                 app:icon="@drawable/add"
                 app:iconGravity="textTop"
                 app:iconPadding="0dp"
-                app:iconSize="14dp" />
+                app:iconSize="16dp" />
 
         </FrameLayout>
 

@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
@@ -21,6 +22,9 @@ import top.bogey.auto_touch.room.data.TaskRunnable;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
+    private static final String SAVE_PATH = "Save";
+    private static final String SERVICE_ENABLED = "service_enabled";
+
     private final ExecutorService findService = Executors.newFixedThreadPool(2);
     private final ExecutorService configService = Executors.newFixedThreadPool(5);
     private final List<TaskRunnable> tasks = new ArrayList<>();
@@ -28,7 +32,7 @@ public class MainAccessibilityService extends AccessibilityService {
     private TaskRepository repository;
     private String currPkgName = "";
 
-    public boolean enable = false;
+    private boolean enable = false;
     public boolean connected = false;
 
     private ServiceConnection serviceConnection;
@@ -36,7 +40,7 @@ public class MainAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (event != null && enable){
+        if (event != null && enable && repository != null){
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED){
                 findService.execute(new FindRunnable());
             }
@@ -51,6 +55,13 @@ public class MainAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
         MainApplication.setService(this);
         connected = true;
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
+        enable = sharedPreferences.getBoolean(SERVICE_ENABLED, false);
+
+        if (repository == null){
+            repository = new TaskRepository(this);
+        }
     }
 
     @Override
@@ -64,7 +75,7 @@ public class MainAccessibilityService extends AccessibilityService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainApplication.setService(this);
         if (repository == null){
-            repository = new TaskRepository(getApplication());
+            repository = new TaskRepository(this);
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -75,6 +86,20 @@ public class MainAccessibilityService extends AccessibilityService {
         connected = false;
         MainApplication.setService(null);
         stopCaptureService();
+        repository = null;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putBoolean(SERVICE_ENABLED, enable);
+        edit.apply();
     }
 
     public TaskRunnable runTask(Task task, CompleteCallback callback){
@@ -175,13 +200,15 @@ public class MainAccessibilityService extends AccessibilityService {
 
                     String pkgName = "";
                     for (Task task : tasks) {
-                        switch (task.taskStatus) {
-                            case AUTO:
-                                runTask(task, null);
-                                break;
-                            case MANUAL:
-                                pkgName = task.pkgName;
-                                break;
+                        if (task.actions != null && !task.actions.isEmpty()){
+                            switch (task.taskStatus) {
+                                case AUTO:
+                                    runTask(task, null);
+                                    break;
+                                case MANUAL:
+                                    pkgName = task.pkgName;
+                                    break;
+                            }
                         }
                     }
                     if (!(isCommon || pkgName.isEmpty())){

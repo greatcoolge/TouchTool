@@ -80,6 +80,7 @@ public class TasksFragment extends Fragment {
                 break;
             case R.id.record:
                 new TaskRecordDialog(requireContext(), PKG_NAME).show();
+                AppUtil.openApp(requireContext(), PKG_NAME);
                 break;
         }
         return super.onOptionsItemSelected(item);

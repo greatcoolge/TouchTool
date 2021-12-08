@@ -22,6 +22,13 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        MainAccessibilityService accessibilityService = MainApplication.getService();
+        binding.serviceToggle.setChecked(accessibilityService != null && accessibilityService.connected && accessibilityService.isEnable());
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
@@ -29,8 +36,8 @@ public class HomeFragment extends Fragment {
         binding.serviceToggle.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
             if (service != null && service.connected){
-                service.enable = !service.enable;
-                binding.serviceToggle.setChecked(service.enable);
+                service.setEnable(!service.isEnable());
+                binding.serviceToggle.setChecked(service.isEnable());
             } else {
                 binding.serviceToggle.setChecked(false);
                 AppUtil.showSimpleDialog(requireActivity(), R.string.service_open_tips, new SelectCallback() {
@@ -45,7 +52,7 @@ public class HomeFragment extends Fragment {
                 });
             }
         });
-        binding.serviceToggle.setChecked(accessibilityService != null && accessibilityService.connected && accessibilityService.enable);
+        binding.serviceToggle.setChecked(accessibilityService != null && accessibilityService.connected && accessibilityService.isEnable());
 
         binding.captureServiceToggle.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
