@@ -31,7 +31,7 @@ public class TaskPicker extends NodePicker{
             dismiss();
         });
 
-        ArrayAdapter<SimpleTaskInfo> arrayAdapter = new ArrayAdapter<>(context, R.layout.dialog_fragment_action_edit_picker);
+        ArrayAdapter<SimpleTaskInfo> arrayAdapter = new ArrayAdapter<>(context, R.layout.float_fragment_action_edit_picker);
         TaskRepository repository = new TaskRepository(context);
         List<Task> tasks = repository.getTasksByPackageName(pkgName);
         for (Task task : tasks) {

@@ -26,7 +26,7 @@ public class KeyPicker extends NodePicker{
             dismiss();
         });
 
-        ArrayAdapter<SimpleTaskInfo> arrayAdapter = new ArrayAdapter<>(context, R.layout.dialog_fragment_action_edit_picker);
+        ArrayAdapter<SimpleTaskInfo> arrayAdapter = new ArrayAdapter<>(context, R.layout.float_fragment_action_edit_picker);
         String[] strings = context.getResources().getStringArray(R.array.keys);
         for (int i = 0; i < strings.length; i++) {
             arrayAdapter.add(new SimpleTaskInfo(i + 1, strings[i]));

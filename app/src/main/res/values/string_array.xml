@@ -7,7 +7,7 @@
 
     <string-array name="node_type">
         <item>无</item>
-        <item>一次</item>
+        <item>次数</item>
         <item>文本</item>
         <item>图片</item>
         <item>位置</item>

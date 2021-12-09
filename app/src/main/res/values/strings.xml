@@ -81,4 +81,8 @@
     <string name="empty_target">目标为空</string>
     <string name="empty_stop">停止条件为空</string>
 
+    <string name="import_string">导入任务</string>
+    <string name="export_string">导出任务</string>
+    <string name="export_tips">导出并分享</string>
+
 </resources>

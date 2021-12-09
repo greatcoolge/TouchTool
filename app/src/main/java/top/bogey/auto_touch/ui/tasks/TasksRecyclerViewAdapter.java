@@ -28,7 +28,7 @@ import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.ui.MainViewModel;
-import top.bogey.auto_touch.ui.action.ActionEditDialog;
+import top.bogey.auto_touch.ui.action.FloatActionEdit;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
@@ -198,7 +198,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 int index = getAdapterPosition();
                 Task task = tasks.get(index);
                 Action action = new Action();
-                new ActionEditDialog(parent.requireContext(), task, action, () -> {
+                new FloatActionEdit(parent.requireContext(), task, action, () -> {
                     task.actions.add(action);
                     adapter.notifyNew();
                     viewModel.saveTask(task);

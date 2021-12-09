@@ -6,11 +6,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.lzf.easyfloat.EasyFloat;
-
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
-import top.bogey.auto_touch.ui.action.ActionEditDialog;
 
 public class FloatShowCallback extends FloatCallback{
     @Override

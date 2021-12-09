@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -27,7 +28,7 @@ import java.util.List;
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
-import top.bogey.auto_touch.databinding.DialogFragmentActionEditBinding;
+import top.bogey.auto_touch.databinding.FloatFragmentActionEditBinding;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.ActionMode;
 import top.bogey.auto_touch.room.bean.Node;
@@ -45,8 +46,8 @@ import top.bogey.auto_touch.ui.picker.WordPicker;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 @SuppressLint("ViewConstructor")
-public class ActionEditDialog extends FrameLayout implements NodePickerInterface {
-    private DialogFragmentActionEditBinding binding;
+public class FloatActionEdit extends FrameLayout implements NodePickerInterface {
+    private FloatFragmentActionEditBinding binding;
     private MainViewModel viewModel;
     private final Task task;
     private final Action action;
@@ -65,7 +66,7 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
     private final Node stop;
     private ActionMode mode = ActionMode.NULL;
 
-    public ActionEditDialog(Context context, @NonNull Task task, @NonNull Action action, CompleteCallback callback){
+    public FloatActionEdit(Context context, @NonNull Task task, @NonNull Action action, CompleteCallback callback){
         super(context);
         this.task = task;
         this.action = action;
@@ -88,7 +89,7 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
             EasyFloat.with(activity)
                     .setLayout(this)
                     .setShowPattern(ShowPattern.ALL_TIME)
-                    .setTag(ActionEditDialog.class.getCanonicalName())
+                    .setTag(FloatActionEdit.class.getCanonicalName())
                     .setDragEnable(true)
                     .setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0)
                     .registerCallbacks(new FloatActionEditShowCallback())
@@ -99,18 +100,18 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
 
     @Override
     public void dismiss() {
-        EasyFloat.dismiss(ActionEditDialog.class.getCanonicalName());
+        EasyFloat.dismiss(FloatActionEdit.class.getCanonicalName());
     }
 
     public void initView(MainActivity activity) {
-        binding = DialogFragmentActionEditBinding.inflate(LayoutInflater.from(getContext()));
+        binding = FloatFragmentActionEditBinding.inflate(LayoutInflater.from(getContext()));
         addView(binding.getRoot());
         viewModel = new ViewModelProvider(activity).get(MainViewModel.class);
 
         KeysRecyclerViewAdapter adapter = new KeysRecyclerViewAdapter(this, action.keys);
         binding.keysBox.setAdapter(adapter);
 
-        targetArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.dialog_fragment_action_edit_picker);
+        targetArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.float_fragment_action_edit_picker);
         binding.targetSpinner.setAdapter(targetArrayAdapter);
         binding.targetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -123,7 +124,7 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
         });
 
         String[] strings = getResources().getStringArray(R.array.node_type);
-        targetTypeArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.dialog_fragment_action_edit_picker);
+        targetTypeArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.float_fragment_action_edit_picker);
         NodeType[] nodeTypes = {NodeType.WORD, NodeType.IMAGE, NodeType.POS};
         for (NodeType nodeType : nodeTypes) {
             targetTypeArrayAdapter.add(new SimpleTaskInfo(nodeType.ordinal(), strings[nodeType.ordinal()]));
@@ -132,43 +133,43 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
         binding.targetTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SimpleTaskInfo item = targetTypeArrayAdapter.getItem(position);
-                NodeType value = NodeType.values()[item.id];
-                switch (value){
-                    case WORD:
-                        binding.targetEdit.setVisibility(VISIBLE);
-                        binding.targetImage.setVisibility(GONE);
-                        binding.targetEdit.setEnabled(true);
-                        binding.targetPicker.setIconResource(R.drawable.text);
-                        if (target.type != NodeType.WORD) target.setWord("");
-                        binding.targetEdit.setText(target.getWord());
-                        break;
-                    case IMAGE:
-                        binding.targetEdit.setVisibility(GONE);
-                        binding.targetImage.setVisibility(VISIBLE);
-                        binding.targetPicker.setIconResource(R.drawable.image);
-                        if (target.type != NodeType.IMAGE) target.setImage(null);
-                        if (target.getImage() != null) binding.targetImage.setImageBitmap(target.getImage());
-                        break;
-                    case POS:
-                        binding.targetEdit.setVisibility(VISIBLE);
-                        binding.targetImage.setVisibility(GONE);
-                        binding.targetEdit.setEnabled(false);
-                        binding.targetPicker.setIconResource(R.drawable.pos);
-                        if (target.type != NodeType.POS) target.setPoses((List<Pos>) null);
-                        binding.targetEdit.setText(target.getWord());
-                        break;
+                if (mode == ActionMode.TOUCH){
+                    SimpleTaskInfo item = targetTypeArrayAdapter.getItem(position);
+                    NodeType value = NodeType.values()[item.id];
+                    switch (value){
+                        case WORD:
+                            binding.targetEdit.setVisibility(VISIBLE);
+                            binding.targetImage.setVisibility(GONE);
+                            binding.targetEdit.setEnabled(true);
+                            binding.targetPicker.setIconResource(R.drawable.text);
+                            if (target.type != NodeType.WORD) target.setWord("");
+                            binding.targetEdit.setText(target.getWord());
+                            break;
+                        case IMAGE:
+                            binding.targetEdit.setVisibility(GONE);
+                            binding.targetImage.setVisibility(VISIBLE);
+                            binding.targetPicker.setIconResource(R.drawable.image);
+                            if (target.type != NodeType.IMAGE) target.setImage(null);
+                            if (target.getImage() != null) binding.targetImage.setImageBitmap(target.getImage());
+                            break;
+                        case POS:
+                            binding.targetEdit.setVisibility(VISIBLE);
+                            binding.targetImage.setVisibility(GONE);
+                            binding.targetEdit.setEnabled(false);
+                            binding.targetPicker.setIconResource(R.drawable.pos);
+                            if (target.type != NodeType.POS) target.setPoses((List<Pos>) null);
+                            binding.targetEdit.setText(target.getWord());
+                            break;
+                    }
                 }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
-        if (action.actionMode == ActionMode.TOUCH){
-            selectSpinner(binding.targetTypeSpinner, target.type.ordinal());
-        }
+        selectSpinner(binding.targetTypeSpinner, target.type.ordinal());
 
-        stopTypeArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.dialog_fragment_action_edit_picker);
-        nodeTypes = new NodeType[]{NodeType.NULL, NodeType.BOOL, NodeType.WORD, NodeType.IMAGE};
+        stopTypeArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.float_fragment_action_edit_picker);
+        nodeTypes = new NodeType[]{NodeType.NULL, NodeType.NUMBER, NodeType.WORD, NodeType.IMAGE};
         for (NodeType nodeType : nodeTypes) {
             stopTypeArrayAdapter.add(new SimpleTaskInfo(nodeType.ordinal(), strings[nodeType.ordinal()]));
         }
@@ -180,26 +181,31 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
                 NodeType value = NodeType.values()[item.id];
                 switch (value){
                     case NULL:
-                    case BOOL:
-                        if (value == NodeType.NULL){
-                            stop.setNull();
-                        } else {
-                            stop.setBool(true);
-                        }
                         binding.stopEdit.setVisibility(VISIBLE);
                         binding.stopImage.setVisibility(GONE);
                         binding.stopEdit.setEnabled(false);
                         binding.stopPicker.setVisibility(GONE);
+                        binding.stopEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
                         binding.stopEdit.setText(item.title);
+                        stop.setNull();
                         break;
+                    case NUMBER:
                     case WORD:
                         binding.stopEdit.setVisibility(VISIBLE);
                         binding.stopImage.setVisibility(GONE);
                         binding.stopEdit.setEnabled(true);
-                        binding.stopPicker.setVisibility(VISIBLE);
-                        binding.stopPicker.setIconResource(R.drawable.text);
-                        if (stop.type != NodeType.WORD) stop.setWord("");
-                        binding.stopEdit.setText(stop.getWord());
+                        if (value == NodeType.NUMBER){
+                            binding.stopPicker.setVisibility(GONE);
+                            if (stop.type != NodeType.NUMBER) stop.setNumber(1);
+                            binding.stopEdit.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+                            binding.stopEdit.setText(String.valueOf(stop.getNumber()));
+                        } else {
+                            binding.stopPicker.setVisibility(VISIBLE);
+                            binding.stopPicker.setIconResource(R.drawable.text);
+                            if (stop.type != NodeType.WORD) stop.setWord("");
+                            binding.stopEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+                            binding.stopEdit.setText(stop.getWord());
+                        }
                         break;
                     case IMAGE:
                         binding.stopEdit.setVisibility(GONE);
@@ -298,7 +304,7 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
         binding.doKeysImagePicker.setOnClickListener(v -> adapter.addNewNode(NodeType.IMAGE));
         binding.doKeysTextPicker.setOnClickListener(v -> adapter.addNewNode(NodeType.WORD));
 
-        binding.closedButton.setOnClickListener(v -> dismiss());
+        binding.closeButton.setOnClickListener(v -> dismiss());
 
         binding.saveButton.setOnClickListener(v -> {
             String delayString = String.valueOf(binding.delayEdit.getText());
@@ -352,10 +358,15 @@ public class ActionEditDialog extends FrameLayout implements NodePickerInterface
             }
 
             switch (stop.type) {
+                case NUMBER:
                 case WORD:
                     String stopWord = String.valueOf(binding.stopEdit.getText());
                     if (stopWord.isEmpty()) flag = true;
-                    stop.setWord(stopWord);
+                    if (stop.type == NodeType.NUMBER){
+                        stop.setNumber(Integer.parseInt(stopWord));
+                    } else {
+                        stop.setWord(stopWord);
+                    }
                     break;
                 case IMAGE:
                     if (binding.stopImage.getDrawable() == null){

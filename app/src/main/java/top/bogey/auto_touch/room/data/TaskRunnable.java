@@ -18,6 +18,7 @@ import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.ActionMode;
 import top.bogey.auto_touch.room.bean.Node;
+import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
@@ -71,6 +72,7 @@ public class TaskRunnable implements Runnable{
             }
 
             int runTimes = 0;
+            int successTimes = 0;
             List<Integer> cacheIds = new ArrayList<>();
             while (runTimes < runAction.times && isRunning()){
                 if (checkNodes(runAction.keys)){
@@ -120,11 +122,17 @@ public class TaskRunnable implements Runnable{
                                 }
                                 break;
                         }
+                        successTimes++;
                         Log.d("Action Run", runAction.getTitle(service.getApplicationContext()));
                         CheckResult stopResult = checkNode(runAction.stop, true);
                         if (stopResult != null && stopResult.result){
-                            stop();
-                            return;
+                            if (runAction.stop.type == NodeType.NUMBER){
+                                if (successTimes >= stopResult.number){
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
                         }
                     }
                 }
@@ -160,8 +168,9 @@ public class TaskRunnable implements Runnable{
         switch (node.type){
             case NULL:
                 return new CheckResult(false);
-            case BOOL:
-                return new CheckResult(true);
+            case NUMBER:
+                int number = node.getNumber();
+                return new CheckResult(number > 0, number);
             case POS:
                 List<Pos> poses = node.getPoses();
                 return new CheckResult(poses != null && !poses.isEmpty());
@@ -275,6 +284,7 @@ public class TaskRunnable implements Runnable{
         public AccessibilityNodeInfo nodeInfo;
         public Rect rect;
         public Task task;
+        public int number;
 
         public CheckResult(boolean result) {
             this.result = result;
@@ -293,6 +303,11 @@ public class TaskRunnable implements Runnable{
         public CheckResult(boolean result, Task task) {
             this.result = result;
             this.task = task;
+        }
+
+        public CheckResult(boolean result, int number) {
+            this.result = result;
+            this.number = number;
         }
     }
 }

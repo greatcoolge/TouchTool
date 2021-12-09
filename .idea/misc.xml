@@ -39,6 +39,9 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit.xml" value="0.67" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit_item.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit_picker.xml" value="0.27355072463768115" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_import.xml" value="0.33559782608695654" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit.xml" value="0.33559782608695654" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit_picker.xml" value="0.33559782608695654" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_bg.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_image.xml" value="0.75" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_pos.xml" value="2.0" />
@@ -54,13 +57,14 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps.xml" value="0.33" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps_item.xml" value="0.7001034126163392" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_home.xml" value="0.25" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_setting.xml" value="0.25679347826086957" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_setting.xml" value="0.22" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_tasks.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_tasks_item.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_actions.xml" value="0.36614583333333334" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_main.xml" value="0.36614583333333334" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_search.xml" value="0.36614583333333334" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_tasks.xml" value="0.32546296296296295" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/xml/filepaths.xml" value="0.2980072463768116" />
       </map>
     </option>
   </component>

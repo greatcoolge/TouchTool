@@ -16,7 +16,7 @@
         tools:listitem="@layout/float_fragment_record_item" />
 
     <LinearLayout
-        android:id="@+id/buttonBox"
+        android:id="@+id/button_box"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -32,7 +32,7 @@
             android:layout_weight="1">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/save_Button"
+                android:id="@+id/save_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -63,7 +63,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/word_Button"
+            android:id="@+id/word_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -75,7 +75,7 @@
             app:iconTint="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/image_Button"
+            android:id="@+id/image_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -87,7 +87,7 @@
             app:iconTint="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/pos_Button"
+            android:id="@+id/pos_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -99,7 +99,7 @@
             app:iconTint="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/key_Button"
+            android:id="@+id/key_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -111,7 +111,7 @@
             app:iconTint="?attr/colorPrimary" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/task_Button"
+            android:id="@+id/task_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="40dp"

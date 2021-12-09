@@ -36,8 +36,8 @@ public class Node implements Cloneable {
         this.value = value;
     }
 
-    public boolean getBool(){
-        return Boolean.parseBoolean(value);
+    public int getNumber(){
+        return Integer.parseInt(value);
     }
 
     public String getWord(){
@@ -76,9 +76,9 @@ public class Node implements Cloneable {
         type = NodeType.NULL;
     }
 
-    public void setBool(boolean bool){
-        value = String.valueOf(bool);
-        type = NodeType.BOOL;
+    public void setNumber(int number){
+        value = String.valueOf(number);
+        type = NodeType.NUMBER;
     }
 
     public void setWord(@NonNull String value){

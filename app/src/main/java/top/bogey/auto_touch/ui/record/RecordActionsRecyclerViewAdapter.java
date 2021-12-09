@@ -16,7 +16,7 @@ import top.bogey.auto_touch.databinding.FloatFragmentRecordItemBinding;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.Task;
-import top.bogey.auto_touch.ui.action.ActionEditDialog;
+import top.bogey.auto_touch.ui.action.FloatActionEdit;
 
 public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<RecordActionsRecyclerViewAdapter.ViewHolder> {
     private final TaskRecordDialog parent;
@@ -84,7 +84,7 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
                 int index = getAdapterPosition();
                 Action action = actions.get(index);
                 Task task = parent.task;
-                new ActionEditDialog(parent.getContext(), task, action, () -> notifyItemChanged(index)).show();
+                new FloatActionEdit(parent.getContext(), task, action, () -> notifyItemChanged(index)).show();
             });
 
             delete.setOnLongClickListener(v -> {

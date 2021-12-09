@@ -38,6 +38,11 @@
     private java.lang.String value;
 }
 
+-keepclassmembers class top.bogey.auto_touch.room.bean.Pos{
+    public int x;
+    public int y;
+}
+
 -keep class top.bogey.auto_touch.util.MatchResult{*;}
 
 # Uncomment this to preserve the line number information for

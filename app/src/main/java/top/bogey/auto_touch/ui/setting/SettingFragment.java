@@ -1,21 +1,62 @@
 package top.bogey.auto_touch.ui.setting;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentSettingBinding;
+import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.ui.MainViewModel;
 
 public class SettingFragment extends Fragment {
-    private FragmentSettingBinding binding;
+    private static final String SAVE_FILE = "Share.txt";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentSettingBinding.inflate(inflater, container, false);
+        FragmentSettingBinding binding = FragmentSettingBinding.inflate(inflater, container, false);
+        MainViewModel viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+
+        binding.exportButton.setOnClickListener(v -> {
+            List<Task> tasks = viewModel.getAllTasks();
+            String json = new Gson().toJson(tasks);
+
+            try(FileOutputStream fileOutputStream = requireContext().openFileOutput(SAVE_FILE, Context.MODE_PRIVATE)){
+                fileOutputStream.write(json.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            File file = new File(requireContext().getFilesDir(), SAVE_FILE);
+            Uri fileUri = null;
+            try {
+                fileUri = FileProvider.getUriForFile(requireContext(), "top.bogey.auto_touch.fileprovider", file);
+            } catch (IllegalArgumentException ignored){}
+            if (fileUri != null){
+                intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                String type = requireContext().getContentResolver().getType(fileUri);
+                intent.setType(type);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                requireContext().startActivity(Intent.createChooser(intent, getString(R.string.export_tips)));
+            }
+        });
 
         return binding.getRoot();
     }

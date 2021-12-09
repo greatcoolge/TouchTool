@@ -4,11 +4,9 @@ import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,16 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.auto_touch.databinding.DialogFragmentActionEditItemBinding;
+import top.bogey.auto_touch.databinding.FloatFragmentActionEditItemBinding;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
 
 public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerViewAdapter.ViewHolder> {
-    private final ActionEditDialog parent;
+    private final FloatActionEdit parent;
     private final List<Node> nodes = new ArrayList<>();
 
-    public KeysRecyclerViewAdapter(ActionEditDialog parent, List<Node> nodes){
+    public KeysRecyclerViewAdapter(FloatActionEdit parent, List<Node> nodes){
         this.parent = parent;
         if (nodes != null) this.nodes.addAll(nodes);
     }
@@ -36,7 +34,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(DialogFragmentActionEditItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(FloatFragmentActionEditItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -91,7 +89,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         public final Button select;
 
 
-        public ViewHolder(DialogFragmentActionEditItemBinding binding) {
+        public ViewHolder(FloatFragmentActionEditItemBinding binding) {
             super(binding.getRoot());
             editText = binding.editText;
             iconImage = binding.iconImage;

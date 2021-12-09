@@ -23,7 +23,7 @@ import top.bogey.auto_touch.databinding.FragmentActionsItemBinding;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
-import top.bogey.auto_touch.ui.action.ActionEditDialog;
+import top.bogey.auto_touch.ui.action.FloatActionEdit;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
@@ -107,7 +107,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             layout.setOnClickListener(v -> {
                 int index = getAdapterPosition();
                 Action action = actions.get(index);
-                new ActionEditDialog(parent.requireContext(), task, action, () -> {
+                new FloatActionEdit(parent.requireContext(), task, action, () -> {
                     notifyItemChanged(index);
                     viewModel.saveTask(task);
                 }).show();

@@ -85,7 +85,7 @@
             app:layout_constraintStart_toEndOf="@+id/do_keys_text"
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="2"
-            tools:listitem="@layout/dialog_fragment_action_edit_item" />
+            tools:listitem="@layout/float_fragment_action_edit_item" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout2"
@@ -565,7 +565,7 @@
             android:layout_weight="1">
 
             <Button
-                android:id="@+id/closed_button"
+                android:id="@+id/close_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

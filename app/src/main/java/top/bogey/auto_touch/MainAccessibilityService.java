@@ -77,7 +77,8 @@ public class MainAccessibilityService extends AccessibilityService {
         if (repository == null){
             repository = new TaskRepository(this);
         }
-        return super.onStartCommand(intent, flags, startId);
+//        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
@@ -214,6 +215,12 @@ public class MainAccessibilityService extends AccessibilityService {
                     if (!(isCommon || pkgName.isEmpty())){
                         if (activity != null){
                             activity.showPlayView(pkgName);
+                        } else {
+                            Intent intent = new Intent(MainAccessibilityService.this, MainActivity.class);
+                            intent.putExtra("IsBackground", true);
+                            intent.putExtra("FloatPackageName", pkgName);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                         }
                     }
                 }
