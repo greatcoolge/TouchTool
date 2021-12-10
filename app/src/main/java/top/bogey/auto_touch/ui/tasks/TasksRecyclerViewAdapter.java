@@ -29,6 +29,7 @@ import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.ui.action.FloatActionEdit;
+import top.bogey.auto_touch.ui.record.TaskRecordDialog;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
 
@@ -203,6 +204,15 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     adapter.notifyNew();
                     viewModel.saveTask(task);
                 }).show();
+            });
+
+            add.setOnLongClickListener(v -> {
+                int index = getAdapterPosition();
+                Task task = tasks.get(index);
+                new TaskRecordDialog(parent.requireContext(), task, () -> {
+                    notifyItemChanged(index);
+                }).show();
+                return true;
             });
 
             for (Button button : groups) {

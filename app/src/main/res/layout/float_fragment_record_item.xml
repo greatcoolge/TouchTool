@@ -21,5 +21,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/number_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="15dp"
+        android:height="15dp"
+        android:background="@drawable/corner"
+        android:backgroundTint="?attr/colorSecondary"
+        android:gravity="center"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

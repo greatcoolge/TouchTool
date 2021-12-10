@@ -71,15 +71,15 @@ public class TasksFragment extends Fragment {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Task task = new Task();
+        task.title = getString(R.string.task_default_title);
+        task.pkgName = PKG_NAME;
         switch (item.getItemId()) {
             case R.id.add:
-                Task task = new Task();
-                task.title = getString(R.string.task_default_title);
-                task.pkgName = PKG_NAME;
                 viewModel.saveTask(task);
                 break;
             case R.id.record:
-                new TaskRecordDialog(requireContext(), PKG_NAME).show();
+                new TaskRecordDialog(requireContext(), task, null).show();
                 AppUtil.openApp(requireContext(), PKG_NAME);
                 break;
         }

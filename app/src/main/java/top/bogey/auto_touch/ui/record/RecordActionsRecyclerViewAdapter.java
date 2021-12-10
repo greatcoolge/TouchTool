@@ -2,6 +2,7 @@ package top.bogey.auto_touch.ui.record;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,8 +23,11 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
     private final TaskRecordDialog parent;
     public final List<Action> actions = new ArrayList<>();
 
-    public RecordActionsRecyclerViewAdapter(TaskRecordDialog parent){
+    public RecordActionsRecyclerViewAdapter(TaskRecordDialog parent, List<Action> actions){
         this.parent = parent;
+        if (actions != null){
+            this.actions.addAll(actions);
+        }
     }
 
     @NonNull
@@ -56,6 +60,7 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
                 }
                 break;
         }
+        holder.indexText.setText(String.valueOf(position + 1));
     }
 
     @Override
@@ -75,10 +80,12 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         public final MaterialButton delete;
+        public final TextView indexText;
 
         public ViewHolder(@NonNull FloatFragmentRecordItemBinding binding) {
             super(binding.getRoot());
             delete = binding.deleteButton;
+            indexText = binding.numberText;
 
             delete.setOnClickListener(v -> {
                 int index = getAdapterPosition();
