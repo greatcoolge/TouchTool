@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.BufferedReader;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.auto_touch.databinding.ActivityMainBinding;
-import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.ui.play.TaskPlayerDialog;
@@ -54,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         MainApplication.setActivity(this);
-
-        startService(new Intent(this, MainAccessibilityService.class));
 
         captureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK){
@@ -156,19 +152,9 @@ public class MainActivity extends AppCompatActivity {
         if (tasks != null){
             List<Task> newTasks = new ArrayList<>();
             for (Task task : tasks) {
-                if (pkgNames.contains(task.pkgName)){
-                    if (task.actions != null && !task.actions.isEmpty()){
-                        boolean flag = true;
-                        for (Action action : task.actions) {
-                            if (!action.checkTimeSafe()){
-                                flag = false;
-                                break;
-                            }
-                        }
-                        if (flag){
-                            task.id = 0;
-                            newTasks.add(task);
-                        }
+                if (pkgNames.contains(task.getPkgName())){
+                    if (task.getActions() != null && !task.getActions().isEmpty()){
+                        newTasks.add(task);
                     }
                 }
             }

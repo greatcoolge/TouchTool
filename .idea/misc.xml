@@ -22,6 +22,8 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/border.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/corner.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/dash_border.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/delay.xml" value="0.38229166666666664" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/edit_text.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/ic_round_save_24.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/item_a.xml" value="0.3398148148148148" />
@@ -40,7 +42,8 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit_item.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_action_edit_picker.xml" value="0.27355072463768115" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/dialog_fragment_import.xml" value="0.33559782608695654" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit.xml" value="0.33559782608695654" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit.xml" value="0.67" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit_item.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit_picker.xml" value="0.33559782608695654" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_bg.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_image.xml" value="0.75" />

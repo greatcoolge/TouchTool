@@ -39,8 +39,11 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Action action = actions.get(position);
-        switch (action.target.type){
-            case WORD:
+        Node target = action.getTargets().get(0);
+        switch (target.getType()){
+            case DELAY:
+                holder.delete.setIconResource(R.drawable.delay);
+            case TEXT:
                 holder.delete.setIconResource(R.drawable.text);
                 break;
             case IMAGE:
@@ -49,15 +52,11 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
             case POS:
                 holder.delete.setIconResource(R.drawable.pos);
                 break;
+            case KEY:
+                holder.delete.setIconResource(R.drawable.keyboard);
+                break;
             case TASK:
-                switch (action.actionMode) {
-                    case KEY:
-                        holder.delete.setIconResource(R.drawable.keyboard);
-                        break;
-                    case TASK:
-                        holder.delete.setIconResource(R.drawable.task);
-                        break;
-                }
+                holder.delete.setIconResource(R.drawable.task);
                 break;
         }
         holder.indexText.setText(String.valueOf(position + 1));
@@ -69,11 +68,6 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
     }
 
     public void addAction(@NonNull Action action){
-        if (action.stop == null){
-            Node stop = new Node();
-            stop.setNull();
-            action.stop = stop;
-        }
         actions.add(action);
         notifyItemInserted(actions.size() - 1);
     }

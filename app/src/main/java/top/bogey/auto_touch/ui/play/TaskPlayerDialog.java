@@ -77,8 +77,8 @@ public class TaskPlayerDialog extends FrameLayout implements NodePickerInterface
     private List<List<Task>> fixTasks(List<Task> tasks){
         Map<Integer, List<Task>> taskMap = new HashMap<>();
         for (Task task : tasks) {
-            if (task.taskStatus == TaskStatus.MANUAL){
-                List<Task> list = taskMap.computeIfAbsent(task.groupId, k -> new ArrayList<>());
+            if (task.getTaskStatus() == TaskStatus.MANUAL){
+                List<Task> list = taskMap.computeIfAbsent(task.getGroupId(), k -> new ArrayList<>());
                 list.add(task);
             }
         }

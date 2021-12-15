@@ -54,7 +54,7 @@ public class TaskPlayerItem extends FrameLayout {
 
     public void setTask(Task task){
         this.task = task;
-        binding.playButton.setText(getPivotalTitle(task.title));
+        binding.playButton.setText(getPivotalTitle(task.getTitle()));
         playing = false;
         refreshButton(false);
     }

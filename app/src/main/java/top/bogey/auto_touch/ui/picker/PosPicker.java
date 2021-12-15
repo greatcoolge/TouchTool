@@ -41,7 +41,7 @@ public class PosPicker extends NodePicker{
     public void show(int gravity, int x, int y) {
         super.show(gravity, x, y);
         for (Pos pos : posList) {
-            addPosView(pos.x, pos.y);
+            addPosView(pos.getX(), pos.getY());
         }
     }
 

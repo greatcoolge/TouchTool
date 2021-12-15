@@ -38,7 +38,7 @@ public class TaskRepository {
         }
     }
 
-    public List<Task> getTasksById(int id){
+    public List<Task> getTasksById(String id){
         Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksById(id));
         try {
             return future.get();
@@ -48,7 +48,7 @@ public class TaskRepository {
         return null;
     }
 
-    public LiveData<List<Task>> getTasksLiveById(int id){
+    public LiveData<List<Task>> getTasksLiveById(String id){
         return taskDao.getTasksLiveById(id);
     }
 

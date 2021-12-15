@@ -16,7 +16,7 @@ public class FloatActionEditShowCallback extends FloatShowCallback{
             if (taskRecordExist){
                 EasyFloat.hide(TaskRecordDialog.class.getCanonicalName());
             } else {
-                super.createdResult(b, s, view);
+                super.createdResult(true, s, view);
             }
         }
     }

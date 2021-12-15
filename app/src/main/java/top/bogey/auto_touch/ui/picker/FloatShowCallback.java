@@ -12,7 +12,6 @@ import top.bogey.auto_touch.MainApplication;
 public class FloatShowCallback extends FloatCallback{
     @Override
     public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
-        super.createdResult(b, s, view);
         if (b){
             MainActivity activity = MainApplication.getActivity();
             if (activity != null){
@@ -23,7 +22,6 @@ public class FloatShowCallback extends FloatCallback{
 
     @Override
     public void dismiss() {
-        super.dismiss();
         MainActivity activity = MainApplication.getActivity();
         if (activity != null){
             ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);

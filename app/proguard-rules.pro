@@ -13,34 +13,38 @@
 #}
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Task{
-    public int id;
-    public java.lang.String pkgName;
-    public java.lang.String title;
-    public int groupId;
-    public java.util.List actions;
-    public top.bogey.auto_touch.room.bean.TaskStatus taskStatus;
+    private java.lang.String id;
+    private java.lang.String pkgName;
+    private java.lang.String title;
+    private int groupId;
+    private java.util.List actions;
+    private top.bogey.auto_touch.room.bean.TaskStatus taskStatus;
 }
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Action{
-    public top.bogey.auto_touch.room.bean.ActionMode actionMode;
-    public boolean enable;
-    public java.util.List keys;
-    public top.bogey.auto_touch.room.bean.Node target;
-    public top.bogey.auto_touch.room.bean.Node stop;
-    public int delay;
-    public int times;
-    public int interval;
-    public int time;
+    private top.bogey.auto_touch.room.bean.ActionMode actionMode;
+    private boolean enable;
+    private java.util.List targets;
+    private top.bogey.auto_touch.room.bean.Node condition;
+    private top.bogey.auto_touch.room.bean.Node stop;
+    private int times;
+    private int interval;
+    private int time;
 }
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Node{
-    public top.bogey.auto_touch.room.bean.NodeType type;
+    private top.bogey.auto_touch.room.bean.NodeType type;
     private java.lang.String value;
 }
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Pos{
-    public int x;
-    public int y;
+    private int x;
+    private int y;
+}
+
+-keepclassmembers class top.bogey.auto_touch.room.bean.SimpleTaskInfo{
+    private java.lang.String id;
+    private java.lang.String title;
 }
 
 -keep class top.bogey.auto_touch.util.MatchResult{*;}

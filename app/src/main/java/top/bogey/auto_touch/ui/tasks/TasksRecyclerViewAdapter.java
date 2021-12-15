@@ -52,14 +52,14 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Task task = tasks.get(position);
-        View child = holder.group.getChildAt(task.taskStatus.ordinal());
+        View child = holder.group.getChildAt(task.getTaskStatus().ordinal());
         holder.group.check(child.getId());
-        holder.title.setText(task.title);
-        holder.title.setTextColor(AppUtil.getGroupColor(parent.requireContext(), task.groupId));
+        holder.title.setText(task.getTitle());
+        holder.title.setTextColor(AppUtil.getGroupColor(parent.requireContext(), task.getGroupId()));
         holder.adapter.setTask(task);
 
         for (int i = 0; i < holder.groups.length; i++) {
-            if (i == task.groupId - 1){
+            if (i == task.getGroupId() - 1){
                 holder.groups[i].setAlpha(1f);
             } else {
                 holder.groups[i].setAlpha(0.04f);
@@ -84,7 +84,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             Task task = tasks.get(i);
             boolean flag = true;
             for (Task newTask : newTasks) {
-                if (task.id == newTask.id) {
+                if (task.getId().equals(newTask.getId())) {
                     flag = false;
                     break;
                 }
@@ -99,7 +99,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         for (Task newTask : newTasks) {
             boolean flag = true;
             for (Task task : tasks) {
-                if (task.id == newTask.id){
+                if (task.getId().equals(newTask.getId())){
                     flag = false;
                     break;
                 }
@@ -148,7 +148,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 titleEdit.setTextColor(title.getCurrentTextColor());
                 titleEdit.requestFocus();
                 InputMethodManager manager = (InputMethodManager) parent.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (manager != null) manager.showSoftInput(titleEdit, 0);
+                if (manager != null) manager.showSoftInput(titleEdit, InputMethodManager.SHOW_FORCED);
                 return true;
             });
 
@@ -159,7 +159,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         int index = getAdapterPosition();
                         Task task = tasks.get(index);
                         title.setText(text);
-                        task.title = text.toString();
+                        task.setTitle(text.toString());
                         notifyItemChanged(index);
                         viewModel.saveTask(task);
                     }
@@ -174,15 +174,15 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 int index = getAdapterPosition();
                 Task task = tasks.get(index);
                 TaskStatus status = TaskStatus.values()[selectIndex];
-                boolean b = task.taskStatus == status;
-                task.taskStatus = status;
+                boolean b = task.getTaskStatus() == status;
+                task.setTaskStatus(status);
                 if (!b) viewModel.saveTask(task);
             });
 
             delete.setOnClickListener(v -> {
                 int index = getAdapterPosition();
                 Task task = tasks.get(index);
-                AppUtil.showSimpleDialog(parent.requireActivity(), parent.requireContext().getString(R.string.delete_task_tips, task.title), new SelectCallback() {
+                AppUtil.showSimpleDialog(parent.requireActivity(), parent.requireContext().getString(R.string.delete_task_tips, task.getTitle()), new SelectCallback() {
                     @Override
                     public void onEnter() {
                         tasks.remove(index);
@@ -200,7 +200,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 Task task = tasks.get(index);
                 Action action = new Action();
                 new FloatActionEdit(parent.requireContext(), task, action, () -> {
-                    task.actions.add(action);
+                    task.getActions().add(action);
                     adapter.notifyNew();
                     viewModel.saveTask(task);
                 }).show();
@@ -209,9 +209,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             add.setOnLongClickListener(v -> {
                 int index = getAdapterPosition();
                 Task task = tasks.get(index);
-                new TaskRecordDialog(parent.requireContext(), task, () -> {
-                    notifyItemChanged(index);
-                }).show();
+                new TaskRecordDialog(parent.requireContext(), task, () -> notifyItemChanged(index)).show();
                 return true;
             });
 
@@ -220,10 +218,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     int childIndex = linearLayout.indexOfChild((View) v.getParent());
                     int index = getAdapterPosition();
                     Task task = tasks.get(index);
-                    if (task.groupId == childIndex){
-                        task.groupId = 0;
+                    if (task.getGroupId() == childIndex){
+                        task.setGroupId(0);
                     } else {
-                        task.groupId = childIndex;
+                        task.setGroupId(childIndex);
                     }
                     notifyItemChanged(index);
                     viewModel.saveTask(task);

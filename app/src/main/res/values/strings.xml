@@ -43,21 +43,34 @@
     <string name="task_default_title">默认任务标题\n长按修改</string>
 
     <string name="delete_action_tips">确定要删除这个动作吗？</string>
-    <string name="word_title">点击 %1$s %2$d次</string>
-    <string name="word_title_long">长按 %1$s %2$d次</string>
-    <string name="key_title">使用 %1$s %2$d次</string>
-    <string name="gesture_title">延迟%1$d毫秒画手势%2$d次，每次%3$d毫秒</string>
-    <string name="image_title">点击图片 %1$d次</string>
-    <string name="image_title_long">长按图片 %1$d次</string>
 
-    <string name="task_title">执行任务 %1$s %2$d次</string>
+    <string name="delay_target">延迟%1$d毫秒</string>
+    <string name="text_target">%1$s文本 %2$s </string>
+    <string name="image_target">%1$s图片</string>
+    <string name="pos_target">%1$s位置 %2$s </string>
+    <string name="key_target">使用 %1$s 按键</string>
+    <string name="task_target">执行 %1$s 任务</string>
+
+    <string name="null_con">无</string>
+    <string name="number_con">成功%1$d次</string>
+    <string name="text_con">出现文本 %1$s</string>
+    <string name="image_con">出现图片</string>
 
     <string name="touch">点击</string>
-    <string name="keyboard">按键</string>
-    <string name="task">任务</string>
+    <string name="long_touch">长按</string>
+    <string name="condition_title_1">如果%1$s\n则</string>
+    <string name="condition_title_2">\n否则</string>
+    <string name="loop_title_1">尝试执行%1$d次\n</string>
+    <string name="loop_title_2">直到%1$s</string>
+    <string name="parallel_title_1">同时执行任务\n</string>
+    <string name="parallel_title_2">直到全部完成</string>
+    <string name="parallel_title_3">直到完成%1$d个</string>
+
+    <string name="condition">条件任务</string>
+    <string name="loop">循环任务</string>
+    <string name="parallel">并行任务</string>
 
     <string name="do_keys">条件</string>
-    <string name="delay">延迟</string>
     <string name="time">时间</string>
     <string name="interval">间隔</string>
     <string name="times">次数</string>
@@ -67,21 +80,9 @@
     <string name="s">秒</string>
     <string name="ms">毫秒</string>
 
-    <string name="word">文字</string>
-    <string name="image">图片</string>
-    <string name="pos">位置</string>
-
-    <string name="none">无</string>
-    <string name="success_once">成功\n一次</string>
-    <string name="exist_word">出现\n文字</string>
-    <string name="exist_image">出现\n图片</string>
-
     <string name="exist_empty_config">存在空配置项</string>
-    <string name="action_timeout">动作时长超过1分钟</string>
     <string name="empty_target">目标为空</string>
-    <string name="empty_stop">停止条件为空</string>
 
-    <string name="import_string">导入任务</string>
     <string name="export_string">导出任务</string>
     <string name="export_tips">导出并分享</string>
 

@@ -1,5 +1,6 @@
 package top.bogey.auto_touch.ui.action;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,28 +8,46 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentActionEditItemBinding;
+import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
+import top.bogey.auto_touch.room.bean.Pos;
+import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
+import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
+import top.bogey.auto_touch.ui.picker.PosPicker;
+import top.bogey.auto_touch.ui.picker.WordPicker;
 
 public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerViewAdapter.ViewHolder> {
     private final FloatActionEdit parent;
     private final List<Node> nodes = new ArrayList<>();
+    private int maxCount = 1;
+    private final List<Task> tasks;
 
     public KeysRecyclerViewAdapter(FloatActionEdit parent, List<Node> nodes){
         this.parent = parent;
         if (nodes != null) this.nodes.addAll(nodes);
+        else this.nodes.add(new Node(NodeType.TEXT));
+        tasks = parent.viewModel.getTasksByPackageName(parent.task.getPkgName());
     }
 
     @NonNull
@@ -40,16 +59,75 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Node node = nodes.get(position);
-        if (node.type == NodeType.WORD){
-            holder.editText.setVisibility(View.VISIBLE);
-            holder.iconImage.setVisibility(View.INVISIBLE);
-            holder.select.setVisibility(View.INVISIBLE);
-            holder.editText.setText(node.getWord());
-        } else {
-            holder.editText.setVisibility(View.INVISIBLE);
-            holder.iconImage.setVisibility(View.VISIBLE);
-            holder.select.setVisibility(View.VISIBLE);
-            if (node.getImage() != null) holder.iconImage.setImageBitmap(node.getImage());
+        switch (node.getType()) {
+            case DELAY:
+                holder.targetPicker.setVisibility(View.GONE);
+                holder.targetEdit.setVisibility(View.VISIBLE);
+                holder.targetImage.setVisibility(View.GONE);
+                holder.targetSpinner.setVisibility(View.GONE);
+                holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+                holder.targetEdit.setEnabled(true);
+                holder.targetEdit.setText(node.getText());
+                break;
+            case TEXT:
+                holder.targetPicker.setVisibility(View.VISIBLE);
+                holder.targetEdit.setVisibility(View.VISIBLE);
+                holder.targetImage.setVisibility(View.GONE);
+                holder.targetSpinner.setVisibility(View.GONE);
+                holder.targetPicker.setIconResource(R.drawable.text);
+                holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+                holder.targetEdit.setEnabled(true);
+                holder.targetEdit.setText(node.getText());
+                break;
+            case IMAGE:
+                holder.targetPicker.setVisibility(View.VISIBLE);
+                holder.targetEdit.setVisibility(View.GONE);
+                holder.targetImage.setVisibility(View.VISIBLE);
+                holder.targetSpinner.setVisibility(View.GONE);
+                holder.targetPicker.setIconResource(R.drawable.image);
+                holder.targetImage.setImageBitmap(node.getImage());
+                break;
+            case POS:
+                holder.targetPicker.setVisibility(View.VISIBLE);
+                holder.targetEdit.setVisibility(View.VISIBLE);
+                holder.targetImage.setVisibility(View.GONE);
+                holder.targetSpinner.setVisibility(View.GONE);
+                holder.targetPicker.setIconResource(R.drawable.pos);
+                holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+                holder.targetEdit.setEnabled(false);
+                holder.targetEdit.setText(node.getText());
+                break;
+            case KEY:
+            case TASK:
+                holder.targetPicker.setVisibility(View.GONE);
+                holder.targetEdit.setVisibility(View.GONE);
+                holder.targetImage.setVisibility(View.GONE);
+                holder.targetSpinner.setVisibility(View.VISIBLE);
+                break;
+        }
+        switch (node.getType()) {
+            case KEY:
+                String[] strings = parent.getContext().getResources().getStringArray(R.array.keys);
+                holder.adapter.clear();
+                for (int i = 0; i < strings.length; i++) {
+                    holder.adapter.add(new SimpleTaskInfo(String.valueOf(i), strings[i]));
+                }
+                parent.selectSpinner(holder.targetSpinner, node.getText());
+                break;
+            case TASK:
+                holder.adapter.clear();
+                for (Task task : tasks) {
+                    if (!task.getId().equals(parent.task.getId())) {
+                        holder.adapter.add(new SimpleTaskInfo(task.getId(), task.getTitle()));
+                    }
+                }
+                SimpleTaskInfo task = node.getTask();
+                if (task != null) {
+                    parent.selectSpinner(holder.targetSpinner, task.getId());
+                } else {
+                    parent.selectSpinner(holder.targetSpinner, "");
+                }
+                break;
         }
     }
 
@@ -62,9 +140,9 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         List<Node> realNodes = new ArrayList<>();
         for (Node node : nodes) {
             boolean flag = false;
-            switch (node.type) {
-                case WORD:
-                    flag = node.getWord().isEmpty();
+            switch (node.getType()) {
+                case TEXT:
+                    flag = node.getText().isEmpty();
                     break;
                 case IMAGE:
                     flag = node.getImage() == null;
@@ -77,41 +155,57 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         return realNodes;
     }
 
-    public void addNewNode(NodeType nodeType){
-        nodes.add(new Node(nodeType));
-        notifyItemInserted(nodes.size() - 1);
+    public void addNewNode(Node node){
+        if (nodes.size() < maxCount){
+            nodes.add(node);
+            notifyItemInserted(nodes.size() - 1);
+        } else {
+            Toast.makeText(parent.getContext(), "超出最大目标数限制", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void cleanAll(){
+        int size = nodes.size();
+        nodes.clear();
+        notifyItemRangeRemoved(0, size);
+    }
+
+    public void setMaxCount(int maxCount){
+        this.maxCount = maxCount;
+        while (nodes.size() > maxCount){
+            nodes.remove(nodes.size() - 1);
+            notifyItemRemoved(nodes.size());
+        }
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
-        public final Button delete;
-        public final EditText editText;
-        public final ImageView iconImage;
-        public final Button select;
+        public final EditText targetEdit;
+        public final ImageView targetImage;
+        public final Spinner targetSpinner;
+        public final MaterialButton targetPicker;
+        public final MaterialButton deleteButton;
+        public ArrayAdapter<SimpleTaskInfo> adapter;
 
 
         public ViewHolder(FloatFragmentActionEditItemBinding binding) {
             super(binding.getRoot());
-            editText = binding.editText;
-            iconImage = binding.iconImage;
-            delete = binding.deleteButton;
-            select = binding.selectImageButton;
+            targetEdit = binding.targetEdit;
+            targetImage = binding.targetImage;
+            targetSpinner = binding.targetSpinner;
+            targetPicker = binding.targetPicker;
+            deleteButton = binding.deleteButton;
 
-            delete.setOnClickListener(v -> {
-                int index = getAdapterPosition();
-                nodes.remove(index);
-                notifyItemRemoved(index);
+            adapter = new ArrayAdapter<>(parent.getContext(), R.layout.float_fragment_action_edit_picker);
+            targetSpinner.setAdapter(adapter);
+
+            targetEdit.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus){
+                    InputMethodManager manager = (InputMethodManager) parent.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    manager.showSoftInput(targetEdit, InputMethodManager.SHOW_FORCED);
+                }
             });
 
-            select.setOnClickListener(v -> new ImagePicker(parent.getContext(), nodePicker -> {
-                ImagePicker imagePicker = (ImagePicker) nodePicker;
-                Bitmap bitmap = imagePicker.getBitmap();
-                iconImage.setImageBitmap(bitmap);
-                int index = getAdapterPosition();
-                Node node = nodes.get(index);
-                node.setImage(bitmap);
-            }).show(Gravity.START | Gravity.TOP, 0, 0));
-
-            editText.addTextChangedListener(new TextWatcher() {
+            targetEdit.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -124,15 +218,86 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    Editable text = editText.getText();
+                    Editable text = targetEdit.getText();
                     int index = getAdapterPosition();
                     Node node = nodes.get(index);
+                    String value = "";
                     if (text != null && text.length() > 0){
-                        node.setWord(text.toString());
-                    } else {
-                        node.setWord("");
+                        value = String.valueOf(text);
+                    }
+                    switch (node.getType()) {
+                        case TEXT:
+                            node.setText(value);
+                            break;
+                        case DELAY:
+                            int delay = 0;
+                            try {
+                                delay = Integer.parseInt(value);
+                            } catch (NumberFormatException ignored) {
+                            }
+                            node.setDelay(delay);
+                            break;
                     }
                 }
+            });
+
+            targetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    int index = getAdapterPosition();
+                    Node node = nodes.get(index);
+                    SimpleTaskInfo item = adapter.getItem(position);
+                    switch (node.getType()) {
+                        case KEY:
+                            node.setKey(Integer.parseInt(item.getId()));
+                            break;
+                        case TASK:
+                            node.setTask(item);
+                            break;
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            targetPicker.setOnClickListener(v -> {
+                int index = getAdapterPosition();
+                Node node = nodes.get(index);
+                switch (node.getType()) {
+                    case TEXT:
+                        new WordPicker(parent.getContext(), nodePicker -> {
+                            WordPicker wordPicker = (WordPicker) nodePicker;
+                            String key = wordPicker.getKey();
+                            node.setText(key);
+                            targetEdit.setText(key);
+                        }).show(Gravity.START | Gravity.TOP, 0, 0);
+                        break;
+                    case IMAGE:
+                        new ImagePicker(parent.getContext(), nodePicker -> {
+                            ImagePicker imagePicker = (ImagePicker) nodePicker;
+                            Bitmap bitmap = imagePicker.getBitmap();
+                            node.setImage(bitmap);
+                            targetImage.setImageBitmap(bitmap);
+                        }).show(Gravity.START | Gravity.TOP, 0, 0);
+                        break;
+                    case POS:
+                        new PosPicker(parent.getContext(), nodePicker -> {
+                            PosPicker posPicker = (PosPicker) nodePicker;
+                            List<Pos> posList = posPicker.getPosList();
+                            node.setPoses(posList);
+                            targetEdit.setText(node.getText());
+                        }, node.getPoses()).show(Gravity.START | Gravity.TOP, 0, 0);
+                        break;
+                }
+            });
+
+            deleteButton.setOnClickListener(v -> {
+                int index = getAdapterPosition();
+                nodes.remove(index);
+                notifyItemRemoved(index);
             });
         }
     }

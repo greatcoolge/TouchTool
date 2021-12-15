@@ -20,10 +20,10 @@ public interface TaskDao {
     List<Task> getTasksByPackageName(String pkgName);
 
     @Query("select * from Task where id = :id")
-    List<Task> getTasksById(int id);
+    List<Task> getTasksById(String id);
 
     @Query("select * from Task where id = :id")
-    LiveData<List<Task>> getTasksLiveById(int id);
+    LiveData<List<Task>> getTasksLiveById(String id);
 
     @Query("select * from Task where pkgName=:pkgName")
     LiveData<List<Task>> getTasksLiveByPackageName(String pkgName);

@@ -20,41 +20,41 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/word_button"
+            android:id="@+id/condition_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/radio_f"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/touch"
+            android:text="@string/condition"
             android:textColor="@color/check" />
 
         <RadioButton
-            android:id="@+id/key_button"
+            android:id="@+id/loop_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/radio_m"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/keyboard"
+            android:text="@string/loop"
             android:textColor="@color/check" />
 
         <RadioButton
-            android:id="@+id/task_button"
+            android:id="@+id/parallel_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/radio_l"
             android:button="@null"
             android:gravity="center"
-            android:text="@string/task"
+            android:text="@string/parallel"
             android:textColor="@color/check" />
     </RadioGroup>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
+        android:id="@+id/target_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -63,9 +63,208 @@
         app:layout_constraintTop_toBottomOf="@+id/mode_group">
 
         <TextView
-            android:id="@+id/do_keys_text"
-            android:layout_width="wrap_content"
+            android:id="@+id/target_text"
+            android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/target"
+            android:textColor="?attr/colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/target_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/target_text"
+            app:layout_constraintTop_toTopOf="@+id/target_text">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delay_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:icon="@drawable/delay"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="?attr/colorPrimary"
+                app:iconSize="22dp"/>
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/word_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:icon="@drawable/text"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="?attr/colorPrimary"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/image_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:icon="@drawable/image"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="?attr/colorPrimary"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pos_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:icon="@drawable/pos"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="?attr/colorPrimary"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:icon="@drawable/keyboard"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="?attr/colorPrimary"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/task_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:icon="@drawable/task"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconTint="?attr/colorPrimary"
+                app:iconSize="22dp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/target_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/target_text"
+            app:layout_constraintTop_toBottomOf="@+id/target_text"
+            tools:itemCount="2"
+            tools:listitem="@layout/float_fragment_action_edit_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/time_layout"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/target_layout">
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/time"
+            android:textColor="?attr/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/time_edit"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/edit_text"
+            android:gravity="center"
+            android:inputType="number"
+            android:textColor="?attr/colorSecondary"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/time_group"
+            app:layout_constraintStart_toEndOf="@+id/time_text"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/time_group"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/time_ms_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/radio_f"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/ms"
+                android:textColor="@color/check"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/time_s_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/radio_l"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/s"
+                android:textColor="@color/check"
+                android:textSize="12sp" />
+
+        </RadioGroup>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/condition_layout"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/time_layout">
+
+        <TextView
+            android:id="@+id/condition_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/do_keys"
             android:textColor="?attr/colorPrimary"
@@ -73,43 +272,68 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/keys_box"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
-            app:layout_constraintStart_toEndOf="@+id/do_keys_text"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:itemCount="2"
-            tools:listitem="@layout/float_fragment_action_edit_item" />
+            app:layout_constraintEnd_toStartOf="@+id/condition_group"
+            app:layout_constraintStart_toEndOf="@+id/condition_text"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/condition_edit"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/edit_text"
+                android:gravity="center"
+                android:inputType="text"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/condition_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout2"
-            android:layout_width="25dp"
-            android:layout_height="55dp"
+            android:id="@+id/condition_group"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/do_keys_image_picker"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:background="@drawable/corner"
-                app:icon="@drawable/image"
-                app:iconGravity="textTop"
-                app:iconPadding="0dp"
-                app:iconSize="18dp"
-                app:layout_constraintEnd_toEndOf="parent"
+            <Spinner
+                android:id="@+id/condition_type_spinner"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/spinner"
+                android:dropDownWidth="wrap_content"
+                android:popupBackground="@drawable/spinner"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/condition_picker"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/do_keys_text_picker"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/condition_picker"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -119,434 +343,229 @@
                 app:iconPadding="0dp"
                 app:iconSize="18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <TextView
-        android:id="@+id/delay_text"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/delay"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
-
-    <EditText
-        android:id="@+id/delay_edit"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:gravity="center"
-        android:inputType="number"
-        android:textColor="?attr/colorSecondary"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/delay_text"
-        app:layout_constraintEnd_toStartOf="@+id/delay_group"
-        app:layout_constraintStart_toEndOf="@+id/delay_text"
-        app:layout_constraintTop_toTopOf="@+id/delay_text" />
-
-    <RadioGroup
-        android:id="@+id/delay_group"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/delay_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/delay_text">
-
-        <RadioButton
-            android:id="@+id/delay_ms_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/radio_f"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/ms"
-            android:textColor="@color/check"
-            android:textSize="12sp" />
-
-        <RadioButton
-            android:id="@+id/delay_s_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/radio_l"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/s"
-            android:textColor="@color/check"
-            android:textSize="12sp" />
-
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/time_text"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/time"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/delay_text" />
-
-    <EditText
-        android:id="@+id/time_edit"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:gravity="center"
-        android:inputType="number"
-        android:textColor="?attr/colorSecondary"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/time_text"
-        app:layout_constraintEnd_toStartOf="@+id/time_group"
-        app:layout_constraintStart_toEndOf="@+id/time_text"
-        app:layout_constraintTop_toTopOf="@+id/time_text" />
-
-    <RadioGroup
-        android:id="@+id/time_group"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/time_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/time_text">
-
-        <RadioButton
-            android:id="@+id/time_ms_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/radio_f"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/ms"
-            android:textColor="@color/check"
-            android:textSize="12sp" />
-
-        <RadioButton
-            android:id="@+id/time_s_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/radio_l"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/s"
-            android:textColor="@color/check"
-            android:textSize="12sp" />
-
-    </RadioGroup>
-
-
-    <TextView
-        android:id="@+id/interval_text"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/interval"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time_text" />
-
-    <EditText
-        android:id="@+id/interval_edit"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:gravity="center"
-        android:inputType="number"
-        android:textColor="?attr/colorSecondary"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/interval_text"
-        app:layout_constraintEnd_toStartOf="@+id/interval_group"
-        app:layout_constraintStart_toEndOf="@+id/interval_text"
-        app:layout_constraintTop_toTopOf="@+id/interval_text" />
-
-    <RadioGroup
-        android:id="@+id/interval_group"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/interval_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/interval_text">
-
-        <RadioButton
-            android:id="@+id/interval_ms_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/radio_f"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/ms"
-            android:textColor="@color/check"
-            android:textSize="12sp"/>
-
-        <RadioButton
-            android:id="@+id/interval_s_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/radio_l"
-            android:button="@null"
-            android:gravity="center"
-            android:text="@string/s"
-            android:textColor="@color/check"
-            android:textSize="12sp"/>
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/times_text"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/times"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interval_text" />
-
-    <EditText
-        android:id="@+id/times_edit"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:gravity="center"
-        android:inputType="number"
-        android:textColor="?attr/colorSecondary"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/times_text"
-        app:layout_constraintEnd_toStartOf="@+id/space"
-        app:layout_constraintStart_toEndOf="@+id/times_text"
-        app:layout_constraintTop_toTopOf="@+id/times_text" />
-
-    <Space
-        android:id="@+id/space"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/times_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/times_text" />
-
-    <TextView
-        android:id="@+id/target_text"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/times_layout"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/target"
-        android:textColor="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/times_text" />
+        app:layout_constraintTop_toBottomOf="@+id/condition_layout">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/target_text"
-        app:layout_constraintEnd_toStartOf="@+id/target_group"
-        app:layout_constraintStart_toEndOf="@+id/target_text"
-        app:layout_constraintTop_toTopOf="@+id/target_text">
-
+        <TextView
+            android:id="@+id/times_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/times"
+            android:textColor="?attr/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/target_edit"
+            android:id="@+id/times_edit"
             android:layout_width="0dp"
-            android:layout_height="36sp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
-            android:backgroundTint="?attr/colorPrimary"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/edit_text"
             android:gravity="center"
-            android:inputType="text"
+            android:inputType="number"
             android:textColor="?attr/colorSecondary"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintEnd_toStartOf="@+id/space"
+            app:layout_constraintStart_toEndOf="@+id/times_text"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/target_image"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:scaleType="centerInside"
+        <Space
+            android:id="@+id/space"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <Spinner
-            android:id="@+id/target_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="@drawable/spinner"
-            android:dropDownWidth="wrap_content"
-            android:popupBackground="@drawable/spinner"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/target_group"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        app:layout_constraintBottom_toBottomOf="@+id/target_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/target_text">
-
-        <Spinner
-            android:id="@+id/target_type_spinner"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/spinner"
-            android:dropDownWidth="wrap_content"
-            android:popupBackground="@drawable/spinner"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/target_picker"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/target_picker"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/corner"
-            app:icon="@drawable/text"
-            app:iconGravity="textTop"
-            app:iconPadding="0dp"
-            app:iconSize="18dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/stop_text"
+        android:id="@+id/interval_layout"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/stop_key"
-        android:textColor="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/target_text" />
+        app:layout_constraintTop_toBottomOf="@+id/times_layout">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/stop_text"
-        app:layout_constraintEnd_toStartOf="@+id/stop_group"
-        app:layout_constraintStart_toEndOf="@+id/stop_text"
-        app:layout_constraintTop_toTopOf="@+id/stop_text">
-
+        <TextView
+            android:id="@+id/interval_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/interval"
+            android:textColor="?attr/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/stop_edit"
+            android:id="@+id/interval_edit"
             android:layout_width="0dp"
-            android:layout_height="36dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
-            android:backgroundTint="?attr/colorPrimary"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/edit_text"
             android:gravity="center"
-            android:inputType="text"
+            android:inputType="number"
             android:textColor="?attr/colorSecondary"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/interval_group"
+            app:layout_constraintStart_toEndOf="@+id/interval_text"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/stop_image"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:scaleType="centerInside"
+        <RadioGroup
+            android:id="@+id/interval_group"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
+            <RadioButton
+                android:id="@+id/interval_ms_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/radio_f"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/ms"
+                android:textColor="@color/check"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/interval_s_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/radio_l"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/s"
+                android:textColor="@color/check"
+                android:textSize="12sp" />
+        </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/stop_group"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/stop_text"
+        android:id="@+id/stop_layout"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/stop_text">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interval_layout">
 
-        <Spinner
-            android:id="@+id/stop_type_spinner"
+        <TextView
+            android:id="@+id/stop_text"
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/spinner"
-            android:dropDownWidth="wrap_content"
-            android:popupBackground="@drawable/spinner"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/stop_key"
+            android:textColor="?attr/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/stop_picker"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/stop_picker"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/corner"
-            app:icon="@drawable/text"
-            app:iconGravity="textTop"
-            app:iconPadding="0dp"
-            app:iconSize="18dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/stop_group"
+            app:layout_constraintStart_toEndOf="@+id/stop_text"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <EditText
+                android:id="@+id/stop_edit"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/edit_text"
+                android:gravity="center"
+                android:inputType="text"
+                android:textColor="?attr/colorSecondary"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/stop_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/stop_group"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent">
 
+            <Spinner
+                android:id="@+id/stop_type_spinner"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/spinner"
+                android:dropDownWidth="wrap_content"
+                android:popupBackground="@drawable/spinner"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/stop_picker"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stop_picker"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/corner"
+                app:icon="@drawable/text"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <LinearLayout
         android:id="@+id/button_box"
@@ -557,7 +576,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stop_text">
+        app:layout_constraintTop_toBottomOf="@+id/stop_layout">
 
         <FrameLayout
             android:layout_width="0dp"

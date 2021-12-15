@@ -18,14 +18,13 @@ import top.bogey.auto_touch.room.bean.Task;
 public abstract class TaskDatabase extends RoomDatabase {
     private static final String DB_NAME = "TASK_DB";
     private static volatile TaskDatabase instance;
-    public static ThreadPoolExecutor service;
+    public static final ThreadPoolExecutor service = new ThreadPoolExecutor(1, 5, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
     static synchronized TaskDatabase getInstance(Context context){
         if (instance == null) instance = create(context);
         return instance;
     }
 
     private static TaskDatabase create(final Context context){
-        service = new ThreadPoolExecutor(1, 5, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
         return Room.databaseBuilder(context, TaskDatabase.class, DB_NAME).build();
     }
 

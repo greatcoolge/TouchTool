@@ -1,3 +1,7 @@
 package top.bogey.auto_touch.room.bean;
 
-public enum ActionMode {NULL, TOUCH, KEY, TASK}
+public enum ActionMode {
+    NULL,
+    CONDITION,
+    LOOP,
+    PARALLEL}

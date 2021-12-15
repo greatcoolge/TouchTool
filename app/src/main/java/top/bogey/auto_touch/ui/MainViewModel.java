@@ -92,7 +92,7 @@ public class MainViewModel extends AndroidViewModel {
         return repository.getTasksLiveByPackageName(pkgName);
     }
 
-    public LiveData<List<Task>> getTasksLiveById(int id){
+    public LiveData<List<Task>> getTasksLiveById(String id){
         return repository.getTasksLiveById(id);
     }
 
@@ -100,7 +100,7 @@ public class MainViewModel extends AndroidViewModel {
         return repository.getTasksByPackageName(pkgName);
     }
 
-    public Task getTasksById(int id){
+    public Task getTasksById(String id){
         List<Task> tasks = repository.getTasksById(id);
         if (tasks != null && !tasks.isEmpty()){
             return tasks.get(0);

@@ -1,16 +1,18 @@
 package top.bogey.auto_touch.room.data;
 
-import android.accessibilityservice.GestureDescription;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +23,6 @@ import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.Task;
-import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 public class TaskRunnable implements Runnable{
@@ -50,133 +51,165 @@ public class TaskRunnable implements Runnable{
 
     @Override
     public void run() {
-        ArrayList<Integer> ids = new ArrayList<>();
-        ids.add(task.id);
-        doConfig(task, ids);
+        doTask(task);
         if (callback != null) callback.onComplete();
     }
 
-    private void doConfig(@NonNull Task task, List<Integer> ids){
+    private void doTask(@NonNull Task task){
         List<Action> actions = new ArrayList<>();
-        for (Action action : task.actions) {
-            if (action.enable) actions.add(action);
+        for (Action action : task.getActions()) {
+            if (action.isEnable()) actions.add(action);
         }
 
         Action runAction = actions.remove(0);
         while (runAction != null && isRunning()){
+            if (runAction.getActionMode() == ActionMode.CONDITION) {
+                CheckResult checkResult = checkNode(runAction.getCondition(), true);
+                if (checkResult.result){
+                    doAction(runAction, 0);
+                } else {
+                    if (runAction.getTargets().size() > 1){
+                        doAction(runAction, 1);
+                    }
+                }
+            } else if (runAction.getActionMode() == ActionMode.LOOP) {
+                int successTimes = 0;
+                while (successTimes < runAction.getTimes() && isRunning()){
+                    for (int i = 0; i < runAction.getTargets().size(); i++) {
+                        doAction(runAction, i);
+                    }
+                    CheckResult checkResult = checkNode(runAction.getStop());
+                    if (checkResult.result){
+                        break;
+                    }
+                    successTimes++;
+                }
+            } else if (runAction.getActionMode() == ActionMode.PARALLEL) {
+                CountDownLatch latch = new CountDownLatch(runAction.getStop().getNumber());
+                ExecutorService executorService = Executors.newFixedThreadPool(5);
+                for (int i = 0; i < runAction.getTargets().size(); i++) {
+                    int index = i;
+                    executorService.submit(() -> {
+                        doAction(runAction, index);
+                        latch.countDown();
+                    });
+                }
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private boolean doAction(Action action, int index){
+        int runTimes = 0;
+        int successTimes = 0;
+        List<Integer> cacheIds = new ArrayList<>();
+        while (runTimes < runAction.times && isRunning()){
+            if (checkNodes(runAction.keys)){
+                CheckResult checkResult = checkNode(runAction.target);
+                if (checkResult.result){
+                    Rect rect = null;
+                    switch (runAction.target.type){
+                        case WORD:
+                            AccessibilityNodeInfo nodeInfo = checkResult.nodeInfo;
+                            if (runAction.time <= 100)
+                                nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                            else
+                                nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                            break;
+                        case IMAGE:
+                            rect = checkResult.rect;
+                        case POS:
+                            List<Pos> posList = new ArrayList<>();
+                            if (rect != null){
+                                posList.add(new Pos(rect.centerX(), rect.centerY()));
+                            } else {
+                                posList.addAll(runAction.target.getPoses());
+                            }
+                            Path path = getPath(posList);
+                            if (path != null){
+                                service.dispatchGesture(new GestureDescription.Builder().addStroke(
+                                        new GestureDescription.StrokeDescription(path, 0, runAction.time)
+                                ).build(), null, null);
+                            }
+                            break;
+                        case TASK:
+                            switch (runAction.actionMode){
+                                case KEY:
+                                    service.performGlobalAction(runAction.target.getTask().id);
+                                    break;
+                                case TASK:
+                                    Task newTask = checkResult.task;
+                                    if (newTask != null){
+                                        if (!ids.contains(newTask.id) && newTask.taskStatus != TaskStatus.AUTO){
+                                            cacheIds.clear();
+                                            cacheIds.addAll(ids);
+                                            cacheIds.add(newTask.id);
+                                            doConfig(newTask, cacheIds);
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                    successTimes++;
+                    Log.d("Action Run", runAction.getTitle(service.getApplicationContext()));
+                    CheckResult stopResult = checkNode(runAction.stop, true);
+                    if (stopResult != null && stopResult.result){
+                        if (runAction.stop.type == NodeType.NUMBER){
+                            if (successTimes >= stopResult.number){
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
 
             try {
-                Thread.sleep(runAction.delay);
+                Thread.sleep(runAction.interval);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            int runTimes = 0;
-            int successTimes = 0;
-            List<Integer> cacheIds = new ArrayList<>();
-            while (runTimes < runAction.times && isRunning()){
-                if (checkNodes(runAction.keys)){
-                    CheckResult checkResult = checkNode(runAction.target);
-                    if (checkResult != null && checkResult.result){
-                        Rect rect = null;
-                        switch (runAction.target.type){
-                            case WORD:
-                                AccessibilityNodeInfo nodeInfo = checkResult.nodeInfo;
-                                if (runAction.time <= 100)
-                                    nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                else
-                                    nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                                break;
-                            case IMAGE:
-                                rect = checkResult.rect;
-                            case POS:
-                                List<Pos> posList = new ArrayList<>();
-                                if (rect != null){
-                                    posList.add(new Pos(rect.centerX(), rect.centerY()));
-                                } else {
-                                    posList.addAll(runAction.target.getPoses());
-                                }
-                                Path path = getPath(posList);
-                                if (path != null){
-                                    service.dispatchGesture(new GestureDescription.Builder().addStroke(
-                                            new GestureDescription.StrokeDescription(path, 0, runAction.time)
-                                    ).build(), null, null);
-                                }
-                                break;
-                            case TASK:
-                                switch (runAction.actionMode){
-                                    case KEY:
-                                        service.performGlobalAction(runAction.target.getTask().id);
-                                        break;
-                                    case TASK:
-                                        Task newTask = checkResult.task;
-                                        if (newTask != null){
-                                            if (!ids.contains(newTask.id) && newTask.taskStatus != TaskStatus.AUTO){
-                                                cacheIds.clear();
-                                                cacheIds.addAll(ids);
-                                                cacheIds.add(newTask.id);
-                                                doConfig(newTask, cacheIds);
-                                            }
-                                        }
-                                        break;
-                                }
-                                break;
-                        }
-                        successTimes++;
-                        Log.d("Action Run", runAction.getTitle(service.getApplicationContext()));
-                        CheckResult stopResult = checkNode(runAction.stop, true);
-                        if (stopResult != null && stopResult.result){
-                            if (runAction.stop.type == NodeType.NUMBER){
-                                if (successTimes >= stopResult.number){
-                                    break;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                try {
-                    Thread.sleep(runAction.interval);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                runTimes++;
-            }
-
-            if (runAction.actionMode == ActionMode.TASK){
-                ids.clear();
-                ids.addAll(cacheIds);
-            }
-
-            if (actions.size() > 0) {
-                runAction = actions.remove(0);
-            } else {
-                runAction = null;
-            }
+            runTimes++;
         }
+
+        if (runAction.actionMode == ActionMode.TASK){
+            ids.clear();
+            ids.addAll(cacheIds);
+        }
+
+        if (actions.size() > 0) {
+            runAction = actions.remove(0);
+        } else {
+            runAction = null;
+        }
+        return false;
     }
 
     private CheckResult checkNode(Node node){
         return checkNode(node, false);
     }
 
-    @Nullable
+    @NonNull
     private CheckResult checkNode(@NonNull Node node, boolean simpleResult){
-        switch (node.type){
+        switch (node.getType()){
             case NULL:
-                return new CheckResult(false);
+                return new CheckResult(true);
             case NUMBER:
                 int number = node.getNumber();
                 return new CheckResult(number > 0, number);
-            case POS:
-                List<Pos> poses = node.getPoses();
-                return new CheckResult(poses != null && !poses.isEmpty());
-            case WORD:
+            case DELAY:
+                int delay = node.getDelay();
+                return new CheckResult(delay > 0, delay);
+            case TEXT:
                 AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
-                List<AccessibilityNodeInfo> nodes = searchNodes(nodeInfo, node.getWord());
+                List<AccessibilityNodeInfo> nodes = searchNodes(nodeInfo, node.getText());
                 if (simpleResult){
                     return new CheckResult(nodes != null && !nodes.isEmpty());
                 } else {
@@ -189,23 +222,28 @@ public class TaskRunnable implements Runnable{
                 } else {
                     return new CheckResult(false);
                 }
+            case POS:
+                List<Pos> poses = node.getPoses();
+                return new CheckResult(poses != null && !poses.isEmpty());
+            case KEY:
+                int key = node.getKey();
+                return new CheckResult(key >= 0, key);
             case TASK:
-                List<Task> list = repository.getTasksById(node.getTask().id);
+                List<Task> list = repository.getTasksById(node.getTask().getId());
                 if (list != null && !list.isEmpty()){
                     return new CheckResult(true, list.get(0));
                 } else {
-                    // 可能是按键任务，总是返回true
-                    return new CheckResult(true);
+                    return new CheckResult(false);
                 }
         }
-        return null;
+        return new CheckResult(false);
     }
 
     private boolean checkNodes(List<Node> nodes){
         if (nodes == null) return true;
         for (Node node : nodes) {
             CheckResult checkResult = checkNode(node, true);
-            if (checkResult == null || !checkResult.result){
+            if (!checkResult.result){
                 return false;
             }
         }
@@ -216,10 +254,10 @@ public class TaskRunnable implements Runnable{
         if (poses != null && !poses.isEmpty()){
             Path path = new Path();
             Pos firstPos = poses.get(0);
-            path.moveTo(firstPos.x, firstPos.y);
+            path.moveTo(firstPos.getX(), firstPos.getY());
             for (int i = 1; i < poses.size(); i++) {
                 Pos pos = poses.get(i);
-                path.lineTo(pos.x, pos.y);
+                path.lineTo(pos.getX(), pos.getY());
             }
             return path;
         }
@@ -235,7 +273,7 @@ public class TaskRunnable implements Runnable{
             if (realKey != null) {
                 int i = realKey.indexOf("id/");
                 if (i == 0){
-                    return nodeInfo.findAccessibilityNodeInfosByViewId(task.pkgName + ":" + realKey);
+                    return nodeInfo.findAccessibilityNodeInfosByViewId(task.getPkgName() + ":" + realKey);
                 } else {
                     return nodeInfo.findAccessibilityNodeInfosByText(realKey);
                 }

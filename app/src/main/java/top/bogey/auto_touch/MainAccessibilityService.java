@@ -13,8 +13,11 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRepository;
@@ -25,8 +28,8 @@ public class MainAccessibilityService extends AccessibilityService {
     private static final String SAVE_PATH = "Save";
     private static final String SERVICE_ENABLED = "service_enabled";
 
-    private final ExecutorService findService = Executors.newFixedThreadPool(2);
-    private final ExecutorService configService = Executors.newFixedThreadPool(5);
+    private static final ExecutorService findService = Executors.newFixedThreadPool(4);
+    private static final ExecutorService taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
     private final List<TaskRunnable> tasks = new ArrayList<>();
 
     private TaskRepository repository;
@@ -107,7 +110,7 @@ public class MainAccessibilityService extends AccessibilityService {
         if (enable){
             TaskRunnable taskRunnable = new TaskRunnable(this, task, callback);
             tasks.add(taskRunnable);
-            configService.submit(taskRunnable);
+            taskService.submit(taskRunnable);
             return taskRunnable;
         } else {
             if (callback != null){
@@ -201,13 +204,13 @@ public class MainAccessibilityService extends AccessibilityService {
 
                     String pkgName = "";
                     for (Task task : tasks) {
-                        if (task.actions != null && !task.actions.isEmpty()){
-                            switch (task.taskStatus) {
+                        if (task.getActions() != null && !task.getActions().isEmpty()){
+                            switch (task.getTaskStatus()) {
                                 case AUTO:
                                     runTask(task, null);
                                     break;
                                 case MANUAL:
-                                    pkgName = task.pkgName;
+                                    pkgName = task.getPkgName();
                                     break;
                             }
                         }

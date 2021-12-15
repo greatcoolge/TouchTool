@@ -2,7 +2,6 @@ package top.bogey.auto_touch.ui.record;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,26 +14,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 
-import java.util.List;
+import java.util.Collections;
 
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.databinding.FloatFragmentRecordBinding;
 import top.bogey.auto_touch.room.bean.Action;
-import top.bogey.auto_touch.room.bean.ActionMode;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
-import top.bogey.auto_touch.room.bean.Pos;
-import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
+import top.bogey.auto_touch.ui.action.FloatActionEdit;
 import top.bogey.auto_touch.ui.picker.FloatShowCallback;
-import top.bogey.auto_touch.ui.picker.ImagePicker;
-import top.bogey.auto_touch.ui.picker.KeyPicker;
 import top.bogey.auto_touch.ui.picker.NodePickerInterface;
-import top.bogey.auto_touch.ui.picker.PosPicker;
-import top.bogey.auto_touch.ui.picker.TaskPicker;
-import top.bogey.auto_touch.ui.picker.WordPicker;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 @SuppressLint("ViewConstructor")
@@ -42,6 +34,7 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
     private FloatFragmentRecordBinding binding;
     public final Task task;
     private final CompleteCallback callback;
+    private RecordActionsRecyclerViewAdapter adapter;
 
     private float lastY = 0f;
     private boolean isToBottom = false;
@@ -86,7 +79,7 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
         addView(binding.getRoot());
         MainViewModel viewModel = new ViewModelProvider(activity).get(MainViewModel.class);
 
-        RecordActionsRecyclerViewAdapter adapter = new RecordActionsRecyclerViewAdapter(this, task.actions);
+        adapter = new RecordActionsRecyclerViewAdapter(this, task.getActions());
         binding.recyclerView.setAdapter(adapter);
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
@@ -116,70 +109,16 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
             return false;
         });
 
-        binding.wordButton.setOnClickListener(v -> new WordPicker(getContext(), nodePicker -> {
-            WordPicker wordPicker = (WordPicker) nodePicker;
-            String key = wordPicker.getKey();
-            if (key != null && !key.isEmpty()){
-                Action action = new Action();
-                action.actionMode = ActionMode.TOUCH;
-                action.target = new Node(NodeType.WORD, key);
-                adapter.addAction(action);
-            }
-        }).show(Gravity.START | Gravity.TOP, 0, 0));
-
-        binding.imageButton.setOnClickListener(v -> new ImagePicker(getContext(), nodePicker -> {
-            ImagePicker imagePicker = (ImagePicker) nodePicker;
-            Bitmap bitmap = imagePicker.getBitmap();
-            if (bitmap != null){
-                Action action = new Action();
-                action.actionMode = ActionMode.TOUCH;
-                Node node = new Node();
-                node.setImage(bitmap);
-                action.target = node;
-                adapter.addAction(action);
-            }
-        }).show(Gravity.START | Gravity.TOP, 0, 0));
-
-        binding.posButton.setOnClickListener(v -> new PosPicker(getContext(), nodePicker -> {
-            PosPicker posPicker = (PosPicker) nodePicker;
-            List<Pos> posList = posPicker.getPosList();
-            Action action = new Action();
-            action.actionMode = ActionMode.TOUCH;
-            Node node = new Node();
-            node.setPoses(posList);
-            action.target = node;
-            adapter.addAction(action);
-        }, null).show(Gravity.START | Gravity.TOP, 0, 0));
-
-        binding.keyButton.setOnClickListener(v -> new KeyPicker(getContext(), nodePicker -> {
-            KeyPicker keyPicker = (KeyPicker) nodePicker;
-            SimpleTaskInfo taskInfo = keyPicker.getTaskInfo();
-            if (taskInfo != null){
-                Action action = new Action();
-                action.actionMode = ActionMode.KEY;
-                Node node = new Node();
-                node.setTask(taskInfo);
-                action.target = node;
-                adapter.addAction(action);
-            }
-        }).show(Gravity.START | Gravity.TOP, 0, 0));
-
-        binding.taskButton.setOnClickListener(v -> new TaskPicker(getContext(), nodePicker -> {
-            TaskPicker taskPicker = (TaskPicker) nodePicker;
-            SimpleTaskInfo taskInfo = taskPicker.getTaskInfo();
-            if (taskInfo != null){
-                Action action = new Action();
-                action.actionMode = ActionMode.TASK;
-                Node node = new Node();
-                node.setTask(taskInfo);
-                action.target = node;
-                adapter.addAction(action);
-            }
-        }, task.pkgName).show(Gravity.START | Gravity.TOP, 0, 0));
+        binding.delayButton.setOnClickListener(v -> addNewAction(NodeType.DELAY));
+        binding.wordButton.setOnClickListener(v -> addNewAction(NodeType.TEXT));
+        binding.imageButton.setOnClickListener(v -> addNewAction(NodeType.IMAGE));
+        binding.posButton.setOnClickListener(v -> addNewAction(NodeType.POS));
+        binding.keyButton.setOnClickListener(v -> addNewAction(NodeType.KEY));
+        binding.taskButton.setOnClickListener(v -> addNewAction(NodeType.TASK));
 
         binding.saveButton.setOnClickListener(v -> {
             if (!adapter.actions.isEmpty()){
-                task.actions = adapter.actions;
+                task.setActions(adapter.actions);
                 viewModel.saveTask(task);
                 if (callback != null){
                     callback.onComplete();
@@ -187,6 +126,12 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
             }
             dismiss();
         });
+    }
+
+    private void addNewAction(NodeType type){
+        Action action = new Action();
+        action.setTargets(Collections.singletonList(new Node(type)));
+        new FloatActionEdit(getContext(), task, action, () -> adapter.addAction(action)).show();
     }
 
     private void checkPosition(float nowY){

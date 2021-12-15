@@ -71,6 +71,18 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/delay_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:icon="@drawable/delay"
+            app:iconGravity="textEnd"
+            app:iconPadding="0dp"
+            app:iconTint="?attr/colorPrimary" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/word_button"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"

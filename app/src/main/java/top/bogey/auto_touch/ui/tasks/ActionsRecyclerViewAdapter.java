@@ -48,16 +48,16 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         if (actions.size() == 1) {
             holder.layout.setBackgroundResource(R.drawable.item_a);
-            holder.up.setVisibility(View.INVISIBLE);
-            holder.down.setVisibility(View.INVISIBLE);
+            holder.up.setVisibility(View.GONE);
+            holder.down.setVisibility(View.GONE);
         } else if (position == 0) {
             holder.layout.setBackgroundResource(R.drawable.item_f);
-            holder.up.setVisibility(View.INVISIBLE);
+            holder.up.setVisibility(View.GONE);
             holder.down.setVisibility(View.VISIBLE);
         } else if (position == actions.size() - 1) {
             holder.layout.setBackgroundResource(R.drawable.item_l);
             holder.up.setVisibility(View.VISIBLE);
-            holder.down.setVisibility(View.INVISIBLE);
+            holder.down.setVisibility(View.GONE);
         } else {
             holder.layout.setBackgroundResource(R.drawable.item_m);
             holder.up.setVisibility(View.VISIBLE);
@@ -65,8 +65,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
         Action action = actions.get(position);
         holder.title.setText(action.getTitle(parent.requireContext()));
-        holder.enabledToggle.setChecked(action.enable);
-        holder.refreshSelectState(action.enable);
+        holder.enabledToggle.setChecked(action.isEnable());
+        holder.refreshSelectState(action.isEnable());
         holder.enabledToggle.setText(String.valueOf(position + 1));
     }
 
@@ -77,8 +77,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
     public void setTask(Task task){
         this.task = task;
-        if (task.actions == null) task.actions = new ArrayList<>();
-        actions = task.actions;
+        if (task.getActions() == null) task.setActions(new ArrayList<>());
+        actions = task.getActions();
         notifyDataSetChanged();
     }
 
@@ -117,8 +117,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             enabledToggle.setOnClickListener(v -> {
                 int index = getAdapterPosition();
                 Action action = actions.get(index);
-                action.enable = !action.enable;
-                refreshSelectState(action.enable);
+                action.setEnable(!action.isEnable());
+                refreshSelectState(action.isEnable());
                 viewModel.saveTask(task);
             });
 
@@ -165,7 +165,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         public void refreshSelectState(boolean isChecked){
             Context context = parent.requireContext();
             if (isChecked){
-                enabledToggle.setBackgroundTintList(ColorStateList.valueOf(AppUtil.getGroupColor(context, task.groupId)));
+                enabledToggle.setBackgroundTintList(ColorStateList.valueOf(AppUtil.getGroupColor(context, task.getGroupId())));
             } else {
                 int[] attrs = new int[] {R.attr.backgroundColor};
                 TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs);
