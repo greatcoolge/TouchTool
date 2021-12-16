@@ -47,7 +47,7 @@ public class SettingFragment extends Fragment {
             File file = new File(requireContext().getFilesDir(), SAVE_FILE);
             Uri fileUri = null;
             try {
-                fileUri = FileProvider.getUriForFile(requireContext(), "top.bogey.auto_touch.fileprovider", file);
+                fileUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".file_provider", file);
             } catch (IllegalArgumentException ignored){}
             if (fileUri != null){
                 intent.putExtra(Intent.EXTRA_STREAM, fileUri);

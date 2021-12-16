@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.UUID;
-
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentTasksBinding;
 import top.bogey.auto_touch.room.bean.Task;
@@ -73,7 +71,7 @@ public class TasksFragment extends Fragment {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Task task = new Task(UUID.randomUUID().toString());
+        Task task = new Task();
         task.setTitle(getString(R.string.task_default_title));
         task.setPkgName(PKG_NAME);
         switch (item.getItemId()) {
