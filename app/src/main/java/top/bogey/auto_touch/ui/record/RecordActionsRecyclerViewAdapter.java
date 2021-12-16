@@ -43,6 +43,7 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
         switch (target.getType()){
             case DELAY:
                 holder.delete.setIconResource(R.drawable.delay);
+                break;
             case TEXT:
                 holder.delete.setIconResource(R.drawable.text);
                 break;

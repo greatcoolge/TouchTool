@@ -3,10 +3,16 @@ package top.bogey.auto_touch.ui.tasks;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -64,10 +70,26 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             holder.down.setVisibility(View.VISIBLE);
         }
         Action action = actions.get(position);
-        holder.title.setText(action.getTitle(parent.requireContext()));
+        String title = action.getTitle();
+        if (title.isEmpty()){
+            holder.title.setText(action.getDefaultTitle(parent.requireContext()));
+        } else {
+            holder.title.setText(title);
+        }
         holder.enabledToggle.setChecked(action.isEnable());
         holder.refreshSelectState(action.isEnable());
         holder.enabledToggle.setText(String.valueOf(position + 1));
+        switch (action.getActionMode()) {
+            case CONDITION:
+                holder.modeImage.setImageResource(R.drawable.condition);
+                break;
+            case LOOP:
+                holder.modeImage.setImageResource(R.drawable.loop);
+                break;
+            case PARALLEL:
+                holder.modeImage.setImageResource(R.drawable.parallel);
+                break;
+        }
     }
 
     @Override
@@ -91,9 +113,11 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         public final ConstraintLayout layout;
         public final ToggleButton enabledToggle;
         public final TextView title;
+        public final EditText titleEdit;
         public final Button up;
         public final Button down;
         public final Button delete;
+        public final ImageView modeImage;
 
 
         public ViewHolder(FragmentActionsItemBinding binding) {
@@ -101,9 +125,11 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             layout = binding.getRoot();
             enabledToggle = binding.enabledToggle;
             title = binding.titleText;
+            titleEdit = binding.titleEdit;
             up = binding.upButton;
             down = binding.downButton;
             delete = binding.deleteButton;
+            modeImage = binding.modeImage;
 
             layout.setOnClickListener(v -> {
                 int index = getAdapterPosition();
@@ -112,6 +138,44 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     notifyItemChanged(index);
                     viewModel.saveTask(task);
                 }).show();
+            });
+
+            title.setOnClickListener(v -> {
+                int index = getAdapterPosition();
+                Action action = actions.get(index);
+                new FloatActionEdit(parent.requireContext(), task, action, () -> {
+                    notifyItemChanged(index);
+                    viewModel.saveTask(task);
+                }).show();
+            });
+
+            title.setOnLongClickListener(v -> {
+                titleEdit.setVisibility(View.VISIBLE);
+                title.setVisibility(View.GONE);
+                titleEdit.setText(title.getText());
+                titleEdit.requestFocus();
+                titleEdit.selectAll();
+                InputMethodManager manager = (InputMethodManager) parent.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (manager != null) manager.showSoftInput(titleEdit, InputMethodManager.SHOW_IMPLICIT);
+                return true;
+            });
+
+            titleEdit.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    Editable text = titleEdit.getText();
+                    String titleStr = "";
+                    if (text != null && text.length() > 0){
+                        titleStr = text.toString();
+                    }
+                    int index = getAdapterPosition();
+                    Action action = actions.get(index);
+                    action.setTitle(titleStr);
+                    notifyItemChanged(index);
+                    viewModel.saveTask(task);
+                    titleEdit.setVisibility(View.GONE);
+                    title.setVisibility(View.VISIBLE);
+                }
+                return true;
             });
 
             enabledToggle.setOnClickListener(v -> {
@@ -164,16 +228,18 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
         public void refreshSelectState(boolean isChecked){
             Context context = parent.requireContext();
+            ColorStateList colorStateList;
             if (isChecked){
-                enabledToggle.setBackgroundTintList(ColorStateList.valueOf(AppUtil.getGroupColor(context, task.getGroupId())));
+                colorStateList = ColorStateList.valueOf(AppUtil.getGroupColor(context, task.getGroupId()));
             } else {
                 int[] attrs = new int[] {R.attr.backgroundColor};
                 TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs);
                 int selectColor = typedArray.getResourceId(0, R.color.grey_300);
                 typedArray.recycle();
-
-                enabledToggle.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(selectColor, null)));
+                colorStateList = ColorStateList.valueOf(context.getResources().getColor(selectColor, null));
             }
+            enabledToggle.setBackgroundTintList(colorStateList);
+            modeImage.setImageTintList(colorStateList);
         }
     }
 }

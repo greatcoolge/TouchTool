@@ -53,7 +53,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
 
     private KeysRecyclerViewAdapter adapter;
 
-    private int intervalScale = 1;
     private int timeScale = 1;
 
     private ActionMode mode = ActionMode.NULL;
@@ -89,7 +88,7 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
     }
 
     public void show(){
-        show(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
+        show(Gravity.CENTER, 0, 0);
     }
 
     @Override
@@ -219,12 +218,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
         });
         binding.timeGroup.check(binding.timeGroup.getChildAt(action.getTime() % 1000 == 0 ? 1 : 0).getId());
 
-        binding.intervalGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            int index = group.indexOfChild(group.findViewById(checkedId));
-            intervalScale = index == 0 ? 1 : 1000;
-        });
-        binding.intervalGroup.check(binding.intervalGroup.getChildAt(action.getInterval() % 1000 == 0 ? 1 : 0).getId());
-
         binding.modeGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int index = group.indexOfChild(group.findViewById(checkedId));
             changeMode(ActionMode.values()[index + 1]);
@@ -232,7 +225,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
         binding.modeGroup.check(binding.modeGroup.getChildAt(action.getActionMode().ordinal() - 1).getId());
 
         binding.timeEdit.setText(String.valueOf(action.getTime() / timeScale));
-        binding.intervalEdit.setText(String.valueOf(action.getInterval() / intervalScale));
         binding.timesEdit.setText(String.valueOf(action.getTimes()));
 
         binding.conditionPicker.setOnClickListener(v -> {
@@ -290,7 +282,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
             }
 
             Editable timeText = binding.timeEdit.getText();
-            Editable intervalText = binding.intervalEdit.getText();
             Editable timesText = binding.timesEdit.getText();
             Editable conditionText = binding.conditionEdit.getText();
             Editable stopText = binding.stopEdit.getText();
@@ -306,7 +297,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                     break;
                 case LOOP:
                     if (timeText == null || timeText.length() == 0
-                            || intervalText == null || intervalText.length() == 0
                             || timesText == null || timesText.length() == 0
                             || stop.getType() == NodeType.TEXT && (stopText == null || stopText.length() == 0)
                             || stop.getType() == NodeType.IMAGE && binding.stopImage.getDrawable() == null) {
@@ -343,7 +333,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                     break;
                 case LOOP:
                     action.setTime(Integer.parseInt(String.valueOf(timeText)) * timeScale);
-                    action.setInterval(Integer.parseInt(String.valueOf(intervalText)) * intervalScale);
                     action.setTimes(Integer.parseInt(String.valueOf(timesText)));
                 case PARALLEL:
                     switch (stop.getType()) {
@@ -380,7 +369,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                 binding.timeLayout.setVisibility(VISIBLE);
                 binding.conditionLayout.setVisibility(VISIBLE);
                 binding.timesLayout.setVisibility(GONE);
-                binding.intervalLayout.setVisibility(GONE);
                 binding.stopLayout.setVisibility(GONE);
                 selectSpinner(binding.conditionTypeSpinner, String.valueOf(condition.getType().ordinal()));
                 break;
@@ -388,7 +376,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                 binding.timeLayout.setVisibility(VISIBLE);
                 binding.conditionLayout.setVisibility(GONE);
                 binding.timesLayout.setVisibility(VISIBLE);
-                binding.intervalLayout.setVisibility(VISIBLE);
                 binding.stopLayout.setVisibility(VISIBLE);
                 stopTypeArrayAdapter.clear();
                 NodeType[] nodeTypes = new NodeType[]{NodeType.NULL, NodeType.NUMBER, NodeType.TEXT, NodeType.IMAGE};
@@ -402,7 +389,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                 binding.timeLayout.setVisibility(GONE);
                 binding.conditionLayout.setVisibility(GONE);
                 binding.timesLayout.setVisibility(GONE);
-                binding.intervalLayout.setVisibility(GONE);
                 binding.stopLayout.setVisibility(VISIBLE);
                 stopTypeArrayAdapter.clear();
                 stopTypeArrayAdapter.add(new SimpleTaskInfo(String.valueOf(NodeType.NUMBER.ordinal()), strings[NodeType.NUMBER.ordinal()]));

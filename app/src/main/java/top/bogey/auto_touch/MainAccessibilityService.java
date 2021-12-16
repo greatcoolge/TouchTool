@@ -1,17 +1,20 @@
 package top.bogey.auto_touch;
 
 import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.GestureDescription;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -28,9 +31,12 @@ public class MainAccessibilityService extends AccessibilityService {
     private static final String SAVE_PATH = "Save";
     private static final String SERVICE_ENABLED = "service_enabled";
 
-    private static final ExecutorService findService = Executors.newFixedThreadPool(4);
-    private static final ExecutorService taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
+    private final ExecutorService findService;
+    public final ExecutorService taskService;
     private final List<TaskRunnable> tasks = new ArrayList<>();
+
+    private final List<GestureDescription.StrokeDescription> strokes = new LinkedList<>();
+    private boolean gestureRunning = false;
 
     private TaskRepository repository;
     private String currPkgName = "";
@@ -40,6 +46,11 @@ public class MainAccessibilityService extends AccessibilityService {
 
     private ServiceConnection serviceConnection;
     public CaptureService.CaptureBinder binder;
+
+    public MainAccessibilityService() {
+        findService = Executors.newFixedThreadPool(4);
+        taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
+    }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -80,8 +91,7 @@ public class MainAccessibilityService extends AccessibilityService {
         if (repository == null){
             repository = new TaskRepository(this);
         }
-//        return super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -117,6 +127,38 @@ public class MainAccessibilityService extends AccessibilityService {
                 callback.onComplete();
             }
             return null;
+        }
+    }
+
+    public void runGesture(Path path, int time){
+        strokes.add(new GestureDescription.StrokeDescription(path, 0, time));
+        runGesture();
+    }
+
+    private void runGesture(){
+        if (!gestureRunning){
+            if (strokes.size() > 0){
+                gestureRunning = true;
+                Log.d("TAG", "执行手势");
+                GestureDescription.StrokeDescription strokeDescription = strokes.remove(0);
+                dispatchGesture(new GestureDescription.Builder().addStroke(strokeDescription).build(), new GestureResultCallback() {
+                    @Override
+                    public void onCompleted(GestureDescription gestureDescription) {
+                        super.onCompleted(gestureDescription);
+                        gestureRunning = false;
+                        Log.d("TAG", "执行手势完成");
+                        runGesture();
+                    }
+
+                    @Override
+                    public void onCancelled(GestureDescription gestureDescription) {
+                        super.onCancelled(gestureDescription);
+                        gestureRunning = false;
+                        Log.d("TAG", "取消执行手势");
+                        runGesture();
+                    }
+                }, null);
+            }
         }
     }
 

@@ -39,32 +39,34 @@
     <string name="closed">关闭</string>
     <string name="auto">自动</string>
     <string name="manual">手动</string>
-    <string name="delete_task_tips">确定要删除任务%1$s吗？</string>
-    <string name="task_default_title">默认任务标题\n长按修改</string>
+    <string name="delete_task_tips">确定要删除任务 %1$s 吗？</string>
+    <string name="task_default_title">默认任务标题 长按修改</string>
 
     <string name="delete_action_tips">确定要删除这个动作吗？</string>
 
     <string name="delay_target">延迟%1$d毫秒</string>
     <string name="text_target">%1$s文本 %2$s </string>
     <string name="image_target">%1$s图片</string>
-    <string name="pos_target">%1$s位置 %2$s </string>
+    <string name="pos_target">%1$s手势</string>
     <string name="key_target">使用 %1$s 按键</string>
     <string name="task_target">执行 %1$s 任务</string>
 
     <string name="null_con">无</string>
-    <string name="number_con">成功%1$d次</string>
+    <string name="number_con">成功%1$d个</string>
     <string name="text_con">出现文本 %1$s</string>
     <string name="image_con">出现图片</string>
 
     <string name="touch">点击</string>
     <string name="long_touch">长按</string>
+    <string name="slide">滑动</string>
+    
     <string name="condition_title_1">如果%1$s\n则</string>
     <string name="condition_title_2">\n否则</string>
     <string name="loop_title_1">尝试执行%1$d次\n</string>
     <string name="loop_title_2">直到%1$s</string>
     <string name="parallel_title_1">同时执行任务\n</string>
     <string name="parallel_title_2">直到全部完成</string>
-    <string name="parallel_title_3">直到完成%1$d个</string>
+    <string name="parallel_tips">执行并行任务超过1分钟，任务自动停止</string>
 
     <string name="condition">条件任务</string>
     <string name="loop">循环任务</string>

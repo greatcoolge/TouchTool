@@ -10,6 +10,7 @@ public class Action{
     private ActionMode actionMode = ActionMode.CONDITION;
     private boolean enable = true;
 
+    private String title = "";
     private Node condition;
     private List<Node> targets;
 
@@ -18,12 +19,10 @@ public class Action{
 
     // 循环次数
     private int times = 1;
-    // 循环间隔
-    private int interval = 1000;
     // 循环结束条件
     private Node stop;
 
-    public String getTitle(Context context){
+    public String getDefaultTitle(Context context){
         if (targets == null || targets.isEmpty()) return "";
         StringBuilder builder = new StringBuilder();
         switch (actionMode) {
@@ -58,7 +57,7 @@ public class Action{
                     builder.append("\n");
                 }
                 if (stop != null && stop.getType() == NodeType.NUMBER){
-                    builder.append(stop.getNumber() == targets.size() ? context.getString(R.string.parallel_title_2) : context.getString(R.string.parallel_title_3));
+                    builder.append(stop.getNumber() == targets.size() ? context.getString(R.string.parallel_title_2) : context.getString(R.string.loop_title_2, getConditionTitle(context, stop)));
                 }
                 break;
         }
@@ -80,7 +79,7 @@ public class Action{
         return "";
     }
 
-    private String getTargetTitle(Context context, Node node){
+    public String getTargetTitle(Context context, Node node){
         if (node == null) return "";
         String touch = time > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
         switch (node.getType()){
@@ -91,7 +90,8 @@ public class Action{
             case IMAGE:
                 return context.getString(R.string.image_target, touch);
             case POS:
-                return context.getString(R.string.pos_target, touch, node.getText());
+                String slide = node.getPoses().size() > 1 ? context.getString(R.string.slide) : context.getString(R.string.touch);
+                return context.getString(R.string.pos_target, slide);
             case KEY:
                 String[] keys = context.getResources().getStringArray(R.array.keys);
                 return context.getString(R.string.key_target, keys[node.getKey()]);
@@ -115,6 +115,14 @@ public class Action{
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Node getCondition() {
@@ -147,14 +155,6 @@ public class Action{
 
     public void setTimes(int times) {
         this.times = times;
-    }
-
-    public int getInterval() {
-        return interval;
-    }
-
-    public void setInterval(int interval) {
-        this.interval = interval;
     }
 
     public Node getStop() {

@@ -60,38 +60,25 @@
 
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/title"
+    <EditText
+        android:id="@+id/title_edit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:ellipsize="end"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:background="@null"
         android:gravity="center"
-        android:maxLines="2"
-        android:textAlignment="center"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="none"
+        android:singleLine="true"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_group" />
-
-    <EditText
-        android:id="@+id/title_edit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        android:singleLine="true"
-        android:imeOptions="actionDone"
-        android:textSize="14sp"
-        android:backgroundTint="?attr/colorPrimary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/title"
-        app:layout_constraintEnd_toEndOf="@+id/title"
-        app:layout_constraintStart_toStartOf="@+id/title"
-        app:layout_constraintTop_toTopOf="@+id/title"
-        tools:ignore="LabelFor" />
 
     <LinearLayout
         android:id="@+id/linear_layout"
@@ -104,7 +91,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title">
+        app:layout_constraintTop_toBottomOf="@+id/title_edit">
 
 
         <FrameLayout

@@ -12,6 +12,10 @@
 #   public *;
 #}
 
+-assumenosideeffects class android.util.Log{
+    public static int d(...);
+}
+
 -keepclassmembers class top.bogey.auto_touch.room.bean.Task{
     private java.lang.String id;
     private java.lang.String pkgName;
@@ -28,7 +32,6 @@
     private top.bogey.auto_touch.room.bean.Node condition;
     private top.bogey.auto_touch.room.bean.Node stop;
     private int times;
-    private int interval;
     private int time;
 }
 

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -54,8 +53,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         Task task = tasks.get(position);
         View child = holder.group.getChildAt(task.getTaskStatus().ordinal());
         holder.group.check(child.getId());
-        holder.title.setText(task.getTitle());
-        holder.title.setTextColor(AppUtil.getGroupColor(parent.requireContext(), task.getGroupId()));
+        holder.titleEdit.setText(task.getTitle());
+        holder.titleEdit.setTextColor(AppUtil.getGroupColor(parent.requireContext(), task.getGroupId()));
+        holder.titleEdit.setInputType(EditorInfo.TYPE_NULL);
+        holder.titleEdit.setBackground(null);
         holder.adapter.setTask(task);
 
         for (int i = 0; i < holder.groups.length; i++) {
@@ -114,7 +115,6 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     protected class ViewHolder extends RecyclerView.ViewHolder {
         public final ConstraintLayout layout;
         public final RadioGroup group;
-        public final TextView title;
         public final EditText titleEdit;
         public final Button add;
         public final Button delete;
@@ -128,7 +128,6 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             super(binding.getRoot());
             layout = binding.getRoot();
             group = binding.statusGroup;
-            title = binding.title;
             titleEdit = binding.titleEdit;
             add = binding.add;
             delete = binding.delete;
@@ -141,14 +140,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             adapter = new ActionsRecyclerViewAdapter(parent);
             actionBox.setAdapter(adapter);
 
-            layout.setOnLongClickListener(v -> {
-                title.setVisibility(View.INVISIBLE);
-                titleEdit.setVisibility(View.VISIBLE);
-                titleEdit.setText(title.getText());
-                titleEdit.setTextColor(title.getCurrentTextColor());
+            titleEdit.setOnLongClickListener(v -> {
+                titleEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+                titleEdit.setBackgroundResource(R.drawable.edit_text);
                 titleEdit.requestFocus();
                 InputMethodManager manager = (InputMethodManager) parent.requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (manager != null) manager.showSoftInput(titleEdit, InputMethodManager.SHOW_FORCED);
+                if (manager != null) manager.showSoftInput(titleEdit, InputMethodManager.SHOW_IMPLICIT);
                 return true;
             });
 
@@ -158,13 +155,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     if (text != null && text.length() > 0){
                         int index = getAdapterPosition();
                         Task task = tasks.get(index);
-                        title.setText(text);
                         task.setTitle(text.toString());
                         notifyItemChanged(index);
                         viewModel.saveTask(task);
                     }
-                    titleEdit.setVisibility(View.INVISIBLE);
-                    title.setVisibility(View.VISIBLE);
+                    titleEdit.setInputType(EditorInfo.TYPE_NULL);
+                    titleEdit.setBackground(null);
                 }
                 return true;
             });
