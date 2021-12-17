@@ -26,6 +26,7 @@ import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRepository;
 import top.bogey.auto_touch.room.data.TaskRunnable;
 import top.bogey.auto_touch.util.CompleteCallback;
+import top.bogey.auto_touch.util.RunningCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
     private static final String SAVE_PATH = "Save";
@@ -116,7 +117,7 @@ public class MainAccessibilityService extends AccessibilityService {
         edit.apply();
     }
 
-    public TaskRunnable runTask(Task task, CompleteCallback callback){
+    public TaskRunnable runTask(Task task, RunningCallback callback){
         if (enable){
             TaskRunnable taskRunnable = new TaskRunnable(this, task, callback);
             tasks.add(taskRunnable);
@@ -124,7 +125,7 @@ public class MainAccessibilityService extends AccessibilityService {
             return taskRunnable;
         } else {
             if (callback != null){
-                callback.onComplete();
+                callback.onResult(false);
             }
             return null;
         }

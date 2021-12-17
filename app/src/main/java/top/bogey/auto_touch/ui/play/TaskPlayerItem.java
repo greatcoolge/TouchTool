@@ -17,6 +17,8 @@ import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentPlayItemBinding;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRunnable;
+import top.bogey.auto_touch.util.AppUtil;
+import top.bogey.auto_touch.util.RunningCallback;
 
 @SuppressLint("ViewConstructor")
 public class TaskPlayerItem extends FrameLayout {
@@ -40,23 +42,34 @@ public class TaskPlayerItem extends FrameLayout {
                         taskRunnable.stop();
                     }
                     playing = false;
+                    refreshProgress(task.getGroupId(), 0);
                 } else {
-                    taskRunnable = service.runTask(this.task, () -> {
-                        playing = false;
-                        refreshButton(false);
+                    taskRunnable = service.runTask(this.task, new RunningCallback() {
+                        @Override
+                        public void onResult(boolean result) {
+                            playing = false;
+                            refreshProgress(task.getGroupId(), 0);
+                        }
+
+                        @Override
+                        public void onProgress(int groupId, int percent) {
+                            if (playing){
+                                refreshProgress(groupId, percent);
+                            }
+                        }
                     });
                     playing = true;
+                    refreshProgress(task.getGroupId(), 1);
                 }
-                refreshButton(playing);
             }
         });
     }
 
     public void setTask(Task task){
         this.task = task;
-        binding.playButton.setText(getPivotalTitle(task.getTitle()));
+        binding.playButton.setLabelText(getPivotalTitle(task.getTitle()));
         playing = false;
-        refreshButton(false);
+        refreshProgress(task.getGroupId(), 0);
     }
 
     private String getPivotalTitle(String title){
@@ -70,25 +83,13 @@ public class TaskPlayerItem extends FrameLayout {
         return title.substring(0, 1);
     }
 
-    private synchronized void refreshButton(boolean playing){
+    private synchronized void refreshProgress(int groupId, int percent){
         post(() -> {
-            int[] attrs = new int[] {R.attr.colorOnPrimary};
-            TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs);
-            int selectColor = typedArray.getResourceId(0, R.color.grey_50);
-            typedArray.recycle();
+            int color = AppUtil.getGroupColor(getContext(), groupId);
+            binding.playButton.setLabelTextColor(color);
+            binding.playButton.setProgressColor(color);
 
-            attrs = new int[] {R.attr.colorPrimary};
-            typedArray = getContext().getTheme().obtainStyledAttributes(attrs);
-            int unselectColor = typedArray.getResourceId(0, R.color.teal_500);
-            typedArray.recycle();
-
-            if (playing){
-                binding.playButton.setBackgroundResource(R.drawable.corner);
-                binding.playButton.setTextColor(getResources().getColor(selectColor, null));
-            } else {
-                binding.playButton.setBackgroundDrawable(null);
-                binding.playButton.setTextColor(getResources().getColor(unselectColor, null));
-            }
+            binding.playButton.showAnimation(binding.playButton.getProgress(), percent, 100);
         });
     }
 }

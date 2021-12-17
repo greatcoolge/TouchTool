@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -399,9 +400,9 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
     }
 
     public void selectSpinner(@NonNull Spinner spinner, String id){
-        ArrayAdapter<SimpleTaskInfo> spinnerAdapter = (ArrayAdapter<SimpleTaskInfo>) spinner.getAdapter();
+        SpinnerAdapter spinnerAdapter = spinner.getAdapter();
         for (int i = 0; i < spinnerAdapter.getCount(); i++) {
-            SimpleTaskInfo item = spinnerAdapter.getItem(i);
+            SimpleTaskInfo item = (SimpleTaskInfo) spinnerAdapter.getItem(i);
             if (item.getId().equals(id)) {
                 spinner.setSelection(i);
                 return;
