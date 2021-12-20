@@ -234,13 +234,13 @@ public class MainAccessibilityService extends AccessibilityService {
 
                     Log.d("EnterApp", packageName);
 
-                    boolean isCommon = false;
-                    List<Task> tasks = repository.getTasksByPackageName(currPkgName);
-                    if (tasks == null || tasks.isEmpty()){
-                        tasks = repository.getTasksByPackageName(getString(R.string.common_package_name));
-                        isCommon = true;
+                    List<Task> tasks = new ArrayList<>();
+                    String comPkgName = getString(R.string.common_package_name);
+                    List<Task> pkgTasks = repository.getTasksByPackageNames(comPkgName, currPkgName);
+                    if (pkgTasks != null){
+                        tasks.addAll(pkgTasks);
                     }
-                    if (tasks == null || tasks.isEmpty()) return;
+                    if (tasks.isEmpty()) return;
 
                     String pkgName = "";
                     for (Task task : tasks) {
@@ -250,12 +250,15 @@ public class MainAccessibilityService extends AccessibilityService {
                                     runTask(task, null);
                                     break;
                                 case MANUAL:
-                                    pkgName = task.getPkgName();
+                                    String name = task.getPkgName();
+                                    if (!name.equals(comPkgName)){
+                                        pkgName = name;
+                                    }
                                     break;
                             }
                         }
                     }
-                    if (!(isCommon || pkgName.isEmpty())){
+                    if (!pkgName.isEmpty()){
                         if (activity != null){
                             activity.showPlayView(pkgName);
                         } else {

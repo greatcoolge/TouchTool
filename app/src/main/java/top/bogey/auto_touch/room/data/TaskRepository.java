@@ -38,6 +38,16 @@ public class TaskRepository {
         }
     }
 
+    public List<Task> getTasksByPackageNames(String... pkgNames){
+        Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksByPackageNames(pkgNames));
+        try {
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return getTasksByPackageNames(pkgNames);
+        }
+    }
+
     public List<Task> getTasksById(String id){
         Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksById(id));
         try {
