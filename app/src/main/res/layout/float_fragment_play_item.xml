@@ -16,7 +16,7 @@
         app:cpvLabelTextSize="14sp"
         app:cpvNormalColor="?attr/backgroundColor"
         app:cpvProgress="0"
-        app:cpvProgressColor="?attr/colorPrimary"
+        app:cpvProgressColor="?attr/colorSecondary"
         app:cpvShowTick="false"
         app:cpvStrokeWidth="10dp"
         app:layout_constraintBottom_toBottomOf="parent"

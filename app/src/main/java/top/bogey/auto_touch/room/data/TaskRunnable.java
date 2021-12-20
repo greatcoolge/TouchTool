@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -25,6 +25,7 @@ import top.bogey.auto_touch.room.bean.ActionMode;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
+import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.util.RunningCallback;
 
@@ -35,18 +36,20 @@ public class TaskRunnable implements Runnable{
     private final TaskRepository repository;
     private final RunningCallback callback;
 
-    private final LinkedHashMap<Action, Integer> actionPercent;
+    private final Map<String, Task> taskMap = new HashMap<>();
+    private final Map<Node, Integer> taskNodeMap = new HashMap<>();
     private final int allPercent;
+    private int percent = 0;
 
     private boolean isRunning = true;
 
     public TaskRunnable(@NonNull MainAccessibilityService service, Task task, RunningCallback callback) {
         this.service = service;
         this.task = task;
-        actionPercent = calculateActionPercent(task);
-        allPercent = getAllPercent(actionPercent);
-        repository = new TaskRepository(service.getApplication());
         this.callback = callback;
+        repository = new TaskRepository(service.getApplication());
+        getAllTasks(taskMap, task);
+        allPercent = getAllPercent(task);
     }
 
     public void stop() {
@@ -57,6 +60,14 @@ public class TaskRunnable implements Runnable{
         return isRunning;
     }
 
+    private void sleep(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
         doTask(task);
@@ -64,30 +75,29 @@ public class TaskRunnable implements Runnable{
     }
 
     private boolean doTask(@NonNull Task task){
-        Log.d("TAG", "执行任务: " + task.getTitle());
         List<Action> actions = new ArrayList<>();
         for (Action action : task.getActions()) {
             if (action.isEnable()) actions.add(action);
         }
 
-        int percent = 0;
-
         boolean result = true;
         Action runAction = actions.remove(0);
         while (runAction != null && isRunning()){
-            Log.d("TAG", "执行动作: " + runAction.getDefaultTitle(service));
             if (runAction.getActionMode() == ActionMode.CONDITION) {
                 CheckResult checkResult = checkNode(runAction.getCondition(), true);
                 if (checkResult.result){
                     result &= doAction(runAction, 0);
+                    if (runAction.getTargets().size() > 1){
+                        addNodePercent(runAction.getTargets().get(1), true);
+                    }
                 } else {
                     if (runAction.getTargets().size() > 1){
                         result &= doAction(runAction, 1);
                     } else {
                         result = false;
                     }
+                    addNodePercent(runAction.getTargets().get(0), true);
                 }
-                if (task == this.task) percent = refreshActionPercent(runAction);
             } else if (runAction.getActionMode() == ActionMode.LOOP) {
                 int successTimes = 0;
                 int runTimes = 0;
@@ -95,7 +105,6 @@ public class TaskRunnable implements Runnable{
                 while (runTimes < runAction.getTimes() && isRunning()){
                     for (int i = 0; i < runAction.getTargets().size(); i++) {
                         if (doAction(runAction, i)) successTimes++;
-                        if (task == this.task) refreshRunningPercent(++percent);
                     }
                     if (stop.getType() != NodeType.NULL){
                         if (stop.getType() == NodeType.NUMBER && successTimes >= stop.getNumber()){
@@ -110,7 +119,6 @@ public class TaskRunnable implements Runnable{
                 if (stop.getType() != NodeType.NULL && successTimes == 0){
                     result = false;
                 }
-                if (task == this.task) percent = refreshActionPercent(runAction);
             } else if (runAction.getActionMode() == ActionMode.PARALLEL) {
                 CountDownLatch latch = new CountDownLatch(runAction.getStop().getNumber());
                 Action finalRunAction = runAction;
@@ -130,7 +138,6 @@ public class TaskRunnable implements Runnable{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (task == this.task) percent = refreshActionPercent(runAction);
             }
 
             if (actions.size() > 0){
@@ -148,36 +155,29 @@ public class TaskRunnable implements Runnable{
         List<Node> targets = action.getTargets();
         if (targets.size() > index){
             Node target = targets.get(index);
-            Log.d("TAG", "执行动作目标: " + action.getTargetTitle(service, target));
-            CheckResult result = checkNode(target);
-            if (result.result){
+            Log.d("TAG :" + percent, "执行动作目标: " + action.getTargetTitle(service, target));
+            CheckResult checkResult = checkNode(target);
+            boolean result = false;
+            if (checkResult.result){
+                result = true;
                 switch (target.getType()) {
                     case DELAY:
-                        try {
-                            Thread.sleep(target.getDelay());
-                            return true;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            return false;
-                        }
+                        sleep(target.getDelay());
+                        break;
                     case TEXT:
-                        AccessibilityNodeInfo nodeInfo = result.nodeInfo;
+                        AccessibilityNodeInfo nodeInfo = checkResult.nodeInfo;
                         if (action.getTime() <= 100)
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         else
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
 
-                        try {
-                            Thread.sleep(action.getTime());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        sleep(action.getTime());
+                        break;
                     case IMAGE:
                     case POS:
                         Path path = null;
                         if (target.getType() == NodeType.IMAGE){
-                            path = getPath(Collections.singletonList(new Pos(result.rect.centerX(), result.rect.centerY())));
+                            path = getPath(Collections.singletonList(new Pos(checkResult.rect.centerX(), checkResult.rect.centerY())));
                         } else if (target.getType() == NodeType.POS){
                             path = getPath(target.getPoses());
                         }
@@ -185,22 +185,22 @@ public class TaskRunnable implements Runnable{
                             service.runGesture(path, action.getTime());
                         }
 
-                        try {
-                            Thread.sleep(action.getTime());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                        sleep(action.getTime());
+                        break;
                     case KEY:
                         service.performGlobalAction(target.getKey() + 1);
-                        return true;
+
+                        sleep(action.getTime());
+                        break;
                     case TASK:
-                        if (result.task != null){
-                            return doTask(result.task);
+                        if (checkResult.task != null){
+                            result = doTask(checkResult.task);
                         }
-                        return true;
+                        break;
                 }
             }
+            addNodePercent(target, !checkResult.result);
+            return result;
         }
         return false;
     }
@@ -242,9 +242,9 @@ public class TaskRunnable implements Runnable{
                 int key = node.getKey();
                 return new CheckResult(key >= 0, key);
             case TASK:
-                List<Task> list = repository.getTasksById(node.getTask().getId());
-                if (list != null && !list.isEmpty()){
-                    return new CheckResult(true, list.get(0));
+                Task task = taskMap.get(node.getTask().getId());
+                if (task != null){
+                    return new CheckResult(true, task);
                 } else {
                     return new CheckResult(false);
                 }
@@ -319,50 +319,70 @@ public class TaskRunnable implements Runnable{
         return searchClickableNode(nodeInfo.getParent());
     }
 
-    private LinkedHashMap<Action, Integer> calculateActionPercent(Task task){
-        LinkedHashMap<Action, Integer> percent = new LinkedHashMap<>();
-        for (Action action : task.getActions()) {
-            if (action.isEnable()) {
-                switch (action.getActionMode()) {
-                    case CONDITION:
-                    case PARALLEL:
-                        percent.put(action, 1);
-                        break;
-                    case LOOP:
-                        List<Node> targets = action.getTargets();
-                        percent.put(action, targets.size() * action.getTimes());
-                        break;
-                }
-
-            }
-        }
-        return percent;
-    }
-
-    private int getAllPercent(Map<Action, Integer> actionPercent){
-        int percent = 0;
-        for (Map.Entry<Action, Integer> entry : actionPercent.entrySet()) {
-            percent += entry.getValue();
-        }
-        return percent;
-    }
-
     private void refreshRunningPercent(int percent){
         if (callback != null){
-            callback.onProgress(task.getGroupId(), (int) (percent * 100.0 / allPercent));
+            callback.onProgress((int) (percent * 100.0 / allPercent));
         }
     }
 
-    private int refreshActionPercent(Action action){
-        int percent = 0;
-        for (Map.Entry<Action, Integer> next : actionPercent.entrySet()) {
-            if (next.getKey() != action) {
-                percent += next.getValue();
-            } else {
-                break;
+    private synchronized void addNodePercent(Node node, boolean skip){
+        if (node.getType() != NodeType.TASK){
+            refreshRunningPercent(++percent);
+        } else {
+            if (skip){
+                Integer integer = taskNodeMap.get(node);
+                if (integer != null){
+                    percent += integer;
+                    refreshRunningPercent(percent);
+                }
             }
         }
-        refreshRunningPercent(percent);
+    }
+
+    private void getAllTasks(Map<String, Task> taskMap, Task task){
+        taskMap.put(task.getId(), task);
+        for (Action action : task.getActions()) {
+            if (action.isEnable()){
+                for (Node target : action.getTargets()) {
+                    if (target.getType() == NodeType.TASK) {
+                        SimpleTaskInfo taskInfo = target.getTask();
+                        if (!taskMap.containsKey(taskInfo.getId())){
+                            List<Task> tasks = repository.getTasksById(taskInfo.getId());
+                            if (tasks != null){
+                                for (Task newTask : tasks) {
+                                    getAllTasks(taskMap, newTask);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private int getAllPercent(Task task){
+        int percent = 0;
+        for (Action action : task.getActions()) {
+            if (action.isEnable()) {
+                int cent = 0;
+                for (Node target : action.getTargets()) {
+                    if (target.getType() == NodeType.TASK){
+                        Task newTask = taskMap.get(target.getTask().getId());
+                        if (newTask != null){
+                            int taskCent = getAllPercent(newTask);
+                            taskNodeMap.put(target, taskCent);
+                            cent += taskCent;
+                        }
+                    } else {
+                        cent++;
+                    }
+                }
+                if (action.getActionMode() == ActionMode.LOOP){
+                    cent *= action.getTimes();
+                }
+                percent += cent;
+            }
+        }
         return percent;
     }
 

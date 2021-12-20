@@ -140,14 +140,12 @@ public class MainAccessibilityService extends AccessibilityService {
         if (!gestureRunning){
             if (strokes.size() > 0){
                 gestureRunning = true;
-                Log.d("TAG", "执行手势");
                 GestureDescription.StrokeDescription strokeDescription = strokes.remove(0);
                 dispatchGesture(new GestureDescription.Builder().addStroke(strokeDescription).build(), new GestureResultCallback() {
                     @Override
                     public void onCompleted(GestureDescription gestureDescription) {
                         super.onCompleted(gestureDescription);
                         gestureRunning = false;
-                        Log.d("TAG", "执行手势完成");
                         runGesture();
                     }
 
@@ -155,7 +153,6 @@ public class MainAccessibilityService extends AccessibilityService {
                     public void onCancelled(GestureDescription gestureDescription) {
                         super.onCancelled(gestureDescription);
                         gestureRunning = false;
-                        Log.d("TAG", "取消执行手势");
                         runGesture();
                     }
                 }, null);

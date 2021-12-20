@@ -2,7 +2,6 @@ package top.bogey.auto_touch.ui.play;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
@@ -13,7 +12,6 @@ import java.util.regex.Pattern;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
-import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentPlayItemBinding;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRunnable;
@@ -27,12 +25,12 @@ public class TaskPlayerItem extends FrameLayout {
     private boolean playing = false;
     private TaskRunnable taskRunnable;
 
-    public TaskPlayerItem(@NonNull Context context, Task task) {
+    public TaskPlayerItem(@NonNull Context context, Task newTask) {
         super(context);
         binding = FloatFragmentPlayItemBinding.inflate(LayoutInflater.from(context));
         addView(binding.getRoot());
 
-        setTask(task);
+        setTask(newTask);
 
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
@@ -42,25 +40,24 @@ public class TaskPlayerItem extends FrameLayout {
                         taskRunnable.stop();
                     }
                     playing = false;
-                    refreshProgress(task.getGroupId(), 0);
                 } else {
-                    taskRunnable = service.runTask(this.task, new RunningCallback() {
+                    taskRunnable = service.runTask(task, new RunningCallback() {
                         @Override
                         public void onResult(boolean result) {
                             playing = false;
-                            refreshProgress(task.getGroupId(), 0);
+                            refreshProgress(0);
                         }
 
                         @Override
-                        public void onProgress(int groupId, int percent) {
+                        public void onProgress(int percent) {
                             if (playing){
-                                refreshProgress(groupId, percent);
+                                refreshProgress(percent);
                             }
                         }
                     });
                     playing = true;
-                    refreshProgress(task.getGroupId(), 1);
                 }
+                refreshProgress(0);
             }
         });
     }
@@ -69,7 +66,7 @@ public class TaskPlayerItem extends FrameLayout {
         this.task = task;
         binding.playButton.setLabelText(getPivotalTitle(task.getTitle()));
         playing = false;
-        refreshProgress(task.getGroupId(), 0);
+        refreshProgress(0);
     }
 
     private String getPivotalTitle(String title){
@@ -83,11 +80,11 @@ public class TaskPlayerItem extends FrameLayout {
         return title.substring(0, 1);
     }
 
-    private synchronized void refreshProgress(int groupId, int percent){
+    private synchronized void refreshProgress(int percent){
         post(() -> {
-            int color = AppUtil.getGroupColor(getContext(), groupId);
-            binding.playButton.setLabelTextColor(color);
+            int color = AppUtil.getGroupColor(getContext(), task.getGroupId());
             binding.playButton.setProgressColor(color);
+            binding.playButton.setLabelText(percent == 0 ? getPivotalTitle(task.getTitle()) : String.valueOf(percent));
 
             binding.playButton.showAnimation(binding.playButton.getProgress(), percent, 100);
         });
