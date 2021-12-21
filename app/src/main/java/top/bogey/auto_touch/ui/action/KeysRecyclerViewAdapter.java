@@ -14,7 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -65,15 +67,18 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetEdit.setVisibility(View.VISIBLE);
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.GONE);
+                holder.timeGroup.setVisibility(View.VISIBLE);
                 holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
                 holder.targetEdit.setEnabled(true);
-                holder.targetEdit.setText(node.getText());
+                holder.timeGroup.check(holder.timeGroup.getChildAt(node.getDelay() % 1000 == 0 ? 1 : 0).getId());
+                holder.targetEdit.setText(String.valueOf(node.getDelay() / holder.delayScale));
                 break;
             case TEXT:
                 holder.targetPicker.setVisibility(View.VISIBLE);
                 holder.targetEdit.setVisibility(View.VISIBLE);
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.GONE);
+                holder.timeGroup.setVisibility(View.GONE);
                 holder.targetPicker.setIconResource(R.drawable.text);
                 holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
                 holder.targetEdit.setEnabled(true);
@@ -84,6 +89,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetEdit.setVisibility(View.GONE);
                 holder.targetImage.setVisibility(View.VISIBLE);
                 holder.targetSpinner.setVisibility(View.GONE);
+                holder.timeGroup.setVisibility(View.GONE);
                 holder.targetPicker.setIconResource(R.drawable.image);
                 holder.targetImage.setImageBitmap(node.getImage());
                 break;
@@ -92,6 +98,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetEdit.setVisibility(View.VISIBLE);
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.GONE);
+                holder.timeGroup.setVisibility(View.GONE);
                 holder.targetPicker.setIconResource(R.drawable.pos);
                 holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
                 holder.targetEdit.setEnabled(false);
@@ -103,6 +110,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetEdit.setVisibility(View.GONE);
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.VISIBLE);
+                holder.timeGroup.setVisibility(View.GONE);
                 break;
         }
         switch (node.getType()) {
@@ -129,6 +137,8 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 }
                 break;
         }
+        String[] strings = parent.getContext().getResources().getStringArray(R.array.node_type);
+        holder.titleText.setText(strings[node.getType().ordinal()]);
     }
 
     @Override
@@ -164,12 +174,6 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         }
     }
 
-    public void cleanAll(){
-        int size = nodes.size();
-        nodes.clear();
-        notifyItemRangeRemoved(0, size);
-    }
-
     public void setMaxCount(int maxCount){
         this.maxCount = maxCount;
         while (nodes.size() > maxCount){
@@ -184,7 +188,11 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         public final Spinner targetSpinner;
         public final MaterialButton targetPicker;
         public final MaterialButton deleteButton;
+        public final RadioGroup timeGroup;
+        public final TextView titleText;
+
         public ArrayAdapter<SimpleTaskInfo> adapter;
+        public int delayScale = 1;
 
 
         public ViewHolder(FloatFragmentActionEditItemBinding binding) {
@@ -194,6 +202,8 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             targetSpinner = binding.targetSpinner;
             targetPicker = binding.targetPicker;
             deleteButton = binding.deleteButton;
+            timeGroup = binding.timeGroup;
+            titleText = binding.titleText;
 
             adapter = new ArrayAdapter<>(parent.getContext(), R.layout.float_fragment_action_edit_picker);
             targetSpinner.setAdapter(adapter);
@@ -235,7 +245,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                                 delay = Integer.parseInt(value);
                             } catch (NumberFormatException ignored) {
                             }
-                            node.setDelay(delay);
+                            node.setDelay(delay * delayScale);
                             break;
                     }
                 }
@@ -298,6 +308,19 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 int index = getAdapterPosition();
                 nodes.remove(index);
                 notifyItemRemoved(index);
+            });
+
+            timeGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                int checkIndex = group.indexOfChild(group.findViewById(checkedId));
+                delayScale = checkIndex == 0 ? 1 : 1000;
+
+                Editable text = targetEdit.getText();
+                if (text != null && text.length() > 0){
+                    int delay = Integer.parseInt(text.toString());
+                    int index = getAdapterPosition();
+                    Node node = nodes.get(index);
+                    node.setDelay(delay * delayScale);
+                }
             });
         }
     }

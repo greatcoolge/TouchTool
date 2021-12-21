@@ -64,13 +64,13 @@
     <string name="condition_title_2">\n否则</string>
     <string name="loop_title_1">尝试执行%1$d次\n</string>
     <string name="loop_title_2">直到%1$s</string>
-    <string name="parallel_title_1">同时执行任务\n</string>
+    <string name="parallel_title_1">同时执行动作\n</string>
     <string name="parallel_title_2">直到全部完成</string>
-    <string name="parallel_tips">执行并行任务超过1分钟，任务自动停止</string>
+    <string name="parallel_tips">执行并行动作超过1分钟，任务自动停止</string>
 
-    <string name="condition">条件任务</string>
-    <string name="loop">循环任务</string>
-    <string name="parallel">并行任务</string>
+    <string name="condition">条件动作</string>
+    <string name="loop">循环动作</string>
+    <string name="parallel">并行动作</string>
 
     <string name="do_keys">条件</string>
     <string name="time">时间</string>

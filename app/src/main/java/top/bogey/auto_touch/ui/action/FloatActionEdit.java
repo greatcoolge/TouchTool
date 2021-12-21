@@ -384,7 +384,7 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                     stopTypeArrayAdapter.add(new SimpleTaskInfo(String.valueOf(nodeType.ordinal()), strings[nodeType.ordinal()]));
                 }
                 selectSpinner(binding.stopTypeSpinner, String.valueOf(stop.getType().ordinal()));
-                adapter.setMaxCount(5);
+                adapter.setMaxCount(10);
                 break;
             case PARALLEL:
                 binding.timeLayout.setVisibility(GONE);

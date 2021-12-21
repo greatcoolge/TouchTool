@@ -44,7 +44,10 @@ public class Node{
     }
 
     public int getNumber(){
-        return Integer.parseInt(value);
+        try{
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored){}
+        return 1;
     }
 
     public void setDelay(int delay){
@@ -53,7 +56,10 @@ public class Node{
     }
 
     public int getDelay(){
-        return Integer.parseInt(value);
+        try{
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored){}
+        return 1000;
     }
 
     public void setText(String text){
@@ -125,7 +131,10 @@ public class Node{
     }
 
     public int getKey(){
-        return Integer.parseInt(value);
+        try{
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored){}
+        return 0;
     }
 
     public void setTask(SimpleTaskInfo info){
