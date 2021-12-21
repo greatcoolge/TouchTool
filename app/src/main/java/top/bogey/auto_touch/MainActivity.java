@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        binding.getRoot().post(() -> handleIntent(getIntent()));
     }
 
     @Override
@@ -70,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
         NavController controller = Navigation.findNavController(this, R.id.con_view);
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         NavigationUI.setupWithNavController(binding.menuMain, controller);
-
-        handleIntent(getIntent());
     }
 
     @Override

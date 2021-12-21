@@ -1,0 +1,139 @@
+[
+	{
+		"actions": [
+			{
+				"actionMode": "CONDITION",
+				"condition": {
+					"type": "TEXT",
+					"value": "青少年"
+				},
+				"enable": true,
+				"targets": [
+					{
+						"type": "TEXT",
+						"value": "知道了"
+					}
+				],
+				"time": 100,
+				"times": 1,
+				"title": ""
+			}
+		],
+		"groupId": 0,
+		"id": "5006e2ea-c511-4c3d-a0a9-0e47635bd811",
+		"pkgName": "configs.common",
+		"taskStatus": "CLOSED",
+		"title": "青少年"
+	},
+	{
+		"actions": [
+			{
+				"actionMode": "LOOP",
+				"enable": true,
+				"stop": {
+					"type": "NUMBER",
+					"value": "1"
+				},
+				"targets": [
+					{
+						"type": "TEXT",
+						"value": "继续安装"
+					},
+					{
+						"type": "DELAY",
+						"value": "100"
+					}
+				],
+				"time": 100,
+				"times": 100,
+				"title": ""
+			},
+			{
+				"actionMode": "LOOP",
+				"enable": true,
+				"stop": {
+					"type": "NUMBER",
+					"value": "1"
+				},
+				"targets": [
+					{
+						"type": "TEXT",
+						"value": "完成"
+					},
+					{
+						"type": "DELAY",
+						"value": "500"
+					}
+				],
+				"time": 100,
+				"times": 100,
+				"title": ""
+			}
+		],
+		"groupId": 0,
+		"id": "ed88eb1a-0abb-445f-b0ea-ef95f70112d3",
+		"pkgName": "com.miui.packageinstaller",
+		"taskStatus": "AUTO",
+		"title": "继续安装"
+	},
+	{
+		"actions": [
+			{
+				"actionMode": "LOOP",
+				"enable": true,
+				"stop": {
+					"type": "NUMBER",
+					"value": "1"
+				},
+				"targets": [
+					{
+						"type": "TEXT",
+						"value": "跳过"
+					},
+					{
+						"type": "DELAY",
+						"value": "500"
+					}
+				],
+				"time": 100,
+				"times": 20,
+				"title": ""
+			}
+		],
+		"groupId": 0,
+		"id": "15e41284-d9f5-43c2-86de-e2ce0c741340",
+		"pkgName": "configs.common",
+		"taskStatus": "AUTO",
+		"title": "跳过"
+	},
+	{
+		"actions": [
+			{
+				"actionMode": "LOOP",
+				"enable": true,
+				"stop": {
+					"type": "NUMBER",
+					"value": "1"
+				},
+				"targets": [
+					{
+						"type": "TASK",
+						"value": "{\"id\":\"5006e2ea-c511-4c3d-a0a9-0e47635bd811\",\"title\":\"青少年\"}"
+					},
+					{
+						"type": "DELAY",
+						"value": "1000"
+					}
+				],
+				"time": 100,
+				"times": 50,
+				"title": ""
+			}
+		],
+		"groupId": 0,
+		"id": "14eba2e6-48ce-423a-99ce-22350e410ee4",
+		"pkgName": "configs.common",
+		"taskStatus": "AUTO",
+		"title": "自动青少年"
+	}
+]

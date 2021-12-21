@@ -28,6 +28,7 @@
 -keepclassmembers class top.bogey.auto_touch.room.bean.Action{
     private top.bogey.auto_touch.room.bean.ActionMode actionMode;
     private boolean enable;
+    private java.lang.String title;
     private java.util.List targets;
     private top.bogey.auto_touch.room.bean.Node condition;
     private top.bogey.auto_touch.room.bean.Node stop;
