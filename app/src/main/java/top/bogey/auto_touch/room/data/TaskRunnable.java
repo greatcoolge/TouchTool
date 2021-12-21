@@ -103,9 +103,11 @@ public class TaskRunnable implements Runnable{
                 int runTimes = 0;
                 Node stop = runAction.getStop();
                 while (runTimes < runAction.getTimes() && isRunning()){
+                    boolean flag = true;
                     for (int i = 0; i < runAction.getTargets().size(); i++) {
-                        if (doAction(runAction, i)) successTimes++;
+                        flag &= doAction(runAction, i);
                     }
+                    if (flag) successTimes++;
                     if (stop.getType() != NodeType.NULL){
                         if (stop.getType() == NodeType.NUMBER && successTimes >= stop.getNumber()){
                             break;
