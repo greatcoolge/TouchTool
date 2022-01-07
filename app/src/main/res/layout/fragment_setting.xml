@@ -8,15 +8,74 @@
     android:background="?attr/backgroundColor"
     tools:context=".ui.setting.SettingFragment">
 
-    <Button
-        android:id="@+id/export_button"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:background="@drawable/corner"
-        android:text="@string/export_string"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/export_button"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/corner"
+            android:text="@string/export_string" />
+
+        <Button
+            android:id="@+id/clean_button"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/corner"
+            android:text="@string/clean_string" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/zan_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
+            android:text="@string/zan"
+            android:textColor="?attr/colorPrimary"
+            app:icon="@drawable/zan"
+            app:iconGravity="textTop"
+            app:iconSize="30dp"
+            app:iconTint="?attr/colorPrimary"/>
+
+        <Button
+            android:id="@+id/book_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
+            android:text="@string/book"
+            android:textColor="?attr/colorPrimary"
+            app:icon="@drawable/book"
+            app:iconGravity="textTop"
+            app:iconSize="30dp"
+            app:iconTint="?attr/colorPrimary"/>
+
+    </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

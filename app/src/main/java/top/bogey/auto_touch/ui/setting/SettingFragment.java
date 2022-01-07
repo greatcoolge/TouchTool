@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -56,6 +57,37 @@ public class SettingFragment extends Fragment {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 requireContext().startActivity(Intent.createChooser(intent, getString(R.string.export_tips)));
             }
+        });
+
+        binding.cleanButton.setOnClickListener(v -> {
+            List<String> pkgNames = viewModel.getAllPkgNames();
+            List<Task> tasks = viewModel.getAllTasks();
+            for (Task task : tasks) {
+                if (!pkgNames.contains(task.getPkgName())){
+                    viewModel.deleteTask(task);
+                }
+            }
+            Toast.makeText(requireContext(), R.string.clean_tips, Toast.LENGTH_LONG).show();
+        });
+
+        binding.zanButton.setOnClickListener(v -> {
+            try {
+                String address = "market://details?id=" + requireContext().getPackageName();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+                intent.setPackage("com.coolapk.market");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } catch (Exception ignored){
+                Toast.makeText(requireContext(), R.string.market_tips, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        binding.bookButton.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://gitee.com/mrbogey/AutoTouch"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } catch (Exception ignored){ }
         });
 
         return binding.getRoot();

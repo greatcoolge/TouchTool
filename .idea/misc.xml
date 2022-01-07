@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/add.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/book.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/close.xml" value="0.3398148148148148" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/condition.xml" value="0.3764102564102564" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/delete.xml" value="0.3398148148148148" />
@@ -20,6 +21,7 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/text.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/text_add.xml" value="0.3764102564102564" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/up.xml" value="0.3398148148148148" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable-anydpi/zan.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/border.xml" value="0.38229166666666664" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/condition.xml" value="0.3764102564102564" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/drawable/corner.xml" value="0.3398148148148148" />
@@ -64,7 +66,7 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps.xml" value="0.33" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_apps_item.xml" value="0.5997267759562842" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_home.xml" value="0.25" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_setting.xml" value="0.22" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_setting.xml" value="0.33" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_tasks.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/fragment_tasks_item.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/menu/menu_actions.xml" value="0.36614583333333334" />

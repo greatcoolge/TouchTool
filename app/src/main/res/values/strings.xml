@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">AutoTouch</string>
+    <string name="app_name_release">AutoTouch</string>
+    <string name="app_name_debug">AutoTouchD</string>
     <string name="service_des">自动执行点击任务</string>
 
     <string name="home">主页</string>
@@ -86,6 +87,10 @@
     <string name="empty_target">目标为空</string>
 
     <string name="export_string">导出任务</string>
-    <string name="export_tips">导出并分享</string>
-
+    <string name="export_tips">导出配置文件并发送</string>
+    <string name="clean_string">清理任务</string>
+    <string name="clean_tips">冗余任务清理完成</string>
+    <string name="zan">评论</string>
+    <string name="market_tips">未安装酷安应用市场</string>
+    <string name="book">教程</string>
 </resources>
