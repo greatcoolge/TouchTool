@@ -21,7 +21,7 @@
             android:id="@+id/export_button"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_margin="5dp"
+            android:layout_margin="12dp"
             android:background="@drawable/corner"
             android:text="@string/export_string" />
 
@@ -29,7 +29,7 @@
             android:id="@+id/clean_button"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_margin="5dp"
+            android:layout_margin="12dp"
             android:background="@drawable/corner"
             android:text="@string/clean_string" />
 

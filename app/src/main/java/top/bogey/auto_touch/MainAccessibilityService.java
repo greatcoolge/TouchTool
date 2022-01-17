@@ -234,15 +234,10 @@ public class MainAccessibilityService extends AccessibilityService {
 
                     Log.d("EnterApp", packageName);
 
-                    List<Task> tasks = new ArrayList<>();
-                    String comPkgName = getString(R.string.common_package_name);
-                    List<Task> pkgTasks = repository.getTasksByPackageNames(comPkgName, currPkgName);
-                    if (pkgTasks != null){
-                        tasks.addAll(pkgTasks);
-                    }
-                    if (tasks.isEmpty()) return;
+                    List<Task> tasks = getAppTaskByPkgName(packageName);
 
-                    String pkgName = "";
+                    String comPkgName = getString(R.string.common_package_name);
+                    boolean isManual = false;
                     for (Task task : tasks) {
                         if (task.getActions() != null && !task.getActions().isEmpty()){
                             switch (task.getTaskStatus()) {
@@ -252,25 +247,50 @@ public class MainAccessibilityService extends AccessibilityService {
                                 case MANUAL:
                                     String name = task.getPkgName();
                                     if (!name.equals(comPkgName)){
-                                        pkgName = name;
+                                        isManual = true;
                                     }
                                     break;
                             }
                         }
                     }
-                    if (!pkgName.isEmpty()){
+                    if (isManual){
                         if (activity != null){
-                            activity.showPlayView(pkgName);
+                            activity.showPlayView(packageName);
                         } else {
                             Intent intent = new Intent(MainAccessibilityService.this, MainActivity.class);
                             intent.putExtra("IsBackground", true);
-                            intent.putExtra("FloatPackageName", pkgName);
+                            intent.putExtra("FloatPackageName", packageName);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                         }
                     }
                 }
             }
+        }
+
+        private List<Task> getAppTaskByPkgName(String pkgName){
+            List<Task> tasks = new ArrayList<>();
+            List<Task> pkgTasks = repository.getTasksByPackageNames(pkgName);
+            if (pkgTasks != null){
+                tasks.addAll(pkgTasks);
+            }
+            String conPkgName = getString(R.string.common_package_name);
+            List<Task> comTasks = repository.getTasksByPackageNames(conPkgName);
+            if (comTasks != null){
+                for (Task comTask : comTasks) {
+                    boolean flag = true;
+                    for (Task task : tasks) {
+                        if (comTask.getTitle().equals(task.getTitle())){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag){
+                        tasks.add(comTask);
+                    }
+                }
+            }
+            return tasks;
         }
     }
 }
