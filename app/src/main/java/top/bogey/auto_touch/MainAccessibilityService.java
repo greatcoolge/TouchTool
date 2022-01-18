@@ -31,6 +31,7 @@ import top.bogey.auto_touch.util.RunningCallback;
 public class MainAccessibilityService extends AccessibilityService {
     private static final String SAVE_PATH = "Save";
     private static final String SERVICE_ENABLED = "service_enabled";
+    private static final String DEBUG_TIPS_ENABLED = "debug_tips_enabled";
 
     private final ExecutorService findService;
     public final ExecutorService taskService;
@@ -114,6 +115,18 @@ public class MainAccessibilityService extends AccessibilityService {
         SharedPreferences sharedPreferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         edit.putBoolean(SERVICE_ENABLED, enable);
+        edit.apply();
+    }
+
+    public static boolean isShowDebugTips(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(DEBUG_TIPS_ENABLED, false);
+    }
+
+    public static void setShowDebugTips(Context context, boolean isShow){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putBoolean(DEBUG_TIPS_ENABLED, isShow);
         edit.apply();
     }
 

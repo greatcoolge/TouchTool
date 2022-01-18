@@ -15,12 +15,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.gson.Gson;
+import com.lzf.easyfloat.EasyFloat;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentSettingBinding;
 import top.bogey.auto_touch.room.bean.Task;
@@ -70,6 +72,16 @@ public class SettingFragment extends Fragment {
             Toast.makeText(requireContext(), R.string.clean_tips, Toast.LENGTH_LONG).show();
         });
 
+        binding.debugToggle.setOnClickListener(v -> {
+            boolean show = MainAccessibilityService.isShowDebugTips(requireContext());
+            binding.debugToggle.setChecked(!show);
+            MainAccessibilityService.setShowDebugTips(requireContext(), !show);
+            showDebugView(!show);
+        });
+        boolean show = MainAccessibilityService.isShowDebugTips(requireContext());
+        binding.debugToggle.setChecked(show);
+        showDebugView(show);
+
         binding.zanButton.setOnClickListener(v -> {
             try {
                 String address = "market://details?id=" + requireContext().getPackageName();
@@ -91,5 +103,15 @@ public class SettingFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void showDebugView(boolean show){
+        if (show){
+            if (EasyFloat.getFloatView(DebugDialog.class.getCanonicalName()) == null){
+                new DebugDialog(requireContext()).show();
+            }
+        } else {
+            EasyFloat.dismiss(DebugDialog.class.getCanonicalName());
+        }
     }
 }

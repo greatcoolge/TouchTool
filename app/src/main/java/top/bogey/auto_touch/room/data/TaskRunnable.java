@@ -2,11 +2,12 @@ package top.bogey.auto_touch.room.data;
 
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.util.Log;
+import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import com.lzf.easyfloat.EasyFloat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.ui.setting.DebugDialog;
 import top.bogey.auto_touch.util.RunningCallback;
 
 public class TaskRunnable implements Runnable{
@@ -40,6 +42,7 @@ public class TaskRunnable implements Runnable{
     private final Map<Node, Integer> taskNodeMap = new HashMap<>();
     private final int allPercent;
     private int percent = 0;
+    private DebugDialog debugDialog = null;
 
     private boolean isRunning = true;
 
@@ -50,6 +53,13 @@ public class TaskRunnable implements Runnable{
         repository = new TaskRepository(service.getApplication());
         getAllTasks(taskMap, task);
         allPercent = getAllPercent(task);
+
+        if (MainAccessibilityService.isShowDebugTips(service)){
+            View floatView = EasyFloat.getFloatView(DebugDialog.class.getCanonicalName());
+            if (floatView != null){
+                debugDialog = (DebugDialog) floatView;
+            }
+        }
     }
 
     public void stop() {
@@ -133,7 +143,9 @@ public class TaskRunnable implements Runnable{
                 try {
                     boolean await = latch.await(60, TimeUnit.SECONDS);
                     if (!await){
-                        Toast.makeText(service, R.string.parallel_tips, Toast.LENGTH_LONG).show();
+                        if (debugDialog != null){
+                            debugDialog.addTips(service.getString(R.string.parallel_tips));
+                        }
                         stop();
                         break;
                     }
@@ -157,7 +169,9 @@ public class TaskRunnable implements Runnable{
         List<Node> targets = action.getTargets();
         if (targets.size() > index){
             Node target = targets.get(index);
-            Log.d("TAG :" + percent, "执行动作目标: " + action.getTargetTitle(service, target));
+            if (debugDialog != null){
+                debugDialog.addTips("["+ task.getTitle() +"]["+ percent +"]" + action.getTargetTitle(service, target));
+            }
             CheckResult checkResult = checkNode(target);
             boolean result = false;
             if (checkResult.result){

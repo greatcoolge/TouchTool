@@ -33,6 +33,20 @@
             android:background="@drawable/corner"
             android:text="@string/clean_string" />
 
+        <ToggleButton
+            android:id="@+id/debug_toggle"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_margin="12dp"
+            android:background="@drawable/toggle"
+            android:textColor="@color/check"
+            android:textOff="@string/debug_closed"
+            android:textOn="@string/debug_opened"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </LinearLayout>
 
 

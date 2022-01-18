@@ -93,4 +93,6 @@
     <string name="zan">评论</string>
     <string name="market_tips">未安装酷安应用市场</string>
     <string name="book">教程</string>
+    <string name="debug_opened">任务提示已开</string>
+    <string name="debug_closed">任务提示已关</string>
 </resources>
