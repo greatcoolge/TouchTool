@@ -13,6 +13,7 @@ import java.util.List;
 
 import top.bogey.auto_touch.databinding.FloatFragmentPickerBgBinding;
 import top.bogey.auto_touch.room.bean.Pos;
+import top.bogey.auto_touch.util.AppUtil;
 
 public class PosPicker extends NodePicker{
     private final List<PosPickerView> posViews = new ArrayList<>();
@@ -33,7 +34,9 @@ public class PosPicker extends NodePicker{
         });
         floatCallback = new TouchCallback();
         if (poses != null){
-            posList.addAll(poses);
+            for (Pos pos : poses) {
+                posList.add(AppUtil.percent2px(context, pos));
+            }
         }
     }
 
@@ -49,7 +52,7 @@ public class PosPicker extends NodePicker{
         posList.clear();
         for (PosPickerView posView : posViews) {
             int[] location = posView.getLocation();
-            posList.add(new Pos(location[0], location[1]));
+            posList.add(AppUtil.px2percent(context, new Pos(location[0], location[1])));
         }
     }
 

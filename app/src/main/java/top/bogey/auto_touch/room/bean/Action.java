@@ -14,9 +14,6 @@ public class Action{
     private Node condition;
     private List<Node> targets;
 
-    // 执行时长
-    private int time = 100;
-
     // 循环次数
     private int times = 1;
     // 循环结束条件
@@ -81,7 +78,7 @@ public class Action{
 
     public String getTargetTitle(Context context, Node node){
         if (node == null) return "";
-        String touch = time > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
+        String touch = node.getTime() > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
         switch (node.getType()){
             case DELAY:
                 return context.getString(R.string.delay_target, node.getDelay());
@@ -139,14 +136,6 @@ public class Action{
 
     public void setTargets(List<Node> targets) {
         this.targets = targets;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
     }
 
     public int getTimes() {

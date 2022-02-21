@@ -29,7 +29,6 @@ import java.util.List;
 
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentActionEditItemBinding;
-import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Node;
 import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
@@ -68,6 +67,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.GONE);
                 holder.timeGroup.setVisibility(View.VISIBLE);
+                holder.pressTime.setVisibility(View.GONE);
                 holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
                 holder.targetEdit.setEnabled(true);
                 holder.timeGroup.check(holder.timeGroup.getChildAt(node.getDelay() % 1000 == 0 ? 1 : 0).getId());
@@ -79,6 +79,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.GONE);
                 holder.timeGroup.setVisibility(View.GONE);
+                holder.pressTime.setVisibility(View.VISIBLE);
                 holder.targetPicker.setIconResource(R.drawable.text);
                 holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
                 holder.targetEdit.setEnabled(true);
@@ -90,6 +91,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetImage.setVisibility(View.VISIBLE);
                 holder.targetSpinner.setVisibility(View.GONE);
                 holder.timeGroup.setVisibility(View.GONE);
+                holder.pressTime.setVisibility(View.VISIBLE);
                 holder.targetPicker.setIconResource(R.drawable.image);
                 holder.targetImage.setImageBitmap(node.getImage());
                 break;
@@ -99,6 +101,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 holder.targetImage.setVisibility(View.GONE);
                 holder.targetSpinner.setVisibility(View.GONE);
                 holder.timeGroup.setVisibility(View.GONE);
+                holder.pressTime.setVisibility(View.VISIBLE);
                 holder.targetPicker.setIconResource(R.drawable.pos);
                 holder.targetEdit.setInputType(EditorInfo.TYPE_CLASS_TEXT);
                 holder.targetEdit.setEnabled(false);
@@ -115,6 +118,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         }
         switch (node.getType()) {
             case KEY:
+                holder.pressTime.setVisibility(View.VISIBLE);
                 String[] strings = parent.getContext().getResources().getStringArray(R.array.keys);
                 holder.adapter.clear();
                 for (int i = 0; i < strings.length; i++) {
@@ -123,6 +127,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 parent.selectSpinner(holder.targetSpinner, node.getText());
                 break;
             case TASK:
+                holder.pressTime.setVisibility(View.GONE);
                 holder.adapter.clear();
                 for (Task task : tasks) {
                     if (!task.getId().equals(parent.task.getId())) {
@@ -139,6 +144,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         }
         String[] strings = parent.getContext().getResources().getStringArray(R.array.node_type);
         holder.titleText.setText(strings[node.getType().ordinal()]);
+        holder.pressTime.setText(String.valueOf(node.getTime()));
     }
 
     @Override
@@ -170,7 +176,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             nodes.add(node);
             notifyItemInserted(nodes.size() - 1);
         } else {
-            Toast.makeText(parent.getContext(), "超出最大目标数限制", Toast.LENGTH_LONG).show();
+            Toast.makeText(parent.getContext(), R.string.too_much_target, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -189,6 +195,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
         public final MaterialButton targetPicker;
         public final MaterialButton deleteButton;
         public final RadioGroup timeGroup;
+        public final EditText pressTime;
         public final TextView titleText;
 
         public ArrayAdapter<SimpleTaskInfo> adapter;
@@ -203,6 +210,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             targetPicker = binding.targetPicker;
             deleteButton = binding.deleteButton;
             timeGroup = binding.timeGroup;
+            pressTime = binding.pressTime;
             titleText = binding.titleText;
 
             adapter = new ArrayAdapter<>(parent.getContext(), R.layout.float_fragment_action_edit_picker);
@@ -247,6 +255,39 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             }
                             node.setDelay(delay * delayScale);
                             break;
+                    }
+                }
+            });
+
+            pressTime.setOnFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus){
+                    InputMethodManager manager = (InputMethodManager) parent.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    manager.showSoftInput(pressTime, InputMethodManager.SHOW_FORCED);
+                }
+            });
+
+            pressTime.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    Editable text = pressTime.getText();
+                    int index = getAdapterPosition();
+                    Node node = nodes.get(index);
+                    String value = "";
+                    if (text != null && text.length() > 0){
+                        value = String.valueOf(text);
+                    }
+                    if (!value.isEmpty()){
+                        node.setTime(Integer.parseInt(value));
                     }
                 }
             });

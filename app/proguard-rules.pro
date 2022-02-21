@@ -33,12 +33,12 @@
     private top.bogey.auto_touch.room.bean.Node condition;
     private top.bogey.auto_touch.room.bean.Node stop;
     private int times;
-    private int time;
 }
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Node{
     private top.bogey.auto_touch.room.bean.NodeType type;
     private java.lang.String value;
+    private int time;
 }
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Pos{

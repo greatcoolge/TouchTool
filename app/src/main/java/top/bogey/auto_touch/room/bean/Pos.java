@@ -30,6 +30,6 @@ public class Pos {
     @NonNull
     @Override
     public String toString() {
-        return "(" + x + "," + y + ")";
+        return "(" + x + "%," + y + "%)";
     }
 }

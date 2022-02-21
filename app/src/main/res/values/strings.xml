@@ -85,6 +85,7 @@
 
     <string name="exist_empty_config">存在空配置项</string>
     <string name="empty_target">目标为空</string>
+    <string name="too_much_target">超出最大目标数限制</string>
 
     <string name="export_string">导出任务</string>
     <string name="export_tips">导出配置文件并发送</string>

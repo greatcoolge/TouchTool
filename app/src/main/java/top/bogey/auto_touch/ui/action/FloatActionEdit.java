@@ -54,8 +54,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
 
     private KeysRecyclerViewAdapter adapter;
 
-    private int timeScale = 1;
-
     private ActionMode mode = ActionMode.NULL;
     private final Node condition;
     private final Node stop;
@@ -213,19 +211,12 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
         });
         selectSpinner(binding.stopTypeSpinner, String.valueOf(stop.getType().ordinal()));
 
-        binding.timeGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            int index = group.indexOfChild(group.findViewById(checkedId));
-            timeScale = index == 0 ? 1 : 1000;
-        });
-        binding.timeGroup.check(binding.timeGroup.getChildAt(action.getTime() % 1000 == 0 ? 1 : 0).getId());
-
         binding.modeGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int index = group.indexOfChild(group.findViewById(checkedId));
             changeMode(ActionMode.values()[index + 1]);
         });
         binding.modeGroup.check(binding.modeGroup.getChildAt(action.getActionMode().ordinal() - 1).getId());
 
-        binding.timeEdit.setText(String.valueOf(action.getTime() / timeScale));
         binding.timesEdit.setText(String.valueOf(action.getTimes()));
 
         binding.conditionPicker.setOnClickListener(v -> {
@@ -282,7 +273,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                 return;
             }
 
-            Editable timeText = binding.timeEdit.getText();
             Editable timesText = binding.timesEdit.getText();
             Editable conditionText = binding.conditionEdit.getText();
             Editable stopText = binding.stopEdit.getText();
@@ -290,15 +280,13 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
             boolean flag = false;
             switch (mode){
                 case CONDITION:
-                    if (timeText == null || timeText.length() == 0
-                            || condition.getType() == NodeType.TEXT && (conditionText == null || conditionText.length() == 0)
+                    if (condition.getType() == NodeType.TEXT && (conditionText == null || conditionText.length() == 0)
                             || condition.getType() == NodeType.IMAGE && binding.conditionImage.getDrawable() == null) {
                         flag = true;
                     }
                     break;
                 case LOOP:
-                    if (timeText == null || timeText.length() == 0
-                            || timesText == null || timesText.length() == 0
+                    if (timesText == null || timesText.length() == 0
                             || stop.getType() == NodeType.TEXT && (stopText == null || stopText.length() == 0)
                             || stop.getType() == NodeType.IMAGE && binding.stopImage.getDrawable() == null) {
                         flag = true;
@@ -329,11 +317,9 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                             condition.setImage(((BitmapDrawable) binding.conditionImage.getDrawable()).getBitmap());
                             break;
                     }
-                    action.setTime(Integer.parseInt(String.valueOf(timeText)) * timeScale);
                     action.setCondition(condition);
                     break;
                 case LOOP:
-                    action.setTime(Integer.parseInt(String.valueOf(timeText)) * timeScale);
                     action.setTimes(Integer.parseInt(String.valueOf(timesText)));
                 case PARALLEL:
                     switch (stop.getType()) {
@@ -367,14 +353,12 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
         String[] strings = getResources().getStringArray(R.array.node_type);
         switch (mode) {
             case CONDITION:
-                binding.timeLayout.setVisibility(VISIBLE);
                 binding.conditionLayout.setVisibility(VISIBLE);
                 binding.timesLayout.setVisibility(GONE);
                 binding.stopLayout.setVisibility(GONE);
                 selectSpinner(binding.conditionTypeSpinner, String.valueOf(condition.getType().ordinal()));
                 break;
             case LOOP:
-                binding.timeLayout.setVisibility(VISIBLE);
                 binding.conditionLayout.setVisibility(GONE);
                 binding.timesLayout.setVisibility(VISIBLE);
                 binding.stopLayout.setVisibility(VISIBLE);
@@ -387,7 +371,6 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                 adapter.setMaxCount(10);
                 break;
             case PARALLEL:
-                binding.timeLayout.setVisibility(GONE);
                 binding.conditionLayout.setVisibility(GONE);
                 binding.timesLayout.setVisibility(GONE);
                 binding.stopLayout.setVisibility(VISIBLE);

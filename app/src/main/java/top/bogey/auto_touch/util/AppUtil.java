@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.WindowManager;
 
 import androidx.annotation.ColorInt;
 
@@ -23,6 +25,7 @@ import java.util.List;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.R;
+import top.bogey.auto_touch.room.bean.Pos;
 
 public class AppUtil {
 
@@ -105,6 +108,23 @@ public class AppUtil {
 
     public static int dp2px(Context context, int dp){
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    public static Point getScreenSize(Context context){
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        manager.getDefaultDisplay().getRealSize(point);
+        return point;
+    }
+
+    public static Pos px2percent(Context context, Pos pos){
+        Point size = getScreenSize(context);
+        return new Pos(Math.round(pos.getX() * 100f / size.x), Math.round(pos.getY() * 100f / size.y));
+    }
+
+    public static Pos percent2px(Context context, Pos pos){
+        Point size = getScreenSize(context);
+        return new Pos(Math.round(size.x * pos.getX() / 100f), Math.round(size.y * pos.getY() / 100f));
     }
 
     public static void gotoAutostartSettingIntent(Activity activity){

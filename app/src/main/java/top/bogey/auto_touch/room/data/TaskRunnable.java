@@ -29,6 +29,7 @@ import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.setting.DebugDialog;
+import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.RunningCallback;
 
 public class TaskRunnable implements Runnable{
@@ -182,12 +183,12 @@ public class TaskRunnable implements Runnable{
                         break;
                     case TEXT:
                         AccessibilityNodeInfo nodeInfo = checkResult.nodeInfo;
-                        if (action.getTime() <= 100)
+                        if (target.getTime() <= 100)
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         else
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
 
-                        sleep(action.getTime());
+                        sleep(target.getTime());
                         break;
                     case IMAGE:
                     case POS:
@@ -195,18 +196,22 @@ public class TaskRunnable implements Runnable{
                         if (target.getType() == NodeType.IMAGE){
                             path = getPath(Collections.singletonList(new Pos(checkResult.rect.centerX(), checkResult.rect.centerY())));
                         } else if (target.getType() == NodeType.POS){
-                            path = getPath(target.getPoses());
+                            List<Pos> poses = new ArrayList<>();
+                            for (Pos pos : target.getPoses()) {
+                                poses.add(AppUtil.percent2px(service.getApplicationContext(), pos));
+                            }
+                            path = getPath(poses);
                         }
                         if (path != null){
-                            service.runGesture(path, action.getTime());
+                            service.runGesture(path, target.getTime());
                         }
 
-                        sleep(action.getTime());
+                        sleep(target.getTime());
                         break;
                     case KEY:
                         service.performGlobalAction(target.getKey() + 1);
 
-                        sleep(action.getTime());
+                        sleep(target.getTime());
                         break;
                     case TASK:
                         if (checkResult.task != null){

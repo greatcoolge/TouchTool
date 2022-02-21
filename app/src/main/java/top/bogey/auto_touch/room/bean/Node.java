@@ -17,6 +17,7 @@ import java.util.List;
 public class Node{
     private NodeType type;
     private String value = "";
+    private int time = 100;
 
     private transient Bitmap bitmap;
 
@@ -27,6 +28,20 @@ public class Node{
     public Node(NodeType type, String value) {
         this.type = type;
         this.value = value;
+    }
+
+    public Node(NodeType type, String value, int time) {
+        this.type = type;
+        this.value = value;
+        this.time = time;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 
     public NodeType getType() {
@@ -156,6 +171,6 @@ public class Node{
     @Override
     @NonNull
     public Node clone(){
-        return new Node(type, value);
+        return new Node(type, value, time);
     }
 }
