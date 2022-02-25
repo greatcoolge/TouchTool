@@ -7,6 +7,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -58,17 +59,8 @@ public class HomeFragment extends Fragment {
             MainAccessibilityService service = MainApplication.getService();
             if (service != null){
                 if (service.binder == null){
-                    AppUtil.showSimpleDialog(requireActivity(), R.string.capture_service_open_tips, new SelectCallback() {
-                        @Override
-                        public void onEnter() {
-                            service.startCaptureService(false, () -> binding.captureServiceToggle.setChecked(service.binder != null));
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            binding.captureServiceToggle.setChecked(false);
-                        }
-                    });
+                    Toast.makeText(requireActivity(), R.string.capture_service_open_tips, Toast.LENGTH_LONG).show();
+                    service.startCaptureService(false, result -> binding.captureServiceToggle.setChecked(result));
                 } else {
                     service.stopCaptureService();
                     binding.captureServiceToggle.setChecked(false);

@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> captureLauncher;
     private PermissionResultCallback callback;
-    private Intent captureIntent;
 
     private TaskPlayerDialog playerDialog;
 
@@ -54,11 +53,8 @@ public class MainActivity extends AppCompatActivity {
         MainApplication.setActivity(this);
 
         captureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == RESULT_OK){
-                captureIntent = result.getData();
-                if (callback != null){
-                    callback.onResult(result.getResultCode(), captureIntent);
-                }
+            if (callback != null){
+                callback.onResult(result.getResultCode(), result.getData());
             }
         });
 
@@ -163,10 +159,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launcherCapture(PermissionResultCallback callback){
-        if (captureIntent != null){
-            callback.onResult(RESULT_OK, captureIntent);
-            return;
-        }
         this.callback = callback;
         MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         captureLauncher.launch(manager.createScreenCaptureIntent());
@@ -176,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         binding.getRoot().post(() -> {
             if (playerDialog != null) playerDialog.dismiss();
             playerDialog = new TaskPlayerDialog(this, pkgName, () -> playerDialog = null);
-            playerDialog.show(Gravity.END | Gravity.CENTER_VERTICAL, 0, 0);
+            playerDialog.show(Gravity.END | Gravity.CENTER_VERTICAL, -20, 0);
         });
     }
 

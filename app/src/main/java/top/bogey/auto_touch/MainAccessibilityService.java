@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRepository;
 import top.bogey.auto_touch.room.data.TaskRunnable;
-import top.bogey.auto_touch.util.CompleteCallback;
+import top.bogey.auto_touch.util.ResultCallback;
 import top.bogey.auto_touch.util.RunningCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
@@ -48,6 +48,7 @@ public class MainAccessibilityService extends AccessibilityService {
 
     private ServiceConnection serviceConnection;
     public CaptureService.CaptureBinder binder;
+    private ResultCallback resultCallback;
 
     public MainAccessibilityService() {
         findService = Executors.newFixedThreadPool(4);
@@ -173,13 +174,13 @@ public class MainAccessibilityService extends AccessibilityService {
         }
     }
 
-    public void startCaptureService(boolean moveBack, CompleteCallback callback){
+    public void startCaptureService(boolean moveBack, ResultCallback callback){
         if (binder == null){
+            resultCallback = callback;
             serviceConnection = new ServiceConnection() {
                 @Override
                 public void onServiceConnected(ComponentName name, IBinder service) {
                     binder = (CaptureService.CaptureBinder) service;
-                    if (callback != null) callback.onComplete();
                 }
 
                 @Override
@@ -191,7 +192,7 @@ public class MainAccessibilityService extends AccessibilityService {
             intent.putExtra("MoveBack", moveBack);
             bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         } else {
-            if (callback != null) callback.onComplete();
+            if (callback != null) callback.onResult(true);
         }
     }
 
@@ -201,6 +202,15 @@ public class MainAccessibilityService extends AccessibilityService {
             stopService(new Intent(this, CaptureService.class));
             serviceConnection = null;
             binder = null;
+        }
+    }
+
+    public void callCaptureServiceResult(boolean result){
+        if (!result){
+            stopCaptureService();
+        }
+        if (resultCallback != null){
+            resultCallback.onResult(result);
         }
     }
 

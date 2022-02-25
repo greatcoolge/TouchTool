@@ -328,7 +328,9 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                             break;
                         case NUMBER:
                             int i = Integer.parseInt(stopText.toString());
-                            i = Math.min(i, nodes.size());
+                            if (mode == ActionMode.PARALLEL){
+                                i = Math.min(i, nodes.size());
+                            }
                             stop.setNumber(i);
                             break;
                         case TEXT:

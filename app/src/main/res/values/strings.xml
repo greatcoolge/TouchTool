@@ -14,7 +14,7 @@
     <string name="cancel">取消</string>
 
     <string name="common_name">通用</string>
-    <string name="common_package_name">configs.common</string>
+    <string name="common_package_name" translatable="false">configs.common</string>
 
     <string name="service_opened">服务已开启</string>
     <string name="service_closed">服务已关闭</string>
@@ -22,7 +22,8 @@
 
     <string name="capture_service_opened">录屏已开启</string>
     <string name="capture_service_closed">录屏已关闭</string>
-    <string name="capture_service_open_tips">需要授予屏幕录制权限才能使用点击图片的能力，但是会增加耗电量，建议在需要的时候开启。</string>
+    <string name="capture_service_open_tips">需要授予屏幕录制权限才能使用检测图片的能力</string>
+    <string name="check_image">当前任务需要检测图片，请开启屏幕录制</string>
 
     <string name="auto_start">自启动</string>
     <string name="auto_start_tips">开启自启动权限使服务在后台稳定运行</string>

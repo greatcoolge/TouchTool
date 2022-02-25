@@ -5,12 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import top.bogey.auto_touch.CaptureService;
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
+import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.util.SelectCallback;
 
 public class ImagePicker extends NodePicker{
@@ -38,7 +40,16 @@ public class ImagePicker extends NodePicker{
         super.show(gravity, x, y);
         MainAccessibilityService service = MainApplication.getService();
         if (service != null){
-            service.startCaptureService(true, () -> binder = service.binder);
+            if (service.binder == null){
+                Toast.makeText(context, R.string.check_image, Toast.LENGTH_LONG).show();
+                service.startCaptureService(true, result -> {
+                    if (result){
+                        binder = service.binder;
+                    }
+                });
+            } else {
+                binder = service.binder;
+            }
         }
     }
 

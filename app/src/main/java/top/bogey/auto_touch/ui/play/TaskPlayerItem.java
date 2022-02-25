@@ -4,15 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
+import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentPlayItemBinding;
+import top.bogey.auto_touch.room.bean.Action;
+import top.bogey.auto_touch.room.bean.Node;
+import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.data.TaskRunnable;
 import top.bogey.auto_touch.util.AppUtil;
@@ -34,32 +41,65 @@ public class TaskPlayerItem extends FrameLayout {
 
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null && service.isEnable()){
-                if (playing){
-                    if (taskRunnable != null && taskRunnable.isRunning()){
-                        taskRunnable.stop();
+            // 录屏服务没开启，需要检查点击图片的动作
+            if (service.binder == null){
+                List<Node> nodes = new ArrayList<>();
+                List<Action> actions = newTask.getActions();
+                for (Action action : actions) {
+                    nodes.addAll(action.getTargets());
+                    nodes.add(action.getCondition());
+                    nodes.add(action.getStop());
+                }
+                boolean flag = false;
+                for (Node node : nodes) {
+                    if (node.getType() == NodeType.IMAGE){
+                        flag = true;
+                        break;
                     }
-                    playing = false;
-                } else {
-                    taskRunnable = service.runTask(task, new RunningCallback() {
-                        @Override
-                        public void onResult(boolean result) {
-                            playing = false;
-                            refreshProgress(0);
-                        }
-
-                        @Override
-                        public void onProgress(int percent) {
-                            if (playing){
-                                refreshProgress(percent);
-                            }
+                }
+                if (flag){
+                    Toast.makeText(context, R.string.check_image, Toast.LENGTH_LONG).show();
+                    service.startCaptureService(true, result -> {
+                        if (result){
+                            startPlay();
                         }
                     });
-                    playing = true;
+                } else {
+                    startPlay();
                 }
-                refreshProgress(0);
+            } else {
+                startPlay();
             }
         });
+    }
+
+    private void startPlay(){
+        MainAccessibilityService service = MainApplication.getService();
+        if (service != null && service.isEnable()){
+            if (playing){
+                if (taskRunnable != null && taskRunnable.isRunning()){
+                    taskRunnable.stop();
+                }
+                playing = false;
+            } else {
+                taskRunnable = service.runTask(task, new RunningCallback() {
+                    @Override
+                    public void onResult(boolean result) {
+                        playing = false;
+                        refreshProgress(0);
+                    }
+
+                    @Override
+                    public void onProgress(int percent) {
+                        if (playing){
+                            refreshProgress(percent);
+                        }
+                    }
+                });
+                playing = true;
+            }
+            refreshProgress(0);
+        }
     }
 
     public void setTask(Task task){

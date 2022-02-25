@@ -1,6 +1,7 @@
 package top.bogey.auto_touch;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -52,12 +53,18 @@ public class CaptureService extends Service {
             MainActivity activity = MainApplication.getActivity();
             if (activity != null){
                 activity.launcherCapture((code, data) -> {
-                    MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-                    projection = manager.getMediaProjection(code, data);
-                    setVirtualDisplay();
-                    boolean moveBack = intent.getBooleanExtra("MoveBack", false);
-                    if (moveBack){
-                        activity.moveTaskToBack(true);
+                    MainAccessibilityService service = MainApplication.getService();
+                    if (code == Activity.RESULT_OK){
+                        MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+                        projection = manager.getMediaProjection(code, data);
+                        setVirtualDisplay();
+                        boolean moveBack = intent.getBooleanExtra("MoveBack", false);
+                        if (moveBack){
+                            activity.moveTaskToBack(true);
+                        }
+                        service.callCaptureServiceResult(true);
+                    } else {
+                        service.callCaptureServiceResult(false);
                     }
                 });
             }

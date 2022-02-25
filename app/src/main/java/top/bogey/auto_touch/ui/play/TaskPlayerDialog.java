@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.enums.SidePattern;
+import com.lzf.easyfloat.utils.DisplayUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +64,10 @@ public class TaskPlayerDialog extends FrameLayout implements NodePickerInterface
                 .setLayout(this)
                 .setSidePattern(SidePattern.RESULT_HORIZONTAL)
                 .setShowPattern(ShowPattern.ALL_TIME)
+                .setBorder(20,
+                        -DisplayUtils.INSTANCE.getStatusBarHeight(getContext()),
+                        DisplayUtils.INSTANCE.getScreenWidth(getContext()) - 20,
+                        DisplayUtils.INSTANCE.getScreenHeight(getContext()))
                 .setTag(AppUtil.getIdentityCode(this))
                 .setGravity(gravity, x, y)
                 .show();

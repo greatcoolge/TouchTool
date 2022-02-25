@@ -130,7 +130,7 @@
             android:inputType="number"
             android:textColor="?attr/colorSecondary"
             android:textSize="14sp"
-            android:hint="@string/ms"
+            android:hint="@string/time"
             android:textColorHint="@color/grey_500"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/target_picker"
