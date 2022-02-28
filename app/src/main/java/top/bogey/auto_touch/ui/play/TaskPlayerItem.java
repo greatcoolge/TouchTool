@@ -52,7 +52,7 @@ public class TaskPlayerItem extends FrameLayout {
                 }
                 boolean flag = false;
                 for (Node node : nodes) {
-                    if (node.getType() == NodeType.IMAGE){
+                    if (node != null && node.getType() == NodeType.IMAGE){
                         flag = true;
                         break;
                     }
