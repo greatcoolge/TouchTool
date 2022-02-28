@@ -1,1 +1,93 @@
-[{"actions":[{"actionMode":"LOOP","enable":true,"stop":{"type":"NUMBER","value":"1"},"targets":[{"type":"TEXT","value":"跳过"},{"type":"DELAY","value":"500"}],"time":100,"times":20,"title":""}],"groupId":0,"id":"15e41284-d9f5-43c2-86de-e2ce0c741340","pkgName":"configs.common","taskStatus":"AUTO","title":"跳过"},{"actions":[{"actionMode":"LOOP","enable":true,"stop":{"type":"NUMBER","value":"1"},"targets":[{"type":"TASK","value":"{\"id\":\"5006e2ea-c511-4c3d-a0a9-0e47635bd811\",\"title\":\"青少年\"}"},{"type":"DELAY","value":"1000"}],"time":100,"times":50,"title":""}],"groupId":0,"id":"14eba2e6-48ce-423a-99ce-22350e410ee4","pkgName":"configs.common","taskStatus":"AUTO","title":"自动青少年"},{"actions":[{"actionMode":"CONDITION","condition":{"type":"TEXT","value":"青少年"},"enable":true,"targets":[{"type":"TEXT","value":"知道了"}],"time":100,"times":1,"title":""}],"groupId":0,"id":"5006e2ea-c511-4c3d-a0a9-0e47635bd811","pkgName":"configs.common","taskStatus":"CLOSED","title":"青少年"},{"actions":[{"actionMode":"LOOP","enable":true,"stop":{"type":"NUMBER","value":"1"},"targets":[{"type":"TEXT","value":"继续安装"},{"type":"DELAY","value":"100"}],"time":100,"times":100,"title":""}],"groupId":0,"id":"ae2a17fc-e1b2-4e0d-8082-b6fd180bd11b","pkgName":"com.miui.packageinstaller","taskStatus":"CLOSED","title":"继续安装"},{"actions":[{"actionMode":"LOOP","enable":true,"stop":{"type":"NUMBER","value":"1"},"targets":[{"type":"TEXT","value":"“安装”"},{"type":"DELAY","value":"100"}],"time":100,"times":100,"title":""}],"groupId":0,"id":"86485324-bd3c-4d7e-8df9-c17cd1433a9e","pkgName":"com.miui.packageinstaller","taskStatus":"CLOSED","title":"安装"},{"actions":[{"actionMode":"CONDITION","condition":{"type":"NULL","value":""},"enable":true,"targets":[{"type":"DELAY","value":"1000"}],"time":100,"times":1,"title":""},{"actionMode":"PARALLEL","enable":true,"stop":{"type":"NUMBER","value":"1"},"targets":[{"type":"TASK","value":"{\"id\":\"ae2a17fc-e1b2-4e0d-8082-b6fd180bd11b\",\"title\":\"继续安装\"}"},{"type":"TASK","value":"{\"id\":\"86485324-bd3c-4d7e-8df9-c17cd1433a9e\",\"title\":\"安装\"}"}],"time":100,"times":100,"title":""},{"actionMode":"LOOP","enable":true,"stop":{"type":"NUMBER","value":"1"},"targets":[{"type":"TEXT","value":"完成"},{"type":"DELAY","value":"500"}],"time":100,"times":100,"title":""}],"groupId":0,"id":"ed88eb1a-0abb-445f-b0ea-ef95f70112d3","pkgName":"com.miui.packageinstaller","taskStatus":"AUTO","title":"自动安装"}]
+[
+	{
+		"actions": [
+			{
+				"actionMode": "CONDITION",
+				"condition": {
+					"time": 0,
+					"type": "TEXT",
+					"value": "青少年"
+				},
+				"enable": true,
+				"targets": [
+					{
+						"time": 100,
+						"type": "TEXT",
+						"value": "知道了"
+					}
+				],
+				"times": 1,
+				"title": ""
+			}
+		],
+		"groupId": 0,
+		"id": "1f3a40ed-689a-47b4-a51d-74c2594db034",
+		"pkgName": "configs.common",
+		"taskStatus": "CLOSED",
+		"title": "青少年"
+	},
+	{
+		"actions": [
+			{
+				"actionMode": "LOOP",
+				"enable": true,
+				"stop": {
+					"time": 0,
+					"type": "NUMBER",
+					"value": "1"
+				},
+				"targets": [
+					{
+						"time": 100,
+						"type": "DELAY",
+						"value": "100"
+					},
+					{
+						"time": 100,
+						"type": "TEXT",
+						"value": "跳过"
+					}
+				],
+				"times": 30,
+				"title": ""
+			}
+		],
+		"groupId": 3,
+		"id": "446e8de1-61e0-441d-9914-e4c726e34f85",
+		"pkgName": "configs.common",
+		"taskStatus": "AUTO",
+		"title": "跳过"
+	},
+	{
+		"actions": [
+			{
+				"actionMode": "LOOP",
+				"enable": true,
+				"stop": {
+					"time": 0,
+					"type": "NUMBER",
+					"value": "1"
+				},
+				"targets": [
+					{
+						"time": 100,
+						"type": "TASK",
+						"value": "{\"id\":\"1f3a40ed-689a-47b4-a51d-74c2594db034\",\"title\":\"青少年\"}"
+					},
+					{
+						"time": 100,
+						"type": "DELAY",
+						"value": "1000"
+					}
+				],
+				"times": 10,
+				"title": ""
+			}
+		],
+		"groupId": 3,
+		"id": "eb779105-d27b-449a-b7bd-c14693d00d4d",
+		"pkgName": "configs.common",
+		"taskStatus": "AUTO",
+		"title": "自动青少年"
+	}
+]
