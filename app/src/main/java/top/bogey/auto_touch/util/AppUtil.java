@@ -18,6 +18,8 @@ import android.view.WindowManager;
 
 import androidx.annotation.ColorInt;
 
+import com.lzf.easyfloat.utils.DisplayUtils;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -110,10 +112,7 @@ public class AppUtil {
     }
 
     public static Point getScreenSize(Context context){
-        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Point point = new Point();
-        manager.getDefaultDisplay().getRealSize(point);
-        return point;
+        return new Point(DisplayUtils.INSTANCE.getScreenWidth(context), DisplayUtils.INSTANCE.getScreenHeight(context));
     }
 
     public static Pos px2percent(Context context, Pos pos){
