@@ -24,7 +24,6 @@ public class MainViewModel extends AndroidViewModel {
     private final List<ApplicationInfo> allApps = new ArrayList<>();
     private final TaskRepository repository;
 
-
     public MainViewModel(Application application){
         super(application);
         repository = new TaskRepository(application);

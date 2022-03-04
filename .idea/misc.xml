@@ -53,9 +53,9 @@
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_action_edit_picker.xml" value="0.33559782608695654" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_debug.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_debug_item.xml" value="0.5" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_bg.xml" value="0.5" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_bg.xml" value="0.25" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_image.xml" value="0.75" />
-        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_pos.xml" value="2.0" />
+        <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_pos.xml" value="0.5" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_task.xml" value="0.25" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_picker_word.xml" value="1.25" />
         <entry key="..\:/Idea/AutoTouch/app/src/main/res/layout/float_fragment_play.xml" value="0.9" />
