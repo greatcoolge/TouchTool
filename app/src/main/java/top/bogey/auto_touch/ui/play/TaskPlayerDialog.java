@@ -8,22 +8,20 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
-import com.lzf.easyfloat.EasyFloat;
-import com.lzf.easyfloat.enums.ShowPattern;
-import com.lzf.easyfloat.enums.SidePattern;
-import com.lzf.easyfloat.utils.DisplayUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import top.bogey.auto_touch.MainApplication;
+import top.bogey.auto_touch.databinding.FloatFragmentPlayBinding;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.room.data.TaskRepository;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
+import top.bogey.auto_touch.ui.easy_float.FloatGravity;
+import top.bogey.auto_touch.ui.easy_float.SidePattern;
 import top.bogey.auto_touch.ui.picker.NodePickerInterface;
-import top.bogey.auto_touch.databinding.FloatFragmentPlayBinding;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.CompleteCallback;
 
@@ -59,18 +57,18 @@ public class TaskPlayerDialog extends FrameLayout implements NodePickerInterface
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
+    public void show(int x, int y) {
         EasyFloat.with(MainApplication.getActivity())
                 .setLayout(this)
-                .setSidePattern(SidePattern.RESULT_HORIZONTAL)
-                .setShowPattern(ShowPattern.ALL_TIME)
-                .setBorder(20,
-                        -DisplayUtils.INSTANCE.getStatusBarHeight(getContext()),
-                        DisplayUtils.INSTANCE.getScreenWidth(getContext()) - 20,
-                        DisplayUtils.INSTANCE.getScreenHeight(getContext()))
+                .setSidePattern(SidePattern.HORIZONTAL)
+                .setGravity(FloatGravity.RIGHT_CENTER, x, y)
+                .setBorder(20, 20, 0, 0)
                 .setTag(AppUtil.getIdentityCode(this))
-                .setGravity(gravity, x, y)
                 .show();
+    }
+
+    public void show(){
+        show(0, 0);
     }
 
     @Override

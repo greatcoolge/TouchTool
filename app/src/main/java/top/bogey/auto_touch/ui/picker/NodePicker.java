@@ -7,10 +7,8 @@ import android.view.View;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
-import com.lzf.easyfloat.EasyFloat;
-import com.lzf.easyfloat.enums.ShowPattern;
-
 import top.bogey.auto_touch.MainApplication;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.util.AppUtil;
 
 public class NodePicker implements NodePickerInterface {
@@ -18,33 +16,30 @@ public class NodePicker implements NodePickerInterface {
     protected View layout;
 
     protected PickerCallback pickerCallback;
-    protected FloatCallback floatCallback;
+    protected FloatCallbackImpl floatCallbackImpl;
 
     protected NodePicker(@NonNull Context context, @LayoutRes int layoutId, PickerCallback pickerCallback) {
         this.context = context;
         layout = LayoutInflater.from(context).inflate(layoutId, null);
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatPickerShowCallback();
+        floatCallbackImpl = new FloatPickerShowCallback();
     }
 
     protected NodePicker(Context context, View layout, PickerCallback pickerCallback) {
         this.context = context;
         this.layout = layout;
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatPickerShowCallback();
+        floatCallbackImpl = new FloatPickerShowCallback();
     }
 
     @Override
-    public void show(int gravity, int x, int y){
+    public void show(int x, int y){
         EasyFloat.with(MainApplication.getActivity())
                 .setLayout(layout)
-                .setShowPattern(ShowPattern.ALL_TIME)
                 .setTag(AppUtil.getIdentityCode(this))
                 .setDragEnable(false)
-                .setImmersionStatusBar(true)
-                .setGravity(gravity, x, y)
-                .setMatchParent(true, true)
-                .registerCallbacks(floatCallback)
+                .setMatch(true, true)
+                .setCallback(floatCallbackImpl)
                 .setAnimator(null)
                 .show();
     }

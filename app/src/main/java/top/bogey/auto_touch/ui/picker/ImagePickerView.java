@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.SelectCallback;
@@ -66,6 +67,13 @@ public class ImagePickerView extends View {
     public ImagePickerView(Context context, SelectCallback callback) {
         this(context);
         this.callback = callback;
+    }
+
+    public Rect getMarkArea(){
+        int realStatusBarHeight = AppUtil.getRealStatusBarHeight(MainApplication.getActivity());
+        markArea.top += realStatusBarHeight;
+        markArea.bottom += realStatusBarHeight;
+        return markArea;
     }
 
     @Override

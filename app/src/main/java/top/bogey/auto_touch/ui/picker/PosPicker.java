@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -32,7 +31,7 @@ public class PosPicker extends NodePicker{
             }
             dismiss();
         });
-        floatCallback = new TouchCallback();
+        floatCallbackImpl = new TouchCallback();
         if (poses != null){
             for (Pos pos : poses) {
                 posList.add(AppUtil.percent2px(context, pos));
@@ -41,8 +40,8 @@ public class PosPicker extends NodePicker{
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
-        super.show(gravity, x, y);
+    public void show(int x, int y) {
+        super.show(x, y);
         for (Pos pos : posList) {
             addPosView(pos.getX(), pos.getY());
         }
@@ -74,18 +73,18 @@ public class PosPicker extends NodePicker{
         });
         posViews.add(posPickerView);
         posPickerView.setIndex(posViews.size());
-        posPickerView.show(Gravity.START | Gravity.TOP, x, y);
+        posPickerView.show(x, y);
     }
 
-    private class TouchCallback extends FloatPickerShowCallback{
+    private class TouchCallback extends FloatPickerShowCallback {
         private boolean drag;
         private float lastX, lastY;
 
         @Override
-        public void touchEvent(@NonNull View view, @NonNull MotionEvent motionEvent) {
-            super.touchEvent(view, motionEvent);
-            float rawX = motionEvent.getRawX();
-            float rawY = motionEvent.getRawY();
+        public void onTouch(MotionEvent motionEvent) {
+            super.onTouch(motionEvent);
+            float rawX = motionEvent.getX();
+            float rawY = motionEvent.getY();
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     drag = false;
@@ -110,8 +109,8 @@ public class PosPicker extends NodePicker{
         }
 
         @Override
-        public void dismiss() {
-            super.dismiss();
+        public void onDismiss() {
+            super.onDismiss();
             for (PosPickerView posView : posViews) {
                 posView.dismiss();
             }

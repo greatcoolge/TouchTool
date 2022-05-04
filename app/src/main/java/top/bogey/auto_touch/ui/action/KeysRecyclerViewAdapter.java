@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -219,7 +218,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             targetEdit.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus){
                     InputMethodManager manager = (InputMethodManager) parent.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    manager.showSoftInput(targetEdit, InputMethodManager.SHOW_FORCED);
+                    manager.showSoftInput(targetEdit, 0);
                 }
             });
 
@@ -324,7 +323,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             String key = wordPicker.getKey();
                             node.setText(key);
                             targetEdit.setText(key);
-                        }).show(Gravity.START | Gravity.TOP, 0, 0);
+                        }).show(0, 0);
                         break;
                     case IMAGE:
                         new ImagePicker(parent.getContext(), nodePicker -> {
@@ -332,7 +331,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             Bitmap bitmap = imagePicker.getBitmap();
                             node.setImage(bitmap);
                             targetImage.setImageBitmap(bitmap);
-                        }).show(Gravity.START | Gravity.TOP, 0, 0);
+                        }).show(0, 0);
                         break;
                     case POS:
                         new PosPicker(parent.getContext(), nodePicker -> {
@@ -340,7 +339,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             List<Pos> posList = posPicker.getPosList();
                             node.setPoses(posList);
                             targetEdit.setText(node.getText());
-                        }, node.getPoses()).show(Gravity.START | Gravity.TOP, 0, 0);
+                        }, node.getPoses()).show(0, 0);
                         break;
                 }
             });

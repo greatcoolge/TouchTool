@@ -3,7 +3,6 @@ package top.bogey.auto_touch.ui.setting;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewParent;
@@ -11,12 +10,11 @@ import android.widget.FrameLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.lzf.easyfloat.EasyFloat;
-import com.lzf.easyfloat.enums.ShowPattern;
-
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.databinding.FloatFragmentDebugBinding;
-import top.bogey.auto_touch.ui.picker.FloatCallback;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
+import top.bogey.auto_touch.ui.easy_float.FloatGravity;
+import top.bogey.auto_touch.ui.picker.FloatCallbackImpl;
 import top.bogey.auto_touch.ui.picker.NodePickerInterface;
 
 @SuppressLint("ViewConstructor")
@@ -33,7 +31,7 @@ public class DebugDialog extends FrameLayout implements NodePickerInterface {
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
+    public void show(int x, int y) {
         show();
     }
 
@@ -41,11 +39,10 @@ public class DebugDialog extends FrameLayout implements NodePickerInterface {
         initView();
         EasyFloat.with(MainApplication.getActivity())
                 .setLayout(this)
-                .setShowPattern(ShowPattern.ALL_TIME)
                 .setTag(DebugDialog.class.getCanonicalName())
                 .setDragEnable(true)
-                .setGravity(Gravity.CENTER, 0, 0)
-                .registerCallbacks(new FloatCallback())
+                .setGravity(FloatGravity.CENTER, 0, 0)
+                .setCallback(new FloatCallbackImpl())
                 .hasEditText(true)
                 .setAnimator(null)
                 .show();

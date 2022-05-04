@@ -7,8 +7,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
 
-import com.lzf.easyfloat.EasyFloat;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +26,7 @@ import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.ui.setting.DebugDialog;
 import top.bogey.auto_touch.util.AppUtil;
 import top.bogey.auto_touch.util.RunningCallback;
@@ -56,7 +55,7 @@ public class TaskRunnable implements Runnable{
         allPercent = getAllPercent(task);
 
         if (MainAccessibilityService.isShowDebugTips(service)){
-            View floatView = EasyFloat.getFloatView(DebugDialog.class.getCanonicalName());
+            View floatView = EasyFloat.getView(DebugDialog.class.getCanonicalName());
             if (floatView != null){
                 debugDialog = (DebugDialog) floatView;
             }

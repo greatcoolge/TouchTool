@@ -79,8 +79,8 @@ public class TasksFragment extends Fragment {
                 viewModel.saveTask(task);
                 break;
             case R.id.record:
-                new TaskRecordDialog(requireContext(), task, null).show();
                 AppUtil.openApp(requireContext(), PKG_NAME);
+                new TaskRecordDialog(requireContext(), task, null).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

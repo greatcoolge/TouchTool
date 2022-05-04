@@ -1,33 +1,28 @@
 package top.bogey.auto_touch.ui.picker;
 
-import android.view.View;
-
-import androidx.annotation.Nullable;
-
-import com.lzf.easyfloat.EasyFloat;
-
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.ui.record.TaskRecordDialog;
 
 public class FloatActionEditShowCallback extends FloatShowCallback{
     @Override
-    public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
-        if (b){
-            boolean taskRecordExist = EasyFloat.getFloatView(TaskRecordDialog.class.getCanonicalName()) != null;
+    public void onCreate(boolean succeed) {
+        if (succeed){
+            boolean taskRecordExist = EasyFloat.getView(TaskRecordDialog.class.getCanonicalName()) != null;
             if (taskRecordExist){
                 EasyFloat.hide(TaskRecordDialog.class.getCanonicalName());
             } else {
-                super.createdResult(true, s, view);
+                super.onCreate(true);
             }
         }
     }
 
     @Override
-    public void dismiss() {
-        boolean taskRecordExist = EasyFloat.getFloatView(TaskRecordDialog.class.getCanonicalName()) != null;
+    public void onDismiss() {
+        boolean taskRecordExist = EasyFloat.getView(TaskRecordDialog.class.getCanonicalName()) != null;
         if (taskRecordExist){
             EasyFloat.show(TaskRecordDialog.class.getCanonicalName());
         } else {
-            super.dismiss();
+            super.onDismiss();
         }
     }
 }

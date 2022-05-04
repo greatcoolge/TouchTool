@@ -9,16 +9,17 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.ColorInt;
-
-import com.lzf.easyfloat.utils.DisplayUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -111,8 +112,75 @@ public class AppUtil {
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 
+    public static boolean isPortrait(Context context){
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        return manager.getDefaultDisplay().getRotation() % 2 == Surface.ROTATION_0;
+    }
+
     public static Point getScreenSize(Context context){
-        return new Point(DisplayUtils.INSTANCE.getScreenWidth(context), DisplayUtils.INSTANCE.getScreenHeight(context));
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        manager.getDefaultDisplay().getRealSize(point);
+        if (isPortrait(context)){
+            if (point.x > point.y) return new Point(point.y, point.x);
+        } else {
+            if (point.y > point.x) return new Point(point.y, point.x);
+        }
+        return point;
+    }
+
+    public static Rect getShowSize(Context context){
+        Rect showRect = new Rect();
+        Point size = getScreenSize(context);
+        int navigationBarHeight = getRealNavigationBarHeight(context);
+        if (isPortrait(context)){
+            showRect.set(0, 0, size.x, size.y - navigationBarHeight);
+        } else {
+            showRect.set(0, 0, size.x - navigationBarHeight, size.y);
+        }
+        return showRect;
+    }
+
+    public static boolean hasNavigationBar(Context context){
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point real = new Point();
+        manager.getDefaultDisplay().getRealSize(real);
+        Point curr = new Point();
+        manager.getDefaultDisplay().getSize(curr);
+        if (isPortrait(context)){
+            if (curr.y + getNavigationBarHeight(context) > real.y) return false;
+            return real.y - curr.y > 0;
+        } else {
+            if (curr.x + getNavigationBarHeight(context) > real.x) return false;
+            return real.x - curr.x > 0;
+        }
+    }
+
+    public static int getNavigationBarHeight(Context context){
+        int id = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (id > 0) return context.getResources().getDimensionPixelSize(id);
+        return 0;
+    }
+
+    public static int getRealNavigationBarHeight(Context context){
+        if (hasNavigationBar(context)) return getNavigationBarHeight(context);
+        return 0;
+    }
+
+    public static boolean hasStatusBar(Activity activity){
+        WindowManager.LayoutParams attributes = activity.getWindow().getAttributes();
+        return (attributes.flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0;
+    }
+
+    public static int getStatusBarHeight(Context context){
+        int id = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (id > 0) return context.getResources().getDimensionPixelSize(id);
+        return 0;
+    }
+
+    public static int getRealStatusBarHeight(Activity activity){
+        if (hasStatusBar(activity)) return getStatusBarHeight(activity);
+        return 0;
     }
 
     public static Pos px2percent(Context context, Pos pos){

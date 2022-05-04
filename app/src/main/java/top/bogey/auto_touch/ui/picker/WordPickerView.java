@@ -10,15 +10,14 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
-import com.lzf.easyfloat.EasyFloat;
-import com.lzf.easyfloat.enums.ShowPattern;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentPickerWordBinding;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
+import top.bogey.auto_touch.ui.easy_float.FloatGravity;
 import top.bogey.auto_touch.util.AppUtil;
 
 @SuppressLint("ViewConstructor")
@@ -36,16 +35,14 @@ public class WordPickerView extends FrameLayout implements NodePickerInterface {
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
+    public void show(int x, int y) {
         EasyFloat.with(MainApplication.getActivity())
                 .setLayout(this)
-                .setShowPattern(ShowPattern.ALL_TIME)
                 .setTag(AppUtil.getIdentityCode(this))
                 .setDragEnable(false)
-                .setImmersionStatusBar(true)
-                .setGravity(gravity, x, y)
+                .setGravity(FloatGravity.TOP_LEFT, x, y)
                 .setAnimator(null)
-                .registerCallbacks(new FloatClickCallback(() -> {
+                .setCallback(new FloatClickCallback(() -> {
                     if (pickerCallback != null){
                         pickerCallback.call(this);
                     }
@@ -54,7 +51,7 @@ public class WordPickerView extends FrameLayout implements NodePickerInterface {
     }
 
     public void show(Rect rect, String key){
-        show(Gravity.START | Gravity.TOP, rect.left, rect.top);
+        show(rect.left, rect.top);
         init(rect, key, false);
     }
 

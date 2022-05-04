@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.gson.Gson;
-import com.lzf.easyfloat.EasyFloat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +26,7 @@ import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FragmentSettingBinding;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 
 public class SettingFragment extends Fragment {
     private static final String SAVE_FILE = "Share.txt";
@@ -107,7 +107,7 @@ public class SettingFragment extends Fragment {
 
     private void showDebugView(boolean show){
         if (show){
-            if (EasyFloat.getFloatView(DebugDialog.class.getCanonicalName()) == null){
+            if (EasyFloat.getView(DebugDialog.class.getCanonicalName()) == null){
                 new DebugDialog(requireContext()).show();
             }
         } else {

@@ -2,17 +2,14 @@ package top.bogey.auto_touch.ui.picker;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.view.View;
-
-import androidx.annotation.Nullable;
 
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
 
-public class FloatShowCallback extends FloatCallback{
+public class FloatShowCallback extends FloatCallbackImpl {
     @Override
-    public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
-        if (b){
+    public void onCreate(boolean succeed) {
+        if (succeed){
             MainActivity activity = MainApplication.getActivity();
             if (activity != null){
                 activity.moveTaskToBack(true);
@@ -21,7 +18,7 @@ public class FloatShowCallback extends FloatCallback{
     }
 
     @Override
-    public void dismiss() {
+    public void onDismiss() {
         MainActivity activity = MainApplication.getActivity();
         if (activity != null){
             ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);

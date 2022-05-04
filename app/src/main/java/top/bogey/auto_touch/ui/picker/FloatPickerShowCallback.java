@@ -1,19 +1,14 @@
 package top.bogey.auto_touch.ui.picker;
 
-import android.view.View;
-
-import androidx.annotation.Nullable;
-
-import com.lzf.easyfloat.EasyFloat;
-
 import top.bogey.auto_touch.ui.action.FloatActionEdit;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.ui.record.TaskRecordDialog;
 
-public class FloatPickerShowCallback extends FloatCallback{
+public class FloatPickerShowCallback extends FloatCallbackImpl {
     @Override
-    public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
-        if (b){
-            boolean actionEditExist = EasyFloat.getFloatView(FloatActionEdit.class.getCanonicalName()) != null;
+    public void onCreate(boolean succeed) {
+        if (succeed){
+            boolean actionEditExist = EasyFloat.getView(FloatActionEdit.class.getCanonicalName()) != null;
             if (actionEditExist){
                 EasyFloat.hide(FloatActionEdit.class.getCanonicalName());
             } else {
@@ -23,8 +18,8 @@ public class FloatPickerShowCallback extends FloatCallback{
     }
 
     @Override
-    public void dismiss() {
-        boolean actionEditExist = EasyFloat.getFloatView(FloatActionEdit.class.getCanonicalName()) != null;
+    public void onDismiss() {
+        boolean actionEditExist = EasyFloat.getView(FloatActionEdit.class.getCanonicalName()) != null;
         if (actionEditExist){
             EasyFloat.show(FloatActionEdit.class.getCanonicalName());
         } else {

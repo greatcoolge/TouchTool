@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import top.bogey.auto_touch.util.CompleteCallback;
 
-public class FloatClickCallback extends FloatCallback{
+public class FloatClickCallback extends FloatCallbackImpl {
     private final CompleteCallback clickCallback;
     private boolean drag;
     private float lastX, lastY;
@@ -17,8 +17,8 @@ public class FloatClickCallback extends FloatCallback{
     }
 
     @Override
-    public void touchEvent(@NonNull View view, @NonNull MotionEvent motionEvent) {
-        super.touchEvent(view, motionEvent);
+    public void onTouch(MotionEvent motionEvent) {
+        super.onTouch(motionEvent);
         float rawX = motionEvent.getRawX();
         float rawY = motionEvent.getRawY();
         switch (motionEvent.getAction()) {

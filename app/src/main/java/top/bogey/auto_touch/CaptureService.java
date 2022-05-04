@@ -52,7 +52,7 @@ public class CaptureService extends Service {
         if (projection == null){
             MainActivity activity = MainApplication.getActivity();
             if (activity != null){
-                activity.launcherCapture((code, data) -> {
+                activity.launchCapture((code, data) -> {
                     MainAccessibilityService service = MainApplication.getService();
                     if (code == Activity.RESULT_OK){
                         MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);

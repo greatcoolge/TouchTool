@@ -19,9 +19,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.lzf.easyfloat.EasyFloat;
-import com.lzf.easyfloat.enums.ShowPattern;
-
 import java.util.List;
 
 import top.bogey.auto_touch.MainActivity;
@@ -35,6 +32,9 @@ import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
+import top.bogey.auto_touch.ui.easy_float.FloatGravity;
+import top.bogey.auto_touch.ui.easy_float.SidePattern;
 import top.bogey.auto_touch.ui.picker.FloatActionEditShowCallback;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
 import top.bogey.auto_touch.ui.picker.NodePickerInterface;
@@ -70,24 +70,23 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
+    public void show(int x, int y) {
         MainActivity activity = MainApplication.getActivity();
         if (activity != null){
             initView(activity);
             EasyFloat.with(activity)
                     .setLayout(this)
-                    .setShowPattern(ShowPattern.ALL_TIME)
                     .setTag(FloatActionEdit.class.getCanonicalName())
                     .setDragEnable(true)
-                    .setGravity(gravity, x, y)
-                    .registerCallbacks(new FloatActionEditShowCallback())
+                    .setGravity(FloatGravity.CENTER, x, y)
+                    .setCallback(new FloatActionEditShowCallback())
                     .hasEditText(true)
                     .show();
         }
     }
 
     public void show(){
-        show(Gravity.CENTER, 0, 0);
+        show(0, 0);
     }
 
     @Override
@@ -226,14 +225,14 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                         WordPicker wordPicker = (WordPicker) nodePicker;
                         String key = wordPicker.getKey();
                         binding.conditionEdit.setText(key);
-                    }).show(Gravity.START | Gravity.TOP, 0, 0);
+                    }).show(0, 0);
                     break;
                 case IMAGE:
                     new ImagePicker(getContext(), nodePicker -> {
                         ImagePicker imagePicker = (ImagePicker) nodePicker;
                         Bitmap bitmap = imagePicker.getBitmap();
                         binding.conditionImage.setImageBitmap(bitmap);
-                    }).show(Gravity.START | Gravity.TOP, 0, 0);
+                    }).show(0, 0);
                     break;
             }
         });
@@ -245,14 +244,14 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                         WordPicker wordPicker = (WordPicker) nodePicker;
                         String key = wordPicker.getKey();
                         binding.stopEdit.setText(key);
-                    }).show(Gravity.START | Gravity.TOP, 0, 0);
+                    }).show(0, 0);
                     break;
                 case IMAGE:
                     new ImagePicker(getContext(), nodePicker -> {
                         ImagePicker imagePicker = (ImagePicker) nodePicker;
                         Bitmap bitmap = imagePicker.getBitmap();
                         binding.stopImage.setImageBitmap(bitmap);
-                    }).show(Gravity.START | Gravity.TOP, 0, 0);
+                    }).show(0, 0);
                     break;
             }
         });

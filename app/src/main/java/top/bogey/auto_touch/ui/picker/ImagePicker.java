@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,19 +24,19 @@ public class ImagePicker extends NodePicker{
             @Override
             public void onEnter() {
                 ImagePickerView pickerView = (ImagePickerView) layout;
-                startCapture(pickerView.markArea);
+                startCapture(pickerView.getMarkArea());
                 dismiss();
             }
 
             @Override
             public void onCancel() { }
         });
-        floatCallback = new TouchCallback();
+        floatCallbackImpl = new TouchCallback();
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
-        super.show(gravity, x, y);
+    public void show(int x, int y) {
+        super.show(x, y);
         MainAccessibilityService service = MainApplication.getService();
         if (service != null){
             if (service.binder == null){
@@ -61,18 +60,18 @@ public class ImagePicker extends NodePicker{
         if (binder != null) bitmap = binder.captureImage(rect);
     }
 
-    private class TouchCallback extends FloatPickerShowCallback{
+    private class TouchCallback extends FloatPickerShowCallback {
         @Override
-        public void dismiss() {
-            super.dismiss();
+        public void onDismiss() {
+            super.onDismiss();
             if (pickerCallback != null){
                 pickerCallback.call(ImagePicker.this);
             }
         }
 
         @Override
-        public void touchEvent(@NonNull View view, @NonNull MotionEvent motionEvent) {
-            super.touchEvent(view, motionEvent);
+        public void onTouch(MotionEvent motionEvent) {
+            super.onTouch(motionEvent);
             ImagePickerView pickerView = (ImagePickerView) layout;
             pickerView.onTouch(motionEvent);
         }

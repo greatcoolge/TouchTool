@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
@@ -40,12 +39,12 @@ public class WordPicker extends NodePicker{
             }
             dismiss();
         });
-        floatCallback = new TouchCallback();
+        floatCallbackImpl = new TouchCallback();
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
-        super.show(gravity, x, y);
+    public void show(int x, int y) {
+        super.show(x, y);
         markAll();
     }
 
@@ -184,13 +183,13 @@ public class WordPicker extends NodePicker{
         return size != nodes.size();
     }
 
-    private class TouchCallback extends FloatPickerShowCallback{
+    private class TouchCallback extends FloatPickerShowCallback {
         private boolean drag;
         private float lastX, lastY;
 
         @Override
-        public void touchEvent(@NonNull View view, @NonNull MotionEvent motionEvent) {
-            super.touchEvent(view, motionEvent);
+        public void onTouch(MotionEvent motionEvent) {
+            super.onTouch(motionEvent);
             float rawX = motionEvent.getRawX();
             float rawY = motionEvent.getRawY();
             switch (motionEvent.getAction()) {
@@ -218,8 +217,8 @@ public class WordPicker extends NodePicker{
         }
 
         @Override
-        public void dismiss() {
-            super.dismiss();
+        public void onDismiss() {
+            super.onDismiss();
             if (wordPickerView != null){
                 wordPickerView.dismiss();
             }

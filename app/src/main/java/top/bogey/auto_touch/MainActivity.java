@@ -6,7 +6,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.view.Gravity;
+import android.provider.Settings;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,9 +26,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import top.bogey.auto_touch.databinding.ActivityMainBinding;
 import top.bogey.auto_touch.room.bean.Task;
@@ -41,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> captureLauncher;
-    private PermissionResultCallback callback;
+    private PermissionResultCallback captureCallback;
+
+    private ActivityResultLauncher<Intent> floatLauncher;
+    private PermissionResultCallback floatCallback;
 
     private TaskPlayerDialog playerDialog;
 
@@ -53,8 +58,14 @@ public class MainActivity extends AppCompatActivity {
         MainApplication.setActivity(this);
 
         captureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (callback != null){
-                callback.onResult(result.getResultCode(), result.getData());
+            if (captureCallback != null){
+                captureCallback.onResult(result.getResultCode(), result.getData());
+            }
+        });
+
+        floatLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (floatCallback != null){
+                floatCallback.onResult(result.getResultCode(), result.getData());
             }
         });
 
@@ -158,17 +169,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void launcherCapture(PermissionResultCallback callback){
-        this.callback = callback;
+    public void launchCapture(PermissionResultCallback callback){
+        captureCallback = callback;
         MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         captureLauncher.launch(manager.createScreenCaptureIntent());
+    }
+
+    public void launchFloat(PermissionResultCallback callback){
+        floatCallback = callback;
+        try {
+            Field field = Settings.class.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
+            Intent intent = new Intent(Objects.requireNonNull(field.get(null)).toString());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            floatLauncher.launch(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showPlayView(String pkgName){
         binding.getRoot().post(() -> {
             if (playerDialog != null) playerDialog.dismiss();
             playerDialog = new TaskPlayerDialog(this, pkgName, () -> playerDialog = null);
-            playerDialog.show(Gravity.END | Gravity.CENTER_VERTICAL, -20, 0);
+            playerDialog.show(0, 0);
         });
     }
 

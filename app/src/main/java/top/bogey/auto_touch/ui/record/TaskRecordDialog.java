@@ -2,7 +2,6 @@ package top.bogey.auto_touch.ui.record;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewParent;
@@ -10,9 +9,6 @@ import android.widget.FrameLayout;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.lzf.easyfloat.EasyFloat;
-import com.lzf.easyfloat.enums.ShowPattern;
 
 import java.util.Collections;
 
@@ -25,6 +21,8 @@ import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.ui.action.FloatActionEdit;
+import top.bogey.auto_touch.ui.easy_float.EasyFloat;
+import top.bogey.auto_touch.ui.easy_float.FloatGravity;
 import top.bogey.auto_touch.ui.picker.FloatShowCallback;
 import top.bogey.auto_touch.ui.picker.NodePickerInterface;
 import top.bogey.auto_touch.util.CompleteCallback;
@@ -47,7 +45,7 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
     }
 
     @Override
-    public void show(int gravity, int x, int y) {
+    public void show(int x, int y) {
         show();
     }
 
@@ -57,11 +55,10 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
             initView(activity);
             EasyFloat.with(activity)
                     .setLayout(this)
-                    .setShowPattern(ShowPattern.ALL_TIME)
                     .setTag(TaskRecordDialog.class.getCanonicalName())
                     .setDragEnable(true)
-                    .setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0)
-                    .registerCallbacks(new FloatShowCallback())
+                    .setGravity(FloatGravity.BOTTOM_CENTER, 0, 0)
+                    .setCallback(new FloatShowCallback())
                     .hasEditText(true)
                     .setAnimator(null)
                     .show();
