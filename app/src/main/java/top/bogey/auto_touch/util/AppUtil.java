@@ -16,7 +16,6 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Surface;
-import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.ColorInt;
@@ -129,16 +128,21 @@ public class AppUtil {
         return point;
     }
 
-    public static Rect getShowSize(Context context){
-        Rect showRect = new Rect();
-        Point size = getScreenSize(context);
-        int navigationBarHeight = getRealNavigationBarHeight(context);
+    public static Point getShowSize(Context context){
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        manager.getDefaultDisplay().getSize(point);
         if (isPortrait(context)){
-            showRect.set(0, 0, size.x, size.y - navigationBarHeight);
+            if (point.x > point.y) return new Point(point.y, point.x);
         } else {
-            showRect.set(0, 0, size.x - navigationBarHeight, size.y);
+            if (point.y > point.x) return new Point(point.y, point.x);
         }
-        return showRect;
+        return point;
+    }
+
+    public static Rect getShowArea(Context context){
+        Point size = getShowSize(context);
+        return new Rect(0, 0, size.x, size.y);
     }
 
     public static boolean hasNavigationBar(Context context){

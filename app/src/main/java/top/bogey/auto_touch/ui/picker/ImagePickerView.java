@@ -70,9 +70,10 @@ public class ImagePickerView extends View {
     }
 
     public Rect getMarkArea(){
-        int realStatusBarHeight = AppUtil.getRealStatusBarHeight(MainApplication.getActivity());
-        markArea.top += realStatusBarHeight;
-        markArea.bottom += realStatusBarHeight;
+        int[] locations = new int[2];
+        getLocationOnScreen(locations);
+        markArea.top += locations[1];
+        markArea.bottom += locations[1];
         return markArea;
     }
 

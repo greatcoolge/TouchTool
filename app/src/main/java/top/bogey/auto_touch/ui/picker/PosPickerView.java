@@ -3,6 +3,7 @@ package top.bogey.auto_touch.ui.picker;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -51,11 +52,12 @@ public class PosPickerView extends FrameLayout implements NodePickerInterface {
     }
 
     public int[] getLocation(){
-        int realStatusBarHeight = AppUtil.getRealStatusBarHeight(MainApplication.getActivity());
         int[] location = new int[2];
-        getLocationOnScreen(location);
-        location[0] += offset;
-        location[1] += offset - realStatusBarHeight;
+        WindowManager.LayoutParams params = EasyFloat.getParams(AppUtil.getIdentityCode(this));
+        if (params != null){
+            location[0] += offset + params.x;
+            location[1] += offset + params.y;
+        }
         return location;
     }
 }

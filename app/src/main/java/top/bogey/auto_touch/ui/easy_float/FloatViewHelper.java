@@ -105,7 +105,7 @@ public class FloatViewHelper {
     }
 
     private void initGravity(){
-        Rect showSize = AppUtil.getShowSize(context);
+        Rect showSize = AppUtil.getShowArea(context);
         switch (config.gravity){
             case TOP_LEFT:
                 params.x = showSize.left;

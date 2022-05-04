@@ -19,7 +19,7 @@ class FloatAnimator {
     }
 
     private Animator getAnimator(View view, WindowManager manager, LayoutParams params, SidePattern side, boolean isExit){
-        Rect showRect = AppUtil.getShowSize(view.getContext());
+        Rect showRect = AppUtil.getShowArea(view.getContext());
         int leftDistance = params.x - showRect.left;
         int rightDistance = showRect.right - leftDistance - view.getWidth();
         int topDistance = params.y - showRect.top;

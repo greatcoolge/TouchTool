@@ -90,7 +90,7 @@ class FloatTouchUtils {
     }
 
     private void initValue(){
-        showRect = AppUtil.getShowSize(context);
+        showRect = AppUtil.getShowArea(context);
     }
 
     private void sideAnim(View view, WindowManager manager, LayoutParams params){

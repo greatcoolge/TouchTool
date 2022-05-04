@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
 
 import java.util.HashMap;
 
@@ -55,6 +56,15 @@ public class EasyFloat {
         if (views.containsKey(tag)){
             FloatViewHelper helper = getHelper(tag);
             return helper.getView();
+        }
+        return null;
+    }
+
+    public static LayoutParams getParams(String tag){
+        tag = checkTag(tag);
+        if (views.containsKey(tag)){
+            FloatViewHelper helper = getHelper(tag);
+            return helper.params;
         }
         return null;
     }
