@@ -16,20 +16,20 @@ public class NodePicker implements NodePickerInterface {
     protected View layout;
 
     protected PickerCallback pickerCallback;
-    protected FloatCallbackImpl floatCallbackImpl;
+    protected FloatCallbackImpl floatCallback;
 
     protected NodePicker(@NonNull Context context, @LayoutRes int layoutId, PickerCallback pickerCallback) {
         this.context = context;
         layout = LayoutInflater.from(context).inflate(layoutId, null);
         this.pickerCallback = pickerCallback;
-        floatCallbackImpl = new FloatPickerShowCallback();
+        floatCallback = new FloatPickerShowCallback();
     }
 
     protected NodePicker(Context context, View layout, PickerCallback pickerCallback) {
         this.context = context;
         this.layout = layout;
         this.pickerCallback = pickerCallback;
-        floatCallbackImpl = new FloatPickerShowCallback();
+        floatCallback = new FloatPickerShowCallback();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class NodePicker implements NodePickerInterface {
                 .setTag(AppUtil.getIdentityCode(this))
                 .setDragEnable(false)
                 .setMatch(true, true)
-                .setCallback(floatCallbackImpl)
+                .setCallback(floatCallback)
                 .setAnimator(null)
                 .show();
     }

@@ -132,7 +132,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             modeImage = binding.modeImage;
 
             layout.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 new FloatActionEdit(parent.requireContext(), task, action, () -> {
                     notifyItemChanged(index);
@@ -141,7 +141,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             });
 
             title.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 new FloatActionEdit(parent.requireContext(), task, action, () -> {
                     notifyItemChanged(index);
@@ -167,7 +167,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     if (text != null && text.length() > 0){
                         titleStr = text.toString();
                     }
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     Action action = actions.get(index);
                     action.setTitle(titleStr);
                     notifyItemChanged(index);
@@ -179,7 +179,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             });
 
             enabledToggle.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 action.setEnable(!action.isEnable());
                 refreshSelectState(action.isEnable());
@@ -187,7 +187,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             });
 
             up.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 int newIndex = Math.max(0, index - 1);
                 actions.add(newIndex, actions.remove(index));
                 notifyItemRangeChanged(newIndex, 2);
@@ -195,7 +195,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             });
 
             down.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 int newIndex = Math.min(actions.size() - 1, index + 1);
                 actions.add(newIndex, actions.remove(index));
                 notifyItemRangeChanged(index, 2);
@@ -205,7 +205,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             delete.setOnClickListener(v -> AppUtil.showSimpleDialog(parent.requireActivity(), R.string.delete_action_tips, new SelectCallback() {
                 @Override
                 public void onEnter() {
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     actions.remove(index);
                     notifyItemRemoved(index);
                     if (!actions.isEmpty()){

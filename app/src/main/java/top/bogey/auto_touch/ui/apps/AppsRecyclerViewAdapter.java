@@ -93,7 +93,7 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
             layout = binding.getRoot();
 
             layout.setOnClickListener(view -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 AppInfo info = appsInfo.get(index);
                 NavController controller = Navigation.findNavController(parent.requireActivity(), R.id.con_view);
                 controller.navigate(AppsFragmentDirections.actionAppsFragmentToTasksFragment(info.packageName));

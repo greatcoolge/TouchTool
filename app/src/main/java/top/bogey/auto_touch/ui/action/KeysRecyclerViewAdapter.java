@@ -236,7 +236,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 @Override
                 public void afterTextChanged(Editable s) {
                     Editable text = targetEdit.getText();
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     Node node = nodes.get(index);
                     String value = "";
                     if (text != null && text.length() > 0){
@@ -279,7 +279,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 @Override
                 public void afterTextChanged(Editable s) {
                     Editable text = pressTime.getText();
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     Node node = nodes.get(index);
                     String value = "";
                     if (text != null && text.length() > 0){
@@ -294,7 +294,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             targetSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     Node node = nodes.get(index);
                     SimpleTaskInfo item = adapter.getItem(position);
                     switch (node.getType()) {
@@ -314,7 +314,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             });
 
             targetPicker.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getAbsoluteAdapterPosition();
                 Node node = nodes.get(index);
                 switch (node.getType()) {
                     case TEXT:
@@ -345,7 +345,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
             });
 
             deleteButton.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 nodes.remove(index);
                 notifyItemRemoved(index);
             });
@@ -357,7 +357,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 Editable text = targetEdit.getText();
                 if (text != null && text.length() > 0){
                     int delay = Integer.parseInt(text.toString());
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     Node node = nodes.get(index);
                     node.setDelay(delay * delayScale);
                 }

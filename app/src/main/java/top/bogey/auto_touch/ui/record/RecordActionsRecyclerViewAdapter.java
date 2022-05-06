@@ -83,14 +83,14 @@ public class RecordActionsRecyclerViewAdapter extends RecyclerView.Adapter<Recor
             indexText = binding.numberText;
 
             delete.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 Task task = parent.task;
                 new FloatActionEdit(parent.getContext(), task, action, () -> notifyItemChanged(index)).show();
             });
 
             delete.setOnLongClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 actions.remove(index);
                 notifyItemRemoved(index);
                 return true;

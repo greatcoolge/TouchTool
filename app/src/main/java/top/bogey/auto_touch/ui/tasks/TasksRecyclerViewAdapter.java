@@ -153,7 +153,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
                     Editable text = titleEdit.getText();
                     if (text != null && text.length() > 0){
-                        int index = getAdapterPosition();
+                        int index = getBindingAdapterPosition();
                         Task task = tasks.get(index);
                         task.setTitle(text.toString());
                         notifyItemChanged(index);
@@ -167,7 +167,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
             group.setOnCheckedChangeListener((group, checkedId) -> {
                 int selectIndex = group.indexOfChild(group.findViewById(checkedId));
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 TaskStatus status = TaskStatus.values()[selectIndex];
                 boolean b = task.getTaskStatus() == status;
@@ -176,7 +176,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
 
             delete.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 AppUtil.showSimpleDialog(parent.requireActivity(), parent.requireContext().getString(R.string.delete_task_tips, task.getTitle()), new SelectCallback() {
                     @Override
@@ -192,7 +192,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
 
             add.setOnClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 Action action = new Action();
                 new FloatActionEdit(parent.requireContext(), task, action, () -> {
@@ -203,7 +203,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
 
             add.setOnLongClickListener(v -> {
-                int index = getAdapterPosition();
+                int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 new TaskRecordDialog(parent.requireContext(), task, () -> notifyItemChanged(index)).show();
                 return true;
@@ -212,7 +212,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             for (Button button : groups) {
                 button.setOnClickListener(v -> {
                     int childIndex = linearLayout.indexOfChild((View) v.getParent());
-                    int index = getAdapterPosition();
+                    int index = getBindingAdapterPosition();
                     Task task = tasks.get(index);
                     if (task.getGroupId() == childIndex){
                         task.setGroupId(0);

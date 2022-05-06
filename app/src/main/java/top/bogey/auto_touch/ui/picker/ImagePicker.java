@@ -31,7 +31,7 @@ public class ImagePicker extends NodePicker{
             @Override
             public void onCancel() { }
         });
-        floatCallbackImpl = new TouchCallback();
+        floatCallback = new TouchCallback();
     }
 
     @Override

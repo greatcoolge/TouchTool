@@ -16,6 +16,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.ColorInt;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import top.bogey.auto_touch.MainAccessibilityService;
+import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.room.bean.Pos;
 
@@ -145,45 +147,18 @@ public class AppUtil {
         return new Rect(0, 0, size.x, size.y);
     }
 
-    public static boolean hasNavigationBar(Context context){
-        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Point real = new Point();
-        manager.getDefaultDisplay().getRealSize(real);
-        Point curr = new Point();
-        manager.getDefaultDisplay().getSize(curr);
-        if (isPortrait(context)){
-            if (curr.y + getNavigationBarHeight(context) > real.y) return false;
-            return real.y - curr.y > 0;
-        } else {
-            if (curr.x + getNavigationBarHeight(context) > real.x) return false;
-            return real.x - curr.x > 0;
-        }
-    }
-
-    public static int getNavigationBarHeight(Context context){
-        int id = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (id > 0) return context.getResources().getDimensionPixelSize(id);
+    public static int getStatusBarHeight(View view, WindowManager.LayoutParams params){
+        if (params == null) return 0;
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        // 绝对坐标和相对坐标一致，则状态栏高度为0，否则就是有状态栏
+        if (location[1] > params.y) return getStatusBarHeight(view.getContext());
         return 0;
-    }
-
-    public static int getRealNavigationBarHeight(Context context){
-        if (hasNavigationBar(context)) return getNavigationBarHeight(context);
-        return 0;
-    }
-
-    public static boolean hasStatusBar(Activity activity){
-        WindowManager.LayoutParams attributes = activity.getWindow().getAttributes();
-        return (attributes.flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0;
     }
 
     public static int getStatusBarHeight(Context context){
         int id = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (id > 0) return context.getResources().getDimensionPixelSize(id);
-        return 0;
-    }
-
-    public static int getRealStatusBarHeight(Activity activity){
-        if (hasStatusBar(activity)) return getStatusBarHeight(activity);
         return 0;
     }
 

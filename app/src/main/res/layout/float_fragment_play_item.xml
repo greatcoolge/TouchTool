@@ -18,7 +18,7 @@
         app:cpvProgress="0"
         app:cpvProgressColor="?attr/colorSecondary"
         app:cpvShowTick="false"
-        app:cpvStrokeWidth="5dp"
+        app:cpvStrokeWidth="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
