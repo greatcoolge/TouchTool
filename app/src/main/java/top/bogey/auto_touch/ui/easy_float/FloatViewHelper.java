@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Build;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,7 +109,7 @@ public class FloatViewHelper {
     }
 
     private void initGravity(){
-        Rect showSize = AppUtil.getShowArea(context);
+        Rect showSize = AppUtil.getScreenArea(context);
         int statusBarHeight = AppUtil.getStatusBarHeight(floatView, params);
         showSize.top += config.topBorder;
         showSize.bottom -= (statusBarHeight + config.bottomBorder);

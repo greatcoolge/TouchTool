@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import top.bogey.auto_touch.MainAccessibilityService;
-import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.room.bean.Pos;
 
@@ -140,20 +138,8 @@ public class AppUtil {
         return point;
     }
 
-    public static Point getShowSize(Context context){
-        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Point point = new Point();
-        manager.getDefaultDisplay().getSize(point);
-        if (isPortrait(context)){
-            if (point.x > point.y) return new Point(point.y, point.x);
-        } else {
-            if (point.y > point.x) return new Point(point.y, point.x);
-        }
-        return point;
-    }
-
-    public static Rect getShowArea(Context context){
-        Point size = getShowSize(context);
+    public static Rect getScreenArea(Context context){
+        Point size = getScreenSize(context);
         return new Rect(0, 0, size.x, size.y);
     }
 

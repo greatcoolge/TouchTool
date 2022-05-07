@@ -80,7 +80,7 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
 
         @Override
         public void bindTreeNode(TreeNode node) {
-            int padding = node.getLevel() * 5;
+            int padding = node.getLevel() * 8;
             itemView.setPaddingRelative(padding, 0, 0, 0);
             AccessibilityNodeInfo value = (AccessibilityNodeInfo) node.getValue();
             titleText.setText(getNodeTitle(value));

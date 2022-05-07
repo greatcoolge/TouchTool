@@ -97,7 +97,7 @@ class FloatTouchUtils {
     }
 
     private void initValue(View view, LayoutParams params){
-        showRect = AppUtil.getShowArea(context);
+        showRect = AppUtil.getScreenArea(context);
         statusBarHeight = AppUtil.getStatusBarHeight(view, params);
         showRect.bottom -= statusBarHeight;
     }
