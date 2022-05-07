@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1dp"
-    android:background="@drawable/item_m"
+    android:background="@drawable/item_a"
     android:backgroundTint="#BBFFFFFF"
     android:backgroundTintMode="multiply">
 

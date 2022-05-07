@@ -293,9 +293,18 @@ public class TaskRunnable implements Runnable{
         if (matcher.find()) {
             String realKey = matcher.group(1);
             if (realKey != null) {
-                int i = realKey.indexOf("id/");
-                if (i == 0){
+                if (realKey.indexOf("id/") == 0){
                     return nodeInfo.findAccessibilityNodeInfosByViewId(task.getPkgName() + ":" + realKey);
+                } else if (realKey.indexOf("lv/") == 0){
+                    String[] split = realKey.split("/");
+                    String[] levels = split[1].split(",");
+                    for (String level : levels) {
+                        nodeInfo = searchNode(nodeInfo, Integer.parseInt(level));
+                        if (nodeInfo == null){
+                            return null;
+                        }
+                    }
+                    return new ArrayList<>(Collections.singletonList(nodeInfo));
                 } else {
                     return nodeInfo.findAccessibilityNodeInfosByText(realKey);
                 }
@@ -322,6 +331,21 @@ public class TaskRunnable implements Runnable{
                 }
             }
         }
+    }
+
+    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, int level){
+        int index = 0;
+        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
+            AccessibilityNodeInfo child = nodeInfo.getChild(i);
+            if (child != null){
+                if (level == index){
+                    return child;
+                } else {
+                    index++;
+                }
+            }
+        }
+        return null;
     }
 
     private AccessibilityNodeInfo searchClickableNode(List<AccessibilityNodeInfo> nodes){

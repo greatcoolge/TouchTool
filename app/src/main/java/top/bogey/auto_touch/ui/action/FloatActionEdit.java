@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -34,8 +33,7 @@ import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.ui.easy_float.FloatGravity;
-import top.bogey.auto_touch.ui.easy_float.SidePattern;
-import top.bogey.auto_touch.ui.picker.FloatActionEditShowCallback;
+import top.bogey.auto_touch.ui.picker.FloatShowActionEditCallback;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
 import top.bogey.auto_touch.ui.picker.NodePickerInterface;
 import top.bogey.auto_touch.ui.picker.WordPicker;
@@ -79,7 +77,7 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                     .setTag(FloatActionEdit.class.getCanonicalName())
                     .setDragEnable(true)
                     .setGravity(FloatGravity.CENTER, x, y)
-                    .setCallback(new FloatActionEditShowCallback())
+                    .setCallback(new FloatShowActionEditCallback())
                     .hasEditText(true)
                     .show();
         }

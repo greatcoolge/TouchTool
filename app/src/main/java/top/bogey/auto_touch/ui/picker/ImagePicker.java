@@ -31,7 +31,7 @@ public class ImagePicker extends NodePicker{
             @Override
             public void onCancel() { }
         });
-        floatCallback = new TouchCallback();
+        floatCallback = new TouchPickerCallback();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ImagePicker extends NodePicker{
         if (binder != null) bitmap = binder.captureImage(rect);
     }
 
-    private class TouchCallback extends FloatPickerShowCallback {
+    private class TouchPickerCallback extends FloatShowPickerCallback {
         @Override
         public void onDismiss() {
             super.onDismiss();

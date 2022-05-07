@@ -84,6 +84,9 @@
     <string name="s">秒</string>
     <string name="ms">毫秒</string>
 
+    <string name="word_picker_open">展开</string>
+    <string name="word_picker_tips">长按选择</string>
+
     <string name="exist_empty_config">存在空配置项</string>
     <string name="empty_target">目标为空</string>
     <string name="too_much_target">超出最大目标数限制</string>

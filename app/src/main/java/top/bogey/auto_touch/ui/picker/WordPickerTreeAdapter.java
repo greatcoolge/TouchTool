@@ -31,6 +31,8 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
         setTreeNodeLongClickListener((treeNode, view) -> {
             AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) treeNode.getValue();
             picker.addWordView(nodeInfo, false);
+            setSelectedNode(treeNode);
+            notifyDataSetChanged();
             return true;
         });
     }
@@ -41,7 +43,7 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
         TreeNode node = manager.get(position);
         if (node.equals(selectedNode)){
             ViewHolder viewHolder = (ViewHolder) holder;
-            viewHolder.titleText.setTextColor(viewHolder.itemView.getContext().getResources().getColor(R.color.red_500, null));
+            viewHolder.titleText.setTextColor(viewHolder.itemView.getContext().getResources().getColor(R.color.amber_500, null));
         }
     }
 

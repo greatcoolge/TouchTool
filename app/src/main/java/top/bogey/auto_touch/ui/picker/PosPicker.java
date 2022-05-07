@@ -30,7 +30,7 @@ public class PosPicker extends NodePicker{
             }
             dismiss();
         });
-        floatCallback = new TouchCallback();
+        floatCallback = new TouchPickerCallback();
         if (poses != null){
             for (Pos pos : poses) {
                 posList.add(AppUtil.percent2px(context, pos));
@@ -75,7 +75,7 @@ public class PosPicker extends NodePicker{
         posPickerView.show(x, y);
     }
 
-    private class TouchCallback extends FloatPickerShowCallback {
+    private class TouchPickerCallback extends FloatShowPickerCallback {
         private boolean drag;
         private float lastX, lastY;
 

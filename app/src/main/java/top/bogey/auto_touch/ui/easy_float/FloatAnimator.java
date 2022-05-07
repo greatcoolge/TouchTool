@@ -48,7 +48,6 @@ class FloatAnimator {
                 end = params.y;
                 break;
             case HORIZONTAL:
-            case DEFAULT:
                 start = leftDistance < rightDistance ? showRect.left - view.getWidth(): showRect.right;
                 end = params.x;
                 break;
@@ -58,6 +57,7 @@ class FloatAnimator {
                 end = params.y;
                 break;
             case SIDE:
+            case DEFAULT:
                 int minX = Math.min(leftDistance, rightDistance);
                 int minY = Math.min(topDistance, bottomDistance);
                 if (minX > minY){

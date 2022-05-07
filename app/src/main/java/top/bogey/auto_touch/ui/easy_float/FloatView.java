@@ -57,7 +57,9 @@ public class FloatView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        config.callback.onDismiss();
+        if (config.callback != null){
+            config.callback.onDismiss();
+        }
     }
 
     interface LayoutCallback{

@@ -21,6 +21,8 @@ class FloatTouchUtils {
     private float lastX;
     private float lastY;
 
+    private int statusBarHeight = 0;
+
     FloatTouchUtils(Context context, FloatConfig config) {
         this.context = context;
         this.config = config;
@@ -34,40 +36,45 @@ class FloatTouchUtils {
             config.isDrag = false;
             return;
         }
+
+        float touchX = event.getRawX();
+        float touchY = event.getRawY();
+
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 config.isDrag = false;
-                lastX = event.getRawX();
-                lastY = event.getRawY();
-                initValue();
+                initValue(view, params);
+                lastX = touchX;
+                lastY = touchY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 边界范围外的触摸被忽略
-                if (event.getRawX() < config.leftBorder + showRect.left || event.getRawX() > showRect.right - config.rightBorder
-                || event.getRawY() < config.topBorder + showRect.top || event.getRawY() > showRect.bottom - config.bottomBorder) return;
+                if (touchX < config.leftBorder + showRect.left || touchX > showRect.right - config.rightBorder
+                || touchY - statusBarHeight < config.topBorder + showRect.top || touchY - statusBarHeight > showRect.bottom - config.bottomBorder) return;
 
-                float dx = event.getRawX() - lastX;
-                float dy = event.getRawY() - lastY;
+                float dx = touchX - lastX;
+                float dy = touchY - lastY;
                 if (!config.isDrag && dx * dx + dy * dy < 81) return;
                 config.isDrag = true;
 
                 // 限制界面x，y轴的位置
                 int x = params.x + (int) dx;
                 if (x < config.leftBorder) x = showRect.left + config.leftBorder;
-                else if (x > showRect.right - config.rightBorder) x = showRect.right - config.rightBorder - view.getWidth();
+                else if (x > showRect.right - config.rightBorder - view.getWidth()) x = showRect.right - config.rightBorder - view.getWidth();
 
                 int y = params.y + (int) dy;
                 if (y < config.topBorder + showRect.top) y = showRect.top + config.topBorder;
-                else if (y > showRect.bottom - config.bottomBorder) y = showRect.bottom - config.bottomBorder - view.getHeight();
+                else if (y > showRect.bottom - config.bottomBorder - view.getHeight()) y = showRect.bottom - config.bottomBorder - view.getHeight();
 
                 params.x = x;
                 params.y = y;
                 manager.updateViewLayout(view, params);
+
                 if (config.callback != null){
                     config.callback.onDrag(event);
                 }
-                lastX = event.getRawX();
-                lastY = event.getRawY();
+                lastX = touchX;
+                lastY = touchY;
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -85,12 +92,14 @@ class FloatTouchUtils {
     }
 
     void updateFloatPosition(View view, WindowManager manager, LayoutParams params){
-        initValue();
+        initValue(view, params);
         sideAnim(view, manager, params);
     }
 
-    private void initValue(){
+    private void initValue(View view, LayoutParams params){
         showRect = AppUtil.getShowArea(context);
+        statusBarHeight = AppUtil.getStatusBarHeight(view, params);
+        showRect.bottom -= statusBarHeight;
     }
 
     private void sideAnim(View view, WindowManager manager, LayoutParams params){

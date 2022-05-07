@@ -22,14 +22,14 @@ public class NodePicker implements NodePickerInterface {
         this.context = context;
         layout = LayoutInflater.from(context).inflate(layoutId, null);
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatPickerShowCallback();
+        floatCallback = new FloatShowPickerCallback();
     }
 
     protected NodePicker(Context context, View layout, PickerCallback pickerCallback) {
         this.context = context;
         this.layout = layout;
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatPickerShowCallback();
+        floatCallback = new FloatShowPickerCallback();
     }
 
     @Override

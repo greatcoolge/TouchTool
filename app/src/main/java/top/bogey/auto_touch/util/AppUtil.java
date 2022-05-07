@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -103,6 +105,14 @@ public class AppUtil {
     public static int getGroupColor(Context context, int group){
         int[] colors = {R.color.amber_500, R.color.red_500, R.color.blue_500, R.color.green_500};
         return context.getResources().getColor(colors[group], null);
+    }
+
+    public static int getAttrColor(Context context, int id, int defValue){
+        int[] attrs = new int[] {id};
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs);
+        int selectColor = typedArray.getResourceId(0, defValue);
+        typedArray.recycle();
+        return context.getResources().getColor(selectColor, null);
     }
 
     public static String getIdentityCode(Object obj){

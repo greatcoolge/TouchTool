@@ -33,9 +33,11 @@ import top.bogey.auto_touch.room.bean.NodeType;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.ui.easy_float.FloatUtils;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
 import top.bogey.auto_touch.ui.picker.PosPicker;
 import top.bogey.auto_touch.ui.picker.WordPicker;
+import top.bogey.auto_touch.util.AppUtil;
 
 public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerViewAdapter.ViewHolder> {
     private final FloatActionEdit parent;
@@ -221,7 +223,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                     manager.showSoftInput(targetEdit, 0);
                 }
             });
-
+            FloatUtils.initInput(targetEdit, FloatActionEdit.class.getCanonicalName());
             targetEdit.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -258,13 +260,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                 }
             });
 
-            pressTime.setOnFocusChangeListener((v, hasFocus) -> {
-                if (hasFocus){
-                    InputMethodManager manager = (InputMethodManager) parent.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    manager.showSoftInput(pressTime, InputMethodManager.SHOW_FORCED);
-                }
-            });
-
+            FloatUtils.initInput(pressTime, FloatActionEdit.class.getCanonicalName());
             pressTime.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

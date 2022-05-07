@@ -2,7 +2,6 @@ package top.bogey.auto_touch.ui.tasks;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -232,11 +231,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             if (isChecked){
                 colorStateList = ColorStateList.valueOf(AppUtil.getGroupColor(context, task.getGroupId()));
             } else {
-                int[] attrs = new int[] {R.attr.backgroundColor};
-                TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs);
-                int selectColor = typedArray.getResourceId(0, R.color.grey_300);
-                typedArray.recycle();
-                colorStateList = ColorStateList.valueOf(context.getResources().getColor(selectColor, null));
+                colorStateList = ColorStateList.valueOf(AppUtil.getAttrColor(context, R.attr.backgroundColor, R.color.grey_300));
             }
             enabledToggle.setBackgroundTintList(colorStateList);
             modeImage.setImageTintList(colorStateList);

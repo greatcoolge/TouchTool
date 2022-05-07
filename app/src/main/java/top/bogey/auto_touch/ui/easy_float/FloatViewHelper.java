@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,9 @@ public class FloatViewHelper {
     WindowManager manager = null;
     LayoutParams params = null;
     FloatView floatView = null;
+
+    private int measuredWidth;
+    private int measuredHeight;
 
     public FloatViewHelper(Context context, FloatConfig config) {
         this.context = context;
@@ -59,6 +63,9 @@ public class FloatViewHelper {
         floatView.touchCallback = event -> touchUtils.updateFloatPosition(floatView, event, manager, params);
         floatView.layoutCallback = () -> {
             initGravity();
+            measuredWidth = floatView.getMeasuredWidth();
+            measuredHeight = floatView.getMeasuredHeight();
+
             if (config.callback != null){
                 config.callback.onCreate(true);
             }
@@ -100,12 +107,16 @@ public class FloatViewHelper {
                 }
             }
         };
-
-        //floatView.getViewTreeObserver().addOnGlobalLayoutListener(() -> touchUtils.updateFloatPosition(floatView, manager, params));
     }
 
     private void initGravity(){
         Rect showSize = AppUtil.getShowArea(context);
+        int statusBarHeight = AppUtil.getStatusBarHeight(floatView, params);
+        showSize.top += config.topBorder;
+        showSize.bottom -= (statusBarHeight + config.bottomBorder);
+        showSize.left += config.leftBorder;
+        showSize.right -= config.rightBorder;
+
         switch (config.gravity){
             case TOP_LEFT:
                 params.x = showSize.left;
@@ -206,7 +217,7 @@ public class FloatViewHelper {
 
     private void remove(){
         try{
-            manager.removeViewImmediate(floatView);
+            manager.removeView(floatView);
         } catch (Exception ignored){}
     }
 
