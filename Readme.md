@@ -1,12 +1,11 @@
-| 主界面 | 应用列表 | 设置 |
-| - | - | - |
-|![主界面](/images/home.png)|![应用列表](/images/apps.png)|![设置](/images/setting.png)|
+| 主界面 | 应用列表 | 设置 | 导入导出 | 任务提示 |
+| - | - | - | - | - |
+|![主界面](/images/主页.png)|![应用列表](/images/应用列表.png)|![设置](/images/设置.png)|![导入导出](/images/导入导出.png)|![任务提示](/images/任务提示.png)|
 
-| 任务 | 动作 | 权限 |
-| - | - | - |
-|![任务](/images/tasks.png)|![动作](/images/action.png)|![权限](/images/permission.png)|
+| 任务 | 条件动作 | 循环动作 | 并行动作 | 行为 |
+| - | - | - | - | - |
+|![任务](/images/任务.png)|![条件动作](/images/条件动作.png)|![循环动作](/images/循环动作.png)|![并行动作](/images/并行动作.png)|![行为](/images/行为.png)|
 
-| 条件任务 | 循环任务 | 并行任务 |
-| - | - | - |
-|![条件任务](/images/condition_config.png)|![循环任务](/images/loop_config.png)|![并行任务](/images/parallel_config.png)|
-|![条件示例](/images/condition_example.png)|![循环示例](/images/loop_example.png)|![并行示例](/images/parallel_example.png)|
+| 控件采集 | 图片采集 | 手势采集 | 条件介绍 | 权限一览 |
+| - | - | - | - | - |
+|![控件采集](/images/控件采集.png)|![图片采集](/images/图片采集.png)|![手势采集](/images/手势采集.png)|![条件介绍](/images/条件.png)|![权限一览](/images/权限一览.png)|
