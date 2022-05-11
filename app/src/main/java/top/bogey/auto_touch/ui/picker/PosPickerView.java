@@ -29,6 +29,8 @@ public class PosPickerView extends FrameLayout implements NodePickerInterface {
     private float lastY = 0;
     private boolean isDrag = false;
 
+    int[] location = new int[2];
+
     private final Paint paint;
 
     public PosPickerView(@NonNull Context context, PickerCallback pickerCallback, List<Pos> poses) {
@@ -48,15 +50,13 @@ public class PosPickerView extends FrameLayout implements NodePickerInterface {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        int[] location = new int[2];
         getLocationOnScreen(location);
-        if (poses != null){
-            currPoints.clear();
+
+        if (poses != null && currPoints.size() == 0){
             points.clear();
             for (Pos pos : poses) {
                 pos = AppUtil.percent2px(getContext(), pos);
-                // 恢复为本地坐标
-                currPoints.add(new Point(pos.getX(), pos.getY() - location[1]));
+                currPoints.add(new Point(pos.getX(), pos.getY()));
             }
             points.addAll(currPoints);
         }
@@ -67,25 +67,22 @@ public class PosPickerView extends FrameLayout implements NodePickerInterface {
         super.dispatchDraw(canvas);
         if (currPoints.size() >= 2){
             for (int i = 0; i < currPoints.size() - 1; i++) {
-                canvas.drawLine(currPoints.get(i).x, currPoints.get(i).y, currPoints.get(i + 1).x, currPoints.get(i + 1).y, paint);
+                canvas.drawLine(currPoints.get(i).x, currPoints.get(i).y - location[1], currPoints.get(i + 1).x, currPoints.get(i + 1).y - location[1], paint);
             }
         }
     }
 
     public List<Pos> getPoses() {
-        int[] location = new int[2];
-        getLocationOnScreen(location);
         ArrayList<Pos> poses = new ArrayList<>();
         for (Point point : points) {
-            // 转变为屏幕坐标
-            poses.add(AppUtil.px2percent(getContext(), new Pos(point.x, point.y + location[1])));
+            poses.add(AppUtil.px2percent(getContext(), new Pos(point.x, point.y)));
         }
         return poses;
     }
 
     public void onTouch(MotionEvent event){
-        float x = event.getX();
-        float y = event.getY();
+        float x = event.getRawX();
+        float y = event.getRawY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 lastX = x;

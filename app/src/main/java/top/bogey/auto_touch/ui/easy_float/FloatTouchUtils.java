@@ -91,11 +91,6 @@ class FloatTouchUtils {
         }
     }
 
-    void updateFloatPosition(View view, WindowManager manager, LayoutParams params){
-        initValue(view, params);
-        sideAnim(view, manager, params);
-    }
-
     private void initValue(View view, LayoutParams params){
         showRect = AppUtil.getScreenArea(context);
         statusBarHeight = AppUtil.getStatusBarHeight(view, params);
