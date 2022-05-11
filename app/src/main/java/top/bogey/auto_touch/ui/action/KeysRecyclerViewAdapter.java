@@ -335,7 +335,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             List<Pos> posList = posPicker.getPosList();
                             node.setPoses(posList);
                             targetEdit.setText(node.getText());
-                        }, node.getPoses()).show(0, 0);
+                        }).show(0, 0);
                         break;
                 }
             });
