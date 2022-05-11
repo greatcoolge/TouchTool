@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DouglasPeucker {
-    private static final float epsilon = 10;
+    private static final float epsilon = 5;
 
     public static List<Point> compress(List<Point> points){
         if (points.size() <= 2) return points;
@@ -22,8 +22,8 @@ public class DouglasPeucker {
         }
 
         if (max > epsilon){
-            List<Point> list = compress(points.subList(0, index));
-            List<Point> list2 = compress(points.subList(index, points.size() - 1));
+            List<Point> list = compress(new ArrayList<>(points.subList(0, index)));
+            List<Point> list2 = compress(new ArrayList<>(points.subList(index, points.size() - 1)));
             list.remove(list.size() - 1);
             list.addAll(list2);
             return list;

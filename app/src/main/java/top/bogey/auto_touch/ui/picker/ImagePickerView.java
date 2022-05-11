@@ -79,6 +79,7 @@ public class ImagePickerView extends View {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         if (isComplete) {
             super.draw(canvas);
             if (callback != null){
@@ -106,8 +107,6 @@ public class ImagePickerView extends View {
                 canvas.drawRect(Math.min(startX, endX), Math.min(startY, endY), Math.max(startX, endX), Math.max(startY, endY), markPaint);
             }
         }
-
-        super.draw(canvas);
     }
 
     public void onTouch(MotionEvent event) {

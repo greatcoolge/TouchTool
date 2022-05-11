@@ -13,6 +13,9 @@ import android.widget.EditText;
 import java.lang.reflect.Method;
 
 public class FloatUtils {
+    public static final int FOCUSABLE = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+    public static final int NOT_FOCUSABLE = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+
     @SuppressLint("ClickableViewAccessibility")
     public static void initInput(EditText editText, String tag){
         editText.setOnTouchListener((v, event) -> {
@@ -26,7 +29,7 @@ public class FloatUtils {
     public static void openInput(EditText editText, String tag){
         FloatViewHelper helper = EasyFloat.getHelper(tag);
         if (helper != null){
-            helper.params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL;
+            helper.params.flags = FOCUSABLE;
             helper.manager.updateViewLayout(helper.floatView, helper.params);
         }
 
@@ -41,7 +44,7 @@ public class FloatUtils {
     public static void closeInput(String tag){
         FloatViewHelper helper = EasyFloat.getHelper(tag);
         if (helper != null){
-            helper.params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
+            helper.params.flags = NOT_FOCUSABLE;
             helper.manager.updateViewLayout(helper.floatView, helper.params);
         }
     }

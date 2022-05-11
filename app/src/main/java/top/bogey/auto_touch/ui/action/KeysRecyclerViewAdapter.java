@@ -36,8 +36,8 @@ import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.easy_float.FloatUtils;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
 import top.bogey.auto_touch.ui.picker.PosPicker;
+import top.bogey.auto_touch.ui.picker.PosPickerView;
 import top.bogey.auto_touch.ui.picker.WordPicker;
-import top.bogey.auto_touch.util.AppUtil;
 
 public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerViewAdapter.ViewHolder> {
     private final FloatActionEdit parent;
@@ -331,11 +331,11 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                         break;
                     case POS:
                         new PosPicker(parent.getContext(), nodePicker -> {
-                            PosPicker posPicker = (PosPicker) nodePicker;
-                            List<Pos> posList = posPicker.getPosList();
+                            PosPickerView posPickerView = (PosPickerView) nodePicker;
+                            List<Pos> posList = posPickerView.getPoses();
                             node.setPoses(posList);
                             targetEdit.setText(node.getText());
-                        }).show(0, 0);
+                        }, node.getPoses()).show(0, 0);
                         break;
                 }
             });

@@ -25,9 +25,6 @@ public class FloatViewHelper {
     LayoutParams params = null;
     FloatView floatView = null;
 
-    private int measuredWidth;
-    private int measuredHeight;
-
     public FloatViewHelper(Context context, FloatConfig config) {
         this.context = context;
         this.config = config;
@@ -44,7 +41,7 @@ public class FloatViewHelper {
         }
         params.format = PixelFormat.RGBA_8888;
         params.gravity = Gravity.START | Gravity.TOP;
-        params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
+        params.flags = FloatUtils.NOT_FOCUSABLE;
         params.width = config.matchWidth ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT;
         params.height = config.matchHeight ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT;
 
@@ -62,8 +59,6 @@ public class FloatViewHelper {
         floatView.touchCallback = event -> touchUtils.updateFloatPosition(floatView, event, manager, params);
         floatView.layoutCallback = () -> {
             initGravity();
-            measuredWidth = floatView.getMeasuredWidth();
-            measuredHeight = floatView.getMeasuredHeight();
 
             if (config.callback != null){
                 config.callback.onCreate(true);
@@ -71,12 +66,10 @@ public class FloatViewHelper {
             if (config.animator != null){
                 Animator animator = config.animator.enterAnim(floatView, manager, params, config.side);
                 if (animator != null){
-                    params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_LAYOUT_NO_LIMITS;
                     animator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             config.isAnim = false;
-                            params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
                             initEditText(floatView);
                         }
 
@@ -92,7 +85,6 @@ public class FloatViewHelper {
                         @Override
                         public void onAnimationCancel(Animator animation) {
                             config.isAnim = false;
-                            params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
                             initEditText(floatView);
                         }
                     });
@@ -183,7 +175,6 @@ public class FloatViewHelper {
         if (config.animator != null){
             Animator animator = config.animator.exitAnim(floatView, manager, params, config.side);
             if (animator != null){
-                params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_LAYOUT_NO_LIMITS;
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -193,7 +184,6 @@ public class FloatViewHelper {
                     @Override
                     public void onAnimationCancel(Animator animation) {
                         config.isAnim = false;
-                        params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
                         callback.onAnimEnd();
                         remove();
                     }
@@ -201,7 +191,6 @@ public class FloatViewHelper {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         config.isAnim = false;
-                        params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE;
                         callback.onAnimEnd();
                         remove();
                     }
