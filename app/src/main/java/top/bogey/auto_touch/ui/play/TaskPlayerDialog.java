@@ -57,18 +57,14 @@ public class TaskPlayerDialog extends FrameLayout implements NodePickerInterface
     }
 
     @Override
-    public void show(int x, int y) {
+    public void show() {
         EasyFloat.with(MainApplication.getActivity())
                 .setLayout(this)
                 .setSidePattern(SidePattern.HORIZONTAL)
-                .setGravity(FloatGravity.RIGHT_CENTER, x, y)
+                .setGravity(FloatGravity.RIGHT_CENTER, 0, 0)
                 .setBorder(20, 20, 0, 0)
                 .setTag(AppUtil.getIdentityCode(this))
                 .show();
-    }
-
-    public void show(){
-        show(0, 0);
     }
 
     @Override

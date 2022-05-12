@@ -3,6 +3,7 @@ package top.bogey.auto_touch.ui.picker;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
@@ -20,33 +21,36 @@ import com.amrdeveloper.treeview.TreeViewHolderFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
-import top.bogey.auto_touch.databinding.FloatFragmentPickerWordBgBinding;
-import top.bogey.auto_touch.ui.easy_float.EasyFloat;
+import top.bogey.auto_touch.databinding.FloatFragmentPickerWordBinding;
 import top.bogey.auto_touch.util.AppUtil;
 
+@SuppressLint("ViewConstructor")
 public class WordPicker extends NodePicker{
-    private final FloatFragmentPickerWordBgBinding binding;
+    private final FloatFragmentPickerWordBinding binding;
     private boolean addEnabled = true;
-    private WordPickerView wordPickerView;
-    private String key = "";
     private TreeNodeManager manager;
     private boolean showList = false;
     private AccessibilityNodeInfo rootNode;
 
-    public WordPicker(@NonNull Context context, PickerCallback pickerCallback) {
-        super(context, null, pickerCallback);
-        binding = FloatFragmentPickerWordBgBinding.inflate(LayoutInflater.from(context));
-        layout = binding.getRoot();
+    private AccessibilityNodeInfo selectNode = null;
+    private String selectKey = "";
+    private String selectLevel = "";
 
-        binding.closeButton.setOnClickListener(v -> {
+    public WordPicker(@NonNull Context context, PickerCallback pickerCallback) {
+        super(context, pickerCallback);
+        floatCallback = new TouchCallback();
+
+        binding = FloatFragmentPickerWordBinding.inflate(LayoutInflater.from(context));
+        addView(binding.getRoot());
+
+        binding.saveButton.setOnClickListener(v -> {
             addEnabled = false;
-            if (wordPickerView != null){
-                key = wordPickerView.getWord();
-            }
             if (pickerCallback != null){
                 pickerCallback.call(this);
             }
@@ -83,32 +87,61 @@ public class WordPicker extends NodePicker{
             animator.start();
         });
 
-        floatCallback = new TouchPickerCallback();
+        binding.titleText.setOnClickListener(v -> {
+            addEnabled = false;
+            CharSequence text = binding.titleText.getText();
+            if (text != null && text.length() > 0){
+                if (text.toString().equals(selectKey)){
+                    binding.titleText.setText(selectLevel);
+                } else {
+                    binding.titleText.setText(selectKey);
+                }
+            } else {
+                binding.titleText.setText(selectKey);
+            }
+        });
+
+        binding.markBox.setOnClickListener(v -> {
+            addEnabled = false;
+            showWordView(null, false);
+        });
+
     }
 
     public String getKey(){
-        if (key.isEmpty()) return key;
-        return String.format("\"%s\"", key);
+        if (selectNode != null){
+            CharSequence text = binding.titleText.getText();
+            if (text != null && text.length() > 0) return String.format("\"%s\"", text);
+        }
+        return "";
     }
 
-    public void addWordView(AccessibilityNodeInfo nodeInfo, boolean selectTreeNode){
-        if (nodeInfo != null){
-            WordPickerTreeAdapter adapter = (WordPickerTreeAdapter) binding.wordRecyclerView.getAdapter();
+    public void showWordView(AccessibilityNodeInfo nodeInfo, boolean selectTreeNode){
+        if (nodeInfo == null){
+            selectNode = null;
+            selectKey = "";
+            selectLevel = "";
+            binding.markBox.setVisibility(INVISIBLE);
+        } else {
+            selectNode = nodeInfo;
+            selectLevel = "lv/" + getNodeLevel(nodeInfo);
+            selectKey = getNodeKey(nodeInfo);
+            if (selectKey.isEmpty()) selectKey = selectLevel;
+
+            binding.titleText.setText(selectKey);
+
             Rect rect = new Rect();
             nodeInfo.getBoundsInScreen(rect);
-            if (wordPickerView != null) wordPickerView.dismiss();
-            wordPickerView = new WordPickerView(context, nodePicker -> {
-                wordPickerView = null;
-                if (adapter != null){
-                    adapter.setSelectedNode(null);
-                    adapter.notifyDataSetChanged();
-                }
-            });
-            int statusBarHeight = AppUtil.getStatusBarHeight(layout, EasyFloat.getParams(AppUtil.getIdentityCode(WordPicker.this)));
-            rect.top = Math.max(0, rect.top - statusBarHeight);
-            rect.bottom -= statusBarHeight;
-            wordPickerView.show(rect,  getNodeText(nodeInfo), getNodeLevel(nodeInfo));
+            int[] location = new int[2];
+            getLocationOnScreen(location);
+            ViewGroup.LayoutParams params = binding.markBox.getLayoutParams();
+            params.width = Math.max(rect.width(), AppUtil.dp2px(getContext(), 30));
+            params.height = Math.max(rect.height(), AppUtil.dp2px(getContext(), 40));
+            binding.markBox.setX(rect.left);
+            binding.markBox.setY(rect.top - location[1]);
+            binding.markBox.setVisibility(VISIBLE);
 
+            WordPickerTreeAdapter adapter = (WordPickerTreeAdapter) binding.wordRecyclerView.getAdapter();
             if (selectTreeNode && adapter != null){
                 adapter.collapseAll();
                 if (manager.size() > 0){
@@ -169,6 +202,16 @@ public class WordPicker extends NodePicker{
         return name;
     }
 
+    private String getNodeKey(AccessibilityNodeInfo nodeInfo){
+        String key = getNodeText(nodeInfo);
+        Pattern pattern = Pattern.compile(".+:(id/.+)");
+        Matcher matcher = pattern.matcher(key);
+        if (matcher.find() && matcher.group(1) != null){
+            key = matcher.group(1);
+        }
+        return key;
+    }
+
     private String getNodeLevel(AccessibilityNodeInfo nodeInfo){
         AccessibilityNodeInfo parent = nodeInfo.getParent();
         if (parent != null){
@@ -220,7 +263,7 @@ public class WordPicker extends NodePicker{
         }
     }
 
-    private class TouchPickerCallback extends FloatShowPickerCallback {
+    private class TouchCallback extends FloatShowPickerCallback {
         private boolean drag;
         private float lastX, lastY;
 
@@ -243,24 +286,16 @@ public class WordPicker extends NodePicker{
                     lastY = rawY;
                 case MotionEvent.ACTION_UP:
                     if (!drag){
-                        layout.postDelayed(() -> {
+                        binding.getRoot().postDelayed(() -> {
                             if (addEnabled && !showList){
                                 AccessibilityNodeInfo node = getClickableNodeIn((int) rawX, (int) rawY);
                                 if (node != null){
-                                    addWordView(node, true);
+                                    showWordView(node, true);
                                 }
                             }
                             addEnabled = true;
                         }, 50);
                     }
-            }
-        }
-
-        @Override
-        public void onDismiss() {
-            super.onDismiss();
-            if (wordPickerView != null){
-                wordPickerView.dismiss();
             }
         }
 

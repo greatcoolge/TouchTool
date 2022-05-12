@@ -45,10 +45,6 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
     }
 
     @Override
-    public void show(int x, int y) {
-        show();
-    }
-
     public void show(){
         MainActivity activity = MainApplication.getActivity();
         if (activity != null){

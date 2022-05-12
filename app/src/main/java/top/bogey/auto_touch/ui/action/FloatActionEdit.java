@@ -68,7 +68,7 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
     }
 
     @Override
-    public void show(int x, int y) {
+    public void show() {
         MainActivity activity = MainApplication.getActivity();
         if (activity != null){
             initView(activity);
@@ -76,15 +76,11 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                     .setLayout(this)
                     .setTag(FloatActionEdit.class.getCanonicalName())
                     .setDragEnable(true)
-                    .setGravity(FloatGravity.CENTER, x, y)
+                    .setGravity(FloatGravity.CENTER, 0, 0)
                     .setCallback(new FloatShowActionEditCallback())
                     .hasEditText(true)
                     .show();
         }
-    }
-
-    public void show(){
-        show(0, 0);
     }
 
     @Override
@@ -223,14 +219,14 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                         WordPicker wordPicker = (WordPicker) nodePicker;
                         String key = wordPicker.getKey();
                         binding.conditionEdit.setText(key);
-                    }).show(0, 0);
+                    }).show();
                     break;
                 case IMAGE:
                     new ImagePicker(getContext(), nodePicker -> {
                         ImagePicker imagePicker = (ImagePicker) nodePicker;
                         Bitmap bitmap = imagePicker.getBitmap();
                         binding.conditionImage.setImageBitmap(bitmap);
-                    }).show(0, 0);
+                    }).show();
                     break;
             }
         });
@@ -242,14 +238,14 @@ public class FloatActionEdit extends FrameLayout implements NodePickerInterface 
                         WordPicker wordPicker = (WordPicker) nodePicker;
                         String key = wordPicker.getKey();
                         binding.stopEdit.setText(key);
-                    }).show(0, 0);
+                    }).show();
                     break;
                 case IMAGE:
                     new ImagePicker(getContext(), nodePicker -> {
                         ImagePicker imagePicker = (ImagePicker) nodePicker;
                         Bitmap bitmap = imagePicker.getBitmap();
                         binding.stopImage.setImageBitmap(bitmap);
-                    }).show(0, 0);
+                    }).show();
                     break;
             }
         });

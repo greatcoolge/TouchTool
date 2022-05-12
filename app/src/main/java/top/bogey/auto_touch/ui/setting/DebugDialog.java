@@ -31,10 +31,6 @@ public class DebugDialog extends FrameLayout implements NodePickerInterface {
     }
 
     @Override
-    public void show(int x, int y) {
-        show();
-    }
-
     public void show(){
         initView();
         EasyFloat.with(MainApplication.getActivity())

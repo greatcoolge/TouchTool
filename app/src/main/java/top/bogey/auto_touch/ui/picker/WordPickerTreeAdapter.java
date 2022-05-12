@@ -30,7 +30,7 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
         setRoot(root);
         setTreeNodeLongClickListener((treeNode, view) -> {
             AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) treeNode.getValue();
-            picker.addWordView(nodeInfo, false);
+            picker.showWordView(nodeInfo, false);
             setSelectedNode(treeNode);
             notifyDataSetChanged();
             return true;

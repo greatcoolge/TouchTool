@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         binding.getRoot().post(() -> {
             if (playerDialog != null) playerDialog.dismiss();
             playerDialog = new TaskPlayerDialog(this, pkgName, () -> playerDialog = null);
-            playerDialog.show(0, 0);
+            playerDialog.show();
         });
     }
 

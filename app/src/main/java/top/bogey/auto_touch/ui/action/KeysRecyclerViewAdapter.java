@@ -36,7 +36,6 @@ import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.easy_float.FloatUtils;
 import top.bogey.auto_touch.ui.picker.ImagePicker;
 import top.bogey.auto_touch.ui.picker.PosPicker;
-import top.bogey.auto_touch.ui.picker.PosPickerView;
 import top.bogey.auto_touch.ui.picker.WordPicker;
 
 public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerViewAdapter.ViewHolder> {
@@ -319,7 +318,7 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             String key = wordPicker.getKey();
                             node.setText(key);
                             targetEdit.setText(key);
-                        }).show(0, 0);
+                        }).show();
                         break;
                     case IMAGE:
                         new ImagePicker(parent.getContext(), nodePicker -> {
@@ -327,15 +326,15 @@ public class KeysRecyclerViewAdapter extends RecyclerView.Adapter<KeysRecyclerVi
                             Bitmap bitmap = imagePicker.getBitmap();
                             node.setImage(bitmap);
                             targetImage.setImageBitmap(bitmap);
-                        }).show(0, 0);
+                        }).show();
                         break;
                     case POS:
                         new PosPicker(parent.getContext(), nodePicker -> {
-                            PosPickerView posPickerView = (PosPickerView) nodePicker;
-                            List<Pos> posList = posPickerView.getPoses();
+                            PosPicker posPicker = (PosPicker) nodePicker;
+                            List<Pos> posList = posPicker.getPoses();
                             node.setPoses(posList);
                             targetEdit.setText(node.getText());
-                        }, node.getPoses()).show(0, 0);
+                        }, node.getPoses()).show();
                         break;
                 }
             });

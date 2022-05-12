@@ -1,41 +1,27 @@
 package top.bogey.auto_touch.ui.picker;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
+import android.widget.FrameLayout;
 
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.util.AppUtil;
 
-public class NodePicker implements NodePickerInterface {
-    protected final Context context;
-    protected View layout;
+@SuppressLint("ViewConstructor")
+public class NodePicker extends FrameLayout implements NodePickerInterface {
+    protected final PickerCallback pickerCallback;
+    protected FloatShowPickerCallback floatCallback = null;
 
-    protected PickerCallback pickerCallback;
-    protected FloatCallbackImpl floatCallback;
-
-    protected NodePicker(@NonNull Context context, @LayoutRes int layoutId, PickerCallback pickerCallback) {
-        this.context = context;
-        layout = LayoutInflater.from(context).inflate(layoutId, null);
+    protected NodePicker(Context context, PickerCallback pickerCallback) {
+        super(context);
         this.pickerCallback = pickerCallback;
-        floatCallback = new FloatShowPickerCallback();
-    }
-
-    protected NodePicker(Context context, View layout, PickerCallback pickerCallback) {
-        this.context = context;
-        this.layout = layout;
-        this.pickerCallback = pickerCallback;
-        floatCallback = new FloatShowPickerCallback();
     }
 
     @Override
-    public void show(int x, int y){
+    public void show(){
         EasyFloat.with(MainApplication.getActivity())
-                .setLayout(layout)
+                .setLayout(this)
                 .setTag(AppUtil.getIdentityCode(this))
                 .setDragEnable(false)
                 .setMatch(true, true)
