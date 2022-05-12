@@ -11,13 +11,13 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatFragmentPickerPosBinding;
 import top.bogey.auto_touch.room.bean.Pos;
 import top.bogey.auto_touch.util.AppUtil;
+import top.bogey.auto_touch.util.DouglasPeucker;
 
 @SuppressLint("ViewConstructor")
 public class PosPicker extends NodePicker{
@@ -112,41 +112,10 @@ public class PosPicker extends NodePicker{
                 isDrag = false;
                 postDelayed(() -> {
                     points.clear();
-                    points.addAll(compress(currPoints));
+                    points.addAll(DouglasPeucker.compress(currPoints));
                 }, 50);
         }
         postInvalidate();
-    }
-
-    private List<Point> compress(List<Point> points){
-        if (points.size() <= 2) return points;
-        float max = 0;
-        int index = 0;
-        for (int i = 1; i < points.size() - 1; i++) {
-            float d = distance(points.get(0), points.get(points.size() - 1), points.get(i));
-            if (d > max){
-                index = i;
-                max = d;
-            }
-        }
-
-        if (max > 5){
-            List<Point> list = compress(new ArrayList<>(points.subList(0, index)));
-            List<Point> list2 = compress(new ArrayList<>(points.subList(index, points.size() - 1)));
-            list.remove(list.size() - 1);
-            list.addAll(list2);
-            return list;
-        } else {
-            return new ArrayList<>(Arrays.asList(points.get(0), points.get(points.size() - 1)));
-        }
-    }
-
-    private float distance(Point start, Point end, Point curr){
-        float a = end.y - start.y;
-        float b = start.x - end.x;
-        if (a == 0 && b == 0) return 0;
-        float c = end.x * start.y - start.x * end.y;
-        return Math.abs(a * curr.x + b * curr.y + c) / (float) Math.sqrt(a * a + b * b);
     }
 
     private class TouchCallback extends FloatShowPickerCallback{

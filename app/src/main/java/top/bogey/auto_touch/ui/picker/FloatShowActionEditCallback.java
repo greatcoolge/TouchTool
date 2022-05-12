@@ -3,7 +3,7 @@ package top.bogey.auto_touch.ui.picker;
 import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.ui.record.TaskRecordDialog;
 
-public class FloatShowActionEditCallback extends FloatShowCallback{
+public class FloatShowActionEditCallback extends FloatShowCallback {
     @Override
     public void onCreate(boolean succeed) {
         if (succeed){

@@ -14,4 +14,11 @@
         android:icon="@drawable/record"
         android:title="@string/record"
         app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/quick_record"
+        android:icon="@drawable/record_fast"
+        android:title="@string/record_fast"
+        app:showAsAction="always" />
 </menu>

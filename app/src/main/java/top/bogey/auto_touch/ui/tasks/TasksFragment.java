@@ -19,6 +19,7 @@ import top.bogey.auto_touch.databinding.FragmentTasksBinding;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.MainViewModel;
 import top.bogey.auto_touch.ui.apps.AppInfo;
+import top.bogey.auto_touch.ui.record.TaskQuickRecordDialog;
 import top.bogey.auto_touch.ui.record.TaskRecordDialog;
 import top.bogey.auto_touch.util.AppUtil;
 
@@ -80,7 +81,11 @@ public class TasksFragment extends Fragment {
                 break;
             case R.id.record:
                 AppUtil.openApp(requireContext(), PKG_NAME);
-                new TaskRecordDialog(requireContext(), task, null).show();
+                new TaskRecordDialog(requireContext(), task, () -> viewModel.saveTask(task)).show();
+                break;
+            case R.id.quick_record:
+                AppUtil.openApp(requireContext(), PKG_NAME);
+                new TaskQuickRecordDialog(requireContext(), task, () -> viewModel.saveTask(task)).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

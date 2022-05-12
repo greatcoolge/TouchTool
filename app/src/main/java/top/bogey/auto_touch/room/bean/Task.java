@@ -5,6 +5,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public class Task {
     private String pkgName;
     private String title;
     private int groupId = 0;
-    private List<Action> actions;
+    private List<Action> actions = new ArrayList<>();
     private TaskStatus taskStatus = TaskStatus.AUTO;
 
     @Ignore

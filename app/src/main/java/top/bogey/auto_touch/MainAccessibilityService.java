@@ -150,6 +150,22 @@ public class MainAccessibilityService extends AccessibilityService {
         runGesture();
     }
 
+    public void runGesture(Path path, int time, ResultCallback callback){
+        dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription(path, 0, time)).build(), new GestureResultCallback() {
+            @Override
+            public void onCompleted(GestureDescription gestureDescription) {
+                super.onCompleted(gestureDescription);
+                if (callback != null) callback.onResult(true);
+            }
+
+            @Override
+            public void onCancelled(GestureDescription gestureDescription) {
+                super.onCancelled(gestureDescription);
+                if (callback != null) callback.onResult(false);
+            }
+        }, null);
+    }
+
     private void runGesture(){
         if (!gestureRunning){
             if (strokes.size() > 0){

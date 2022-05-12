@@ -37,6 +37,7 @@
     <string name="add">添加</string>
     <string name="save">保存</string>
     <string name="record">录制</string>
+    <string name="record_fast">快速录制</string>
 
     <string name="closed">关闭</string>
     <string name="auto">自动</string>

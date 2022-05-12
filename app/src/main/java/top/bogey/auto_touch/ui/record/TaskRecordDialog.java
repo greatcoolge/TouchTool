@@ -24,11 +24,10 @@ import top.bogey.auto_touch.ui.action.FloatActionEdit;
 import top.bogey.auto_touch.ui.easy_float.EasyFloat;
 import top.bogey.auto_touch.ui.easy_float.FloatGravity;
 import top.bogey.auto_touch.ui.picker.FloatShowCallback;
-import top.bogey.auto_touch.ui.picker.NodePickerInterface;
 import top.bogey.auto_touch.util.CompleteCallback;
 
 @SuppressLint("ViewConstructor")
-public class TaskRecordDialog extends FrameLayout implements NodePickerInterface {
+public class TaskRecordDialog extends FrameLayout {
     private FloatFragmentRecordBinding binding;
     public final Task task;
     private final CompleteCallback callback;
@@ -44,7 +43,6 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
         this.callback = callback;
     }
 
-    @Override
     public void show(){
         MainActivity activity = MainApplication.getActivity();
         if (activity != null){
@@ -55,13 +53,10 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
                     .setDragEnable(true)
                     .setGravity(FloatGravity.BOTTOM_CENTER, 0, 0)
                     .setCallback(new FloatShowCallback())
-                    .hasEditText(true)
-                    .setAnimator(null)
                     .show();
         }
     }
 
-    @Override
     public void dismiss() {
         EasyFloat.dismiss(TaskRecordDialog.class.getCanonicalName());
     }
@@ -70,7 +65,6 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
     public void initView(MainActivity activity) {
         binding = FloatFragmentRecordBinding.inflate(LayoutInflater.from(getContext()));
         addView(binding.getRoot());
-        MainViewModel viewModel = new ViewModelProvider(activity).get(MainViewModel.class);
 
         adapter = new RecordActionsRecyclerViewAdapter(this, task.getActions());
         binding.recyclerView.setAdapter(adapter);
@@ -112,7 +106,6 @@ public class TaskRecordDialog extends FrameLayout implements NodePickerInterface
         binding.saveButton.setOnClickListener(v -> {
             if (!adapter.actions.isEmpty()){
                 task.setActions(adapter.actions);
-                viewModel.saveTask(task);
                 if (callback != null){
                     callback.onComplete();
                 }
