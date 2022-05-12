@@ -98,7 +98,7 @@ public class TaskQuickRecordDialog extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
                 costTime = System.currentTimeMillis();
                 // 未知原因，导致重复进入两次按下
-                if (startTime != 0 && Math.abs(startTime - costTime) < 5){
+                if (startTime != 0 && Math.abs(startTime - costTime) > 5){
                     Node node = new Node(NodeType.DELAY);
                     node.setDelay((int) (costTime - startTime));
                     Action action = new Action();
