@@ -55,8 +55,10 @@ public class TaskQuickRecordDialog extends FrameLayout {
 
         binding.saveButton.setOnClickListener(v -> {
             addEnable = false;
-            actions.remove(actions.size() - 1);
-            task.setActions(actions);
+            if (actions.size() > 0){
+                actions.remove(actions.size() - 1);
+                task.setActions(actions);
+            }
             if (callback != null){
                 callback.onComplete();
             }

@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
+@SuppressLint("ViewConstructor")
 public class FloatView extends FrameLayout {
     private final FloatConfig config;
 
