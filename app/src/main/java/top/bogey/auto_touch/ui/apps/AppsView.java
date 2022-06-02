@@ -69,15 +69,10 @@ public class AppsView extends Fragment {
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.show_system:
-                viewModel.showSystem.setValue(!Boolean.TRUE.equals(viewModel.showSystem.getValue()));
-                adapter.refreshApps(viewModel.searchAppList(searchText));
-                break;
-            case R.id.refresh_apps:
-                viewModel.refreshAppList();
-                adapter.refreshApps(viewModel.searchAppList(searchText));
-                break;
+        if (item.getItemId() == R.id.show_system) {
+            viewModel.showSystem.setValue(!Boolean.TRUE.equals(viewModel.showSystem.getValue()));
+            viewModel.refreshAppList();
+            adapter.refreshApps(viewModel.searchAppList(searchText));
         }
         return super.onOptionsItemSelected(item);
     }

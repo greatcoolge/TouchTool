@@ -38,6 +38,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public void refreshAppList(){
         PackageManager manager = getApplication().getPackageManager();
+        allApp.clear();
         allApp.addAll(manager.getInstalledPackages(PackageManager.GET_ACTIVITIES));
     }
 

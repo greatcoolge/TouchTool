@@ -68,7 +68,7 @@ public class Action {
         if (node == null) return "";
         switch (node.getType()){
             case NUMBER:
-                return context.getString(R.string.number_con, ((NumberNode) node).getValue());
+                return context.getString(actionMode == ActionMode.LOOP ? R.string.number_con_loop : R.string.number_con_parallel, ((NumberNode) node).getValue());
             case TEXT:
                 return context.getString(R.string.text_con, ((TextNode) node).getValue());
             case IMAGE:

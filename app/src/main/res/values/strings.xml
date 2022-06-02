@@ -33,7 +33,6 @@
 
     <!-- 应用 -->
     <string name="show_system">展示系统应用</string>
-    <string name="refresh_apps">刷新</string>
     <string name="search_apps">搜索</string>
 
     <!-- 任务 -->
@@ -58,12 +57,13 @@
     <string name="parallel_title_1">同时执行动作\n</string>
     <string name="parallel_title_2">直到全部完成</string>
 
-    <string name="number_con">成功%1$d个</string>
-    <string name="text_con">出现文本 %1$s</string>
+    <string name="number_con_loop">完成%1$d次循环</string>
+    <string name="number_con_parallel">完成%1$d个动作</string>
+    <string name="text_con">出现 %1$s</string>
     <string name="image_con">出现图片</string>
 
     <string name="delay_target">延迟%1$s毫秒</string>
-    <string name="text_target">%1$s文本 %2$s </string>
+    <string name="text_target">%1$s %2$s</string>
     <string name="image_target">%1$s图片</string>
     <string name="pos_target">使用 %1$s 手势</string>
     <string name="key_target">使用 %1$s 按键</string>

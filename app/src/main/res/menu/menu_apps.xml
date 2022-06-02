@@ -9,11 +9,6 @@
         android:title="@string/show_system"
         app:showAsAction="always" />
     <item
-        android:id="@+id/refresh_apps"
-        android:icon="@drawable/icon_refresh_apps"
-        android:title="@string/refresh_apps"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/search_apps"
         android:icon="@drawable/icon_search_apps"
         android:title="@string/search_apps"
