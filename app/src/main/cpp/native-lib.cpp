@@ -19,7 +19,7 @@ cv::Mat bitmap2Mat(JNIEnv *env, jobject bitmap){
 }
 
 jobject createMatchResult(JNIEnv *env, jdouble value, jint x, jint y){
-    auto resultClass = (jclass) env->FindClass("top/bogey/auto_touch/util/MatchResult");
+    auto resultClass = (jclass) env->FindClass("top/bogey/auto_touch/utils/MatchResult");
     jmethodID mid = env->GetMethodID(resultClass, "<init>", "(DII)V");
     jobject result = env->NewObject(resultClass, mid, value, x * 2, y * 2);
     return result;
@@ -27,7 +27,7 @@ jobject createMatchResult(JNIEnv *env, jdouble value, jint x, jint y){
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_top_bogey_auto_1touch_util_NativeUtil_nativeMatchTemplate(JNIEnv *env, jclass clazz, jobject bitmap, jobject temp, jint method) {
+Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclass clazz, jobject bitmap, jobject temp, jint method) {
     cv::Mat src = bitmap2Mat(env, bitmap);
     cv::cvtColor(src, src, cv::COLOR_RGBA2GRAY);
     cv::resize(src, src, cv::Size(src.cols / 2, src.rows / 2));

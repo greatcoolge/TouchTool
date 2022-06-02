@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="top.bogey.auto_touch">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
-    <application android:name=".MainApplication"
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent>
+    </queries>
+
+    <application
+        android:name=".MainApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AutoTouch">
-        <activity android:name=".MainActivity"
+
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="text/plain"/>
             </intent-filter>
+
         </activity>
 
         <service android:name=".MainAccessibilityService"
@@ -40,7 +51,7 @@
             <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibility_service"/>
         </service>
 
-        <service android:name=".CaptureService"
+        <service android:name=".MainCaptureService"
             android:exported="false"
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"/>

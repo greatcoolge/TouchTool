@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    style="?attr/materialCardViewFilledStyle"
+    app:strokeWidth="0dp"
+    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MaterialAlertDialog.Material3">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/mode_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/condition_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:backgroundTint="@color/background_tint_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/container_tint_check"
+                android:text="@string/action_condition"
+                app:icon="@drawable/icon_condition"
+                app:iconTint="@color/container_tint_check"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loop_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:backgroundTint="@color/background_tint_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/container_tint_check"
+                android:text="@string/action_loop"
+                app:icon="@drawable/icon_loop"
+                app:iconTint="@color/container_tint_check"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/parallel_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:backgroundTint="@color/background_tint_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/container_tint_check"
+                android:text="@string/action_parallel"
+                app:icon="@drawable/icon_parallel"
+                app:iconTint="@color/container_tint_check"/>
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mode_group">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delay_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="5dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_delay" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/text_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="5dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/image_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="5dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_image" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/touch_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="5dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_touch" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/key_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="5dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_key" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/task_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginHorizontal="5dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_task" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            tools:listitem="@layout/float_action_item"
+            tools:itemCount="3" />
+
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+
+            <TableRow
+                android:id="@+id/times_row"
+                android:layout_marginTop="4dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_gravity="center"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/title_times" />
+
+                <include
+                    android:id="@+id/times_include"
+                    layout="@layout/float_action_text_base" />
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="4dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/condition_title"
+                    android:layout_gravity="center"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="4dp"
+                    android:text="@string/title_condition" />
+
+                <FrameLayout>
+
+                    <include
+                        android:id="@+id/text_include"
+                        layout="@layout/float_action_text" />
+
+                    <include
+                        android:id="@+id/image_include"
+                        android:visibility="invisible"
+                        layout="@layout/float_action_image" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="0dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/condition_button_none"
+                            style="@style/Theme.AutoTouch.Button.IconOnly"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:icon="@drawable/icon_run_close"
+                            app:iconSize="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/condition_button_times"
+                            style="@style/Theme.AutoTouch.Button.IconOnly"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:icon="@drawable/icon_times"
+                            app:iconSize="10dp" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/condition_button_text"
+                            style="@style/Theme.AutoTouch.Button.IconOnly"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:icon="@drawable/icon_text"
+                            app:iconSize="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/condition_button_image"
+                            style="@style/Theme.AutoTouch.Button.IconOnly"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:icon="@drawable/icon_image"
+                            app:iconSize="10dp" />
+                </LinearLayout>
+
+            </TableRow>
+
+        </TableLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/cancel"
+            app:icon="@drawable/icon_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/save"
+            app:icon="@drawable/icon_save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

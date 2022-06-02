@@ -1,65 +1,46 @@
 package top.bogey.auto_touch.room.data;
 
 import android.graphics.Path;
-import android.graphics.Rect;
-import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import top.bogey.auto_touch.MainAccessibilityService;
-import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.ActionMode;
-import top.bogey.auto_touch.room.bean.Node;
-import top.bogey.auto_touch.room.bean.NodeType;
-import top.bogey.auto_touch.room.bean.Pos;
-import top.bogey.auto_touch.room.bean.SimpleTaskInfo;
 import top.bogey.auto_touch.room.bean.Task;
-import top.bogey.auto_touch.ui.easy_float.EasyFloat;
-import top.bogey.auto_touch.ui.setting.DebugDialog;
-import top.bogey.auto_touch.util.AppUtil;
-import top.bogey.auto_touch.util.RunningCallback;
+import top.bogey.auto_touch.room.bean.node.Node;
+import top.bogey.auto_touch.room.bean.node.NodeType;
+import top.bogey.auto_touch.room.bean.node.NumberNode;
+import top.bogey.auto_touch.room.bean.node.TaskNode;
+import top.bogey.auto_touch.utils.TaskCallback;
 
 public class TaskRunnable implements Runnable{
+    private boolean isRunning = true;
 
     private final MainAccessibilityService service;
     private final Task task;
-    private final TaskRepository repository;
-    private final RunningCallback callback;
+    private final TaskCallback callback;
 
+    private final TaskRepository repository;
     private final Map<String, Task> taskMap = new HashMap<>();
     private final Map<Node, Integer> taskNodeMap = new HashMap<>();
     private final int allPercent;
     private int percent = 0;
-    private DebugDialog debugDialog = null;
 
-    private boolean isRunning = true;
-
-    public TaskRunnable(@NonNull MainAccessibilityService service, Task task, RunningCallback callback) {
+    public TaskRunnable(MainAccessibilityService service, Task task, TaskCallback callback) {
         this.service = service;
         this.task = task;
         this.callback = callback;
-        repository = new TaskRepository(service.getApplication());
+
+        repository = new TaskRepository(service);
         getAllTasks(taskMap, task);
         allPercent = getAllPercent(task);
-
-        if (MainAccessibilityService.isShowDebugTips(service)){
-            View floatView = EasyFloat.getView(DebugDialog.class.getCanonicalName());
-            if (floatView != null){
-                debugDialog = (DebugDialog) floatView;
-            }
-        }
     }
 
     public void stop() {
@@ -70,21 +51,15 @@ public class TaskRunnable implements Runnable{
         return isRunning;
     }
 
-    private void sleep(int time){
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void run() {
-        doTask(task);
-        if (callback != null) callback.onResult(isRunning());
+        if (callback != null) callback.onStart();
+        runTask(task);
+        if (callback != null) callback.onEnd(isRunning);
     }
 
-    private boolean doTask(@NonNull Task task){
+    private boolean runTask(Task task){
+        // 获取任务中有效的动作
         List<Action> actions = new ArrayList<>();
         for (Action action : task.getActions()) {
             if (action.isEnable()) actions.add(action);
@@ -93,291 +68,151 @@ public class TaskRunnable implements Runnable{
         boolean result = true;
         Action runAction = actions.remove(0);
         while (runAction != null && isRunning()){
-            if (runAction.getActionMode() == ActionMode.CONDITION) {
-                CheckResult checkResult = checkNode(runAction.getCondition(), true);
-                if (checkResult.result){
-                    result &= doAction(runAction, 0);
-                    if (runAction.getTargets().size() > 1){
-                        addNodePercent(runAction.getTargets().get(1), true);
-                    }
-                } else {
-                    if (runAction.getTargets().size() > 1){
-                        result &= doAction(runAction, 1);
+            switch (runAction.getActionMode()) {
+                case CONDITION:
+                    if (runAction.getCondition() == null || checkNode(runAction.getCondition())) {
+                        result &= doAction(runAction, 0);
+                        if (runAction.getTargets().size() > 1)
+                            addTaskProgress(runAction.getTargets().get(1), true);
                     } else {
+                        if (runAction.getTargets().size() > 1) result &= doAction(runAction, 1);
+                        else result = false;
+                        addTaskProgress(runAction.getTargets().get(0), true);
+                    }
+                    break;
+                case LOOP:
+                    int succeedTimes = 0;
+                    int finishTimes = 0;
+                    Node stop = runAction.getCondition();
+                    while (finishTimes < runAction.getTimes() && isRunning()){
+                        boolean flag = true;
+                        for (int i = 0; i < runAction.getTargets().size(); i++) {
+                            flag &= doAction(runAction, i);
+                        }
+                        if (flag) succeedTimes++;
+                        if (stop.getType() != NodeType.NULL){
+                            if (stop.getType() == NodeType.NUMBER && succeedTimes >= ((NumberNode) stop).getValue()){
+                                break;
+                            }
+                            if ((stop.getType() == NodeType.TEXT || stop.getType() == NodeType.IMAGE) && checkNode(stop)) break;
+                        }
+                        finishTimes++;
+                    }
+                    // 有结束条件循环却一次都没成功，代表循环执行失败
+                    if (stop.getType() != NodeType.NULL && succeedTimes == 0){
                         result = false;
                     }
-                    addNodePercent(runAction.getTargets().get(0), true);
-                }
-            } else if (runAction.getActionMode() == ActionMode.LOOP) {
-                int successTimes = 0;
-                int runTimes = 0;
-                Node stop = runAction.getStop();
-                while (runTimes < runAction.getTimes() && isRunning()){
-                    boolean flag = true;
+                    break;
+                case PARALLEL:
+                    CountDownLatch latch = new CountDownLatch(((NumberNode) runAction.getCondition()).getValue());
+                    Action finalRunAction = runAction;
                     for (int i = 0; i < runAction.getTargets().size(); i++) {
-                        flag &= doAction(runAction, i);
+                        int index = i;
+                        service.taskService.submit(() -> {
+                            if (doAction(finalRunAction, index)) latch.countDown();
+                        });
                     }
-                    if (flag) successTimes++;
-                    if (stop.getType() != NodeType.NULL){
-                        if (stop.getType() == NodeType.NUMBER && successTimes >= stop.getNumber()){
-                            break;
-                        }
-                        CheckResult checkResult = checkNode(stop, true);
-                        if ((stop.getType() == NodeType.TEXT || stop.getType() == NodeType.IMAGE) && checkResult.result) break;
+                    try {
+                        if (!latch.await(60, TimeUnit.SECONDS)) stop();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    runTimes++;
-                }
-                // 有结束条件循环却一次都没成功，代表循环执行失败
-                if (stop.getType() != NodeType.NULL && successTimes == 0){
-                    result = false;
-                }
-            } else if (runAction.getActionMode() == ActionMode.PARALLEL) {
-                CountDownLatch latch = new CountDownLatch(runAction.getStop().getNumber());
-                Action finalRunAction = runAction;
-                for (int i = 0; i < runAction.getTargets().size(); i++) {
-                    int index = i;
-                    service.taskService.submit(() -> {
-                        if (doAction(finalRunAction, index)) latch.countDown();
-                    });
-                }
-                try {
-                    boolean await = latch.await(60, TimeUnit.SECONDS);
-                    if (!await){
-                        if (debugDialog != null){
-                            debugDialog.addTips(service.getString(R.string.parallel_tips));
-                        }
-                        stop();
-                        break;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    break;
             }
 
-            if (actions.size() > 0){
-                runAction = actions.remove(0);
-            } else {
-                runAction = null;
-            }
+            if (actions.size() > 0) runAction = actions.remove(0);
+            else runAction = null;
         }
 
-        // 线程关闭代表任务执行失败
         return result & isRunning();
+    }
+
+    private void sleep(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean doAction(Action action, int index){
         List<Node> targets = action.getTargets();
         if (targets.size() > index){
-            Node target = targets.get(index);
-            if (debugDialog != null){
-                debugDialog.addTips("["+ task.getTitle() +"]["+ percent +"]" + action.getTargetTitle(service, target));
-            }
-            CheckResult checkResult = checkNode(target);
             boolean result = false;
-            if (checkResult.result){
+            Node target = targets.get(index);
+            Object nodeTarget = getNodeTarget(target);
+            if (nodeTarget != null){
                 result = true;
+                int randomTime = target.getTimeArea().getRandomTime();
                 switch (target.getType()) {
                     case DELAY:
-                        sleep(target.getDelay());
+                        sleep((Integer) nodeTarget);
                         break;
                     case TEXT:
-                        AccessibilityNodeInfo nodeInfo = checkResult.nodeInfo;
-                        if (target.getTime() <= 100)
+                        AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) nodeTarget;
+                        if (target.getTimeArea().getRealMax() <= 100){
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        else
+                        } else {
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-
-                        sleep(target.getTime());
+                        }
+                        sleep(randomTime);
                         break;
                     case IMAGE:
-                    case POS:
-                        Path path = null;
-                        if (target.getType() == NodeType.IMAGE){
-                            path = getPath(Collections.singletonList(new Pos(checkResult.rect.centerX(), checkResult.rect.centerY())));
-                        } else if (target.getType() == NodeType.POS){
-                            List<Pos> poses = new ArrayList<>();
-                            for (Pos pos : target.getPoses()) {
-                                poses.add(AppUtil.percent2px(service.getApplicationContext(), pos));
-                            }
-                            path = getPath(poses);
-                        }
-                        if (path != null){
-                            service.runGesture(path, target.getTime());
-                        }
-
-                        sleep(target.getTime());
+                    case TOUCH:
+                        Path path = (Path) nodeTarget;
+                        service.runGesture(path, randomTime, null);
+                        sleep(randomTime);
                         break;
                     case KEY:
-                        service.performGlobalAction(target.getKey() + 1);
-
-                        sleep(target.getTime());
+                        service.performGlobalAction((Integer) nodeTarget);
                         break;
                     case TASK:
-                        if (checkResult.task != null){
-                            result = doTask(checkResult.task);
-                        }
+                        result = runTask((Task) nodeTarget);
                         break;
                 }
             }
-            addNodePercent(target, !checkResult.result);
+            addTaskProgress(target, nodeTarget == null);
             return result;
         }
         return false;
     }
 
-    private CheckResult checkNode(Node node){
-        return checkNode(node, false);
-    }
-
-    @NonNull
-    private CheckResult checkNode(@NonNull Node node, boolean simpleResult){
-        switch (node.getType()){
-            case NULL:
-                return new CheckResult(true);
-            case NUMBER:
-                int number = node.getNumber();
-                return new CheckResult(number > 0, number);
-            case DELAY:
-                int delay = node.getDelay();
-                return new CheckResult(delay > 0, delay);
+    private boolean checkNode(Node node){
+        switch (node.getType()) {
             case TEXT:
-                AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
-                List<AccessibilityNodeInfo> nodes = searchNodes(nodeInfo, node.getText());
-                if (simpleResult){
-                    return new CheckResult(nodes != null && !nodes.isEmpty());
-                } else {
-                    return new CheckResult(nodes != null && !nodes.isEmpty(), searchClickableNode(nodes));
-                }
+                return node.checkNode(service);
             case IMAGE:
-                if (service.binder != null){
-                    Rect rect = service.binder.matchImage(node.getImage(), 90);
-                    return new CheckResult(rect != null, rect);
-                } else {
-                    return new CheckResult(false);
-                }
-            case POS:
-                List<Pos> poses = node.getPoses();
-                return new CheckResult(poses != null && !poses.isEmpty());
-            case KEY:
-                int key = node.getKey();
-                return new CheckResult(key >= 0, key);
+                return node.checkNode(service.binder);
             case TASK:
-                Task task = taskMap.get(node.getTask().getId());
-                if (task != null){
-                    return new CheckResult(true, task);
-                } else {
-                    return new CheckResult(false);
-                }
-        }
-        return new CheckResult(false);
-    }
-
-    private Path getPath(List<Pos> poses){
-        if (poses != null && !poses.isEmpty()){
-            Path path = new Path();
-            Pos firstPos = poses.get(0);
-            path.moveTo(firstPos.getX(), firstPos.getY());
-            for (int i = 1; i < poses.size(); i++) {
-                Pos pos = poses.get(i);
-                path.lineTo(pos.getX(), pos.getY());
-            }
-            return path;
-        }
-        return null;
-    }
-
-    private List<AccessibilityNodeInfo> searchNodes(AccessibilityNodeInfo nodeInfo, String key){
-        if (nodeInfo == null) return null;
-        Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
-        Matcher matcher = pattern.matcher(key);
-        if (matcher.find()) {
-            String realKey = matcher.group(1);
-            if (realKey != null) {
-                if (realKey.indexOf("id/") == 0){
-                    return nodeInfo.findAccessibilityNodeInfosByViewId(task.getPkgName() + ":" + realKey);
-                } else if (realKey.indexOf("lv/") == 0){
-                    String[] split = realKey.split("/");
-                    String[] levels = split[1].split(",");
-                    for (String level : levels) {
-                        nodeInfo = searchNode(nodeInfo, Integer.parseInt(level));
-                        if (nodeInfo == null){
-                            return null;
-                        }
-                    }
-                    return new ArrayList<>(Collections.singletonList(nodeInfo));
-                } else {
-                    return nodeInfo.findAccessibilityNodeInfosByText(realKey);
-                }
-            }
-        }
-        ArrayList<AccessibilityNodeInfo> similarNodes = new ArrayList<>();
-        searchNodes(similarNodes, nodeInfo, key);
-        return similarNodes;
-    }
-
-    private void searchNodes(List<AccessibilityNodeInfo> similarNodes, AccessibilityNodeInfo nodeInfo, String key){
-        if (nodeInfo == null) return;
-        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
-            AccessibilityNodeInfo child = nodeInfo.getChild(i);
-            if (child != null){
-                String text = String.valueOf(child.getText());
-                String des = String.valueOf(child.getContentDescription());
-                String id = String.valueOf(child.getViewIdResourceName());
-                String lKey = key.toLowerCase();
-                if (text.toLowerCase().contains(lKey) || des.toLowerCase().contains(lKey) || id.toLowerCase().contains(lKey)) {
-                    similarNodes.add(child);
-                } else {
-                    searchNodes(similarNodes, child, key);
-                }
-            }
+                return node.checkNode(taskMap);
+            default:
+                return node.checkNode(null);
         }
     }
 
-    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, int level){
-        int index = 0;
-        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
-            AccessibilityNodeInfo child = nodeInfo.getChild(i);
-            if (child != null){
-                if (level == index){
-                    return child;
-                } else {
-                    index++;
-                }
-            }
-        }
-        return null;
-    }
-
-    private AccessibilityNodeInfo searchClickableNode(List<AccessibilityNodeInfo> nodes){
-        if (nodes == null || nodes.isEmpty()) return null;
-        for (AccessibilityNodeInfo node : nodes) {
-            AccessibilityNodeInfo clickableNode = searchClickableNode(node);
-            if (clickableNode != null) return clickableNode;
-        }
-        return null;
-    }
-
-    private AccessibilityNodeInfo searchClickableNode(AccessibilityNodeInfo nodeInfo){
-        if (nodeInfo == null) return null;
-        if (nodeInfo.isClickable()) return nodeInfo;
-        return searchClickableNode(nodeInfo.getParent());
-    }
-
-    private void refreshRunningPercent(int percent){
-        if (callback != null){
-            callback.onProgress((int) (percent * 100.0 / allPercent));
+    private Object getNodeTarget(Node node){
+        switch (node.getType()){
+            case TEXT:
+            case TOUCH:
+                return node.getNodeTarget(service);
+            case IMAGE:
+                return node.getNodeTarget(service.binder);
+            case TASK:
+                return node.getNodeTarget(taskMap);
+            default:
+                return node.getNodeTarget(null);
         }
     }
 
-    private synchronized void addNodePercent(Node node, boolean skip){
+    private void addTaskProgress(Node node, boolean skip){
         if (node.getType() != NodeType.TASK){
-            refreshRunningPercent(++percent);
+            if (callback != null) callback.onProgress((++percent) * 100 / allPercent);
         } else {
             if (skip){
                 Integer integer = taskNodeMap.get(node);
                 if (integer != null){
                     percent += integer;
-                    refreshRunningPercent(percent);
+                    if (callback != null) callback.onProgress(percent * 100 / allPercent);
                 }
             }
         }
@@ -389,7 +224,7 @@ public class TaskRunnable implements Runnable{
             if (action.isEnable()){
                 for (Node target : action.getTargets()) {
                     if (target.getType() == NodeType.TASK) {
-                        SimpleTaskInfo taskInfo = target.getTask();
+                        TaskNode.TaskInfo taskInfo = ((TaskNode) target).getValue();
                         if (!taskMap.containsKey(taskInfo.getId())){
                             List<Task> tasks = repository.getTasksById(taskInfo.getId());
                             if (tasks != null){
@@ -411,7 +246,7 @@ public class TaskRunnable implements Runnable{
                 int cent = 0;
                 for (Node target : action.getTargets()) {
                     if (target.getType() == NodeType.TASK){
-                        Task newTask = taskMap.get(target.getTask().getId());
+                        Task newTask = taskMap.get(((TaskNode) target).getValue().getId());
                         if (newTask != null){
                             int taskCent = getAllPercent(newTask);
                             taskNodeMap.put(target, taskCent);
@@ -428,37 +263,5 @@ public class TaskRunnable implements Runnable{
             }
         }
         return percent;
-    }
-
-    private static class CheckResult{
-        public boolean result;
-        public AccessibilityNodeInfo nodeInfo;
-        public Rect rect;
-        public Task task;
-        public int number;
-
-        public CheckResult(boolean result) {
-            this.result = result;
-        }
-
-        public CheckResult(boolean result, AccessibilityNodeInfo nodeInfo) {
-            this.result = result;
-            this.nodeInfo = nodeInfo;
-        }
-
-        public CheckResult(boolean result, Rect rect) {
-            this.result = result;
-            this.rect = rect;
-        }
-
-        public CheckResult(boolean result, Task task) {
-            this.result = result;
-            this.task = task;
-        }
-
-        public CheckResult(boolean result, int number) {
-            this.result = result;
-            this.number = number;
-        }
     }
 }

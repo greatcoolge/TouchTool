@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="7"
+            tools:listitem="@layout/float_record_item"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            style="?attr/materialCardViewFilledStyle"
+            app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
+
+            <LinearLayout
+                android:id="@+id/button_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/save_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_save" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/delay_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_delay" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/word_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_text" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/image_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_image" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/pos_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_touch" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/key_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_key" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/task_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_task" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

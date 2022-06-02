@@ -15,10 +15,10 @@ public class Task {
     @PrimaryKey
     private String id;
     private String pkgName;
+
     private String title;
-    private int groupId = 0;
     private List<Action> actions = new ArrayList<>();
-    private TaskStatus taskStatus = TaskStatus.AUTO;
+    private TaskStatus status = TaskStatus.CLOSED;
 
     @Ignore
     public Task() {
@@ -54,14 +54,6 @@ public class Task {
         this.title = title;
     }
 
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-
     public List<Action> getActions() {
         return actions;
     }
@@ -70,11 +62,11 @@ public class Task {
         this.actions = actions;
     }
 
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
+    public TaskStatus getStatus() {
+        return status;
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 }

@@ -1,103 +1,120 @@
 package top.bogey.auto_touch.ui.apps;
 
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import top.bogey.auto_touch.MainActivity;
+import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
-import top.bogey.auto_touch.databinding.FragmentAppsItemBinding;
-import top.bogey.auto_touch.util.AppUtil;
+import top.bogey.auto_touch.databinding.ViewAppsItemBinding;
+import top.bogey.auto_touch.room.bean.node.TaskNode;
 
 public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerViewAdapter.ViewHolder> {
-    private final AppsFragment parent;
-    private final List<AppInfo> appsInfo = new ArrayList<>();
-    public final Map<String, Integer> flagMap = new HashMap<>();
-
-    public AppsRecyclerViewAdapter(AppsFragment parent){
-        this.parent = parent;
-    }
+    private final List<AppInfo> apps = new ArrayList<>();
+    private final Map<String, Integer> flags = new HashMap<>();
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(FragmentAppsItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(ViewAppsItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        AppInfo info = appsInfo.get(position);
-        holder.appName.setText(info.appName);
-        holder.icon.setImageDrawable(AppUtil.getDrawable(parent.requireContext(), info.info));
-
-        boolean existConfig = false;
-        Integer count = flagMap.get(info.packageName);
-        if (count != null){
-            existConfig = count > 0;
-            holder.numberText.setText(String.valueOf(count));
-        }
-
-        holder.numberText.setVisibility(existConfig ? View.VISIBLE : View.GONE);
-        float alpha = existConfig ? 1f : 0.25f;
-        holder.appName.setAlpha(alpha);
-        holder.icon.setAlpha(alpha);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        AppInfo appInfo = apps.get(position);
+        Integer count = flags.get(appInfo.packageName);
+        holder.refreshView(appInfo, count == null ? 0 : count);
     }
 
     @Override
     public int getItemCount() {
-        return appsInfo.size();
+        return apps.size();
     }
 
-    public void refreshList(List<AppInfo> appsInfo){
-        int preSize = this.appsInfo.size();
-        this.appsInfo.clear();
-        notifyItemRangeRemoved(0, preSize);
-        this.appsInfo.addAll(appsInfo);
-        notifyItemRangeInserted(0, appsInfo.size());
+    public void refreshApps(List<AppInfo> apps){
+        this.apps.clear();
+        if (apps != null) this.apps.addAll(apps);
+        notifyDataSetChanged();
     }
 
-    public void notifyCountChanged(String pkgName, int count){
-        flagMap.put(pkgName, count);
+    public void refreshItems(List<TaskNode.TaskGroup> group){
+        if (group == null || group.size() == 0){
+            for (Map.Entry<String, Integer> entry : flags.entrySet()) {
+                refreshItem(entry.getKey(), 0);
+            }
+        } else {
+            for (TaskNode.TaskGroup taskGroup : group) {
+                refreshItem(taskGroup.getPkgName(), taskGroup.getCount());
+            }
+        }
+    }
 
-        for (int i = 0; i < appsInfo.size(); i++) {
-            if (appsInfo.get(i).packageName.equals(pkgName)){
+    public void refreshItem(String pkgName, int count){
+        flags.put(pkgName, count);
+        for (int i = 0; i < apps.size(); i++) {
+            if (apps.get(i).packageName.equals(pkgName)){
                 notifyItemChanged(i);
                 break;
             }
         }
     }
 
-    protected class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView appName;
-        public final TextView numberText;
-        public final ImageView icon;
-        public final ConstraintLayout layout;
+    protected static class ViewHolder extends RecyclerView.ViewHolder{
+        private final MaterialTextView appName;
+        private final MaterialButton numberText;
+        private final ShapeableImageView icon;
 
-        public ViewHolder(FragmentAppsItemBinding binding) {
+        private AppInfo info;
+
+        public ViewHolder(ViewAppsItemBinding binding) {
             super(binding.getRoot());
             appName = binding.appName;
-            numberText =binding.numberText;
+            numberText = binding.numberText;
             icon = binding.icon;
-            layout = binding.getRoot();
 
-            layout.setOnClickListener(view -> {
-                int index = getBindingAdapterPosition();
-                AppInfo info = appsInfo.get(index);
-                NavController controller = Navigation.findNavController(parent.requireActivity(), R.id.con_view);
-                controller.navigate(AppsFragmentDirections.actionAppsFragmentToTasksFragment(info.packageName));
+            itemView.setOnClickListener(v -> {
+                MainActivity activity = MainApplication.getActivity();
+                if (activity != null){
+                    NavController controller = Navigation.findNavController(activity, R.id.con_view);
+                    controller.navigate(AppsViewDirections.actionAppsToTasks(info.packageName));
+                }
             });
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        public void refreshView(AppInfo appInfo, int count){
+            info = appInfo;
+            appName.setText(appInfo.appName);
+            if (appInfo.packageName.equals(itemView.getContext().getString(R.string.common_package_name))){
+                icon.setImageDrawable(itemView.getContext().getDrawable(R.mipmap.ic_launcher));
+            } else {
+                PackageManager manager = itemView.getContext().getPackageManager();
+                icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
+            }
+
+            numberText.setText(String.valueOf(count));
+            numberText.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
+
+            float alpha = count > 0 ? 1f : 0.25f;
+            appName.setAlpha(alpha);
+            icon.setAlpha(alpha);
         }
     }
 }

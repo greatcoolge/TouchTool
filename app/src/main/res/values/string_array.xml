@@ -5,6 +5,11 @@
         <item>主页</item>
     </string-array>
 
+    <string-array name="key_ids">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="node_type">
         <item>无</item>
         <item>次数</item>
@@ -15,4 +20,5 @@
         <item>按键</item>
         <item>任务</item>
     </string-array>
+
 </resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.AutoTouch.Button.OutlinedButton.IconOnly" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textTop</item>
+        <item name="android:textScaleX">0</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Theme.AutoTouch.Button.TextButton.IconOnly" parent="Widget.Material3.Button.TextButton">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textTop</item>
+        <item name="android:textScaleX">0</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Theme.AutoTouch.Button.IconOnly" parent="Widget.Material3.Button">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textTop</item>
+        <item name="android:textScaleX">0</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Theme.AutoTouch.ShapeAppearance.CornerLeft.Full" parent="">
+        <item name="cornerSizeTopLeft">50%</item>
+        <item name="cornerSizeBottomLeft">50%</item>
+        <item name="cornerSizeTopRight">0%</item>
+        <item name="cornerSizeBottomRight">0%</item>
+    </style>
+
+    <style name="Theme.AutoTouch.ShapeAppearance.CornerRight.Full" parent="">
+        <item name="cornerSizeTopLeft">0%</item>
+        <item name="cornerSizeBottomLeft">0%</item>
+        <item name="cornerSizeTopRight">50%</item>
+        <item name="cornerSizeBottomRight">50%</item>
+    </style>
+
+    <style name="Theme.AutoTouch.ShapeAppearance.Corner.Large" parent="">
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomRight">16dp</item>
+    </style>
+
+</resources>

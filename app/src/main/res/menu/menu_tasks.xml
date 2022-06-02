@@ -4,21 +4,17 @@
 
     <item
         android:id="@+id/add"
-        android:icon="@drawable/add"
+        android:icon="@drawable/icon_add_menu"
         android:title="@string/add"
         app:showAsAction="always" />
-
-
     <item
         android:id="@+id/record"
-        android:icon="@drawable/record"
+        android:icon="@drawable/icon_record"
         android:title="@string/record"
         app:showAsAction="always" />
-
-
     <item
-        android:id="@+id/quick_record"
-        android:icon="@drawable/record_fast"
-        android:title="@string/record_fast"
+        android:id="@+id/record_smart"
+        android:icon="@drawable/icon_record_smart"
+        android:title="@string/record_smart"
         app:showAsAction="always" />
 </menu>

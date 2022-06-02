@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/add"
-        android:icon="@drawable/system"
+        android:id="@+id/show_system"
+        android:icon="@drawable/icon_show_system"
         android:title="@string/show_system"
         app:showAsAction="always" />
     <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/refresh"
-        android:title="@string/refresh"
+        android:id="@+id/refresh_apps"
+        android:icon="@drawable/icon_refresh_apps"
+        android:title="@string/refresh_apps"
         app:showAsAction="always" />
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/search"
-        android:title="@string/search"
+        android:id="@+id/search_apps"
+        android:icon="@drawable/icon_search_apps"
+        android:title="@string/search_apps"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always" />
 </menu>

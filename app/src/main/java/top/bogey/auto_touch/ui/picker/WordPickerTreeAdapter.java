@@ -1,13 +1,13 @@
 package top.bogey.auto_touch.ui.picker;
 
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.amrdeveloper.treeview.TreeNode;
 import com.amrdeveloper.treeview.TreeNodeManager;
@@ -19,15 +19,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import top.bogey.auto_touch.R;
+import top.bogey.auto_touch.utils.DisplayUtils;
 
 public class WordPickerTreeAdapter extends TreeViewAdapter {
     private TreeNode selectedNode;
     private final TreeNodeManager manager;
 
-    public WordPickerTreeAdapter(TreeViewHolderFactory factory, TreeNodeManager manager, WordPicker picker, AccessibilityNodeInfo root) {
+    public WordPickerTreeAdapter(TreeViewHolderFactory factory, TreeNodeManager manager, WordPickerFloatView picker) {
         super(factory, manager);
         this.manager = manager;
-        setRoot(root);
         setTreeNodeLongClickListener((treeNode, view) -> {
             AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) treeNode.getValue();
             picker.showWordView(nodeInfo, false);
@@ -43,7 +43,7 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
         TreeNode node = manager.get(position);
         if (node.equals(selectedNode)){
             ViewHolder viewHolder = (ViewHolder) holder;
-            viewHolder.titleText.setTextColor(viewHolder.itemView.getContext().getResources().getColor(R.color.amber_500, null));
+            viewHolder.titleText.setTextColor(DisplayUtils.getAttrColor(viewHolder.itemView.getContext(), com.google.android.material.R.attr.colorError, 0));
         }
     }
 
@@ -58,7 +58,7 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
     }
 
     private TreeNode createTree(AccessibilityNodeInfo root, int level){
-        TreeNode node = new TreeNode(root, R.layout.float_fragment_picker_word_item);
+        TreeNode node = new TreeNode(root, R.layout.float_picker_word_item);
         node.setLevel(level);
         for (int i = 0; i < root.getChildCount(); i++) {
             AccessibilityNodeInfo child = root.getChild(i);
@@ -72,28 +72,32 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
     protected static class ViewHolder extends TreeViewHolder{
         public final TextView titleText;
         public final ImageView imageView;
+        private final ConstraintLayout layout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             titleText = itemView.findViewById(R.id.title_text);
             imageView = itemView.findViewById(R.id.image_view);
+            layout = itemView.findViewById(R.id.constraintLayout);
         }
 
         @Override
         public void bindTreeNode(TreeNode node) {
-            int padding = node.getLevel() * 8;
-            itemView.setPaddingRelative(padding, 0, 0, 0);
+            int padding = node.getLevel() * 16;
+            layout.setPaddingRelative(padding, 0, 0, 0);
             AccessibilityNodeInfo value = (AccessibilityNodeInfo) node.getValue();
             titleText.setText(getNodeTitle(value));
-            Resources resources = itemView.getContext().getResources();
+
+            int color;
             if (value.isClickable()){
-                titleText.setTextColor(resources.getColor(R.color.blue_500, null));
-                imageView.setImageTintList(ColorStateList.valueOf(resources.getColor(R.color.blue_500, null)));
+                color = DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorPrimary, 0);
             } else {
-                titleText.setTextColor(resources.getColor(R.color.grey_700, null));
-                imageView.setImageTintList(ColorStateList.valueOf(resources.getColor(R.color.grey_700, null)));
+                color = DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorOnSurface, 0);
             }
+            titleText.setTextColor(color);
+            imageView.setImageTintList(ColorStateList.valueOf(color));
+
             imageView.setVisibility(node.getChildren().size() > 0 ? View.VISIBLE : View.INVISIBLE);
-            imageView.setImageResource(node.isExpanded() ? R.drawable.up : R.drawable.down);
+            imageView.setImageResource(node.isExpanded() ? R.drawable.icon_up : R.drawable.icon_down);
         }
 
         private String getNodeTitle(AccessibilityNodeInfo node){

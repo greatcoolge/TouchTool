@@ -4,11 +4,13 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.node.TaskNode;
 
 public class TaskRepository {
     private final TaskDao taskDao;
@@ -34,8 +36,9 @@ public class TaskRepository {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return getTasksByPackageName(pkgName);
+//            return getTasksByPackageName(pkgName);
         }
+        return new ArrayList<>();
     }
 
     public List<Task> getTasksByPackageNames(String... pkgNames){
@@ -44,8 +47,9 @@ public class TaskRepository {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return getTasksByPackageNames(pkgNames);
+//            return getTasksByPackageNames(pkgNames);
         }
+        return new ArrayList<>();
     }
 
     public List<Task> getTasksById(String id){
@@ -66,7 +70,7 @@ public class TaskRepository {
         return taskDao.getTasksLiveByPackageName(pkgName);
     }
 
-    public LiveData<List<TaskGroup>> getTaskGroupsLive(){
+    public LiveData<List<TaskNode.TaskGroup>> getTaskGroupsLive(){
         return taskDao.getTaskGroupsLive();
     }
 

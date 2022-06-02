@@ -20,38 +20,45 @@
     private java.lang.String id;
     private java.lang.String pkgName;
     private java.lang.String title;
-    private int groupId;
     private java.util.List actions;
-    private top.bogey.auto_touch.room.bean.TaskStatus taskStatus;
+    private top.bogey.auto_touch.room.bean.TaskStatus status;
 }
 
 -keepclassmembers class top.bogey.auto_touch.room.bean.Action{
     private top.bogey.auto_touch.room.bean.ActionMode actionMode;
     private boolean enable;
-    private java.lang.String title;
     private java.util.List targets;
-    private top.bogey.auto_touch.room.bean.Node condition;
-    private top.bogey.auto_touch.room.bean.Node stop;
+    private top.bogey.auto_touch.room.bean.node.Node condition;
     private int times;
 }
 
--keepclassmembers class top.bogey.auto_touch.room.bean.Node{
-    private top.bogey.auto_touch.room.bean.NodeType type;
-    private java.lang.String value;
-    private int time;
+-keepclassmembers class top.bogey.auto_touch.room.bean.node.Node{
+    protected top.bogey.auto_touch.room.bean.node.NodeType type;
+    protected java.lang.Object value;
+    protected top.bogey.auto_touch.room.bean.node.TimeArea timeArea;
 }
 
--keepclassmembers class top.bogey.auto_touch.room.bean.Pos{
-    private int x;
-    private int y;
-}
-
--keepclassmembers class top.bogey.auto_touch.room.bean.SimpleTaskInfo{
+-keepclassmembers class top.bogey.auto_touch.room.bean.node.TaskNode$TaskInfo{
     private java.lang.String id;
     private java.lang.String title;
 }
 
--keep class top.bogey.auto_touch.util.MatchResult{*;}
+-keepclassmembers class top.bogey.auto_touch.room.bean.node.ImageNode$ImageInfo{
+    private java.lang.String image;
+    private int value;
+}
+
+-keepclassmembers class android.graphics.Point{
+    public int x;
+    public int y;
+}
+
+-keepclassmembers class top.bogey.auto_touch.room.bean.node.TimeArea{
+    private int min;
+    private int max;
+}
+
+-keep class top.bogey.auto_touch.utils.MatchResult{*;}
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.

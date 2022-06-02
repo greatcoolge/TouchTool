@@ -1,104 +1,109 @@
 <resources>
     <string name="app_name_release">AutoTouch</string>
     <string name="app_name_debug">AutoTouchD</string>
-    <string name="service_des">自动执行点击任务</string>
-
-    <string name="home">主页</string>
-    <string name="apps">应用</string>
-    <string name="setting">设置</string>
-    <string name="tasks">任务</string>
-    <string name="actions">动作</string>
-
-    <string name="dialog_title">重要提示</string>
-    <string name="enter">确认</string>
-    <string name="cancel">取消</string>
 
     <string name="common_name">通用</string>
     <string name="common_package_name" translatable="false">configs.common</string>
 
-    <string name="service_opened">服务已开启</string>
-    <string name="service_closed">服务已关闭</string>
-    <string name="service_open_tips">需要开启无障碍服务才能使用</string>
+    <!-- 主页 -->
+    <string name="home">主页</string>
+    <string name="apps">应用</string>
+    <string name="tasks">任务</string>
+    <string name="setting">设置</string>
 
-    <string name="capture_service_opened">录屏已开启</string>
-    <string name="capture_service_closed">录屏已关闭</string>
-    <string name="capture_service_open_tips">需要授予屏幕录制权限才能使用检测图片的能力</string>
-    <string name="check_image">当前任务需要检测图片，请开启屏幕录制</string>
+    <string name="dialog_title">重要提示</string>
+    <string name="enter">确认</string>
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
 
-    <string name="auto_start">自启动</string>
-    <string name="auto_start_tips">开启自启动权限使服务在后台稳定运行</string>
+    <string name="accessibility_service_on">服务已开启</string>
+    <string name="accessibility_service_off">服务已关闭</string>
+    <string name="accessibility_service_on_tips">需要开启无障碍服务才能使用</string>
+    <string name="accessibility_service_des">自动点击</string>
+
+    <string name="capture_service_on">录屏已开启</string>
+    <string name="capture_service_off">录屏已关闭</string>
+    <string name="capture_service_on_tips_1">需要授予屏幕录制权限才能使用检测图片的能力</string>
+    <string name="capture_service_on_tips_2">当前任务需要检测图片，请开启屏幕录制</string>
+
+    <string name="auto_run">自启动</string>
+    <string name="auto_run_tips">开启自启动权限使服务在后台稳定运行</string>
     <string name="lock_task">锁定后台</string>
     <string name="lock_task_tips">锁定后台使服务在后台稳定运行</string>
 
+    <!-- 应用 -->
     <string name="show_system">展示系统应用</string>
-    <string name="refresh">刷新</string>
-    <string name="search">搜索</string>
+    <string name="refresh_apps">刷新</string>
+    <string name="search_apps">搜索</string>
 
+    <!-- 任务 -->
     <string name="add">添加</string>
-    <string name="save">保存</string>
-    <string name="record">录制</string>
-    <string name="record_fast">快速录制</string>
+    <string name="record">记录</string>
+    <string name="record_smart">录制</string>
 
-    <string name="closed">关闭</string>
-    <string name="auto">自动</string>
-    <string name="manual">手动</string>
-    <string name="delete_task_tips">确定要删除任务 %1$s 吗？</string>
+    <string name="run_close">关闭任务</string>
+    <string name="run_auto">自动模式</string>
+    <string name="run_manual">手动模式</string>
+    <string name="delete_task_tips">确定要删除这个任务吗？</string>
+    <string name="delete_action_tips">确定要删除这个动作吗？</string>
     <string name="task_default_title">默认任务标题 长按修改</string>
 
-    <string name="delete_action_tips">确定要删除这个动作吗？</string>
+    <string name="task_title_hint">任务名称</string>
 
-    <string name="delay_target">延迟%1$d毫秒</string>
-    <string name="text_target">%1$s文本 %2$s </string>
-    <string name="image_target">%1$s图片</string>
-    <string name="pos_target">使用 %1$s 手势</string>
-    <string name="key_target">使用 %1$s 按键</string>
-    <string name="task_target">执行 %1$s 任务</string>
-
-    <string name="null_con">无</string>
-    <string name="number_con">成功%1$d个</string>
-    <string name="text_con">出现文本 %1$s</string>
-    <string name="image_con">出现图片</string>
-
-    <string name="touch">点击</string>
-    <string name="long_touch">长按</string>
-    <string name="slide">滑动</string>
-    
+    <!-- 动作 -->
     <string name="condition_title_1">如果%1$s\n则</string>
     <string name="condition_title_2">\n否则</string>
     <string name="loop_title_1">尝试执行%1$d次\n</string>
     <string name="loop_title_2">直到%1$s</string>
     <string name="parallel_title_1">同时执行动作\n</string>
     <string name="parallel_title_2">直到全部完成</string>
-    <string name="parallel_tips">执行并行动作超过1分钟，任务自动停止</string>
 
-    <string name="condition">条件动作</string>
-    <string name="loop">循环动作</string>
-    <string name="parallel">并行动作</string>
+    <string name="number_con">成功%1$d个</string>
+    <string name="text_con">出现文本 %1$s</string>
+    <string name="image_con">出现图片</string>
 
-    <string name="do_keys">条件</string>
-    <string name="time">时间</string>
-    <string name="interval">间隔</string>
-    <string name="times">次数</string>
-    <string name="target">目标</string>
-    <string name="stop_key">停止</string>
+    <string name="delay_target">延迟%1$s毫秒</string>
+    <string name="text_target">%1$s文本 %2$s </string>
+    <string name="image_target">%1$s图片</string>
+    <string name="pos_target">使用 %1$s 手势</string>
+    <string name="key_target">使用 %1$s 按键</string>
+    <string name="task_target">执行 %1$s 任务</string>
 
-    <string name="s">秒</string>
-    <string name="ms">毫秒</string>
+    <string name="touch">点击</string>
+    <string name="long_touch">长按</string>
+    <string name="slide">滑动</string>
 
+    <string name="action_condition">条件</string>
+    <string name="action_loop">循环</string>
+    <string name="action_parallel">并行</string>
+
+    <string name="title_times">次数</string>
+    <string name="title_condition">条件</string>
+    <string name="title_stop">停止</string>
+
+    <string name="time_min">最小</string>
+    <string name="time_max">最大</string>
+    <string name="similar">相似度</string>
+
+    <string name="condition_null_condition">无条件</string>
+    <string name="condition_null_loop">不停止</string>
+    <string name="condition_number_loop">完成循环次数</string>
+    <string name="condition_number_parallel">完成动作个数</string>
+    <string name="condition_text">出现文本</string>
+
+    <string name="check_save_targets">未配置任何有效目标</string>
+
+    <!-- 选择器 -->
     <string name="word_picker_open">展开</string>
     <string name="word_picker_tips">长按选择</string>
 
-    <string name="exist_empty_config">存在空配置项</string>
-    <string name="empty_target">目标为空</string>
-    <string name="too_much_target">超出最大目标数限制</string>
-
-    <string name="export_string">导出任务</string>
+    <!-- 设置 -->
+    <string name="export_tasks">导出任务</string>
     <string name="export_tips">导出配置文件并发送</string>
-    <string name="clean_string">清理任务</string>
+    <string name="clean_tasks">清理任务</string>
     <string name="clean_tips">冗余任务清理完成</string>
     <string name="zan">评论</string>
     <string name="market_tips">未安装酷安应用市场</string>
     <string name="book">教程</string>
-    <string name="debug_opened">任务提示已开</string>
-    <string name="debug_closed">任务提示已关</string>
+
 </resources>

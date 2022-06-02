@@ -1,13 +1,5 @@
 package top.bogey.auto_touch;
 
-import android.content.Context;
-import android.content.Intent;
-import android.media.projection.MediaProjectionManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.Settings;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +9,16 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Context;
+import android.content.Intent;
+import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.Settings;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
@@ -34,38 +35,40 @@ import java.util.Objects;
 
 import top.bogey.auto_touch.databinding.ActivityMainBinding;
 import top.bogey.auto_touch.room.bean.Task;
-import top.bogey.auto_touch.ui.MainViewModel;
-import top.bogey.auto_touch.ui.play.TaskPlayerDialog;
-import top.bogey.auto_touch.util.PermissionResultCallback;
+import top.bogey.auto_touch.room.bean.node.Node;
+import top.bogey.auto_touch.room.data.CustomTypeConverts;
+import top.bogey.auto_touch.ui.play.PlayFloatView;
+import top.bogey.auto_touch.utils.PermissionResultCallback;
+import top.bogey.auto_touch.utils.easy_float.EasyFloat;
 
 public class MainActivity extends AppCompatActivity {
-    static { System.loadLibrary("auto_touch"); }
+    static {System.loadLibrary("auto_touch");}
 
     private ActivityMainBinding binding;
+
     private ActivityResultLauncher<Intent> captureLauncher;
-    private PermissionResultCallback captureCallback;
-
     private ActivityResultLauncher<Intent> floatLauncher;
-    private PermissionResultCallback floatCallback;
-
-    private TaskPlayerDialog playerDialog;
+    private PermissionResultCallback resultCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolBar);
+
         MainApplication.setActivity(this);
 
         captureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (captureCallback != null){
-                captureCallback.onResult(result.getResultCode(), result.getData());
+            if (resultCallback != null){
+                resultCallback.onResult(result.getResultCode(), result.getData());
             }
         });
 
         floatLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (floatCallback != null){
-                floatCallback.onResult(result.getResultCode(), result.getData());
+            if (resultCallback != null){
+                resultCallback.onResult(result.getResultCode(), result.getData());
             }
         });
 
@@ -73,18 +76,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home_fragment, R.id.apps_fragment, R.id.setting_fragment).build();
-        NavController controller = Navigation.findNavController(this, R.id.con_view);
-        NavigationUI.setupActionBarWithNavController(this, controller, configuration);
-        NavigationUI.setupWithNavController(binding.menuMain, controller);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         MainApplication.setActivity(null);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        NavController controller = Navigation.findNavController(this, R.id.con_view);
+        NavigationUI.setupWithNavController(binding.menuView, controller);
+        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.apps, R.id.setting).build();
+        NavigationUI.setupActionBarWithNavController(this, controller, configuration);
     }
 
     @Override
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent){
+    public void handleIntent(Intent intent){
         boolean isBackground = intent.getBooleanExtra("IsBackground", false);
         if (isBackground){
             moveTaskToBack(true);
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         String pkgName = getIntent().getStringExtra("FloatPackageName");
         if (pkgName != null && !pkgName.isEmpty()){
-            showPlayView(pkgName);
+            showPlayFloatView(pkgName);
         }
 
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null){
@@ -153,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
         List<String> pkgNames = viewModel.getAllPkgNames();
 
         List<Task> tasks = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(Node.class, new CustomTypeConverts.NodeAdapter()).create();
         try {
-            tasks = new Gson().fromJson(tasksString, new TypeToken<List<Task>>() {}.getType());
+            tasks = gson.fromJson(tasksString, new TypeToken<List<Task>>(){}.getType());
         } catch (JsonParseException ignored){}
         if (tasks != null){
             List<Task> newTasks = new ArrayList<>();
@@ -170,13 +174,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchCapture(PermissionResultCallback callback){
-        captureCallback = callback;
+        resultCallback = callback;
         MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         captureLauncher.launch(manager.createScreenCaptureIntent());
     }
 
     public void launchFloat(PermissionResultCallback callback){
-        floatCallback = callback;
+        resultCallback = callback;
         try {
             Field field = Settings.class.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
             Intent intent = new Intent(Objects.requireNonNull(field.get(null)).toString());
@@ -188,18 +192,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showPlayView(String pkgName){
-        binding.getRoot().post(() -> {
-            if (playerDialog != null) playerDialog.dismiss();
-            playerDialog = new TaskPlayerDialog(this, pkgName, () -> playerDialog = null);
-            playerDialog.show();
-        });
+    public void showPlayFloatView(String pkgName){
+        binding.getRoot().post(() -> new PlayFloatView(this, pkgName).show());
     }
 
-    public void dismissPlayView() {
-        binding.getRoot().post(() -> {
-            if (playerDialog != null) playerDialog.dismiss();
-        });
+    public void dismissPlayFloatView(){
+        binding.getRoot().post(() -> EasyFloat.dismiss(PlayFloatView.class.getCanonicalName()));
     }
 }
-

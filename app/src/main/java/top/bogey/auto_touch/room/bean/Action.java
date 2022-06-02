@@ -5,19 +5,22 @@ import android.content.Context;
 import java.util.List;
 
 import top.bogey.auto_touch.R;
+import top.bogey.auto_touch.room.bean.node.DelayNode;
+import top.bogey.auto_touch.room.bean.node.KeyNode;
+import top.bogey.auto_touch.room.bean.node.Node;
+import top.bogey.auto_touch.room.bean.node.NodeType;
+import top.bogey.auto_touch.room.bean.node.NumberNode;
+import top.bogey.auto_touch.room.bean.node.TouchNode;
+import top.bogey.auto_touch.room.bean.node.TaskNode;
+import top.bogey.auto_touch.room.bean.node.TextNode;
 
-public class Action{
+public class Action {
     private ActionMode actionMode = ActionMode.CONDITION;
     private boolean enable = true;
 
-    private String title = "";
-    private Node condition;
     private List<Node> targets;
-
-    // 循环次数
     private int times = 1;
-    // 循环结束条件
-    private Node stop;
+    private Node condition;
 
     public String getDefaultTitle(Context context){
         if (targets == null || targets.isEmpty()) return "";
@@ -38,9 +41,9 @@ public class Action{
                 for (int i = 0; i < targets.size(); i++) {
                     builder.append(getTargetTitle(context, targets.get(i)));
                     if (i == targets.size() - 1){
-                        if (stop != null && stop.getType() != NodeType.NULL){
+                        if (condition != null && condition.getType() != NodeType.NULL){
                             builder.append("\n");
-                            builder.append(context.getString(R.string.loop_title_2, getConditionTitle(context, stop)));
+                            builder.append(context.getString(R.string.loop_title_2, getConditionTitle(context, condition)));
                         }
                     } else {
                         builder.append("\n");
@@ -53,8 +56,8 @@ public class Action{
                     builder.append(getTargetTitle(context, target));
                     builder.append("\n");
                 }
-                if (stop != null && stop.getType() == NodeType.NUMBER){
-                    builder.append(stop.getNumber() == targets.size() ? context.getString(R.string.parallel_title_2) : context.getString(R.string.loop_title_2, getConditionTitle(context, stop)));
+                if (condition != null && condition.getType() == NodeType.NUMBER){
+                    builder.append(((NumberNode) condition).getValue() == targets.size() ? context.getString(R.string.parallel_title_2) : context.getString(R.string.loop_title_2, getConditionTitle(context, condition)));
                 }
                 break;
         }
@@ -64,12 +67,10 @@ public class Action{
     private String getConditionTitle(Context context, Node node){
         if (node == null) return "";
         switch (node.getType()){
-            case NULL:
-                return context.getString(R.string.null_con);
             case NUMBER:
-                return context.getString(R.string.number_con, node.getNumber());
+                return context.getString(R.string.number_con, ((NumberNode) node).getValue());
             case TEXT:
-                return context.getString(R.string.text_con, node.getText());
+                return context.getString(R.string.text_con, ((TextNode) node).getValue());
             case IMAGE:
                 return context.getString(R.string.image_con);
         }
@@ -78,22 +79,22 @@ public class Action{
 
     public String getTargetTitle(Context context, Node node){
         if (node == null) return "";
-        String touch = node.getTime() > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
+        String touch = node.getTimeArea().getMax() > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
         switch (node.getType()){
             case DELAY:
-                return context.getString(R.string.delay_target, node.getDelay());
+                return context.getString(R.string.delay_target, ((DelayNode) node).getTitle());
             case TEXT:
-                return context.getString(R.string.text_target, touch, node.getText());
+                return context.getString(R.string.text_target, touch, ((TextNode) node).getValue());
             case IMAGE:
                 return context.getString(R.string.image_target, touch);
-            case POS:
-                String slide = node.getPoses().size() > 1 ? context.getString(R.string.slide) : context.getString(R.string.touch);
+            case TOUCH:
+                String slide = ((TouchNode) node).getPoints().size() > 1 ? context.getString(R.string.slide) : context.getString(R.string.touch);
                 return context.getString(R.string.pos_target, slide);
             case KEY:
                 String[] keys = context.getResources().getStringArray(R.array.keys);
-                return context.getString(R.string.key_target, keys[node.getKey()]);
+                return context.getString(R.string.key_target, keys[((KeyNode) node).getValue()]);
             case TASK:
-                return context.getString(R.string.task_target, node.getTask().getTitle());
+                return context.getString(R.string.task_target, ((TaskNode) node).getValue().getTitle());
         }
         return "";
     }
@@ -114,22 +115,6 @@ public class Action{
         this.enable = enable;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Node getCondition() {
-        return condition;
-    }
-
-    public void setCondition(Node condition) {
-        this.condition = condition;
-    }
-
     public List<Node> getTargets() {
         return targets;
     }
@@ -146,11 +131,11 @@ public class Action{
         this.times = times;
     }
 
-    public Node getStop() {
-        return stop;
+    public Node getCondition() {
+        return condition;
     }
 
-    public void setStop(Node stop) {
-        this.stop = stop;
+    public void setCondition(Node condition) {
+        this.condition = condition;
     }
 }

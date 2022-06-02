@@ -10,6 +10,7 @@ import androidx.room.Query;
 import java.util.List;
 
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.node.TaskNode;
 
 @Dao
 public interface TaskDao {
@@ -32,7 +33,7 @@ public interface TaskDao {
     LiveData<List<Task>> getTasksLiveByPackageName(String pkgName);
 
     @Query("select pkgName, count(*) as count from Task group by pkgName")
-    LiveData<List<TaskGroup>> getTaskGroupsLive();
+    LiveData<List<TaskNode.TaskGroup>> getTaskGroupsLive();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Task task);
