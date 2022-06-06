@@ -113,7 +113,7 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
             numberText.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
 
             float alpha = count > 0 ? 1f : 0.25f;
-            appName.setAlpha(alpha);
+            appName.setAlpha(alpha * 2);
             icon.setAlpha(alpha);
         }
     }

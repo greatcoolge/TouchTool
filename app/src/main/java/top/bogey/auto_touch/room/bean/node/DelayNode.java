@@ -9,7 +9,7 @@ public class DelayNode extends Node {
         if (getValue().getMin() == getValue().getMax()){
             return String.valueOf(getValue().getMin());
         }
-        return getValue().getMin() + "-" + getValue().getMax();
+        return getValue().getRealMin() + "-" + getValue().getRealMax();
     }
 
     @Override

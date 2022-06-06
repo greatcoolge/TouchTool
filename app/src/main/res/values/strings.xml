@@ -51,7 +51,7 @@
 
     <!-- 动作 -->
     <string name="condition_title_1">如果%1$s\n则</string>
-    <string name="condition_title_2">\n否则</string>
+    <string name="condition_title_2">否则</string>
     <string name="loop_title_1">尝试执行%1$d次\n</string>
     <string name="loop_title_2">直到%1$s</string>
     <string name="parallel_title_1">同时执行动作\n</string>

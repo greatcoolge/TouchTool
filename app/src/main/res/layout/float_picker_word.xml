@@ -24,7 +24,7 @@
             android:ellipsize="start"
             android:gravity="center"
             android:lines="2"
-            android:textColor="?attr/colorPrimaryContainer"
+            android:textColor="@color/material_dynamic_primary90"
             android:textSize="9sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

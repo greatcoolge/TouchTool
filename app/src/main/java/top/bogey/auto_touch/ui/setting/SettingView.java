@@ -25,6 +25,8 @@ import top.bogey.auto_touch.MainViewModel;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.ViewSettingBinding;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.ui.debug.DebugFloatView;
+import top.bogey.auto_touch.utils.easy_float.EasyFloat;
 
 public class SettingView extends Fragment {
     private static final String SAVE_FILE = "Share.txt";
@@ -88,6 +90,13 @@ public class SettingView extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } catch (Exception ignored){ }
+        });
+
+        binding.bookButton.setOnLongClickListener(v -> {
+            View view = EasyFloat.getView(DebugFloatView.class.getCanonicalName());
+            if (view != null) ((DebugFloatView) view).dismiss();
+            else new DebugFloatView(requireContext()).show();
+            return true;
         });
 
         return binding.getRoot();

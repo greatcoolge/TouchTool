@@ -1,6 +1,7 @@
 package top.bogey.auto_touch.room.data;
 
 import android.graphics.Path;
+import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ import top.bogey.auto_touch.room.bean.node.Node;
 import top.bogey.auto_touch.room.bean.node.NodeType;
 import top.bogey.auto_touch.room.bean.node.NumberNode;
 import top.bogey.auto_touch.room.bean.node.TaskNode;
+import top.bogey.auto_touch.ui.debug.DebugFloatView;
 import top.bogey.auto_touch.utils.TaskCallback;
+import top.bogey.auto_touch.utils.easy_float.EasyFloat;
 
 public class TaskRunnable implements Runnable{
     private boolean isRunning = true;
@@ -140,6 +143,7 @@ public class TaskRunnable implements Runnable{
         if (targets.size() > index){
             boolean result = false;
             Node target = targets.get(index);
+            addDebugTips("["+ task.getTitle() +"]["+ percent +"]" + action.getTargetTitle(service, target));
             Object nodeTarget = getNodeTarget(target);
             if (nodeTarget != null){
                 result = true;
@@ -175,6 +179,14 @@ public class TaskRunnable implements Runnable{
             return result;
         }
         return false;
+    }
+
+    private void addDebugTips(String tips){
+        View view = EasyFloat.getView(DebugFloatView.class.getCanonicalName());
+        if (view != null){
+            DebugFloatView debugFloatView = (DebugFloatView) view;
+            debugFloatView.addTips(tips);
+        }
     }
 
     private boolean checkNode(Node node){

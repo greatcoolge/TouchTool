@@ -32,6 +32,7 @@ public class Action {
                 }
                 builder.append(getTargetTitle(context, targets.get(0)));
                 if (targets.size() > 1){
+                    builder.append("\n");
                     builder.append(context.getString(R.string.condition_title_2));
                     builder.append(getTargetTitle(context, targets.get(1)));
                 }
@@ -92,7 +93,14 @@ public class Action {
                 return context.getString(R.string.pos_target, slide);
             case KEY:
                 String[] keys = context.getResources().getStringArray(R.array.keys);
-                return context.getString(R.string.key_target, keys[((KeyNode) node).getValue()]);
+                String[] ids = context.getResources().getStringArray(R.array.key_ids);
+                String str = String.valueOf(node.getValue());
+                int index = 0;
+                for (String id : ids) {
+                    if (id.equals(str)) break;
+                    index++;
+                }
+                return context.getString(R.string.key_target, keys[index]);
             case TASK:
                 return context.getString(R.string.task_target, ((TaskNode) node).getValue().getTitle());
         }

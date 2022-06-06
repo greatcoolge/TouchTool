@@ -68,6 +68,11 @@ public class ImagePickerFloatView extends BasePickerFloatView {
             refreshUI();
         });
 
+        binding.closeButton.setOnLongClickListener(v -> {
+            dismiss();
+            return true;
+        });
+
         markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         markPaint.setStyle(Paint.Style.FILL);
         markPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
@@ -102,8 +107,8 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                     if (rect != null){
                         markArea = new RectF(rect);
                         isMarked = true;
-                        refreshUI();
                     }
+                    refreshUI();
                     bitmap.recycle();
                 }
             }
