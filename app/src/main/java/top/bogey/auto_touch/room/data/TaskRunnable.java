@@ -218,7 +218,8 @@ public class TaskRunnable implements Runnable{
 
     private void addTaskProgress(Node node, boolean skip){
         if (node.getType() != NodeType.TASK){
-            if (callback != null) callback.onProgress((++percent) * 100 / allPercent);
+            percent++;
+            if (callback != null) callback.onProgress((percent) * 100 / allPercent);
         } else {
             if (skip){
                 Integer integer = taskNodeMap.get(node);

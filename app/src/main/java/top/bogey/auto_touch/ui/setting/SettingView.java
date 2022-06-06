@@ -86,7 +86,7 @@ public class SettingView extends Fragment {
 
         binding.bookButton.setOnClickListener(v -> {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mr-bogey/AutoTouch"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.qq.com/doc/DUkVCYXBBa09aZ3VX"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } catch (Exception ignored){ }

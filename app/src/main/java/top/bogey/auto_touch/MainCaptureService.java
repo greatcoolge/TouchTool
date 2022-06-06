@@ -105,7 +105,7 @@ public class MainCaptureService extends Service {
             if (matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
             Log.d("MatchImage", "" + matchResult.value);
-            if (matchValue > matchResult.value) return null;
+            if (Math.min(100, matchValue) > matchResult.value) return null;
             return new Rect(matchResult.x, matchResult.y, matchResult.x + matchBitmap.getWidth(), matchResult.y + matchBitmap.getHeight());
         }
 

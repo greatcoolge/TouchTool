@@ -49,8 +49,6 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
     public ActionFloatView(@NonNull Context context, @NonNull Task task, @NonNull Action action, ResultCallback callback) {
         super(context);
 
-        adapter = new ActionsRecyclerViewAdapter(task, action.getTargets());
-
         binding = FloatActionBinding.inflate(LayoutInflater.from(context), this, true);
 
         binding.modeGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -89,6 +87,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         int[] ids = {R.id.condition_button, R.id.loop_button, R.id.parallel_button};
         binding.modeGroup.check(ids[action.getActionMode().ordinal()]);
 
+        adapter = new ActionsRecyclerViewAdapter(task, action.getTargets());
         binding.delayButton.setOnClickListener(v -> adapter.addNode(NodeType.DELAY));
         binding.textButton.setOnClickListener(v -> adapter.addNode(NodeType.TEXT));
         binding.imageButton.setOnClickListener(v -> adapter.addNode(NodeType.IMAGE));
@@ -204,22 +203,24 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 binding.conditionButtonTimes.setVisibility(GONE);
                 binding.conditionButtonText.setVisibility(VISIBLE);
                 binding.conditionButtonImage.setVisibility(VISIBLE);
-                if (condition.getType() == NodeType.NULL) adapter.setMaxCount(1);
-                else adapter.setMaxCount(2);
+                if (adapter != null){
+                    if (condition.getType() == NodeType.NULL) adapter.setMaxCount(1);
+                    else adapter.setMaxCount(2);
+                }
                 break;
             case LOOP:
                 binding.conditionButtonNone.setVisibility(VISIBLE);
                 binding.conditionButtonTimes.setVisibility(VISIBLE);
                 binding.conditionButtonText.setVisibility(VISIBLE);
                 binding.conditionButtonImage.setVisibility(VISIBLE);
-                adapter.setMaxCount(10);
+                if (adapter != null) adapter.setMaxCount(10);
                 break;
             case PARALLEL:
                 binding.conditionButtonNone.setVisibility(GONE);
                 binding.conditionButtonTimes.setVisibility(VISIBLE);
                 binding.conditionButtonText.setVisibility(GONE);
                 binding.conditionButtonImage.setVisibility(GONE);
-                adapter.setMaxCount(5);
+                if (adapter != null) adapter.setMaxCount(5);
                 break;
         }
 
