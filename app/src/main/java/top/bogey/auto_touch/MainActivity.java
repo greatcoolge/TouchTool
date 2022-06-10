@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +45,9 @@ import top.bogey.auto_touch.utils.easy_float.EasyFloat;
 
 public class MainActivity extends AppCompatActivity {
     static {System.loadLibrary("auto_touch");}
+
+    private static final String SAVE_PATH = "Save";
+    private static final String FIRST_RUN = "first_run";
 
     private ActivityMainBinding binding;
 
@@ -73,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.getRoot().post(() -> handleIntent(getIntent()));
+
+        runFirstTimes();
     }
 
     @Override
@@ -100,6 +107,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent);
+    }
+
+    private void runFirstTimes(){
+        SharedPreferences preferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
+        boolean firstRun = preferences.getBoolean(FIRST_RUN, false);
+        if (!firstRun){
+            StringBuilder buffer = new StringBuilder();
+            try {
+                InputStream inputStream = getAssets().open("DefaultTasks");
+                InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                int i = reader.read();
+                while (i != -1){
+                    char c = (char) i;
+                    buffer.append(c);
+                    i = reader.read();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            saveTasks(buffer.toString());
+
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putBoolean(FIRST_RUN, true);
+            edit.apply();
+        }
     }
 
     public void handleIntent(Intent intent){
