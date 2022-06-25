@@ -92,6 +92,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         binding.textButton.setOnClickListener(v -> adapter.addNode(NodeType.TEXT));
         binding.imageButton.setOnClickListener(v -> adapter.addNode(NodeType.IMAGE));
         binding.touchButton.setOnClickListener(v -> adapter.addNode(NodeType.TOUCH));
+        binding.colorButton.setOnClickListener(v -> adapter.addNode(NodeType.COLOR));
         binding.keyButton.setOnClickListener(v -> adapter.addNode(NodeType.KEY));
         binding.taskButton.setOnClickListener(v -> adapter.addNode(NodeType.TASK));
 

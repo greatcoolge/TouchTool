@@ -11,8 +11,13 @@ public class NumberNode extends Node{
     }
 
     @Override
-    public boolean checkNode(Object obj) {
+    public boolean isValid() {
         return getValue() > 0;
+    }
+
+    @Override
+    public boolean checkNode(Object obj) {
+        return isValid();
     }
 
     @Override

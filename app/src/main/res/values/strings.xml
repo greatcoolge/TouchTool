@@ -66,6 +66,7 @@
     <string name="text_target">%1$s %2$s</string>
     <string name="image_target">%1$s图片</string>
     <string name="pos_target">使用 %1$s 手势</string>
+    <string name="color_target">点击颜色</string>
     <string name="key_target">使用 %1$s 按键</string>
     <string name="task_target">执行 %1$s 任务</string>
 

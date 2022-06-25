@@ -18,8 +18,13 @@ public class DelayNode extends Node {
     }
 
     @Override
-    public boolean checkNode(Object obj) {
+    public boolean isValid() {
         return getValue().getRealMin() > 0;
+    }
+
+    @Override
+    public boolean checkNode(Object obj) {
+        return isValid();
     }
 
     @Override

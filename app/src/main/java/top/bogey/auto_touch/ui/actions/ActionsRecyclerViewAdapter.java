@@ -25,6 +25,7 @@ import top.bogey.auto_touch.MainViewModel;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatActionItemBinding;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.node.ColorNode;
 import top.bogey.auto_touch.room.bean.node.DelayNode;
 import top.bogey.auto_touch.room.bean.node.ImageNode;
 import top.bogey.auto_touch.room.bean.node.KeyNode;
@@ -34,6 +35,7 @@ import top.bogey.auto_touch.room.bean.node.TaskNode;
 import top.bogey.auto_touch.room.bean.node.TextNode;
 import top.bogey.auto_touch.room.bean.node.TimeArea;
 import top.bogey.auto_touch.room.bean.node.TouchNode;
+import top.bogey.auto_touch.ui.picker.ColorPickerFloatView;
 import top.bogey.auto_touch.ui.picker.ImagePickerFloatView;
 import top.bogey.auto_touch.ui.picker.TouchPickerFloatView;
 import top.bogey.auto_touch.ui.picker.WordPickerFloatView;
@@ -83,6 +85,9 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 case TOUCH:
                     node = new TouchNode("");
                     break;
+                case COLOR:
+                    node = new ColorNode(new ColorNode.ColorInfo());
+                    break;
                 case KEY:
                     node = new KeyNode(AccessibilityService.GLOBAL_ACTION_BACK);
                     break;
@@ -110,33 +115,12 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         for (int i = nodes.size() - 1; i >= 0; i--) {
             Node node = nodes.get(i);
             TimeArea timeArea = node.getTimeArea();
-            if (timeArea.getMin() == 0 && timeArea.getMax() == 0) {
+            if (timeArea.getRealMin() <= 0) {
                 nodes.remove(i);
                 continue;
             }
 
-            switch (node.getType()) {
-                case DELAY:
-                    TimeArea delayArea = ((DelayNode) node).getValue();
-                    if (delayArea.getMin() == 0 && delayArea.getMax() == 0) nodes.remove(i);
-                    break;
-                case TEXT:
-                    String value = ((TextNode) node).getValue();
-                    if (value == null || value.isEmpty()) nodes.remove(i);
-                    break;
-                case IMAGE:
-                    ImageNode.ImageInfo imageInfo = ((ImageNode) node).getValue();
-                    if (imageInfo.getBitmap() == null) nodes.remove(i);
-                    break;
-                case TOUCH:
-                    List<Point> points = ((TouchNode) node).getPoints();
-                    if (points == null || points.size() == 0) nodes.remove(i);
-                    break;
-                case TASK:
-                    TaskNode.TaskInfo taskInfo = ((TaskNode) node).getValue();
-                    if (taskInfo == null) nodes.remove(i);
-                    break;
-            }
+            if (!node.isValid()) nodes.remove(i);
         }
         return nodes;
     }
@@ -237,22 +221,34 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             binding.textInclude.pickerButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Node node = nodes.get(index);
-                if (node.getType() == NodeType.TEXT){
-                    TextNode textNode = (TextNode) node;
-                    new WordPickerFloatView(itemView.getContext(), picker -> {
-                        WordPickerFloatView wordPicker = (WordPickerFloatView) picker;
-                        String word = wordPicker.getWord();
-                        textNode.setValue(word);
-                        binding.textInclude.textBaseInclude.titleEdit.setText(word);
-                    }, textNode).show();
-                } else if (node.getType() == NodeType.TOUCH){
-                    TouchNode touchNode = (TouchNode) node;
-                    new TouchPickerFloatView(itemView.getContext(), picker -> {
-                        TouchPickerFloatView touchPicker = (TouchPickerFloatView) picker;
-                        List<Point> points = touchPicker.getPoints();
-                        touchNode.setValue(itemView.getContext(), points);
-                        binding.textInclude.textBaseInclude.titleEdit.setText(touchNode.getTitle());
-                    }, touchNode.getPoints(itemView.getContext())).show();
+                switch (node.getType()) {
+                    case TEXT:
+                        TextNode textNode = (TextNode) node;
+                        new WordPickerFloatView(itemView.getContext(), picker -> {
+                            WordPickerFloatView wordPicker = (WordPickerFloatView) picker;
+                            String word = wordPicker.getWord();
+                            textNode.setValue(word);
+                            binding.textInclude.textBaseInclude.titleEdit.setText(word);
+                        }, textNode).show();
+                        break;
+                    case TOUCH:
+                        TouchNode touchNode = (TouchNode) node;
+                        new TouchPickerFloatView(itemView.getContext(), picker -> {
+                            TouchPickerFloatView touchPicker = (TouchPickerFloatView) picker;
+                            List<Point> points = touchPicker.getPoints();
+                            touchNode.setValue(itemView.getContext(), points);
+                            binding.textInclude.textBaseInclude.titleEdit.setText(touchNode.getTitle());
+                        }, touchNode.getPoints(itemView.getContext())).show();
+                        break;
+                    case COLOR:
+                        ColorNode colorNode = (ColorNode) node;
+                        new ColorPickerFloatView(itemView.getContext(), picker -> {
+                            ColorPickerFloatView colorPicker = (ColorPickerFloatView) picker;
+                            int[] color = colorPicker.getColor();
+                            colorNode.setValue(color);
+                            binding.textInclude.textBaseInclude.titleEdit.setText(colorNode.getTitle());
+                        }, colorNode).show();
+                        break;
                 }
             });
 
@@ -322,19 +318,28 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     break;
                 case TEXT:
                 case TOUCH:
+                case COLOR:
                     binding.delayInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.textInclude.getRoot().setVisibility(View.VISIBLE);
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.getRoot().setVisibility(View.VISIBLE);
-                    if (node.getType() == NodeType.TEXT) {
-                        binding.textInclude.pickerButton.setIconResource(R.drawable.icon_text);
-                        binding.textInclude.textBaseInclude.textInputLayout.setEnabled(true);
-                        binding.textInclude.textBaseInclude.titleEdit.setText(((TextNode) node).getValue());
-                    } else {
-                        binding.textInclude.pickerButton.setIconResource(R.drawable.icon_touch);
-                        binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
-                        binding.textInclude.textBaseInclude.titleEdit.setText(((TouchNode) node).getTitle());
+                    switch (node.getType()) {
+                        case TEXT:
+                            binding.textInclude.pickerButton.setIconResource(R.drawable.icon_text);
+                            binding.textInclude.textBaseInclude.textInputLayout.setEnabled(true);
+                            binding.textInclude.textBaseInclude.titleEdit.setText(((TextNode) node).getValue());
+                            break;
+                        case TOUCH:
+                            binding.textInclude.pickerButton.setIconResource(R.drawable.icon_touch);
+                            binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
+                            binding.textInclude.textBaseInclude.titleEdit.setText(((TouchNode) node).getTitle());
+                            break;
+                        case COLOR:
+                            binding.textInclude.pickerButton.setIconResource(R.drawable.icon_color);
+                            binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
+                            binding.textInclude.textBaseInclude.titleEdit.setText(((ColorNode) node).getTitle());
+                            break;
                     }
                     break;
                 case IMAGE:

@@ -18,6 +18,11 @@ public class TaskNode extends Node{
     }
 
     @Override
+    public boolean isValid() {
+        return getValue() != null;
+    }
+
+    @Override
     public boolean checkNode(Object obj) {
         Map<String, Task> taskMap = toTaskMap(obj);
         Task task = taskMap.get(getValue().getId());

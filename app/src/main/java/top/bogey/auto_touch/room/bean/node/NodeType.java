@@ -8,5 +8,6 @@ public enum NodeType {
     IMAGE,
     TOUCH,
     KEY,
-    TASK
+    TASK,
+    COLOR
 }

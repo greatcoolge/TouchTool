@@ -2,6 +2,8 @@ package top.bogey.auto_touch.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.Surface;
@@ -66,5 +68,15 @@ public class DisplayUtils {
     public static Point percent2px(Context context, Point point){
         Point size = getScreenSize(context);
         return new Point(Math.round(size.x * point.x / 100f), Math.round(size.y * point.y / 100f));
+    }
+
+    public static int[] getHsvColor(Bitmap bitmap, int x, int y){
+        int pixel = bitmap.getPixel(x, y);
+        int red = (pixel & 0x00ff0000) >> 16;
+        int green = (pixel & 0x0000ff00) >> 8;
+        int blue = pixel & 0x000000ff;
+        float[] hsv = new float[3];
+        Color.RGBToHSV(red, green, blue, hsv);
+        return new int[]{(int) (hsv[0] / 2), (int) (hsv[1] * 255), (int) (hsv[2] * 255)};
     }
 }

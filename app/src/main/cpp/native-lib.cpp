@@ -9,57 +9,101 @@
 
 #include "android/bitmap.h"
 
-cv::Mat bitmap2Mat(JNIEnv *env, jobject bitmap){
+using namespace std;
+using namespace cv;
+
+Mat bitmap2Mat(JNIEnv *env, jobject bitmap){
     AndroidBitmapInfo bitmapInfo;
     AndroidBitmap_getInfo(env, bitmap, &bitmapInfo);
     int *pixels = nullptr;
     AndroidBitmap_lockPixels(env, bitmap, (void **) &pixels);
-    cv::Mat rgba(cv::Size(bitmapInfo.width, bitmapInfo.height), CV_8UC4, pixels);
+    Mat rgba(Size(bitmapInfo.width, bitmapInfo.height), CV_8UC4, pixels);
+    AndroidBitmap_unlockPixels(env, bitmap);
     return rgba;
 }
 
-jobject createMatchResult(JNIEnv *env, jdouble value, jint x, jint y){
+jobject createMatchResult(JNIEnv *env, jdouble value, jint x, jint y, jint width, jint height){
     auto resultClass = (jclass) env->FindClass("top/bogey/auto_touch/utils/MatchResult");
-    jmethodID mid = env->GetMethodID(resultClass, "<init>", "(DII)V");
-    jobject result = env->NewObject(resultClass, mid, value, x * 2, y * 2);
+    jmethodID mid = env->GetMethodID(resultClass, "<init>", "(DIIII)V");
+    jobject result = env->NewObject(resultClass, mid, value, x, y, width, height);
     return result;
+}
+
+int clamp(int up, int low, int value){
+    return max(low, min(up, value));
 }
 
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclass clazz, jobject bitmap, jobject temp, jint method) {
-    cv::Mat src = bitmap2Mat(env, bitmap);
-    cv::cvtColor(src, src, cv::COLOR_RGBA2GRAY);
-    cv::resize(src, src, cv::Size(src.cols / 2, src.rows / 2));
-    cv::Mat tmp = bitmap2Mat(env, temp);
-    cv::cvtColor(tmp, tmp, cv::COLOR_RGBA2GRAY);
-    cv::resize(tmp, tmp, cv::Size(tmp.cols / 2, tmp.rows / 2));
+    int scale = 2;
+
+    Mat src = bitmap2Mat(env, bitmap);
+    cvtColor(src, src, COLOR_RGBA2GRAY);
+    resize(src, src, Size(src.cols / scale, src.rows / scale));
+    Mat tmp = bitmap2Mat(env, temp);
+    cvtColor(tmp, tmp, COLOR_RGBA2GRAY);
+    resize(tmp, tmp, Size(tmp.cols / scale, tmp.rows / scale));
 
     int resultCol = src.cols - tmp.cols + 1;
     int resultRow = src.rows - tmp.rows + 1;
 
-    cv::Mat result;
+    Mat result;
     result.create(resultCol, resultRow, CV_32FC1);
-    cv::matchTemplate(src, tmp, result, method);
+    matchTemplate(src, tmp, result, method);
 
     double minVal = -1;
     double maxVal;
-    cv::Point minLoc;
-    cv::Point maxLoc;
-    cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+    Point minLoc;
+    Point maxLoc;
+    minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
 
     jobject matchResult;
-    if (method == cv::TM_SQDIFF || method == cv::TM_SQDIFF_NORMED){
-        matchResult = createMatchResult(env, minVal, minLoc.x, minLoc.y);
+    if (method == TM_SQDIFF || method == TM_SQDIFF_NORMED){
+        matchResult = createMatchResult(env, minVal, minLoc.x * scale, minLoc.y * scale, tmp.rows * scale, tmp.cols * scale);
     } else {
-        matchResult = createMatchResult(env, maxVal, maxLoc.x, maxLoc.y);
+        matchResult = createMatchResult(env, maxVal, minLoc.x * scale, minLoc.y * scale, tmp.rows * scale, tmp.cols * scale);
     }
     src.release();
     tmp.release();
     result.release();
-    AndroidBitmap_unlockPixels(env, bitmap);
-    AndroidBitmap_unlockPixels(env, temp);
     return matchResult;
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchColor(JNIEnv *env, jclass clazz, jobject bitmap, jintArray hsvColor) {
+    Mat src = bitmap2Mat(env, bitmap);
+    cvtColor(src, src, COLOR_RGBA2BGR);
+    cvtColor(src, src, COLOR_BGR2HSV);
+    GaussianBlur(src, src, Size(5, 5), 0);
+    erode(src, src, 3);
+
+    jint *hsv = env->GetIntArrayElements(hsvColor, JNI_FALSE);
+    Scalar color((int) hsv[0], (int) hsv[1], (int) hsv[2]);
+    Scalar lowColor(clamp(180, 0, (int)color[0] - 5), clamp(255, 0, (int)color[1] - 5), clamp(255, 0, (int)color[2] - 5));
+    Scalar highColor(clamp(180, 0, (int)color[0] + 5), clamp(255, 0, (int)color[1] + 5), clamp(255, 0, (int)color[2] + 5));
+
+    Mat colorImg;
+    inRange(src, lowColor, highColor, colorImg);
+    vector<vector<Point> > contours;
+    findContours(colorImg, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+    jclass listCls = env->FindClass("java/util/ArrayList");
+    jmethodID listInit = env->GetMethodID(listCls, "<init>", "()V");
+    jobject listObj = env->NewObject(listCls, listInit);
+    jmethodID listAdd = env->GetMethodID(listCls, "add", "(Ljava/lang/Object;)Z");
+
+    for (auto & contour : contours) {
+        double area = contourArea(contour);
+        if(area > 81){
+            Rect r = boundingRect(contour);
+            env->CallBooleanMethod(listObj, listAdd, createMatchResult(env, area, r.x, r.y, r.width, r.height));
+        }
+    }
+
+    src.release();
+    return listObj;
 }
 
 #endif

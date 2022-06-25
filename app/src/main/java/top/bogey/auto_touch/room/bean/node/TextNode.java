@@ -21,6 +21,12 @@ public class TextNode extends Node{
     }
 
     @Override
+    public boolean isValid() {
+        String value = getValue();
+        return value != null && !value.isEmpty();
+    }
+
+    @Override
     public boolean checkNode(Object obj) {
         MainAccessibilityService service = (MainAccessibilityService) obj;
         AccessibilityNodeInfo root = service.getRootInActiveWindow();

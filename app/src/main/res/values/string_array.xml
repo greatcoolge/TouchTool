@@ -23,6 +23,7 @@
         <item>手势</item>
         <item>按键</item>
         <item>任务</item>
+        <item>颜色</item>
     </string-array>
 
 </resources>

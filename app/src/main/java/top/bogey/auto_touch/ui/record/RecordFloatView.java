@@ -17,6 +17,7 @@ import java.util.List;
 import top.bogey.auto_touch.databinding.FloatRecordBinding;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.node.ColorNode;
 import top.bogey.auto_touch.room.bean.node.DelayNode;
 import top.bogey.auto_touch.room.bean.node.ImageNode;
 import top.bogey.auto_touch.room.bean.node.KeyNode;
@@ -93,6 +94,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         binding.wordButton.setOnClickListener(v -> addAction(new TextNode("")));
         binding.imageButton.setOnClickListener(v -> addAction(new ImageNode(new ImageNode.ImageInfo(95))));
         binding.posButton.setOnClickListener(v -> addAction(new TouchNode("")));
+        binding.colorButton.setOnClickListener(v -> addAction(new ColorNode(new ColorNode.ColorInfo())));
         binding.keyButton.setOnClickListener(v -> addAction(new KeyNode(1)));
         binding.taskButton.setOnClickListener(v -> addAction(new TaskNode(null)));
 

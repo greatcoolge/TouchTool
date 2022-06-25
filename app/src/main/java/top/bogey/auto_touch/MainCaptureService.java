@@ -30,6 +30,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import top.bogey.auto_touch.utils.AppUtils;
 import top.bogey.auto_touch.utils.MatchResult;
@@ -101,12 +103,29 @@ public class MainCaptureService extends Service {
 
     public class CaptureServiceBinder extends Binder{
 
+        public List<Rect> matchColor(Bitmap bitmap, int[] color){
+            List<MatchResult> matchResults = AppUtils.nativeMatchColor(bitmap, color);
+            matchResults.sort((o1, o2) -> o2.value - o1.value);
+            List<Rect> rectList = new ArrayList<>();
+            for (MatchResult matchResult : matchResults) {
+                rectList.add(matchResult.rect);
+            }
+            return rectList;
+        }
+
+        public List<Rect> matchColor(int[] color){
+            Bitmap bitmap = getCurrImage();
+            List<Rect> rectList = matchColor(bitmap, color);
+            bitmap.recycle();
+            return rectList;
+        }
+
         public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue){
             if (matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
             Log.d("MatchImage", "" + matchResult.value);
             if (Math.min(100, matchValue) > matchResult.value) return null;
-            return new Rect(matchResult.x, matchResult.y, matchResult.x + matchBitmap.getWidth(), matchResult.y + matchBitmap.getHeight());
+            return matchResult.rect;
         }
 
         public Rect matchImage(Bitmap matchBitmap, int matchValue){

@@ -51,6 +51,9 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
             case TOUCH:
                 holder.delete.setIconResource(R.drawable.icon_touch);
                 break;
+            case COLOR:
+                holder.delete.setIconResource(R.drawable.icon_color);
+                break;
             case KEY:
                 holder.delete.setIconResource(R.drawable.icon_key);
                 break;

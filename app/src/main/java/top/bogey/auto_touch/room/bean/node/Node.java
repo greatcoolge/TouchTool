@@ -32,6 +32,8 @@ public abstract class Node implements Cloneable {
         return type;
     }
 
+    public abstract boolean isValid();
+
     public abstract boolean checkNode(Object obj);
 
     public abstract Object getNodeTarget(Object obj);

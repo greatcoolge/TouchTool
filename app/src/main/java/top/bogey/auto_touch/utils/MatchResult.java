@@ -1,13 +1,13 @@
 package top.bogey.auto_touch.utils;
 
+import android.graphics.Rect;
+
 public class MatchResult {
     public int value;
-    public int x;
-    public int y;
+    public Rect rect;
 
-    public MatchResult(double value, int x, int y) {
+    public MatchResult(double value, int x, int y, int width, int height) {
         this.value = (int) Math.round(value * 100);
-        this.x = x;
-        this.y = y;
+        this.rect = new Rect(x, y, x + width, y + height);
     }
 }

@@ -4,17 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.ColorSpace;
+import android.graphics.Point;
 import android.net.Uri;
 import android.provider.Settings;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import top.bogey.auto_touch.R;
 
 public class AppUtils {
     public static native MatchResult nativeMatchTemplate(Bitmap bitmap, Bitmap temp, int method);
+    public static native List<MatchResult> nativeMatchColor(Bitmap bitmap, int[] hsvColor);
 
     public static void showDialog(Context context, int msg, SelectCallback callback){
         new MaterialAlertDialogBuilder(context)

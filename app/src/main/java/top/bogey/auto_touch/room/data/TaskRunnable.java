@@ -167,6 +167,13 @@ public class TaskRunnable implements Runnable{
                         service.runGesture(path, randomTime, null);
                         sleep(randomTime);
                         break;
+                    case COLOR:
+                        Path[] paths = (Path[]) nodeTarget;
+                        for (Path path1 : paths) {
+                            service.runGesture(path1, 100, null);
+                            sleep(randomTime);
+                        }
+                        break;
                     case KEY:
                         service.performGlobalAction((Integer) nodeTarget);
                         break;
@@ -208,6 +215,7 @@ public class TaskRunnable implements Runnable{
             case TOUCH:
                 return node.getNodeTarget(service);
             case IMAGE:
+            case COLOR:
                 return node.getNodeTarget(service.binder);
             case TASK:
                 return node.getNodeTarget(taskMap);

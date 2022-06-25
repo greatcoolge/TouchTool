@@ -88,6 +88,16 @@
                     app:icon="@drawable/icon_touch" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/color_button"
+                    style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    app:icon="@drawable/icon_color" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/key_button"
                     style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
                     android:layout_width="match_parent"

@@ -33,8 +33,14 @@ public class TouchNode extends Node {
     }
 
     @Override
+    public boolean isValid() {
+        List<Point> points = getPoints();
+        return points != null && !points.isEmpty();
+    }
+
+    @Override
     public boolean checkNode(Object obj) {
-        return !getPoints().isEmpty();
+        return isValid();
     }
 
     @Override

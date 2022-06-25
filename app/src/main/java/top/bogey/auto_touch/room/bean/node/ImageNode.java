@@ -21,6 +21,11 @@ public class ImageNode extends Node{
     }
 
     @Override
+    public boolean isValid() {
+        return getValue().getBitmap() != null;
+    }
+
+    @Override
     public boolean checkNode(Object obj) {
         if (obj != null){
             MainCaptureService.CaptureServiceBinder binder = (MainCaptureService.CaptureServiceBinder) obj;

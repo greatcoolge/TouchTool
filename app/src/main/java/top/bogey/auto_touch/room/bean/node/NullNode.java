@@ -6,6 +6,11 @@ public class NullNode extends Node{
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public boolean checkNode(Object obj) {
         return true;
     }

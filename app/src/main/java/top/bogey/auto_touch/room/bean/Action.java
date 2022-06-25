@@ -6,13 +6,12 @@ import java.util.List;
 
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.room.bean.node.DelayNode;
-import top.bogey.auto_touch.room.bean.node.KeyNode;
 import top.bogey.auto_touch.room.bean.node.Node;
 import top.bogey.auto_touch.room.bean.node.NodeType;
 import top.bogey.auto_touch.room.bean.node.NumberNode;
-import top.bogey.auto_touch.room.bean.node.TouchNode;
 import top.bogey.auto_touch.room.bean.node.TaskNode;
 import top.bogey.auto_touch.room.bean.node.TextNode;
+import top.bogey.auto_touch.room.bean.node.TouchNode;
 
 public class Action {
     private ActionMode actionMode = ActionMode.CONDITION;
@@ -91,6 +90,8 @@ public class Action {
             case TOUCH:
                 String slide = ((TouchNode) node).getPoints().size() > 1 ? context.getString(R.string.slide) : context.getString(R.string.touch);
                 return context.getString(R.string.pos_target, slide);
+            case COLOR:
+                return context.getString(R.string.color_target);
             case KEY:
                 String[] keys = context.getResources().getStringArray(R.array.keys);
                 String[] ids = context.getResources().getStringArray(R.array.key_ids);
