@@ -244,7 +244,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         ColorNode colorNode = (ColorNode) node;
                         new ColorPickerFloatView(itemView.getContext(), picker -> {
                             ColorPickerFloatView colorPicker = (ColorPickerFloatView) picker;
-                            int[] color = colorPicker.getColor();
+                            ColorNode.ColorInfo color = colorPicker.getColor();
                             colorNode.setValue(color);
                             binding.textInclude.textBaseInclude.titleEdit.setText(colorNode.getTitle());
                         }, colorNode).show();

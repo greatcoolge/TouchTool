@@ -48,6 +48,11 @@
     private int value;
 }
 
+-keepclassmembers class top.bogey.auto_touch.room.bean.node.ColorNode$ColorInfo{
+    private int[] color;
+    private int size;
+}
+
 -keepclassmembers class android.graphics.Point{
     public int x;
     public int y;

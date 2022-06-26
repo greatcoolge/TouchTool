@@ -34,8 +34,15 @@ public class ColorNode extends Node{
     public Object getNodeTarget(Object obj) {
         if (obj != null){
             MainCaptureService.CaptureServiceBinder binder = (MainCaptureService.CaptureServiceBinder) obj;
-            List<Rect> rectList = binder.matchColor(getValue().getColor());
+            ColorInfo colorInfo = getValue();
+            List<Rect> rectList = binder.matchColor(colorInfo.getColor());
             if (rectList != null && rectList.size() > 0){
+                for (int i = rectList.size() - 1; i >= 0; i--) {
+                    Rect rect = rectList.get(i);
+                    if (rect.width() * rect.height() < colorInfo.getSize()){
+                        rectList.remove(i);
+                    }
+                }
                 Path[] paths =new Path[rectList.size()];
                 for (int i = 0; i < rectList.size(); i++) {
                     Path path = new Path();
@@ -49,8 +56,9 @@ public class ColorNode extends Node{
     }
 
     public String getTitle(){
-        int[] value = getValue().getColor();
-        return "(" + value[0] + "," + value[1] + "," + value[2] + ")";
+        ColorInfo colorInfo = getValue();
+        int[] value = colorInfo.getColor();
+        return "(" + value[0] + "," + value[1] + "," + value[2] + ")" + " >" + colorInfo.getSize();
     }
 
     public static class ColorInfo{

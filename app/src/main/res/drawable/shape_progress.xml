@@ -14,7 +14,7 @@
     </item>
     <item android:id="@android:id/progress">
         <shape>
-            <solid android:color="?attr/colorPrimaryContainer"/>
+            <solid android:color="?attr/colorSecondaryContainer"/>
             <corners android:radius="16dp"/>
         </shape>
     </item>

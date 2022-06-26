@@ -47,7 +47,7 @@ public class PlayFloatViewItem extends FrameLayout {
                 boolean flag = false;
                 for (Action action : actions) {
                     for (Node target : action.getTargets()) {
-                        if (target.getType() == NodeType.IMAGE){
+                        if (target.getType() == NodeType.IMAGE || target.getType() == NodeType.COLOR){
                             flag = true;
                             break;
                         }

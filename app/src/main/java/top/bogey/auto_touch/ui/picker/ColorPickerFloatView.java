@@ -40,10 +40,10 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
     private final Paint markPaint;
     public List<Rect> markArea = new ArrayList<>();
-
     private boolean isMarked = false;
+
     private int[] color = new int[3];
-    private int value = 1;
+    private int size = 1;
 
     private float lastX, lastY;
     private boolean drag = false;
@@ -75,7 +75,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                value = Math.max(1, progress);
+                size = progress;
                 refreshUI();
             }
 
@@ -100,8 +100,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     }
 
     public ColorNode.ColorInfo getColor(){
-        Rect rect = markArea.get(value);
-        return new ColorNode.ColorInfo(color, rect.width() * rect.height());
+        return new ColorNode.ColorInfo(color, size);
     }
 
     public void realShow(int delay){
@@ -115,11 +114,14 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                     Point size = DisplayUtils.getScreenSize(getContext());
                     showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
                     if (colorNode.isValid()){
-                        markArea = binder.matchColor(showBitmap, colorNode.getValue().getColor());
+                        ColorNode.ColorInfo colorInfo = colorNode.getValue();
+                        markArea = binder.matchColor(showBitmap, colorInfo.getColor());
                         if (markArea != null && markArea.size() > 0) {
                             isMarked = true;
-                            binding.seekBar.setMax(markArea.size());
-                            binding.seekBar.setProgress(markArea.size());
+                            color = colorInfo.getColor();
+                            Rect rect = markArea.get(0);
+                            binding.seekBar.setMax(rect.width() * rect.height());
+                            binding.seekBar.setProgress(colorInfo.getSize());
                         }
                     }
                     refreshUI();
@@ -158,14 +160,15 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         long drawingTime = getDrawingTime();
         drawChild(canvas, binding.getRoot(), drawingTime);
         for (int i = 0; i < markArea.size(); i++) {
-            if (((float) i) / markArea.size() < ((float) value) / binding.seekBar.getMax()){
+            Rect rect = markArea.get(i);
+            if (rect.width() * rect.height() >= size){
                 canvas.drawRect(markArea.get(i), markPaint);
             }
         }
         canvas.restore();
         if (isMarked){
             drawChild(canvas, binding.buttonBox, drawingTime);
-            if (binding.seekBar.getMax() != 1) drawChild(canvas, binding.seekBar, drawingTime);
+            drawChild(canvas, binding.barBox, drawingTime);
         }
     }
 
@@ -198,8 +201,10 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                     markArea = binder.matchColor(showBitmap, color);
                     if (markArea != null && markArea.size() > 0) {
                         isMarked = true;
-                        binding.seekBar.setMax(markArea.size());
-                        binding.seekBar.setProgress(markArea.size());
+                        Rect rect = markArea.get(0);
+                        int size = rect.width() * rect.height();
+                        binding.seekBar.setMax(size);
+                        binding.seekBar.setProgress(size);
                     }
                 }
                 drag = false;
@@ -211,7 +216,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
     private void refreshUI(){
         binding.buttonBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
-        binding.seekBar.setVisibility(isMarked ? VISIBLE : INVISIBLE);
+        binding.barBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
+        binding.numberText.setText(String.valueOf(size));
         postInvalidate();
     }
 
