@@ -33,7 +33,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
     private final FloatPickerColorBinding binding;
 
-    private MainCaptureService.CaptureServiceBinder binder;
+    private MainAccessibilityService service;
 
     private final Paint bitmapPaint;
     private Bitmap showBitmap;
@@ -106,8 +106,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     public void realShow(int delay){
         postDelayed(() -> {
             EasyFloat.show(tag);
-            if (binder != null){
-                Bitmap bitmap = binder.getCurrImage();
+            if (service != null && service.isCaptureEnabled() && service.binder != null){
+                Bitmap bitmap = service.binder.getCurrImage();
                 if (bitmap != null) {
                     int[] location = new int[2];
                     getLocationOnScreen(location);
@@ -115,7 +115,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                     showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
                     if (colorNode.isValid()){
                         ColorNode.ColorInfo colorInfo = colorNode.getValue();
-                        markArea = binder.matchColor(showBitmap, colorInfo.getColor());
+                        markArea = service.binder.matchColor(showBitmap, colorInfo.getColor());
                         if (markArea != null && markArea.size() > 0) {
                             isMarked = true;
                             color = colorInfo.getColor();
@@ -132,18 +132,16 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     }
 
     public void onShow(){
-        MainAccessibilityService service = MainApplication.getService();
+        service = MainApplication.getService();
         if (service != null){
-            if (service.binder == null){
+            if (!service.isCaptureEnabled()){
                 Toast.makeText(getContext(), R.string.capture_service_on_tips_2, Toast.LENGTH_SHORT).show();
                 service.startCaptureService(true, result -> {
                     if (result){
-                        binder = service.binder;
                         realShow(500);
                     }
                 });
             } else {
-                binder = service.binder;
                 realShow(100);
             }
         } else {
@@ -196,9 +194,9 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (!isMarked && !drag && binder != null){
+                if (!isMarked && !drag && service.isCaptureEnabled() && service.binder != null){
                     color = DisplayUtils.getHsvColor(showBitmap, (int) lastX, (int) lastY);
-                    markArea = binder.matchColor(showBitmap, color);
+                    markArea = service.binder.matchColor(showBitmap, color);
                     if (markArea != null && markArea.size() > 0) {
                         isMarked = true;
                         Rect rect = markArea.get(0);

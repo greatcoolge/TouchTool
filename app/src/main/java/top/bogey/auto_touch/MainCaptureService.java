@@ -38,8 +38,8 @@ import top.bogey.auto_touch.utils.MatchResult;
 
 public class MainCaptureService extends Service {
     private static final String NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID";
-    private static final String NOTIFICATION_CHANNEL_NAME = "NOTIFICATION_CHANNEL_NAME";
-    private static final String NOTIFICATION_CHANNEL_DES = "NOTIFICATION_CHANNEL_DES";
+    private static final String NOTIFICATION_CHANNEL_NAME = "录屏服务";
+    private static final String NOTIFICATION_CHANNEL_DES = "快速关闭录屏服务";
     private static final int NOTIFICATION_ID = 10000;
 
     private MediaProjection projection;
@@ -74,21 +74,46 @@ public class MainCaptureService extends Service {
         super.onDestroy();
         if (virtualDisplay != null) virtualDisplay.release();
         if (projection != null) projection.stop();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFICATION_ID + 1);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getBooleanExtra("StopCapture", false)){
+            MainAccessibilityService service = MainApplication.getService();
+            if (service != null){
+                service.stopCaptureService();
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void createNotification(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            Intent intent = new Intent(this, MainCaptureService.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-            Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                    .setContentIntent(pendingIntent)
-                    .build();
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(NOTIFICATION_CHANNEL_DES);
+
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);
-            startForeground(NOTIFICATION_ID, notification);
+
+            Notification foregroundNotification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).build();
+            startForeground(NOTIFICATION_ID, foregroundNotification);
+
+            Intent intent = new Intent(this, MainCaptureService.class);
+            intent.putExtra("StopCapture", true);
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+            Notification closeNotification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(getString(R.string.capture_service_notification_title))
+                    .build();
+
+            closeNotification.flags |= Notification.FLAG_NO_CLEAR;
+            notificationManager.notify(NOTIFICATION_ID + 1, closeNotification);
         }
     }
 

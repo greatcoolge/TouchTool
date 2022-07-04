@@ -5,6 +5,7 @@ import android.graphics.Rect;
 
 import java.util.List;
 
+import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainCaptureService;
 
 public class ColorNode extends Node{
@@ -33,23 +34,25 @@ public class ColorNode extends Node{
     @Override
     public Object getNodeTarget(Object obj) {
         if (obj != null){
-            MainCaptureService.CaptureServiceBinder binder = (MainCaptureService.CaptureServiceBinder) obj;
+            MainAccessibilityService service = (MainAccessibilityService) obj;
             ColorInfo colorInfo = getValue();
-            List<Rect> rectList = binder.matchColor(colorInfo.getColor());
-            if (rectList != null && rectList.size() > 0){
-                for (int i = rectList.size() - 1; i >= 0; i--) {
-                    Rect rect = rectList.get(i);
-                    if (rect.width() * rect.height() < colorInfo.getSize()){
-                        rectList.remove(i);
+            if (service.isCaptureEnabled() && service.binder != null){
+                List<Rect> rectList = service.binder.matchColor(colorInfo.getColor());
+                if (rectList != null && rectList.size() > 0){
+                    for (int i = rectList.size() - 1; i >= 0; i--) {
+                        Rect rect = rectList.get(i);
+                        if (rect.width() * rect.height() < colorInfo.getSize()){
+                            rectList.remove(i);
+                        }
                     }
+                    Path[] paths =new Path[rectList.size()];
+                    for (int i = 0; i < rectList.size(); i++) {
+                        Path path = new Path();
+                        path.moveTo(rectList.get(i).centerX(), rectList.get(i).centerY());
+                        paths[i] = path;
+                    }
+                    return paths;
                 }
-                Path[] paths =new Path[rectList.size()];
-                for (int i = 0; i < rectList.size(); i++) {
-                    Path path = new Path();
-                    path.moveTo(rectList.get(i).centerX(), rectList.get(i).centerY());
-                    paths[i] = path;
-                }
-                return paths;
             }
         }
         return null;

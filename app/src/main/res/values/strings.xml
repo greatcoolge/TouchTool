@@ -25,6 +25,7 @@
     <string name="capture_service_off">录屏已关闭</string>
     <string name="capture_service_on_tips_1">需要授予屏幕录制权限才能使用检测图片的能力</string>
     <string name="capture_service_on_tips_2">当前任务需要检测图片，请开启屏幕录制</string>
+    <string name="capture_service_notification_title">点按关闭AutoTouch录屏服务和通知</string>
 
     <string name="auto_run">自启动</string>
     <string name="auto_run_tips">开启自启动权限使服务在后台稳定运行</string>

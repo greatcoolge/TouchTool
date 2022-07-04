@@ -154,6 +154,10 @@ public class MainAccessibilityService extends AccessibilityService {
         captureEnabled.setValue(false);
     }
 
+    public boolean isCaptureEnabled(){
+        return Boolean.TRUE.equals(captureEnabled.getValue());
+    }
+
     public TaskRunnable runTask(Task task, TaskCallback callback){
         if (Boolean.TRUE.equals(serviceEnabled.getValue())){
             TaskRunnable runnable = new TaskRunnable(this, task, callback);

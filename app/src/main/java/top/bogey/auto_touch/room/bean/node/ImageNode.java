@@ -8,6 +8,7 @@ import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 
+import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainCaptureService;
 
 public class ImageNode extends Node{
@@ -28,8 +29,10 @@ public class ImageNode extends Node{
     @Override
     public boolean checkNode(Object obj) {
         if (obj != null){
-            MainCaptureService.CaptureServiceBinder binder = (MainCaptureService.CaptureServiceBinder) obj;
-            return binder.matchImage(getValue().getBitmap(), getValue().getValue()) != null;
+            MainAccessibilityService service = (MainAccessibilityService) obj;
+            if (service.isCaptureEnabled() && service.binder != null){
+                return service.binder.matchImage(getValue().getBitmap(), getValue().getValue()) != null;
+            }
         }
         return false;
     }
@@ -37,12 +40,14 @@ public class ImageNode extends Node{
     @Override
     public Object getNodeTarget(Object obj) {
         if (obj != null){
-            MainCaptureService.CaptureServiceBinder binder = (MainCaptureService.CaptureServiceBinder) obj;
-            Rect rect = binder.matchImage(getValue().getBitmap(), getValue().getValue());
-            if (rect != null){
-                Path path = new Path();
-                path.moveTo(rect.centerX(), rect.centerY());
-                return path;
+            MainAccessibilityService service = (MainAccessibilityService) obj;
+            if (service.isCaptureEnabled() && service.binder != null){
+                Rect rect = service.binder.matchImage(getValue().getBitmap(), getValue().getValue());
+                if (rect != null){
+                    Path path = new Path();
+                    path.moveTo(rect.centerX(), rect.centerY());
+                    return path;
+                }
             }
         }
         return null;

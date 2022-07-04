@@ -4,24 +4,19 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.List;
-
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
-import top.bogey.auto_touch.MainCaptureService;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatPickerImageBinding;
 import top.bogey.auto_touch.room.bean.node.ImageNode;
@@ -37,7 +32,7 @@ public class ImagePickerFloatView extends BasePickerFloatView {
 
     private final FloatPickerImageBinding binding;
 
-    private MainCaptureService.CaptureServiceBinder binder;
+    private MainAccessibilityService service;
 
     private final Paint bitmapPaint;
     private Bitmap showBitmap;
@@ -100,14 +95,14 @@ public class ImagePickerFloatView extends BasePickerFloatView {
     public void realShow(int delay){
         postDelayed(() -> {
             EasyFloat.show(tag);
-            if (binder != null){
-                Bitmap bitmap = binder.getCurrImage();
+            if (service != null && service.isCaptureEnabled() && service.binder != null){
+                Bitmap bitmap = service.binder.getCurrImage();
                 if (bitmap != null) {
                     int[] location = new int[2];
                     getLocationOnScreen(location);
                     Point size = DisplayUtils.getScreenSize(getContext());
                     showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
-                    Rect rect = binder.matchImage(showBitmap, imageNode.getValue().getBitmap(), imageNode.getValue().getValue());
+                    Rect rect = service.binder.matchImage(showBitmap, imageNode.getValue().getBitmap(), imageNode.getValue().getValue());
                     if (rect != null){
                         markArea = new RectF(rect);
                         isMarked = true;
@@ -120,18 +115,16 @@ public class ImagePickerFloatView extends BasePickerFloatView {
     }
 
     public void onShow(){
-        MainAccessibilityService service = MainApplication.getService();
+        service = MainApplication.getService();
         if (service != null){
-            if (service.binder == null){
+            if (!service.isCaptureEnabled()){
                 Toast.makeText(getContext(), R.string.capture_service_on_tips_2, Toast.LENGTH_SHORT).show();
                 service.startCaptureService(true, result -> {
                     if (result){
-                        binder = service.binder;
                         realShow(500);
                     }
                 });
             } else {
-                binder = service.binder;
                 realShow(100);
             }
         } else {

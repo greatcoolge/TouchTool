@@ -199,9 +199,8 @@ public class TaskRunnable implements Runnable{
     private boolean checkNode(Node node){
         switch (node.getType()) {
             case TEXT:
-                return node.checkNode(service);
             case IMAGE:
-                return node.checkNode(service.binder);
+                return node.checkNode(service);
             case TASK:
                 return node.checkNode(taskMap);
             default:
@@ -213,10 +212,9 @@ public class TaskRunnable implements Runnable{
         switch (node.getType()){
             case TEXT:
             case TOUCH:
-                return node.getNodeTarget(service);
             case IMAGE:
             case COLOR:
-                return node.getNodeTarget(service.binder);
+                return node.getNodeTarget(service);
             case TASK:
                 return node.getNodeTarget(taskMap);
             default:
