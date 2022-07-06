@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -33,6 +34,35 @@ public class TasksView extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_tasks, menu);
+            }
+
+            @SuppressLint("NonConstantResourceId")
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                Task task = new Task();
+                task.setPkgName(appInfo.packageName);
+                task.setTitle(getString(R.string.task_title_default));
+                switch (menuItem.getItemId()) {
+                    case R.id.add:
+                        viewModel.saveTask(task);
+                        break;
+                    case R.id.record:
+                        new RecordFloatView(requireContext(), task, result -> viewModel.saveTask(task)).show();
+                        break;
+                    case R.id.record_smart:
+                        new QuickRecordFloatView(requireContext(), task, result -> viewModel.saveTask(task)).show();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        }, getViewLifecycleOwner());
+
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         ViewTasksBinding binding = ViewTasksBinding.inflate(inflater, container, false);
 
@@ -52,37 +82,24 @@ public class TasksView extends Fragment {
 
         viewModel.getTasksLiveByPackageName(appInfo.packageName).observe(getViewLifecycleOwner(), adapter::setTasks);
 
+        viewModel.copyTask.observe(getViewLifecycleOwner(), task -> {
+            if (task == null) binding.pasteButton.hide();
+            else binding.pasteButton.show();
+        });
+
+        Task task = viewModel.getCopyTask();
+        if (task == null) binding.pasteButton.hide();
+        else binding.pasteButton.show();
+
+        binding.pasteButton.setOnClickListener(v -> {
+            Task copyTask = viewModel.getCopyTask();
+            if (copyTask != null){
+                copyTask.setPkgName(appInfo.packageName);
+                viewModel.saveTask(copyTask);
+            }
+            viewModel.setCopyTask(null);
+        });
+
         return binding.getRoot();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_tasks, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Task task = new Task();
-        task.setPkgName(appInfo.packageName);
-        switch (item.getItemId()) {
-            case R.id.add:
-                viewModel.saveTask(task);
-                break;
-            case R.id.record:
-                new RecordFloatView(requireContext(), task, result -> viewModel.saveTask(task)).show();
-                break;
-            case R.id.record_smart:
-                new QuickRecordFloatView(requireContext(), task, result -> viewModel.saveTask(task)).show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

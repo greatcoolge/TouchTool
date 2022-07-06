@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.material.button.MaterialButton;
-
 import java.util.List;
 
 import top.bogey.auto_touch.R;
@@ -52,14 +50,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         binding = FloatActionBinding.inflate(LayoutInflater.from(context), this, true);
 
         binding.modeGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            for (int i = 0; i < group.getChildCount(); i++) {
-                MaterialButton button = (MaterialButton) group.getChildAt(i);
-                button.setStrokeWidth((int) getContext().getResources().getDimension(com.google.android.material.R.dimen.m3_btn_stroke_size));
-            }
-
             if (isChecked){
-                MaterialButton checkedButton = group.findViewById(checkedId);
-                checkedButton.setStrokeWidth(0);
                 switch (checkedId){
                     case R.id.condition_button:
                         binding.conditionTitle.setText(context.getText(R.string.title_condition));

@@ -1,6 +1,7 @@
 package top.bogey.auto_touch.ui.tasks;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +26,11 @@ import top.bogey.auto_touch.MainViewModel;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.ViewTasksItemBinding;
 import top.bogey.auto_touch.room.bean.Action;
-import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.ui.actions.ActionFloatView;
 import top.bogey.auto_touch.ui.record.RecordFloatView;
-import top.bogey.auto_touch.utils.AppUtils;
-import top.bogey.auto_touch.utils.SelectCallback;
+import top.bogey.auto_touch.utils.DisplayUtils;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder> {
     private final MainViewModel viewModel;
@@ -98,14 +99,18 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         private final MaterialButtonToggleGroup group;
         private final TextInputEditText titleEdit;
         private final ActionsRecyclerViewAdapter adapter;
+        private final TextInputLayout textInputLayout;
+        private boolean isDeleteMode = false;
 
         @SuppressLint({"NonConstantResourceId", "PrivateResource"})
         public ViewHolder(ViewTasksItemBinding binding) {
             super(binding.getRoot());
             group = binding.statusGroup;
             titleEdit = binding.titleEdit;
+            textInputLayout = binding.textInputLayout;
             MaterialButton add = binding.addButton;
             MaterialButton delete = binding.deleteButton;
+            MaterialButton copy = binding.shareButton;
             RecyclerView actionBox = binding.actionBox;
 
             adapter = new ActionsRecyclerViewAdapter();
@@ -128,16 +133,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
 
             group.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-                for (int i = 0; i < group.getChildCount(); i++) {
-                    MaterialButton button = (MaterialButton) group.getChildAt(i);
-                    button.setStrokeWidth((int) itemView.getContext().getResources().getDimension(com.google.android.material.R.dimen.m3_btn_stroke_size));
-                }
-
                 if (isChecked){
-                    MaterialButton checkedButton = group.findViewById(checkedId);
-                    checkedButton.setStrokeWidth(0);
                     int index = getBindingAdapterPosition();
                     Task task = tasks.get(index);
+                    TaskStatus status = task.getStatus();
                     switch (checkedId){
                         case R.id.close_button:
                             task.setStatus(TaskStatus.CLOSED);
@@ -149,20 +148,37 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                             task.setStatus(TaskStatus.MANUAL);
                             break;
                     }
-                    viewModel.saveTask(task);
+                    refreshItem(task);
+                    if (status != task.getStatus()){
+                        viewModel.saveTask(task);
+                    }
                 }
             });
 
-            delete.setOnClickListener(v -> AppUtils.showDialog(itemView.getContext(), R.string.delete_task_tips, new SelectCallback() {
-                @Override
-                public void onEnter() {
+            delete.setOnClickListener(v -> {
+                if (isDeleteMode){
                     int index = getBindingAdapterPosition();
                     Task task = tasks.get(index);
                     tasks.remove(index);
                     notifyItemRemoved(index);
                     viewModel.deleteTask(task);
+                } else {
+                    isDeleteMode = true;
+                    delete.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorError, 0)));
+                    delete.setBackgroundTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorErrorContainer, 0)));
+                    delete.postDelayed(() -> {
+                        delete.setIconTintResource(com.google.android.material.R.color.m3_text_button_foreground_color_selector);
+                        delete.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(android.R.color.transparent, null)));
+                        isDeleteMode = false;
+                    }, 3000);
                 }
-            }));
+            });
+
+            copy.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Task task = tasks.get(index);
+                viewModel.setCopyTask(task);
+            });
 
             add.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
@@ -188,6 +204,19 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             group.check(child.getId());
             titleEdit.setText(task.getTitle());
             adapter.setTask(task);
+            String hint = "";
+            switch (task.getStatus()){
+                case CLOSED:
+                    hint = itemView.getContext().getString(R.string.run_close);
+                    break;
+                case AUTO:
+                    hint = itemView.getContext().getString(R.string.run_auto);
+                    break;
+                case MANUAL:
+                    hint = itemView.getContext().getString(R.string.run_manual);
+                    break;
+            }
+            textInputLayout.setHint(hint);
         }
     }
 }

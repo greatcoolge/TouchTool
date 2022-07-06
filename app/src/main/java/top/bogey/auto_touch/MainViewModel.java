@@ -1,20 +1,18 @@
 package top.bogey.auto_touch;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
-import androidx.collection.ArrayMap;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.room.bean.node.TaskNode;
@@ -29,6 +27,8 @@ public class MainViewModel extends AndroidViewModel {
 
     private final List<PackageInfo> allApp = new ArrayList<>();
 
+    public final MutableLiveData<Task> copyTask = new MutableLiveData<>(null);
+
     public MainViewModel(@NonNull Application application) {
         super(application);
         repository = new TaskRepository(application);
@@ -36,6 +36,7 @@ public class MainViewModel extends AndroidViewModel {
         refreshAppList();
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     public void refreshAppList(){
         PackageManager manager = getApplication().getPackageManager();
         allApp.clear();
@@ -103,5 +104,14 @@ public class MainViewModel extends AndroidViewModel {
 
     public void deleteTask(Task task){
         repository.deleteTask(task);
+    }
+
+    public Task getCopyTask() {
+        return copyTask.getValue();
+    }
+
+    public void setCopyTask(Task task) {
+        if (task != null) copyTask.setValue(new Task(task));
+        else copyTask.setValue(null);
     }
 }

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="?attr/materialCardViewFilledStyle"
+    style="?attr/materialCardViewElevatedStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
@@ -17,43 +16,66 @@
         android:layout_height="match_parent"
         android:paddingHorizontal="8dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/delete_button"
-            style="@style/Theme.AutoTouch.Button.OutlinedButton.IconOnly"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginVertical="4dp"
-            android:layout_weight="1"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            app:icon="@drawable/icon_delete"
-            app:layout_constraintBottom_toBottomOf="@+id/status_group"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/status_group" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_button"
-            style="@style/Theme.AutoTouch.Button.IconOnly"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginVertical="4dp"
-            android:layout_weight="1"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            app:icon="@drawable/icon_add"
-            app:layout_constraintBottom_toBottomOf="@+id/status_group"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/button_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:elevation="1dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/status_group" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delete_button"
+                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_delete"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/add_button"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_add"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/share_button"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/delete_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/share_button"
+                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_copy"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/add_button" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/status_group"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toStartOf="@+id/add_button"
-            app:layout_constraintStart_toEndOf="@+id/delete_button"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_box"
             app:selectionRequired="true"
             app:singleSelection="true">
 
@@ -92,8 +114,9 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/task_title_hint"
+            android:layout_height="36dp"
+            android:hint="@string/run_close"
+            app:hintTextAppearance="@style/Theme.AutoTouch.BodySmall"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/status_group"
@@ -105,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:imeOptions="actionDone"
-                android:paddingVertical="8dp"
+                android:paddingVertical="6dp"
                 android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -113,22 +136,17 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/action_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginVertical="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
+            tools:layout_editor_absoluteX="8dp"
             tools:listitem="@layout/view_tasks_action" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    style="?attr/materialCardViewFilledStyle"
+    android:layout_margin="1dp"
+    style="?attr/materialCardViewElevatedStyle"
     app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
 
     <androidx.constraintlayout.widget.ConstraintLayout

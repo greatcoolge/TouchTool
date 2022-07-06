@@ -2,18 +2,18 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="240dp"
-    android:layout_height="240dp"
-    style="?attr/materialCardViewFilledStyle"
-    android:alpha="0.75"
-    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MaterialAlertDialog.Material3">
+    android:layout_width="160dp"
+    android:layout_height="160dp"
+    android:layout_margin="1dp"
+    style="?attr/materialCardViewElevatedStyle">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginVertical="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginHorizontal="4dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/float_debug_item"/>
 

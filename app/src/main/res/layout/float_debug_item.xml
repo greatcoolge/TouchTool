@@ -5,24 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="2dp"
-    style="?attr/materialCardViewFilledStyle">
+    style="?attr/materialCardViewFilledStyle"
+    app:cardBackgroundColor="?attr/colorBackgroundFloating">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="0dp"
-        android:background="?attr/colorSurface"
-        android:backgroundTint="@color/alpha_500"
-        android:backgroundTintMode="multiply">
+        android:paddingHorizontal="2dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp"
-            android:textSize="11sp"
+            android:textSize="9sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

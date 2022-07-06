@@ -29,6 +29,16 @@ public class Task {
         this.id = id;
     }
 
+    @Ignore
+    public Task(Task task){
+        id = UUID.randomUUID().toString();
+        pkgName = "";
+
+        title = task.getTitle();
+        actions.addAll(task.getActions());
+        status =task.getStatus();
+    }
+
     @NonNull
     public String getId() {
         return id;

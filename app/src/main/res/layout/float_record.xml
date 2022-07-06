@@ -28,7 +28,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            style="?attr/materialCardViewFilledStyle"
+            android:layout_margin="1dp"
+            style="?attr/materialCardViewElevatedStyle"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">
 
             <LinearLayout

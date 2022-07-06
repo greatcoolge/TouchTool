@@ -5,16 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="2dp"
-    style="?attr/materialCardViewFilledStyle">
+    style="?attr/materialCardViewFilledStyle"
+    app:cardBackgroundColor="?attr/colorBackgroundFloating">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
-        android:paddingEnd="0dp"
-        android:background="?attr/colorSurface"
-        android:backgroundTint="@color/alpha_500"
-        android:backgroundTintMode="multiply">
+        android:paddingEnd="4dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/enabled_toggle"
@@ -81,8 +79,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_button"
             style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             app:icon="@drawable/icon_delete"

@@ -25,6 +25,7 @@ import top.bogey.auto_touch.MainViewModel;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatActionItemBinding;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.room.bean.node.ColorNode;
 import top.bogey.auto_touch.room.bean.node.DelayNode;
 import top.bogey.auto_touch.room.bean.node.ImageNode;
@@ -372,11 +373,15 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     } else {
                         adapter.clear();
                         MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+
                         for (Task taskItem : viewModel.getAllTasks()) {
-                            if (!taskItem.getId().equals(task.getId())){
+                            if (taskItem.getStatus() == TaskStatus.CLOSED
+                                    && !taskItem.getId().equals(task.getId())
+                                    && (taskItem.getPkgName().equals(task.getPkgName()) || taskItem.getPkgName().equals(itemView.getContext().getString(R.string.common_package_name)))){
                                 adapter.add(new TaskNode.TaskInfo(taskItem.getId(), taskItem.getTitle()));
                             }
                         }
+
                         TaskNode.TaskInfo taskInfo = ((TaskNode) node).getValue();
                         if (taskInfo == null){
                             selectSpinner("");

@@ -68,7 +68,9 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         private final MaterialButton enabledToggle;
         private final TextView title;
         private final ShapeableImageView modeImage;
+        private boolean isDeleteMode = false;
 
+        @SuppressLint("PrivateResource")
         public ViewHolder(ViewTasksActionBinding binding) {
             super(binding.getRoot());
             enabledToggle = binding.enabledToggle;
@@ -108,9 +110,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 viewModel.saveTask(task);
             });
 
-            binding.deleteButton.setOnClickListener(v -> AppUtils.showDialog(itemView.getContext(), R.string.delete_action_tips, new SelectCallback() {
-                @Override
-                public void onEnter() {
+            binding.deleteButton.setOnClickListener(v -> {
+                if (isDeleteMode){
                     int index = getBindingAdapterPosition();
                     actions.remove(index);
                     notifyItemRemoved(index);
@@ -125,8 +126,17 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         }
                     }
                     viewModel.saveTask(task);
+                } else {
+                    isDeleteMode = true;
+                    binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorError, 0)));
+                    binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorErrorContainer, 0)));
+                    binding.deleteButton.postDelayed(() -> {
+                        binding.deleteButton.setIconTintResource(com.google.android.material.R.color.m3_text_button_foreground_color_selector);
+                        binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(android.R.color.transparent, null)));
+                        isDeleteMode = false;
+                    }, 3000);
                 }
-            }));
+            });
         }
 
         @SuppressLint("PrivateResource")
