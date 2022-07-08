@@ -56,6 +56,13 @@
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"/>
 
+        <receiver android:name=".room.data.AlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="top.bogey.auto_touch.AlarmReceiver"/>
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.file_provider"

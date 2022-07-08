@@ -19,6 +19,7 @@ public class Task {
     private String title;
     private List<Action> actions = new ArrayList<>();
     private TaskStatus status = TaskStatus.CLOSED;
+    private TaskTime time = new TaskTime(System.currentTimeMillis());
 
     @Ignore
     public Task() {
@@ -36,7 +37,8 @@ public class Task {
 
         title = task.getTitle();
         actions.addAll(task.getActions());
-        status =task.getStatus();
+        status = task.getStatus();
+        time = task.getTime();
     }
 
     @NonNull
@@ -78,5 +80,13 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public TaskTime getTime() {
+        return time;
+    }
+
+    public void setTime(TaskTime time) {
+        this.time = time;
     }
 }

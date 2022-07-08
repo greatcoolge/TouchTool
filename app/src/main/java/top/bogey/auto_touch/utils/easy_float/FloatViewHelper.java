@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
 
+import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.utils.DisplayUtils;
 
 public class FloatViewHelper {
@@ -35,7 +36,8 @@ public class FloatViewHelper {
         manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         params = new LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            params.type = LayoutParams.TYPE_APPLICATION_OVERLAY;
+            if (context instanceof MainAccessibilityService) params.type = LayoutParams.TYPE_ACCESSIBILITY_OVERLAY;
+            else params.type = LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
             params.type = LayoutParams.TYPE_PHONE;
         }
@@ -204,9 +206,5 @@ public class FloatViewHelper {
         try{
             manager.removeView(floatViewParent);
         } catch (Exception ignored){}
-    }
-
-    interface AnimCallback{
-        void onAnimEnd();
     }
 }

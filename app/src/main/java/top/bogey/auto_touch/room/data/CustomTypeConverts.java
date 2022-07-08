@@ -47,6 +47,16 @@ public class CustomTypeConverts {
         return gson.toJson(actions);
     }
 
+    @TypeConverter
+    public static long timeFromString(String time){
+        return Long.parseLong(time);
+    }
+
+    @TypeConverter
+    public static String stringFromTime(long time){
+        return String.valueOf(time);
+    }
+
     public static class NodeAdapter implements JsonDeserializer<Node>{
         @Override
         public Node deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

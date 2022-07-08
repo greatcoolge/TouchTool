@@ -3,6 +3,8 @@ package top.bogey.auto_touch;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +14,13 @@ import android.graphics.Path;
 import android.os.IBinder;
 import android.view.accessibility.AccessibilityEvent;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +28,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.TaskStatus;
+import top.bogey.auto_touch.room.bean.TaskTime;
+import top.bogey.auto_touch.room.data.AlarmReceiver;
 import top.bogey.auto_touch.room.data.FindRunnable;
 import top.bogey.auto_touch.room.data.TaskRunnable;
 import top.bogey.auto_touch.utils.ResultCallback;
@@ -47,6 +55,9 @@ public class MainAccessibilityService extends AccessibilityService {
     public final ExecutorService taskService;
     private final List<TaskRunnable> tasks = new ArrayList<>();
 
+    // 定时
+    private final Map<String, PendingIntent> intentMap = new HashMap<>();
+
     public MainAccessibilityService() {
         findService = Executors.newFixedThreadPool(4);
         taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
@@ -56,7 +67,7 @@ public class MainAccessibilityService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event != null && Boolean.TRUE.equals(serviceEnabled.getValue())){
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED){
-                findService.execute(new FindRunnable(this));
+                findService.execute(new FindRunnable(this, tasks, currPkgName));
             }
         }
     }
@@ -184,15 +195,36 @@ public class MainAccessibilityService extends AccessibilityService {
         }, null);
     }
 
-    public String getCurrPkgName() {
-        return currPkgName;
+    public boolean addAlarm(@NonNull Task task){
+        removeAlarm(task.getId());
+        TaskTime time = task.getTime();
+        // 单次任务必须是未来的任务，重复任务永远可以添加
+        if (task.getStatus() == TaskStatus.ALARM && (time.getTime() > System.currentTimeMillis() || time.getInterval() > 0)){
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            Intent intent = new Intent(AlarmReceiver.ACTION);
+            intent.putExtra("id", task.getId());
+            intent.setPackage(getPackageName());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            if (time.getInterval() > 0){
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time.getTime(), time.getInterval(), pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, time.getTime(), pendingIntent);
+            }
+            intentMap.put(task.getId(), pendingIntent);
+            return true;
+        }
+        return false;
+    }
+
+    public void removeAlarm(String id){
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = intentMap.remove(id);
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent);
+        }
     }
 
     public void setCurrPkgName(String currPkgName) {
         this.currPkgName = currPkgName;
-    }
-
-    public List<TaskRunnable> getTasks() {
-        return tasks;
     }
 }

@@ -4,8 +4,9 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainActivity;
@@ -15,8 +16,13 @@ import top.bogey.auto_touch.room.bean.Task;
 
 public class FindRunnable implements Runnable{
     private final MainAccessibilityService service;
-    public FindRunnable(MainAccessibilityService service) {
+    private final List<TaskRunnable> tasks;
+    private final String pkgName;
+
+    public FindRunnable(MainAccessibilityService service, List<TaskRunnable> tasks, String pkgName) {
         this.service = service;
+        this.tasks = tasks;
+        this.pkgName = pkgName;
     }
 
     @Override
@@ -31,12 +37,12 @@ public class FindRunnable implements Runnable{
         }
         if (root != null){
             String packageName = String.valueOf(root.getPackageName());
-            if (!(packageName.equals("null") || packageName.equals(service.getCurrPkgName()))){
+            if (!(packageName.equals("null") || packageName.equals(pkgName))){
                 // 取消所有非当前包下的任务
-                for (TaskRunnable task : service.getTasks()) {
+                for (TaskRunnable task : tasks) {
                     if (task.isRunning()) task.stop();
                 }
-                service.getTasks().clear();
+                tasks.clear();
 
                 service.setCurrPkgName(packageName);
 
@@ -86,29 +92,18 @@ public class FindRunnable implements Runnable{
 
     private List<Task> getAppTaskByPkgName(String pkgName){
         TaskRepository repository = new TaskRepository(service);
-        List<Task> tasks = new ArrayList<>();
-        List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
-        if (pkgTasks != null){
-            tasks.addAll(pkgTasks);
-        }
+        Map<String, Task> taskMap = new HashMap<>();
+
         String conPkgName = service.getString(R.string.common_package_name);
         List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
-        if (comTasks != null){
-            for (Task comTask : comTasks) {
-                boolean flag = true;
-                if (comTask.getTitle() != null){
-                    for (Task task : tasks) {
-                        if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
-                            flag = false;
-                            break;
-                        }
-                    }
-                }
-                if (flag){
-                    tasks.add(comTask);
-                }
-            }
+        for (Task task : comTasks) {
+            taskMap.put(task.getTitle(), task);
         }
-        return tasks;
+
+        List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
+        for (Task task : pkgTasks) {
+            taskMap.put(task.getTitle(), task);
+        }
+        return (List<Task>) taskMap.values();
     }
 }

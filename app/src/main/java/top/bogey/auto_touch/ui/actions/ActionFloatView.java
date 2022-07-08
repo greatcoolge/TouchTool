@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
+import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatActionBinding;
 import top.bogey.auto_touch.room.bean.Action;
@@ -172,7 +173,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
 
     @Override
     public void show() {
-        EasyFloat.with(getContext())
+        EasyFloat.with(MainApplication.getActivity())
                 .setLayout(this)
                 .setTag(ActionFloatView.class.getCanonicalName())
                 .setDragEnable(true)
