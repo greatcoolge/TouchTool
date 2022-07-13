@@ -26,6 +26,7 @@
         android:gravity="bottom"
         android:hint="@string/similar"
         android:translationX="1dp"
+        app:boxStrokeWidth="0.75dp"
         app:layout_constraintEnd_toStartOf="@+id/picker_button"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">

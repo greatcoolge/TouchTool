@@ -27,6 +27,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/condition_button"
                 style="?attr/materialButtonOutlinedStyle"
+                app:strokeWidth="0.75dp"
                 android:backgroundTint="@color/background_tint_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -39,6 +40,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/loop_button"
                 style="?attr/materialButtonOutlinedStyle"
+                app:strokeWidth="0.75dp"
                 android:backgroundTint="@color/background_tint_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,6 +53,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/parallel_button"
                 style="?attr/materialButtonOutlinedStyle"
+                app:strokeWidth="0.75dp"
                 android:backgroundTint="@color/background_tint_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

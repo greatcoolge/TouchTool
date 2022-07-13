@@ -75,6 +75,7 @@ public class TasksView extends Fragment {
         ActionBar actionBar = MainApplication.getActivity().getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(appInfo.appName);
+            actionBar.setSubtitle(appInfo.packageName);
         }
 
         TasksRecyclerViewAdapter adapter = new TasksRecyclerViewAdapter();
@@ -100,6 +101,20 @@ public class TasksView extends Fragment {
             viewModel.setCopyTask(null);
         });
 
+        binding.pasteButton.setOnLongClickListener(v -> {
+            viewModel.setCopyTask(null);
+            return true;
+        });
+
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ActionBar actionBar = MainApplication.getActivity().getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setSubtitle(null);
+        }
     }
 }
