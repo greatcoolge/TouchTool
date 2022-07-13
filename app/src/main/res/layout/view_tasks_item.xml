@@ -29,8 +29,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_button"
                 style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/icon_delete"
@@ -57,8 +57,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share_button"
                 style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/icon_copy"
@@ -109,16 +109,6 @@
                 app:icon="@drawable/icon_run_manual"
                 app:iconTint="@color/container_tint_check" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/alarm_button"
-                style="@style/Theme.AutoTouch.Button.OutlinedButton.IconOnly"
-                android:backgroundTint="@color/background_tint_check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:icon="@drawable/icon_edit_time"
-                app:iconTint="@color/container_tint_check" />
-
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -146,44 +136,14 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:id="@+id/time_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            android:gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_layout">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/day_text"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="11sp"
-                android:maxLines="2"
-                android:gravity="center"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/day_edit_button"
-                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/icon_edit_calender"/>
-
-        </LinearLayout>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/action_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginVertical="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/time_box"
+            app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
             tools:layout_editor_absoluteX="8dp"
             tools:listitem="@layout/view_tasks_action" />
 

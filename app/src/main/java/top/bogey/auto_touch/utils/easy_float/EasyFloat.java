@@ -15,15 +15,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.utils.AppUtils;
 
 public class EasyFloat {
     private static final String TAG = "DEFAULT_TAG";
-    public static final int FOCUSABLE = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_LAYOUT_NO_LIMITS;
-    public static final int NOT_FOCUSABLE = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+    public static final int FOCUSABLE = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_LAYOUT_NO_LIMITS | LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+    public static final int NOT_FOCUSABLE = LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_LAYOUT_NO_LIMITS | LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
     private static final HashMap<String, FloatViewHelper> views = new HashMap<>();
     private static final List<String> tags = new ArrayList<>();
@@ -140,9 +139,7 @@ public class EasyFloat {
         private final FloatConfig config = new FloatConfig();
 
         public Builder(Context context) {
-            MainAccessibilityService service = MainApplication.getService();
-            if (service != null && service.isServiceConnected()) this.context = service;
-            else this.context = context;
+            this.context = context;
         }
 
         public Builder setLayout(int layoutId){

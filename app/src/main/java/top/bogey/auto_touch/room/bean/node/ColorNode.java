@@ -6,7 +6,6 @@ import android.graphics.Rect;
 import java.util.List;
 
 import top.bogey.auto_touch.MainAccessibilityService;
-import top.bogey.auto_touch.MainCaptureService;
 
 public class ColorNode extends Node{
     public ColorNode(ColorInfo colorInfo) {

@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainActivity;
@@ -18,7 +17,6 @@ public class FindRunnable implements Runnable{
     private final MainAccessibilityService service;
     private final List<TaskRunnable> tasks;
     private final String pkgName;
-
     public FindRunnable(MainAccessibilityService service, List<TaskRunnable> tasks, String pkgName) {
         this.service = service;
         this.tasks = tasks;
@@ -92,18 +90,29 @@ public class FindRunnable implements Runnable{
 
     private List<Task> getAppTaskByPkgName(String pkgName){
         TaskRepository repository = new TaskRepository(service);
-        Map<String, Task> taskMap = new HashMap<>();
-
+        List<Task> tasks = new ArrayList<>();
+        List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
+        if (pkgTasks != null){
+            tasks.addAll(pkgTasks);
+        }
         String conPkgName = service.getString(R.string.common_package_name);
         List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
-        for (Task task : comTasks) {
-            taskMap.put(task.getTitle(), task);
+        if (comTasks != null){
+            for (Task comTask : comTasks) {
+                boolean flag = true;
+                if (comTask.getTitle() != null){
+                    for (Task task : tasks) {
+                        if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
+                            flag = false;
+                            break;
+                        }
+                    }
+                }
+                if (flag){
+                    tasks.add(comTask);
+                }
+            }
         }
-
-        List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
-        for (Task task : pkgTasks) {
-            taskMap.put(task.getTitle(), task);
-        }
-        return (List<Task>) taskMap.values();
+        return tasks;
     }
 }

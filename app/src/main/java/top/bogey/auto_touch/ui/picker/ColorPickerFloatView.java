@@ -19,7 +19,6 @@ import java.util.List;
 
 import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainApplication;
-import top.bogey.auto_touch.MainCaptureService;
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatPickerColorBinding;
 import top.bogey.auto_touch.room.bean.node.ColorNode;
