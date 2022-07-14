@@ -20,14 +20,8 @@ public interface TaskDao {
     @Query("select * from Task where pkgName=:pkgName")
     List<Task> getTasksByPackageName(String pkgName);
 
-    @Query("select * from Task where pkgName in (:pkgNames)")
-    List<Task> getTasksByPackageNames(String... pkgNames);
-
     @Query("select * from Task where id = :id")
     List<Task> getTasksById(String id);
-
-    @Query("select * from Task where id = :id")
-    LiveData<List<Task>> getTasksLiveById(String id);
 
     @Query("select * from Task where pkgName=:pkgName")
     LiveData<List<Task>> getTasksLiveByPackageName(String pkgName);

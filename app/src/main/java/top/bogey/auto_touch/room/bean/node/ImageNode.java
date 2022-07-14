@@ -9,7 +9,6 @@ import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 
 import top.bogey.auto_touch.MainAccessibilityService;
-import top.bogey.auto_touch.MainCaptureService;
 
 public class ImageNode extends Node{
     public ImageNode(ImageInfo value) {

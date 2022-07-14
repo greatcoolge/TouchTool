@@ -24,9 +24,7 @@ import top.bogey.auto_touch.databinding.ViewTasksActionBinding;
 import top.bogey.auto_touch.room.bean.Action;
 import top.bogey.auto_touch.room.bean.Task;
 import top.bogey.auto_touch.ui.actions.ActionFloatView;
-import top.bogey.auto_touch.utils.AppUtils;
 import top.bogey.auto_touch.utils.DisplayUtils;
-import top.bogey.auto_touch.utils.SelectCallback;
 
 public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecyclerViewAdapter.ViewHolder> {
     private final MainViewModel viewModel;

@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.ColorSpace;
-import android.graphics.Point;
 import android.net.Uri;
 import android.provider.Settings;
 
@@ -48,10 +46,8 @@ public class AppUtils {
     public static boolean checkFloatPermission(Context context){
         try {
             Method canDrawOverlays = Settings.class.getDeclaredMethod("canDrawOverlays", Context.class);
-            return (Boolean) canDrawOverlays.invoke(null, context);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            return Boolean.TRUE.equals(canDrawOverlays.invoke(null, context)) ;
+        } catch (Exception ignored){}
         return false;
     }
 

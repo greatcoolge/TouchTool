@@ -26,10 +26,10 @@ import top.bogey.auto_touch.room.bean.node.Node;
 import top.bogey.auto_touch.room.bean.node.NodeType;
 import top.bogey.auto_touch.room.bean.node.NullNode;
 import top.bogey.auto_touch.room.bean.node.NumberNode;
-import top.bogey.auto_touch.room.bean.node.TouchNode;
 import top.bogey.auto_touch.room.bean.node.TaskNode;
 import top.bogey.auto_touch.room.bean.node.TextNode;
 import top.bogey.auto_touch.room.bean.node.TimeArea;
+import top.bogey.auto_touch.room.bean.node.TouchNode;
 
 public class CustomTypeConverts {
     @TypeConverter

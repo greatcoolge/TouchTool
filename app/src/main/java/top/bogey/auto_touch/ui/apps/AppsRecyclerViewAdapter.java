@@ -77,17 +77,12 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder{
-        private final MaterialTextView appName;
-        private final MaterialButton numberText;
-        private final ShapeableImageView icon;
-
+        private final ViewAppsItemBinding binding;
         private AppInfo info;
 
         public ViewHolder(ViewAppsItemBinding binding) {
             super(binding.getRoot());
-            appName = binding.appName;
-            numberText = binding.numberText;
-            icon = binding.icon;
+            this.binding = binding;
 
             itemView.setOnClickListener(v -> {
                 MainActivity activity = MainApplication.getActivity();
@@ -101,20 +96,20 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
         @SuppressLint("UseCompatLoadingForDrawables")
         public void refreshView(AppInfo appInfo, int count){
             info = appInfo;
-            appName.setText(appInfo.appName);
+            binding.appName.setText(appInfo.appName);
             if (appInfo.packageName.equals(itemView.getContext().getString(R.string.common_package_name))){
-                icon.setImageDrawable(itemView.getContext().getDrawable(R.mipmap.ic_launcher));
+                binding.icon.setImageDrawable(itemView.getContext().getDrawable(R.mipmap.ic_launcher));
             } else {
                 PackageManager manager = itemView.getContext().getPackageManager();
-                icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
+                binding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
             }
 
-            numberText.setText(String.valueOf(count));
-            numberText.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
+            binding.numberText.setText(String.valueOf(count));
+            binding.numberText.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
 
             float alpha = count > 0 ? 1f : 0.25f;
-            appName.setAlpha(alpha * 2);
-            icon.setAlpha(alpha);
+            binding.appName.setAlpha(alpha * 2);
+            binding.icon.setAlpha(alpha);
         }
     }
 }

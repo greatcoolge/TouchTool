@@ -12,8 +12,8 @@ import java.util.List;
 
 import top.bogey.auto_touch.R;
 import top.bogey.auto_touch.databinding.FloatPlayBinding;
-import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.room.bean.Task;
+import top.bogey.auto_touch.room.bean.TaskStatus;
 import top.bogey.auto_touch.room.data.TaskRepository;
 import top.bogey.auto_touch.utils.DisplayUtils;
 import top.bogey.auto_touch.utils.easy_float.EasyFloat;

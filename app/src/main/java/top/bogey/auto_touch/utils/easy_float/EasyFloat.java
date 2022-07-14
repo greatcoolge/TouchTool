@@ -91,15 +91,6 @@ public class EasyFloat {
         return null;
     }
 
-    public static LayoutParams getParams(String tag){
-        tag = checkTag(tag);
-        if (tags.contains(tag)){
-            FloatViewHelper helper = getHelper(tag);
-            return helper.params;
-        }
-        return null;
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     public static void initInput(EditText editText, String tag){
         editText.setOnTouchListener((v, event) -> {

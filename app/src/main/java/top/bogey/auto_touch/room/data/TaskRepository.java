@@ -41,17 +41,6 @@ public class TaskRepository {
         return new ArrayList<>();
     }
 
-    public List<Task> getTasksByPackageNames(String... pkgNames){
-        Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksByPackageNames(pkgNames));
-        try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-//            return getTasksByPackageNames(pkgNames);
-        }
-        return new ArrayList<>();
-    }
-
     public List<Task> getTasksById(String id){
         Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksById(id));
         try {
@@ -60,10 +49,6 @@ public class TaskRepository {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public LiveData<List<Task>> getTasksLiveById(String id){
-        return taskDao.getTasksLiveById(id);
     }
 
     public LiveData<List<Task>> getTasksLiveByPackageName(String pkgName){

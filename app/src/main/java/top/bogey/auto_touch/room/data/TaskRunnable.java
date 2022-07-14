@@ -4,6 +4,8 @@ import android.graphics.Path;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +63,7 @@ public class TaskRunnable implements Runnable{
         if (callback != null) callback.onEnd(isRunning);
     }
 
-    private boolean runTask(Task task){
+    private boolean runTask(@NonNull Task task){
         // 获取任务中有效的动作
         List<Action> actions = new ArrayList<>();
         for (Action action : task.getActions()) {
@@ -138,7 +140,7 @@ public class TaskRunnable implements Runnable{
         }
     }
 
-    private boolean doAction(Action action, int index){
+    private boolean doAction(@NonNull Action action, int index){
         List<Node> targets = action.getTargets();
         if (targets.size() > index){
             boolean result = false;
@@ -196,7 +198,7 @@ public class TaskRunnable implements Runnable{
         }
     }
 
-    private boolean checkNode(Node node){
+    private boolean checkNode(@NonNull Node node){
         switch (node.getType()) {
             case TEXT:
             case IMAGE:
@@ -208,7 +210,7 @@ public class TaskRunnable implements Runnable{
         }
     }
 
-    private Object getNodeTarget(Node node){
+    private Object getNodeTarget(@NonNull Node node){
         switch (node.getType()){
             case TEXT:
             case TOUCH:
@@ -222,7 +224,7 @@ public class TaskRunnable implements Runnable{
         }
     }
 
-    private void addTaskProgress(Node node, boolean skip){
+    private void addTaskProgress(@NonNull Node node, boolean skip){
         if (node.getType() != NodeType.TASK){
             percent++;
             if (callback != null) callback.onProgress((percent) * 100 / allPercent);
@@ -237,7 +239,7 @@ public class TaskRunnable implements Runnable{
         }
     }
 
-    private void getAllTasks(Map<String, Task> taskMap, Task task){
+    private void getAllTasks(@NonNull Map<String, Task> taskMap, Task task){
         taskMap.put(task.getId(), task);
         for (Action action : task.getActions()) {
             if (action.isEnable()){
@@ -258,7 +260,7 @@ public class TaskRunnable implements Runnable{
         }
     }
 
-    private int getAllPercent(Task task){
+    private int getAllPercent(@NonNull Task task){
         int percent = 0;
         for (Action action : task.getActions()) {
             if (action.isEnable()) {
