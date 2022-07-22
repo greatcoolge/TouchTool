@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import top.bogey.auto_touch.MainAccessibilityService;
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
 import top.bogey.auto_touch.utils.AppUtils;
@@ -130,7 +131,9 @@ public class EasyFloat {
         private final FloatConfig config = new FloatConfig();
 
         public Builder(Context context) {
-            this.context = context;
+            MainAccessibilityService service = MainApplication.getService();
+            if (service != null) this.context = service;
+            else this.context = context;
         }
 
         public Builder setLayout(int layoutId){

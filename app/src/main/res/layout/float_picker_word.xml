@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/alpha_500_dark">
+    android:background="?attr/alphaBackgroundHint">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mark_box"

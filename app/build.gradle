@@ -4,14 +4,14 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "top.bogey.auto_touch"
         minSdk 24
         targetSdk 33
-        versionCode 23
-        versionName "2.2.1"
+        versionCode 25
+        versionName "2.2.3"
 
         externalNativeBuild {
             cmake {
@@ -43,7 +43,7 @@ android {
     externalNativeBuild {
         cmake {
             path file('src/main/cpp/CMakeLists.txt')
-            version '3.18.1'
+            version '3.22.1'
         }
     }
     buildFeatures {

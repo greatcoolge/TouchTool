@@ -11,14 +11,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.textview.MaterialTextView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import top.bogey.auto_touch.MainActivity;
 import top.bogey.auto_touch.MainApplication;
@@ -60,8 +58,16 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
                 refreshItem(entry.getKey(), 0);
             }
         } else {
+            Set<String> keys = new HashSet<>();
             for (TaskNode.TaskGroup taskGroup : group) {
                 refreshItem(taskGroup.getPkgName(), taskGroup.getCount());
+                keys.add(taskGroup.getPkgName());
+            }
+
+            for (Map.Entry<String, Integer> entry : flags.entrySet()) {
+                if (!keys.contains(entry.getKey())){
+                    refreshItem(entry.getKey(), 0);
+                }
             }
         }
     }
