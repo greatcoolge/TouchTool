@@ -103,19 +103,18 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
         public void refreshView(AppInfo appInfo, int count){
             info = appInfo;
             binding.appName.setText(appInfo.appName);
+            PackageManager manager = itemView.getContext().getPackageManager();
             if (appInfo.packageName.equals(itemView.getContext().getString(R.string.common_package_name))){
-                binding.icon.setImageDrawable(itemView.getContext().getDrawable(R.mipmap.ic_launcher));
+                binding.icon.setImageDrawable(itemView.getContext().getApplicationInfo().loadIcon(manager));
             } else {
-                PackageManager manager = itemView.getContext().getPackageManager();
                 binding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
             }
 
             binding.numberText.setText(String.valueOf(count));
-            binding.numberText.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
+            binding.numberText.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
 
             float alpha = count > 0 ? 1f : 0.25f;
-            binding.appName.setAlpha(alpha * 2);
-            binding.icon.setAlpha(alpha);
+            binding.getRoot().setAlpha(alpha);
         }
     }
 }
