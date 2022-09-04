@@ -31,7 +31,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
-            style="@style/Theme.AutoTouch.Button.IconOnly"
+            style="@style/Theme.AutoTouch.Button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="4dp"
@@ -41,7 +41,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_button"
-            style="@style/Theme.AutoTouch.Button.IconOnly"
+            style="@style/Theme.AutoTouch.Button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="4dp"

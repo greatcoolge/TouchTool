@@ -28,7 +28,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_button"
-                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginStart="8dp"
@@ -44,7 +44,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/add_button"
-                style="@style/Theme.AutoTouch.Button.IconOnly"
+                style="@style/Theme.AutoTouch.Button"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:insetTop="0dp"
@@ -58,7 +58,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/share_button"
-                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginEnd="8dp"
@@ -86,7 +86,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/close_button"
-                style="@style/Theme.AutoTouch.Button.OutlinedButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -96,7 +96,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/auto_button"
-                style="@style/Theme.AutoTouch.Button.OutlinedButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -106,7 +106,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/manual_button"
-                style="@style/Theme.AutoTouch.Button.OutlinedButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -122,7 +122,7 @@
             android:layout_height="36dp"
             android:hint="@string/run_close"
             app:boxStrokeWidth="0.75dp"
-            app:hintTextAppearance="@style/Theme.AutoTouch.BodySmall"
+            app:hintTextAppearance="@style/TextAppearance.Material3.LabelSmall"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/status_group"

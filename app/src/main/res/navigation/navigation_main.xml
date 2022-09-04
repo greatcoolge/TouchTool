@@ -6,12 +6,12 @@
     app:startDestination="@id/home">
     <fragment
         android:id="@+id/home"
-        android:name="top.bogey.auto_touch.ui.home.HomeView"
+        android:name="top.bogey.touch_tool.ui.home.HomeView"
         android:label="@string/home"
         tools:layout="@layout/view_home" />
     <fragment
         android:id="@+id/apps"
-        android:name="top.bogey.auto_touch.ui.apps.AppsView"
+        android:name="top.bogey.touch_tool.ui.apps.AppsView"
         android:label="@string/apps"
         tools:layout="@layout/view_apps" >
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/tasks"
-        android:name="top.bogey.auto_touch.ui.tasks.TasksView"
+        android:name="top.bogey.touch_tool.ui.tasks.TasksView"
         android:label="@string/tasks"
         tools:layout="@layout/view_tasks" >
         <argument
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/setting"
-        android:name="top.bogey.auto_touch.ui.setting.SettingView"
+        android:name="top.bogey.touch_tool.ui.setting.SettingView"
         android:label="@string/setting"
         tools:layout="@layout/view_setting" />
 </navigation>

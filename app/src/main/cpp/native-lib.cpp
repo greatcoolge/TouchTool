@@ -23,7 +23,7 @@ Mat bitmap2Mat(JNIEnv *env, jobject bitmap){
 }
 
 jobject createMatchResult(JNIEnv *env, jdouble value, jint x, jint y, jint width, jint height){
-    auto resultClass = (jclass) env->FindClass("top/bogey/auto_touch/utils/MatchResult");
+    auto resultClass = (jclass) env->FindClass("top/bogey/touch_tool/utils/MatchResult");
     jmethodID mid = env->GetMethodID(resultClass, "<init>", "(DIIII)V");
     jobject result = env->NewObject(resultClass, mid, value, x, y, width, height);
     return result;

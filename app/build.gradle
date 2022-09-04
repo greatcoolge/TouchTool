@@ -7,11 +7,11 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "top.bogey.auto_touch"
+        applicationId "top.bogey.touch_tool"
         minSdk 24
         targetSdk 33
-        versionCode 25
-        versionName "2.2.3"
+        versionCode 1
+        versionName "1.0.0"
 
         externalNativeBuild {
             cmake {

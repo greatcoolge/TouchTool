@@ -4,67 +4,69 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
     android:layout_marginBottom="8dp"
     style="?attr/materialCardViewFilledStyle"
     app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:backgroundTintMode="multiply">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/icon_group"
+            style="?attr/materialCardViewFilledStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="80dp"
+            android:layout_marginTop="1px"
+            android:layout_marginStart="1px"
+            android:layout_marginEnd="1px"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="1px"
-                android:layout_marginTop="1px"
-                android:layout_marginEnd="1px"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Chip"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/number_text"
-                style="@style/Theme.AutoTouch.Badge"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/number_text"
+            style="@style/Theme.AutoTouch.Badge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/app_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="4dp"
+            android:layout_marginHorizontal="8dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:gravity="center"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/icon_group" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/app_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginVertical="8dp"
-                android:gravity="center"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

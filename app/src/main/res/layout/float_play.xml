@@ -24,7 +24,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_button"
-            style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+            style="@style/Theme.AutoTouch.Button.IconOnly"
             android:layout_width="32dp"
             android:layout_height="24dp"
             android:insetTop="0dp"

@@ -60,7 +60,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/up_button"
-                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:insetTop="0dp"
@@ -69,7 +69,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/down_button"
-                style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:insetTop="0dp"
@@ -80,7 +80,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_button"
-            style="@style/Theme.AutoTouch.Button.TextButton.IconOnly"
+            style="@style/Theme.AutoTouch.Button.IconOnly"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:insetTop="0dp"
