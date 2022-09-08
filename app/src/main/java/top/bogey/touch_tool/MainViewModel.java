@@ -52,12 +52,14 @@ public class MainViewModel extends AndroidViewModel {
         findString = findString.toLowerCase();
         boolean system = Boolean.TRUE.equals(showSystem.getValue());
         for (PackageInfo info : allApp) {
-            ApplicationInfo applicationInfo = info.applicationInfo;
-            if (system || (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1){
-                String appName = String.valueOf(applicationInfo.loadLabel(manager));
-                String pkgName = info.packageName;
-                if (!appName.equalsIgnoreCase(pkgName) && (findString.isEmpty() || pkgName.toLowerCase().contains(findString) || appName.toLowerCase().contains(findString))){
-                    apps.add(new AppInfo(appName, pkgName, info));
+            if (!info.packageName.equals(getApplication().getPackageName())){
+                ApplicationInfo applicationInfo = info.applicationInfo;
+                if (system || (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1){
+                    String appName = String.valueOf(applicationInfo.loadLabel(manager));
+                    String pkgName = info.packageName;
+                    if (!appName.equalsIgnoreCase(pkgName) && (findString.isEmpty() || pkgName.toLowerCase().contains(findString) || appName.toLowerCase().contains(findString))){
+                        apps.add(new AppInfo(appName, pkgName, info));
+                    }
                 }
             }
         }
@@ -70,7 +72,7 @@ public class MainViewModel extends AndroidViewModel {
         }
         PackageManager manager = getApplication().getPackageManager();
         for (PackageInfo info : allApp) {
-            if (pkgName.equals(info.packageName)){
+            if (pkgName.equals(info.packageName) && !pkgName.equals(getApplication().getPackageName())){
                 return new AppInfo(String.valueOf(info.applicationInfo.loadLabel(manager)), pkgName, info);
             }
         }
@@ -81,6 +83,7 @@ public class MainViewModel extends AndroidViewModel {
         List<String> names = new ArrayList<>();
         names.add(getApplication().getString(R.string.common_package_name));
         for (PackageInfo info : allApp) {
+            if (!info.packageName.equals(getApplication().getPackageName()))
             names.add(info.packageName);
         }
         return names;

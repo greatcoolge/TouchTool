@@ -16,25 +16,36 @@
     <string name="cancel">取消</string>
     <string name="save">保存</string>
 
-    <string name="accessibility_service_on">服务已开启</string>
-    <string name="accessibility_service_off">服务已关闭</string>
-    <string name="accessibility_service_on_tips">需要开启无障碍服务才能使用</string>
+    <string name="accessibility_service_on">功能已开启</string>
+    <string name="accessibility_service_off">功能已关闭</string>
+    <string name="accessibility_service_on_2">无障碍服务已开启</string>
+    <string name="accessibility_service_off_2">无障碍服务已关闭</string>
+    <string name="accessibility_service_on_tips">本应用需要先开启应用提供的无障碍服务才能使用</string>
     <string name="accessibility_service_des">自动点击</string>
 
     <string name="capture_service_on">录屏已开启</string>
     <string name="capture_service_off">录屏已关闭</string>
     <string name="capture_service_on_tips_1">需要授予屏幕录制权限才能使用检测图片的能力</string>
     <string name="capture_service_on_tips_2">当前任务需要检测图片，请开启屏幕录制</string>
+    <string name="capture_service_on_tips_3">未开启无障碍服务，暂时无法使用</string>
     <string name="capture_service_notification_title">点按关闭AutoTouch录屏服务和通知</string>
 
     <string name="auto_run">自启动</string>
-    <string name="auto_run_tips">开启自启动权限使服务在后台稳定运行</string>
+    <string name="open_auto_run">去开启自启动</string>
+    <string name="auto_run_tips">本应用需要长时间在后台驻留，而一些系统会很激进的杀死在后台运行的任务，如果应用被授予自启动权限，相当于加入的系统白名单，就不会那么容易被系统杀死了。</string>
     <string name="lock_task">锁定后台</string>
-    <string name="lock_task_tips">锁定后台使服务在后台稳定运行</string>
+    <string name="goto_lock_task">去锁定后台</string>
+    <string name="lock_task_tips">锁定后台使本应用在后台稳定运行，也可以防止清理后台任务时意外中止本应用。</string>
+    <string name="book">教程</string>
+    <string name="book_tips">当你不知道怎么使用本应用的时候，请点击这里查看教程。</string>
 
     <!-- 应用 -->
     <string name="show_system">展示系统应用</string>
     <string name="search_apps">搜索</string>
+    <string name="export_tasks">导出任务</string>
+    <string name="export_tips">导出配置文件并发送</string>
+    <string name="clean_tasks">清理任务</string>
+    <string name="clean_tips">冗余任务清理完成</string>
 
     <!-- 任务 -->
     <string name="add">添加</string>
@@ -42,7 +53,7 @@
     <string name="record_smart">录制</string>
 
     <string name="task_title_default">默认标题</string>
-    <string name="run_close">禁用任务</string>
+    <string name="run_close">禁用</string>
     <string name="run_auto">自动任务</string>
     <string name="run_manual">手动任务</string>
 
@@ -82,6 +93,7 @@
     <string name="time_min">最小</string>
     <string name="time_max">最大</string>
     <string name="similar">相似度</string>
+    <string name="range">范围</string>
 
     <string name="condition_null_condition">无条件</string>
     <string name="condition_null_loop">不停止</string>
@@ -96,12 +108,15 @@
     <string name="word_picker_tips">长按选择</string>
 
     <!-- 设置 -->
-    <string name="export_tasks">导出任务</string>
-    <string name="export_tips">导出配置文件并发送</string>
-    <string name="clean_tasks">清理任务</string>
-    <string name="clean_tips">冗余任务清理完成</string>
-    <string name="zan">评论</string>
-    <string name="market_tips">未安装酷安应用市场</string>
-    <string name="book">教程</string>
+    <string name="theme">界面外观</string>
+    <string name="night_mode">深色模式</string>
+
+    <string name="app_info">应用信息</string>
+    <string name="version">版本</string>
+    <string name="source_code">在GitHub查看源码</string>
+
+    <string name="action_config">动作配置</string>
+    <string name="action_touch_offset">点击偏移</string>
+    <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移</string>
 
 </resources>

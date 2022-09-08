@@ -92,7 +92,7 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
             delete.setOnLongClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 actions.remove(index);
-                notifyItemRemoved(index);
+                notifyDataSetChanged();
                 return true;
             });
         }

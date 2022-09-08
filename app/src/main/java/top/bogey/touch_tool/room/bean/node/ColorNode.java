@@ -1,6 +1,7 @@
 package top.bogey.touch_tool.room.bean.node;
 
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.Rect;
 
 import java.util.List;
@@ -40,14 +41,15 @@ public class ColorNode extends Node{
                 if (rectList != null && rectList.size() > 0){
                     for (int i = rectList.size() - 1; i >= 0; i--) {
                         Rect rect = rectList.get(i);
-                        if (rect.width() * rect.height() < colorInfo.getSize()){
+                        if (rect.width() * rect.height() < colorInfo.getMinSize()){
                             rectList.remove(i);
                         }
                     }
                     Path[] paths =new Path[rectList.size()];
                     for (int i = 0; i < rectList.size(); i++) {
                         Path path = new Path();
-                        path.moveTo(rectList.get(i).centerX(), rectList.get(i).centerY());
+                        Point fixedPosition = service.getFixedPosition(rectList.get(i).centerX(), rectList.get(i).centerY());
+                        path.moveTo(fixedPosition.x, fixedPosition.y);
                         paths[i] = path;
                     }
                     return paths;
@@ -59,20 +61,21 @@ public class ColorNode extends Node{
 
     public String getTitle(){
         ColorInfo colorInfo = getValue();
-        int[] value = colorInfo.getColor();
-        return "(" + value[0] + "," + value[1] + "," + value[2] + ")" + " >" + colorInfo.getSize();
+        return colorInfo.getMinSize() + "-" + colorInfo.getMaxSize();
     }
 
     public static class ColorInfo{
         private int[] color = new int[]{-1, -1, -1};
-        private int size = 81;
+        private int minSize = 0;
+        private int maxSize = 81;
 
         public ColorInfo() {
         }
 
-        public ColorInfo(int[] color, int size) {
+        public ColorInfo(int[] color, int minSize, int maxSize) {
             this.color = color;
-            this.size = size;
+            this.minSize = minSize;
+            this.maxSize = maxSize;
         }
 
         public int[] getColor() {
@@ -83,12 +86,20 @@ public class ColorNode extends Node{
             this.color = color;
         }
 
-        public int getSize() {
-            return size;
+        public int getMinSize() {
+            return minSize;
         }
 
-        public void setSize(int size) {
-            this.size = size;
+        public void setMinSize(int minSize) {
+            this.minSize = minSize;
+        }
+
+        public int getMaxSize() {
+            return maxSize;
+        }
+
+        public void setMaxSize(int maxSize) {
+            this.maxSize = maxSize;
         }
     }
 }

@@ -11,7 +11,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -42,7 +41,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     private boolean isMarked = false;
 
     private int[] color = new int[3];
-    private int size = 1;
+    private int minSize = 1;
+    private int maxSize = 1;
 
     private float lastX, lastY;
     private boolean drag = false;
@@ -66,28 +66,18 @@ public class ColorPickerFloatView extends BasePickerFloatView {
             refreshUI();
         });
 
-        binding.closeButton.setOnLongClickListener(v -> {
-            dismiss();
-            return true;
+        binding.backButton.setOnClickListener(v -> dismiss());
+
+        binding.slider.addOnChangeListener((slider, value, fromUser) -> {
+            List<Float> values = slider.getValues();
+            if (values.size() >= 2){
+                minSize = values.get(0).intValue();
+                maxSize = values.get(values.size() - 1).intValue();
+            }
+            refreshUI();
         });
 
-        binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                size = progress;
-                refreshUI();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        binding.slider.setLabelFormatter(value -> String.valueOf(Math.round(value)));
 
         markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         markPaint.setStyle(Paint.Style.FILL);
@@ -99,7 +89,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     }
 
     public ColorNode.ColorInfo getColor(){
-        return new ColorNode.ColorInfo(color, size);
+        return new ColorNode.ColorInfo(color, minSize, maxSize);
     }
 
     public void realShow(int delay){
@@ -119,8 +109,9 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                             isMarked = true;
                             color = colorInfo.getColor();
                             Rect rect = markArea.get(0);
-                            binding.seekBar.setMax(rect.width() * rect.height());
-                            binding.seekBar.setProgress(colorInfo.getSize());
+                            binding.slider.setValueFrom(0);
+                            binding.slider.setValueTo(rect.width() * rect.height());
+                            binding.slider.setValues((float) colorInfo.getMinSize(), (float) colorInfo.getMaxSize());
                         }
                     }
                     refreshUI();
@@ -144,7 +135,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                 realShow(100);
             }
         } else {
-            EasyFloat.show(tag);
+            Toast.makeText(getContext(), R.string.capture_service_on_tips_3, Toast.LENGTH_SHORT).show();
+            dismiss();
         }
     }
 
@@ -158,14 +150,15 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         drawChild(canvas, binding.getRoot(), drawingTime);
         for (int i = 0; i < markArea.size(); i++) {
             Rect rect = markArea.get(i);
-            if (rect.width() * rect.height() >= size){
+            int size = rect.width() * rect.height();
+            if (size >= minSize && size <= maxSize){
                 canvas.drawRect(markArea.get(i), markPaint);
             }
         }
         canvas.restore();
         if (isMarked){
             drawChild(canvas, binding.buttonBox, drawingTime);
-            drawChild(canvas, binding.barBox, drawingTime);
+            drawChild(canvas, binding.slider, drawingTime);
         }
     }
 
@@ -200,8 +193,9 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                         isMarked = true;
                         Rect rect = markArea.get(0);
                         int size = rect.width() * rect.height();
-                        binding.seekBar.setMax(size);
-                        binding.seekBar.setProgress(size);
+                        binding.slider.setValueFrom(0);
+                        binding.slider.setValueTo(size);
+                        binding.slider.setValues(0f, (float) size);
                     }
                 }
                 drag = false;
@@ -213,8 +207,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
     private void refreshUI(){
         binding.buttonBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
-        binding.barBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
-        binding.numberText.setText(String.valueOf(size));
+        binding.slider.setVisibility(isMarked ? VISIBLE : INVISIBLE);
         postInvalidate();
     }
 

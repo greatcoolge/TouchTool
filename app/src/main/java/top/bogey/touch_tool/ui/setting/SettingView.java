@@ -1,104 +1,74 @@
 package top.bogey.touch_tool.ui.setting;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.Nullable;
+import androidx.preference.DropDownPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-
-import top.bogey.touch_tool.MainViewModel;
+import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.databinding.ViewSettingBinding;
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.ui.debug.DebugFloatView;
-import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
-public class SettingView extends Fragment {
-    private static final String SAVE_FILE = "Share.txt";
+public class SettingView extends PreferenceFragmentCompat {
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+        PreferenceManager preferenceManager = getPreferenceManager();
+        preferenceManager.setSharedPreferencesName(MainAccessibilityService.SAVE_PATH);
+        setPreferencesFromResource(R.xml.setting, null);
 
-        ViewSettingBinding binding = ViewSettingBinding.inflate(inflater, container, false);
-        MainViewModel viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        DropDownPreference nightMode = findPreference(MainApplication.NIGHT_MODE);
+        if (nightMode != null){
+            nightMode.setOnPreferenceChangeListener((preference, newValue) -> {
+                int nightModeValue = Integer.parseInt(String.valueOf(newValue));
+                MainApplication.initNightMode(requireContext(), nightModeValue);
+                nightMode.setSummary(nightMode.getEntry());
+                MainApplication.getActivity().recreate();
+                return true;
+            });
+            nightMode.setSummary(nightMode.getEntry());
+        }
 
-        binding.exportButton.setOnClickListener(v -> {
-            List<Task> tasks = viewModel.getAllTasks();
-            String json = new Gson().toJson(tasks);
-
-            try(FileOutputStream fileOutputStream = requireContext().openFileOutput(SAVE_FILE, Context.MODE_PRIVATE)){
-                fileOutputStream.write(json.getBytes());
-            } catch (IOException e) {
+        Preference version = findPreference("version");
+        if (version != null){
+            PackageManager manager = requireContext().getPackageManager();
+            try {
+                PackageInfo packageInfo = manager.getPackageInfo(requireContext().getPackageName(), 0);
+                version.setSummary(packageInfo.versionName + "(" + packageInfo.versionCode + ")");
+            } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
+            version.setOnPreferenceClickListener(preference -> {
+                try {
+                    String address = "market://details?id=" + requireContext().getPackageName();
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+                    intent.setPackage("com.coolapk.market");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception ignored){}
+                return true;
+            });
+        }
 
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            File file = new File(requireContext().getFilesDir(), SAVE_FILE);
-            Uri fileUri = null;
-            try {
-                fileUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".file_provider", file);
-            } catch (IllegalArgumentException ignored){}
-            if (fileUri != null){
-                intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                String type = requireContext().getContentResolver().getType(fileUri);
-                intent.setType(type);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                requireContext().startActivity(Intent.createChooser(intent, getString(R.string.export_tips)));
-            }
-        });
-
-        binding.cleanButton.setOnClickListener(v -> {
-            List<String> pkgNames = viewModel.getAllPkgNames();
-            List<Task> tasks = viewModel.getAllTasks();
-            for (Task task : tasks) {
-                if (!pkgNames.contains(task.getPkgName())){
-                    viewModel.deleteTask(task);
-                }
-            }
-            Toast.makeText(requireContext(), R.string.clean_tips, Toast.LENGTH_LONG).show();
-        });
-
-        binding.zanButton.setOnClickListener(v -> {
-            try {
-                String address = "market://details?id=" + requireContext().getPackageName();
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
-                intent.setPackage("com.coolapk.market");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } catch (Exception ignored){
-                Toast.makeText(requireContext(), R.string.market_tips, Toast.LENGTH_LONG).show();
-            }
-        });
-
-        binding.bookButton.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.qq.com/doc/DUkVCYXBBa09aZ3VX"));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } catch (Exception ignored){ }
-        });
-
-        binding.bookButton.setOnLongClickListener(v -> {
-            View view = EasyFloat.getView(DebugFloatView.class.getCanonicalName());
-            if (view != null) ((DebugFloatView) view).dismiss();
-            else new DebugFloatView(requireContext()).show();
-            return true;
-        });
-
-        return binding.getRoot();
+        Preference sourceCode = findPreference("source_code");
+        if (sourceCode != null){
+            sourceCode.setOnPreferenceClickListener(preference -> {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mr-bogey/AutoTouch"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception ignored){ }
+                return true;
+            });
+        }
     }
+
 }

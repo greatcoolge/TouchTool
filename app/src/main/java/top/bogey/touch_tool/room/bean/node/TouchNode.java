@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
+import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class TouchNode extends Node {
@@ -45,8 +46,8 @@ public class TouchNode extends Node {
 
     @Override
     public Object getNodeTarget(Object obj) {
-        Context context = (Context) obj;
-        return getPath(context);
+        MainAccessibilityService service = (MainAccessibilityService) obj;
+        return getPath(service);
     }
 
     public List<Point> getPoints(){
@@ -64,6 +65,23 @@ public class TouchNode extends Node {
             points.add(DisplayUtils.percent2px(context, point));
         }
         return points;
+    }
+
+    public Path getPath(MainAccessibilityService service){
+        List<Point> value = getPoints();
+        if (value != null && !value.isEmpty()){
+            Path path = new Path();
+            Point firstPoint = DisplayUtils.percent2px(service, value.get(0));
+            firstPoint = service.getFixedPosition(firstPoint.x, firstPoint.y);
+            path.moveTo(firstPoint.x, firstPoint.y);
+            for (int i = 1; i < value.size(); i++) {
+                Point point = DisplayUtils.percent2px(service, value.get(i));
+                point = service.getFixedPosition(point.x, point.y);
+                path.lineTo(point.x, point.y);
+            }
+            return path;
+        }
+        return null;
     }
 
     public Path getPath(Context context){

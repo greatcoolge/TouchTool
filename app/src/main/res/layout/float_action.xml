@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp"
-    style="?attr/materialCardViewElevatedStyle"
-    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MaterialAlertDialog.Material3">
+    style="?attr/materialCardViewFilledStyle"
+    app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="320dp"
@@ -205,50 +204,12 @@
                         layout="@layout/float_action_image" />
                 </FrameLayout>
 
-                <LinearLayout
-                    android:layout_gravity="center"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="0dp">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/condition_button_none"
-                            style="@style/Theme.AutoTouch.Button"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            app:icon="@drawable/icon_run_close"
-                            app:iconSize="10dp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/condition_button_times"
-                            style="@style/Theme.AutoTouch.Button"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            app:icon="@drawable/icon_times"
-                            app:iconSize="10dp" />
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/condition_button_text"
-                            style="@style/Theme.AutoTouch.Button"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            app:icon="@drawable/icon_text"
-                            app:iconSize="10dp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/condition_button_image"
-                            style="@style/Theme.AutoTouch.Button"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            app:icon="@drawable/icon_image"
-                            app:iconSize="10dp" />
-                </LinearLayout>
+                <include
+                    android:id="@+id/condition_spinner"
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    layout="@layout/float_action_spinner" />
 
             </TableRow>
 

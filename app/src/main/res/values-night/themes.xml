@@ -1,0 +1,4 @@
+<resources>
+    <style name="Theme.AutoTouch" parent="Theme.AutoTouch.Base">
+    </style>
+</resources>

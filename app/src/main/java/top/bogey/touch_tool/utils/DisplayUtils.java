@@ -6,11 +6,26 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.view.Display;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
 public class DisplayUtils {
+    private static boolean isDefaultPortrait = true;
+
+    public static void initParams(Context context){
+        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point point = new Point();
+        display.getRealSize(point);
+        if (display.getRotation() % 2 == Surface.ROTATION_0){
+            isDefaultPortrait = point.x < point.y;
+        } else {
+            isDefaultPortrait = point.x > point.y;
+        }
+    }
+
     public static int getAttrColor(Context context, int id, int defValue){
         int[] attrs = {id};
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs);
@@ -28,10 +43,13 @@ public class DisplayUtils {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
         manager.getDefaultDisplay().getRealSize(point);
-        if (isPortrait(context)){
-            if (point.x > point.y) return new Point(point.y, point.x);
-        } else {
-            if (point.y > point.x) return new Point(point.y, point.x);
+        if (isDefaultPortrait){
+            // 适用于竖屏手机
+            if (isPortrait(context)){
+                if (point.x > point.y) return new Point(point.y, point.x);
+            } else {
+                if (point.y > point.x) return new Point(point.y, point.x);
+            }
         }
         return point;
     }
@@ -78,5 +96,10 @@ public class DisplayUtils {
         float[] hsv = new float[3];
         Color.RGBToHSV(red, green, blue, hsv);
         return new int[]{(int) (hsv[0] / 2), (int) (hsv[1] * 255), (int) (hsv[2] * 255)};
+    }
+
+    public static int getColorFromHsv(int[] hsv){
+        float[] tmp = new float[]{hsv[0] * 2, hsv[1] / 255f, hsv[2] / 255f};
+        return Color.HSVToColor(tmp);
     }
 }

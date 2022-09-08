@@ -7,7 +7,11 @@ import android.graphics.Point;
 import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +28,7 @@ import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
 import top.bogey.touch_tool.room.bean.node.NullNode;
 import top.bogey.touch_tool.room.bean.node.NumberNode;
+import top.bogey.touch_tool.room.bean.node.TaskNode;
 import top.bogey.touch_tool.room.bean.node.TextNode;
 import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.ui.picker.ImagePickerFloatView;
@@ -39,6 +44,7 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 public class ActionFloatView extends FrameLayout implements FloatViewInterface {
     private final FloatActionBinding binding;
     private final ActionsRecyclerViewAdapter adapter;
+    private final ArrayAdapter<TaskNode.TaskInfo> conditionAdapter;
 
     private ActionMode mode;
     private Node condition = new NullNode();
@@ -48,6 +54,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         super(context);
 
         binding = FloatActionBinding.inflate(LayoutInflater.from(context), this, true);
+        conditionAdapter = new ArrayAdapter<>(context, R.layout.float_action_spinner_item);
 
         binding.modeGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked){
@@ -93,10 +100,34 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         binding.timesInclude.titleEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
         binding.timesInclude.titleEdit.setText(String.valueOf(action.getTimes()));
 
-        binding.conditionButtonNone.setOnClickListener(v -> refreshCondition(new NullNode()));
-        binding.conditionButtonTimes.setOnClickListener(v -> refreshCondition(new NumberNode(1)));
-        binding.conditionButtonText.setOnClickListener(v -> refreshCondition(new TextNode("")));
-        binding.conditionButtonImage.setOnClickListener(v -> refreshCondition(new ImageNode(null)));
+        binding.conditionSpinner.spinner.setAdapter(conditionAdapter);
+        binding.conditionSpinner.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                TaskNode.TaskInfo taskInfo = conditionAdapter.getItem(i);
+                NodeType nodeType = NodeType.valueOf(taskInfo.getId());
+                switch (nodeType){
+                    case NULL:
+                        refreshCondition(new NullNode());
+                        break;
+                    case NUMBER:
+                        refreshCondition(new NumberNode(1));
+                        break;
+                    case TEXT:
+                        refreshCondition(new TextNode(""));
+                        break;
+                    case IMAGE:
+                        refreshCondition(new ImageNode(null));
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         refreshCondition(action.getCondition());
 
         binding.textInclude.textBaseInclude.titleEdit.addTextChangedListener(new ActionsRecyclerViewAdapter.TextChangedWatcher(){
@@ -189,29 +220,32 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
 
     private void refreshCondition(Node newCondition){
         if (newCondition != null) condition = newCondition;
+        conditionAdapter.clear();
+        NodeType[] nodeTypes;
+        String[] keys = getContext().getResources().getStringArray(R.array.node_condition);
         switch (mode) {
             case CONDITION:
-                binding.conditionButtonNone.setVisibility(VISIBLE);
-                binding.conditionButtonTimes.setVisibility(GONE);
-                binding.conditionButtonText.setVisibility(VISIBLE);
-                binding.conditionButtonImage.setVisibility(VISIBLE);
+                nodeTypes = new NodeType[]{NodeType.NULL, NodeType.TEXT, NodeType.IMAGE};
+                for (NodeType type : nodeTypes) {
+                    conditionAdapter.add(new TaskNode.TaskInfo(type.name(), keys[type.ordinal()]));
+                }
                 if (adapter != null){
                     if (condition.getType() == NodeType.NULL) adapter.setMaxCount(1);
                     else adapter.setMaxCount(2);
                 }
                 break;
             case LOOP:
-                binding.conditionButtonNone.setVisibility(VISIBLE);
-                binding.conditionButtonTimes.setVisibility(VISIBLE);
-                binding.conditionButtonText.setVisibility(VISIBLE);
-                binding.conditionButtonImage.setVisibility(VISIBLE);
+                nodeTypes = new NodeType[]{NodeType.NULL, NodeType.NUMBER, NodeType.TEXT, NodeType.IMAGE};
+                for (NodeType nodeType : nodeTypes) {
+                    conditionAdapter.add(new TaskNode.TaskInfo(nodeType.name(), keys[nodeType.ordinal()]));
+                }
                 if (adapter != null) adapter.setMaxCount(10);
                 break;
             case PARALLEL:
-                binding.conditionButtonNone.setVisibility(GONE);
-                binding.conditionButtonTimes.setVisibility(VISIBLE);
-                binding.conditionButtonText.setVisibility(GONE);
-                binding.conditionButtonImage.setVisibility(GONE);
+                nodeTypes = new NodeType[]{NodeType.NUMBER};
+                for (NodeType nodeType : nodeTypes) {
+                    conditionAdapter.add(new TaskNode.TaskInfo(nodeType.name(), keys[nodeType.ordinal()]));
+                }
                 if (adapter != null) adapter.setMaxCount(5);
                 break;
         }
@@ -224,6 +258,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 binding.textInclude.textBaseInclude.textInputLayout.setHint(getContext().getText(mode == ActionMode.CONDITION ? R.string.condition_null_condition : R.string.condition_null_loop));
                 binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
                 binding.textInclude.textBaseInclude.titleEdit.setText("");
+                selectSpinner(NodeType.NULL.name());
                 break;
             case NUMBER:
                 binding.imageInclude.getRoot().setVisibility(INVISIBLE);
@@ -233,6 +268,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 binding.textInclude.textBaseInclude.textInputLayout.setEnabled(true);
                 binding.textInclude.textBaseInclude.titleEdit.setText(String.valueOf(((NumberNode) condition).getValue()));
                 binding.textInclude.textBaseInclude.titleEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+                selectSpinner(NodeType.NUMBER.name());
                 break;
             case TEXT:
                 binding.imageInclude.getRoot().setVisibility(INVISIBLE);
@@ -242,6 +278,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 binding.textInclude.textBaseInclude.textInputLayout.setEnabled(true);
                 binding.textInclude.textBaseInclude.titleEdit.setText(((TextNode) condition).getValue());
                 binding.textInclude.textBaseInclude.titleEdit.setInputType(InputType.TYPE_CLASS_TEXT);
+                selectSpinner(NodeType.TEXT.name());
                 break;
             case IMAGE:
                 binding.textInclude.getRoot().setVisibility(INVISIBLE);
@@ -250,7 +287,24 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                     binding.imageInclude.image.setImageBitmap(((ImageNode) condition).getValue().getBitmap());
                     binding.imageInclude.similarText.setText(String.valueOf(((ImageNode) condition).getValue().getValue()));
                 }
+                selectSpinner(NodeType.IMAGE.name());
                 break;
+        }
+    }
+
+    private void selectSpinner(String id){
+        Spinner spinner = binding.conditionSpinner.spinner;
+        for (int i = 0; i < conditionAdapter.getCount(); i++) {
+            TaskNode.TaskInfo item = conditionAdapter.getItem(i);
+            if (item.getId().equals(id)) {
+                spinner.setSelection(i);
+                return;
+            }
+        }
+        if (conditionAdapter.getCount() > 0){
+            spinner.setSelection(0);
+            AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
+            listener.onItemSelected(spinner, spinner.getSelectedView(), 0, adapter.getItemId(0));
         }
     }
 }

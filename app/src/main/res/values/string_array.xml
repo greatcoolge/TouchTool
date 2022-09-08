@@ -25,4 +25,28 @@
         <item>颜色</item>
     </string-array>
 
+    <string-array name="node_condition">
+        <item>无</item>
+        <item>完成数</item>
+        <item>无</item>
+        <item>出现文本</item>
+        <item>出现图片</item>
+        <item>无</item>
+        <item>无</item>
+        <item>无</item>
+        <item>无</item>
+    </string-array>
+
+    <string-array name="night_mode">
+        <item>跟随系统</item>
+        <item>总是开启</item>
+        <item>总是关闭</item>
+    </string-array>
+
+    <string-array name="night_mode_value">
+        <item>-1</item>
+        <item>2</item>
+        <item>1</item>
+    </string-array>
+
 </resources>

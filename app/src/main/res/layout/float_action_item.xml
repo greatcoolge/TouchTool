@@ -22,20 +22,50 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+        <LinearLayout
+            android:id="@+id/linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/time_include"
             app:layout_constraintStart_toEndOf="@+id/title_text"
             app:layout_constraintTop_toTopOf="parent">
 
-            <include
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/up_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_up" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/down_button"
+                style="@style/Theme.AutoTouch.Button.IconOnly"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_down" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/time_include"
+            app:layout_constraintStart_toEndOf="@+id/linear_layout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <top.bogey.touch_tool.ui.custom.DelayActionItemView
                 android:id="@+id/delay_include"
-                android:visibility="invisible"
-                layout="@layout/float_action_delay" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible" />
 
             <include
                 android:id="@+id/text_include"
@@ -43,20 +73,24 @@
 
             <include
                 android:id="@+id/image_include"
-                android:visibility="invisible"
-                layout="@layout/float_action_image" />
+                layout="@layout/float_action_image"
+                android:visibility="invisible" />
 
             <include
                 android:id="@+id/spinner_include"
-                android:visibility="invisible"
-                layout="@layout/float_action_spinner" />
+                layout="@layout/float_action_spinner"
+                android:visibility="invisible" />
+
+            <include
+                android:id="@+id/color_include"
+                layout="@layout/float_action_color"
+                android:visibility="invisible" />
 
         </FrameLayout>
 
-        <include
+        <top.bogey.touch_tool.ui.custom.DelayActionItemView
             android:id="@+id/time_include"
-            layout="@layout/float_action_delay"
-            android:layout_width="72dp"
+            android:layout_width="88dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             app:layout_constraintBottom_toBottomOf="parent"

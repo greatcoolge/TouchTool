@@ -1,4 +1,5 @@
 <resources>
     <attr name="alphaBackgroundHint"/>
     <attr name="largeCornerRadius"/>
+    <attr name="mediumCornerRadius"/>
 </resources>

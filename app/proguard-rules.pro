@@ -50,7 +50,7 @@
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ColorNode$ColorInfo{
     private int[] color;
-    private int size;
+    private int minSize;
 }
 
 -keepclassmembers class android.graphics.Point{

@@ -3,6 +3,7 @@ package top.bogey.touch_tool.room.bean.node;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Base64;
 
@@ -44,7 +45,8 @@ public class ImageNode extends Node{
                 Rect rect = service.binder.matchImage(getValue().getBitmap(), getValue().getValue());
                 if (rect != null){
                     Path path = new Path();
-                    path.moveTo(rect.centerX(), rect.centerY());
+                    Point fixedPosition = service.getFixedPosition(rect.centerX(), rect.centerY());
+                    path.moveTo(fixedPosition.x, fixedPosition.y);
                     return path;
                 }
             }

@@ -1,7 +1,7 @@
 <resources>
     <style name="Theme.AutoTouch.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="iconPadding">0dp</item>
-        <item name="iconGravity">textTop</item>
+        <item name="iconGravity">textStart</item>
         <item name="android:textScaleX">0</item>
         <item name="android:minWidth">48dp</item>
         <item name="android:minHeight">48dp</item>
@@ -10,7 +10,7 @@
 
     <style name="Theme.AutoTouch.Button.IconOnly" parent="Widget.Material3.Button.TextButton">
         <item name="iconPadding">0dp</item>
-        <item name="iconGravity">textTop</item>
+        <item name="iconGravity">textStart</item>
         <item name="android:textScaleX">0</item>
         <item name="android:minWidth">48dp</item>
         <item name="android:minHeight">48dp</item>
@@ -18,7 +18,7 @@
 
     <style name="Theme.AutoTouch.Button" parent="Widget.Material3.Button">
         <item name="iconPadding">0dp</item>
-        <item name="iconGravity">textTop</item>
+        <item name="iconGravity">textStart</item>
         <item name="android:textScaleX">0</item>
         <item name="android:minWidth">48dp</item>
         <item name="android:minHeight">48dp</item>
@@ -50,6 +50,13 @@
         <item name="cornerSizeBottomLeft">?attr/largeCornerRadius</item>
         <item name="cornerSizeTopRight">?attr/largeCornerRadius</item>
         <item name="cornerSizeBottomRight">?attr/largeCornerRadius</item>
+    </style>
+
+    <style name="Theme.AutoTouch.ShapeAppearance.Corner.Medium" parent="">
+        <item name="cornerSizeTopLeft">?attr/mediumCornerRadius</item>
+        <item name="cornerSizeBottomLeft">?attr/mediumCornerRadius</item>
+        <item name="cornerSizeTopRight">?attr/mediumCornerRadius</item>
+        <item name="cornerSizeBottomRight">?attr/mediumCornerRadius</item>
     </style>
 
 </resources>

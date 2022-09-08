@@ -40,6 +40,7 @@ import top.bogey.touch_tool.ui.picker.ColorPickerFloatView;
 import top.bogey.touch_tool.ui.picker.ImagePickerFloatView;
 import top.bogey.touch_tool.ui.picker.TouchPickerFloatView;
 import top.bogey.touch_tool.ui.picker.WordPickerFloatView;
+import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecyclerViewAdapter.ViewHolder> {
@@ -152,26 +153,18 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             this.binding = binding;
             initEditText(itemView);
 
-            binding.timeInclude.timeMin.addTextChangedListener(new TextChangedWatcher(){
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int index = getBindingAdapterPosition();
-                    Node node = nodes.get(index);
-                    if (s != null && s.length() > 0){
-                        node.getTimeArea().setMin(Integer.parseInt(String.valueOf(s)));
+            binding.timeInclude.setTextWatcher((isMin, editable) -> {
+                int index = getBindingAdapterPosition();
+                Node node = nodes.get(index);
+                if (isMin){
+                    if (editable != null && editable.length() > 0){
+                        node.getTimeArea().setMin(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getTimeArea().setMin(0);
                     }
-                }
-            });
-
-            binding.timeInclude.timeMax.addTextChangedListener(new TextChangedWatcher(){
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int index = getBindingAdapterPosition();
-                    Node node = nodes.get(index);
-                    if (s != null && s.length() > 0){
-                        node.getTimeArea().setMax(Integer.parseInt(String.valueOf(s)));
+                } else {
+                    if (editable != null && editable.length() > 0){
+                        node.getTimeArea().setMax(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getTimeArea().setMax(0);
                     }
@@ -184,26 +177,18 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 notifyItemRemoved(index);
             });
 
-            binding.delayInclude.timeMin.addTextChangedListener(new TextChangedWatcher(){
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int index = getBindingAdapterPosition();
-                    DelayNode node = (DelayNode) nodes.get(index);
-                    if (s != null && s.length() > 0){
-                        node.getValue().setMin(Integer.parseInt(String.valueOf(s)));
+            binding.delayInclude.setTextWatcher((isMin, editable) -> {
+                int index = getBindingAdapterPosition();
+                DelayNode node = (DelayNode) nodes.get(index);
+                if (isMin){
+                    if (editable != null && editable.length() > 0){
+                        node.getValue().setMin(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getValue().setMin(0);
                     }
-                }
-            });
-
-            binding.delayInclude.timeMax.addTextChangedListener(new TextChangedWatcher(){
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int index = getBindingAdapterPosition();
-                    DelayNode node = (DelayNode) nodes.get(index);
-                    if (s != null && s.length() > 0){
-                        node.getValue().setMax(Integer.parseInt(String.valueOf(s)));
+                } else {
+                    if (editable != null && editable.length() > 0){
+                        node.getValue().setMax(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getValue().setMax(0);
                     }
@@ -241,15 +226,6 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                             binding.textInclude.textBaseInclude.titleEdit.setText(touchNode.getTitle());
                         }, touchNode.getPoints(itemView.getContext())).show();
                         break;
-                    case COLOR:
-                        ColorNode colorNode = (ColorNode) node;
-                        new ColorPickerFloatView(itemView.getContext(), picker -> {
-                            ColorPickerFloatView colorPicker = (ColorPickerFloatView) picker;
-                            ColorNode.ColorInfo color = colorPicker.getColor();
-                            colorNode.setValue(color);
-                            binding.textInclude.textBaseInclude.titleEdit.setText(colorNode.getTitle());
-                        }, colorNode).show();
-                        break;
                 }
             });
 
@@ -278,6 +254,19 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 }, imageNode).show();
             });
 
+            binding.colorInclude.pickerButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Node node = nodes.get(index);
+                ColorNode colorNode = (ColorNode) node;
+                new ColorPickerFloatView(itemView.getContext(), picker -> {
+                    ColorPickerFloatView colorPicker = (ColorPickerFloatView) picker;
+                    ColorNode.ColorInfo color = colorPicker.getColor();
+                    colorNode.setValue(color);
+                    binding.colorInclude.colorCard.setCardBackgroundColor(DisplayUtils.getColorFromHsv(colorNode.getValue().getColor()));
+                    binding.colorInclude.similarText.setText(colorNode.getTitle());
+                }, colorNode).show();
+            });
+
             adapter = new ArrayAdapter<>(itemView.getContext(), R.layout.float_action_spinner_item);
             binding.spinnerInclude.spinner.setAdapter(adapter);
             binding.spinnerInclude.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -298,33 +287,56 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
                 }
             });
+
+            binding.upButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                int newIndex = Math.max(0, index - 1);
+                nodes.add(newIndex, nodes.remove(index));
+                notifyItemRangeChanged(newIndex, 2);
+            });
+
+            binding.downButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                int newIndex = Math.min(nodes.size() - 1, index + 1);
+                nodes.add(newIndex, nodes.remove(index));
+                notifyItemRangeChanged(index, 2);
+            });
         }
 
         public void refreshItem(Node node){
             String[] strings = itemView.getContext().getResources().getStringArray(R.array.node_type);
             binding.titleText.setText(strings[node.getType().ordinal()]);
 
-            binding.timeInclude.timeMin.setText(String.valueOf(node.getTimeArea().getMin()));
-            binding.timeInclude.timeMax.setText(String.valueOf(node.getTimeArea().getMax()));
+            binding.timeInclude.setValue(node.getTimeArea().getMin(), node.getTimeArea().getMax());
 
             switch (node.getType()) {
                 case DELAY:
-                    binding.delayInclude.getRoot().setVisibility(View.VISIBLE);
+                    binding.delayInclude.setVisibility(View.VISIBLE);
                     binding.textInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
-                    binding.timeInclude.getRoot().setVisibility(View.GONE);
-                    binding.delayInclude.timeMin.setText(String.valueOf(((DelayNode) node).getValue().getMin()));
-                    binding.delayInclude.timeMax.setText(String.valueOf(((DelayNode) node).getValue().getMax()));
+                    binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.timeInclude.setVisibility(View.GONE);
+                    binding.delayInclude.setValue(((DelayNode) node).getValue().getMin(), ((DelayNode) node).getValue().getMax());
+                    break;
+                case COLOR:
+                    binding.delayInclude.setVisibility(View.INVISIBLE);
+                    binding.textInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.colorInclude.getRoot().setVisibility(View.VISIBLE);
+                    binding.timeInclude.setVisibility(View.VISIBLE);
+                    binding.colorInclude.colorCard.setCardBackgroundColor(DisplayUtils.getColorFromHsv(((ColorNode) node).getValue().getColor()));
+                    binding.colorInclude.similarText.setText(((ColorNode) node).getTitle());
                     break;
                 case TEXT:
                 case TOUCH:
-                case COLOR:
-                    binding.delayInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.delayInclude.setVisibility(View.INVISIBLE);
                     binding.textInclude.getRoot().setVisibility(View.VISIBLE);
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
-                    binding.timeInclude.getRoot().setVisibility(View.VISIBLE);
+                    binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.timeInclude.setVisibility(View.VISIBLE);
                     switch (node.getType()) {
                         case TEXT:
                             binding.textInclude.pickerButton.setIconResource(R.drawable.icon_text);
@@ -336,19 +348,15 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                             binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
                             binding.textInclude.textBaseInclude.titleEdit.setText(((TouchNode) node).getTitle());
                             break;
-                        case COLOR:
-                            binding.textInclude.pickerButton.setIconResource(R.drawable.icon_color);
-                            binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
-                            binding.textInclude.textBaseInclude.titleEdit.setText(((ColorNode) node).getTitle());
-                            break;
                     }
                     break;
                 case IMAGE:
-                    binding.delayInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.delayInclude.setVisibility(View.INVISIBLE);
                     binding.textInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.imageInclude.getRoot().setVisibility(View.VISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
-                    binding.timeInclude.getRoot().setVisibility(View.VISIBLE);
+                    binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.timeInclude.setVisibility(View.VISIBLE);
                     ImageNode.ImageInfo imageInfo = ((ImageNode) node).getValue();
                     binding.imageInclude.similarText.setText(String.valueOf(imageInfo.getValue()));
                     if (imageInfo.getBitmap() != null){
@@ -357,11 +365,12 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     break;
                 case KEY:
                 case TASK:
-                    binding.delayInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.delayInclude.setVisibility(View.INVISIBLE);
                     binding.textInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.VISIBLE);
-                    binding.timeInclude.getRoot().setVisibility(View.GONE);
+                    binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.timeInclude.setVisibility(View.GONE);
                     if (node.getType() == NodeType.KEY){
                         String[] ids = itemView.getContext().getResources().getStringArray(R.array.key_ids);
                         String[] keys = itemView.getContext().getResources().getStringArray(R.array.keys);

@@ -70,6 +70,8 @@ public class WordPickerFloatView extends BasePickerFloatView{
             dismiss();
         });
 
+        binding.backButton.setOnClickListener(v -> dismiss());
+
         binding.switchButton.setOnClickListener(v -> {
             addEnabled = false;
             ViewGroup.LayoutParams params = binding.constraintLayout.getLayoutParams();

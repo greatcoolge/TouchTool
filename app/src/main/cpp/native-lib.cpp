@@ -35,7 +35,7 @@ int clamp(int up, int low, int value){
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclass clazz, jobject bitmap, jobject temp, jint method) {
+Java_top_bogey_touch_1tool_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclass clazz, jobject bitmap, jobject temp, jint method) {
     int scale = 2;
 
     Mat src = bitmap2Mat(env, bitmap);
@@ -60,9 +60,9 @@ Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclas
 
     jobject matchResult;
     if (method == TM_SQDIFF || method == TM_SQDIFF_NORMED){
-        matchResult = createMatchResult(env, minVal, minLoc.x * scale, minLoc.y * scale, tmp.rows * scale, tmp.cols * scale);
+        matchResult = createMatchResult(env, minVal, minLoc.x * scale, minLoc.y * scale, tmp.cols * scale, tmp.rows * scale);
     } else {
-        matchResult = createMatchResult(env, maxVal, minLoc.x * scale, minLoc.y * scale, tmp.rows * scale, tmp.cols * scale);
+        matchResult = createMatchResult(env, maxVal, maxLoc.x * scale, maxLoc.y * scale, tmp.cols * scale, tmp.rows * scale);
     }
     src.release();
     tmp.release();
@@ -72,7 +72,7 @@ Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclas
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_top_bogey_auto_1touch_utils_AppUtils_nativeMatchColor(JNIEnv *env, jclass clazz, jobject bitmap, jintArray hsvColor) {
+Java_top_bogey_touch_1tool_utils_AppUtils_nativeMatchColor(JNIEnv *env, jclass clazz, jobject bitmap, jintArray hsvColor) {
     Mat src = bitmap2Mat(env, bitmap);
     cvtColor(src, src, COLOR_RGBA2BGR);
     cvtColor(src, src, COLOR_BGR2HSV);

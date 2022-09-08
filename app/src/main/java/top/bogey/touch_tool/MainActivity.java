@@ -40,6 +40,7 @@ import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.data.CustomTypeConverts;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
+import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.PermissionResultCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DisplayUtils.initParams(this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

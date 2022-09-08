@@ -38,10 +38,13 @@ public class TouchPickerFloatView extends BasePickerFloatView{
         }
 
         FloatPickerPosBinding binding = FloatPickerPosBinding.inflate(LayoutInflater.from(context), this, true);
+
         binding.saveButton.setOnClickListener(v -> {
             pickerCallback.onComplete(this);
             dismiss();
         });
+
+        binding.backButton.setOnClickListener(v -> dismiss());
 
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(DisplayUtils.getAttrColor(getContext(), com.google.android.material.R.attr.colorPrimaryContainer, 0));

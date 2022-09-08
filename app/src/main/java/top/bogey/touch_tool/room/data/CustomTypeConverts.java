@@ -76,8 +76,9 @@ public class CustomTypeConverts {
                     JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
                     JsonArray colorArray = colorInfo.getAsJsonArray("color");
                     int[] color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
-                    int size = colorInfo.get("size").getAsInt();
-                    node = new ColorNode(new ColorNode.ColorInfo(color, size));
+                    int minSize = colorInfo.get("minSize").getAsInt();
+                    int maxSize = colorInfo.get("maxSize").getAsInt();
+                    node = new ColorNode(new ColorNode.ColorInfo(color, minSize, maxSize));
                     break;
                 case KEY:
                     node = new KeyNode(jsonObject.get("value").getAsInt());

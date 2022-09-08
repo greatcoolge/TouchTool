@@ -17,11 +17,9 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/icon_group"
             style="?attr/materialCardViewFilledStyle"
+            android:backgroundTint="#00ffffff"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_marginTop="1px"
-            android:layout_marginStart="1px"
-            android:layout_marginEnd="1px"
             app:cardBackgroundColor="?attr/colorSurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,10 +32,7 @@
                 android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Chip"/>
+                app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Medium"/>
 
         </com.google.android.material.card.MaterialCardView>
 

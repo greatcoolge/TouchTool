@@ -67,10 +67,7 @@ public class ImagePickerFloatView extends BasePickerFloatView {
             refreshUI();
         });
 
-        binding.closeButton.setOnLongClickListener(v -> {
-            dismiss();
-            return true;
-        });
+        binding.backButton.setOnClickListener(v -> dismiss());
 
         markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         markPaint.setStyle(Paint.Style.FILL);
@@ -128,7 +125,8 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                 realShow(100);
             }
         } else {
-            EasyFloat.show(tag);
+            Toast.makeText(getContext(), R.string.capture_service_on_tips_3, Toast.LENGTH_SHORT).show();
+            dismiss();
         }
     }
 

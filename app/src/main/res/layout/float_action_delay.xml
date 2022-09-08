@@ -5,8 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -16,11 +18,11 @@
             android:id="@+id/text_input_layout_min"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginBottom="4dp"
+            android:layout_weight="1"
             android:gravity="bottom"
-            android:translationX="1dp"
             android:hint="@string/time_min"
+            android:translationX="1dp"
             app:boxStrokeWidth="0.75dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,21 +33,20 @@
                 android:id="@+id/time_min"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:inputType="number"
-                android:paddingVertical="8dp"
                 android:paddingHorizontal="0dp"
-                android:textSize="11sp"
-                android:singleLine="true" />
+                android:paddingVertical="8dp"
+                android:singleLine="true"
+                android:textSize="11sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_layout_max"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginBottom="4dp"
+            android:layout_weight="1"
             android:gravity="bottom"
             android:hint="@string/time_max"
             app:boxStrokeWidth="0.75dp"
@@ -58,15 +59,30 @@
                 android:id="@+id/time_max"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:inputType="number"
-                android:paddingVertical="8dp"
                 android:paddingHorizontal="0dp"
-                android:textSize="11sp"
-                android:singleLine="true" />
+                android:paddingVertical="8dp"
+                android:singleLine="true"
+                android:textSize="11sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/lock_button"
+        style="@style/Theme.AutoTouch.Button"
+        android:backgroundTint="?attr/colorSurfaceVariant"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:icon="@drawable/icon_lock"
+        app:iconSize="16dp"
+        app:iconTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
