@@ -12,10 +12,14 @@ import androidx.preference.DropDownPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.ui.debug.DebugFloatView;
+import top.bogey.touch_tool.utils.AppUtils;
+import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class SettingView extends PreferenceFragmentCompat {
 
@@ -24,6 +28,17 @@ public class SettingView extends PreferenceFragmentCompat {
         PreferenceManager preferenceManager = getPreferenceManager();
         preferenceManager.setSharedPreferencesName(MainAccessibilityService.SAVE_PATH);
         setPreferencesFromResource(R.xml.setting, null);
+
+        SwitchPreferenceCompat actionDebug = findPreference("action_debug");
+        if (actionDebug != null){
+            actionDebug.setOnPreferenceChangeListener((preference, newValue) -> {
+                EasyFloat.dismiss(DebugFloatView.class.getCanonicalName());
+                if (Boolean.TRUE.equals(newValue)){
+                    new DebugFloatView(requireContext()).show();
+                }
+                return true;
+            });
+        }
 
         DropDownPreference nightMode = findPreference(MainApplication.NIGHT_MODE);
         if (nightMode != null){

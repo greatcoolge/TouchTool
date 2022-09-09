@@ -118,5 +118,7 @@
     <string name="action_config">动作配置</string>
     <string name="action_touch_offset">点击偏移</string>
     <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移</string>
+    <string name="action_debug">调试</string>
+    <string name="action_debug_tips">显示任务运行信息弹窗</string>
 
 </resources>

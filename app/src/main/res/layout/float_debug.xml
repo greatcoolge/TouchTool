@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="160dp"
     android:layout_height="160dp"
-    android:layout_margin="1dp"
-    style="?attr/materialCardViewElevatedStyle">
+    style="?attr/materialCardViewFilledStyle">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

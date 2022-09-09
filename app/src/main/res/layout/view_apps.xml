@@ -15,6 +15,7 @@
         android:paddingStart="0dp"
         android:paddingTop="0dp"
         android:paddingEnd="8dp"
+        android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

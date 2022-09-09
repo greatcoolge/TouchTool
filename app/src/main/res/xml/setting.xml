@@ -4,12 +4,21 @@
 
     <PreferenceCategory android:title="@string/action_config">
 
-        <SwitchPreferenceCompat
-            android:key="action_touch_offset"
-            android:title="@string/action_touch_offset"
-            android:summary="@string/action_touch_offset_tips"
+        <SeekBarPreference
             android:icon="@drawable/icon_touch_offset"
-            android:widgetLayout="@layout/widget_switch"/>
+            android:key="action_touch_offset"
+            android:max="10"
+            android:summary="@string/action_touch_offset_tips"
+            android:title="@string/action_touch_offset"
+            app:selectable="false"
+            app:showSeekBarValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="action_debug"
+            android:summary="@string/action_debug_tips"
+            android:title="@string/action_debug"
+            android:widgetLayout="@layout/widget_switch"
+            app:icon="@drawable/icon_debug" />
 
     </PreferenceCategory>
 

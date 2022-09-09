@@ -192,9 +192,7 @@ public class MainAccessibilityService extends AccessibilityService {
 
     public Point getFixedPosition(int x, int y){
         SharedPreferences preferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        if (preferences.getBoolean(ACTION_TOUCH_OFFSET, false)){
-            return new Point((int) (Math.random() * 10 + x - 5), (int) (Math.random() * 10 + y - 5));
-        }
-        return new Point(x, y);
+        int offset = preferences.getInt(ACTION_TOUCH_OFFSET, 0);
+        return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
     }
 }

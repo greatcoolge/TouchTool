@@ -51,7 +51,7 @@
             android:id="@+id/app_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_marginHorizontal="8dp"
             android:ellipsize="end"
             android:singleLine="true"
