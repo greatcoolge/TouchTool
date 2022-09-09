@@ -36,7 +36,6 @@ public class TaskRepository {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-//            return getTasksByPackageName(pkgName);
         }
         return new ArrayList<>();
     }
@@ -57,6 +56,16 @@ public class TaskRepository {
 
     public LiveData<List<TaskNode.TaskGroup>> getTaskGroupsLive(){
         return taskDao.getTaskGroupsLive();
+    }
+
+    public List<TaskNode.TaskGroup> getTaskGroups(){
+        Future<List<TaskNode.TaskGroup>> future = TaskDatabase.service.submit(taskDao::getTaskGroups);
+        try {
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void saveTask(Task task){

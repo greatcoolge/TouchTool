@@ -1,9 +1,6 @@
 package top.bogey.touch_tool.ui.apps;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,16 +13,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import top.bogey.touch_tool.MainViewModel;
@@ -34,7 +25,6 @@ import top.bogey.touch_tool.databinding.ViewAppsBinding;
 import top.bogey.touch_tool.room.bean.Task;
 
 public class AppsView extends Fragment {
-    private static final String SAVE_FILE = "Share.txt";
 
     private MainViewModel viewModel;
     private AppsRecyclerViewAdapter adapter;
@@ -79,27 +69,7 @@ public class AppsView extends Fragment {
                         adapter.refreshApps(viewModel.searchAppList(searchText));
                         return true;
                     case R.id.export_actions:
-                        String json = new Gson().toJson(tasks);
-
-                        try(FileOutputStream fileOutputStream = requireContext().openFileOutput(SAVE_FILE, Context.MODE_PRIVATE)){
-                            fileOutputStream.write(json.getBytes());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        File file = new File(requireContext().getFilesDir(), SAVE_FILE);
-                        Uri fileUri = null;
-                        try {
-                            fileUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".file_provider", file);
-                        } catch (IllegalArgumentException ignored){}
-                        if (fileUri != null){
-                            intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                            String type = requireContext().getContentResolver().getType(fileUri);
-                            intent.setType(type);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            requireContext().startActivity(Intent.createChooser(intent, getString(R.string.export_tips)));
-                        }
+                        new TasksExportView().show(getParentFragmentManager(), "");
                         return true;
                     case R.id.clean_actions:
                         List<String> pkgNames = viewModel.getAllPkgNames();

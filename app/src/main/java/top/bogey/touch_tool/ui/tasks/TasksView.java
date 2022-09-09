@@ -78,6 +78,7 @@ public class TasksView extends Fragment {
             actionBar.setSubtitle(appInfo.packageName);
         }
 
+
         TasksRecyclerViewAdapter adapter = new TasksRecyclerViewAdapter();
         binding.tasksBox.setAdapter(adapter);
 

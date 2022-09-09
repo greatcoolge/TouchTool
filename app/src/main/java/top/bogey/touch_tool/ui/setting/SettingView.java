@@ -3,7 +3,6 @@ package top.bogey.touch_tool.ui.setting;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,7 +17,6 @@ import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.ui.debug.DebugFloatView;
-import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class SettingView extends PreferenceFragmentCompat {

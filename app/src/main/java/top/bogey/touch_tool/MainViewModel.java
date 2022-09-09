@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
@@ -84,7 +85,7 @@ public class MainViewModel extends AndroidViewModel {
         names.add(getApplication().getString(R.string.common_package_name));
         for (PackageInfo info : allApp) {
             if (!info.packageName.equals(getApplication().getPackageName()))
-            names.add(info.packageName);
+                names.add(info.packageName);
         }
         return names;
     }
@@ -116,5 +117,9 @@ public class MainViewModel extends AndroidViewModel {
     public void setCopyTask(Task task) {
         if (task != null) copyTask.setValue(new Task(task));
         else copyTask.setValue(null);
+    }
+
+    public List<TaskNode.TaskGroup> getTaskGroups(){
+        return repository.getTaskGroups();
     }
 }

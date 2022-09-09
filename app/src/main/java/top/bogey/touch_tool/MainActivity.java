@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.Settings;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -98,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.menuView, controller);
         AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.apps, R.id.setting).build();
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
+        controller.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
+            if (navDestination.getId() == R.id.tasks){
+                binding.menuView.setVisibility(View.GONE);
+            } else {
+                binding.menuView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

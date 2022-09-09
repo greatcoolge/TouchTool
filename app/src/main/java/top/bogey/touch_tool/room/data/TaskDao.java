@@ -29,6 +29,9 @@ public interface TaskDao {
     @Query("select pkgName, count(*) as count from Task group by pkgName")
     LiveData<List<TaskNode.TaskGroup>> getTaskGroupsLive();
 
+    @Query("select pkgName, count(*) as count from Task group by pkgName")
+    List<TaskNode.TaskGroup> getTaskGroups();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Task task);
 
