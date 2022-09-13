@@ -81,6 +81,13 @@ public class TaskNode extends Node{
         private String pkgName;
         private int count;
 
+        public TaskGroup() {}
+
+        public TaskGroup(String pkgName) {
+            this.pkgName = pkgName;
+            count = 0;
+        }
+
         public String getPkgName() {
             return pkgName;
         }

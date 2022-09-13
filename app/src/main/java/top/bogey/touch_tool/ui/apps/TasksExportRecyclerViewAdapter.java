@@ -6,13 +6,14 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
@@ -31,6 +32,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
 
     private List<Object> showData = new ArrayList<>();
     public final List<Task> selectTasks = new ArrayList<>();
+    private final Map<String, Boolean> showInfo = new HashMap<>();
 
     public TasksExportRecyclerViewAdapter(TasksExportView parent) {
         this.parent = parent;
@@ -39,7 +41,10 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         selectTasks.addAll(tasks);
 
         List<TaskNode.TaskGroup> originData = viewModel.getTaskGroups();
-        showData.addAll(originData);
+        for (TaskNode.TaskGroup taskGroup : originData) {
+            showData.add(taskGroup);
+            showInfo.put(taskGroup.getPkgName(), Boolean.FALSE);
+        }
     }
 
     @NonNull
@@ -73,7 +78,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
             if (data instanceof TaskNode.TaskGroup){
                 TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) data;
                 tmp.add(taskGroup);
-                if (taskGroup.getCount() > 0)
+                if (Boolean.TRUE.equals(showInfo.get(taskGroup.getPkgName())))
                     tmp.addAll(getTasksByPackageName(taskGroup.getPkgName()));
             }
         }
@@ -133,12 +138,12 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
                 int index = getBindingAdapterPosition();
                 TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) showData.get(index);
                 int size = getTasksByPackageName(taskGroup.getPkgName()).size();
-                if (taskGroup.getCount() == 0){
-                    taskGroup.setCount(size);
+                if (Boolean.FALSE.equals(showInfo.get(taskGroup.getPkgName()))){
+                    showInfo.put(taskGroup.getPkgName(), Boolean.TRUE);
                     refreshShowData();
                     notifyItemRangeInserted(index + 1, size);
                 } else {
-                    taskGroup.setCount(0);
+                    showInfo.put(taskGroup.getPkgName(), Boolean.FALSE);
                     refreshShowData();
                     notifyItemRangeRemoved(index + 1, size);
                 }
