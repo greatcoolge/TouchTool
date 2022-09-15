@@ -42,7 +42,7 @@ public class SettingView extends PreferenceFragmentCompat {
         if (nightMode != null){
             nightMode.setOnPreferenceChangeListener((preference, newValue) -> {
                 int nightModeValue = Integer.parseInt(String.valueOf(newValue));
-                MainApplication.initNightMode(requireContext(), nightModeValue);
+                MainApplication.initNightMode(nightModeValue);
                 nightMode.setSummary(nightMode.getEntry());
                 MainApplication.getActivity().recreate();
                 return true;

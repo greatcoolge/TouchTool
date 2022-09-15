@@ -24,10 +24,10 @@ public class MainApplication extends Application {
     public static void initNightMode(Context context){
         SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
         String nightMode = preferences.getString(NIGHT_MODE, "-1");
-        initNightMode(context, Integer.parseInt(nightMode));
+        initNightMode(Integer.parseInt(nightMode));
     }
 
-    public static void initNightMode(Context context, int nightMode){
+    public static void initNightMode(int nightMode){
         AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
