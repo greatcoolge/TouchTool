@@ -16,8 +16,10 @@ import android.view.accessibility.AccessibilityEvent;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -25,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.data.FindRunnable;
-import top.bogey.touch_tool.room.data.TaskRunnable;
+import top.bogey.touch_tool.room.data.TaskCallable;
 import top.bogey.touch_tool.utils.ResultCallback;
 import top.bogey.touch_tool.utils.TaskCallback;
 
@@ -47,7 +49,7 @@ public class MainAccessibilityService extends AccessibilityService {
     private String currPkgName = "";
     private final ExecutorService findService;
     public final ExecutorService taskService;
-    private final List<TaskRunnable> tasks = new ArrayList<>();
+    private final List<TaskCallable> tasks = new ArrayList<>();
 
     public MainAccessibilityService() {
         findService = Executors.newFixedThreadPool(4);
@@ -160,14 +162,26 @@ public class MainAccessibilityService extends AccessibilityService {
         return Boolean.TRUE.equals(captureEnabled.getValue());
     }
 
-    public TaskRunnable runTask(Task task, TaskCallback callback){
+    public TaskCallable runTask(Task task, TaskCallback callback){
         if (Boolean.TRUE.equals(serviceEnabled.getValue())){
-            TaskRunnable runnable = new TaskRunnable(this, task, callback);
-            tasks.add(runnable);
-            taskService.submit(runnable);
-            return runnable;
+            TaskCallable callable = new TaskCallable(this, task, callback);
+            tasks.add(callable);
+            taskService.submit(callable);
+            return callable;
         }
         return null;
+    }
+
+    public void stopTask(TaskCallable callable){
+        if (Boolean.TRUE.equals(serviceEnabled.getValue())){
+            tasks.remove(callable);
+            callable.stop();
+            try {
+                taskService.invokeAny(Collections.singletonList(callable));
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void runGesture(Path path, int time, ResultCallback callback){

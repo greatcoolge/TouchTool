@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +26,7 @@ import top.bogey.touch_tool.ui.debug.DebugFloatView;
 import top.bogey.touch_tool.utils.TaskCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
-public class TaskRunnable implements Runnable{
+public class TaskCallable implements Callable<Void> {
     private boolean isRunning = true;
 
     private final MainAccessibilityService service;
@@ -38,7 +39,7 @@ public class TaskRunnable implements Runnable{
     private final int allPercent;
     private int percent = 0;
 
-    public TaskRunnable(MainAccessibilityService service, Task task, TaskCallback callback) {
+    public TaskCallable(MainAccessibilityService service, Task task, TaskCallback callback) {
         this.service = service;
         this.task = task;
         this.callback = callback;
@@ -50,6 +51,9 @@ public class TaskRunnable implements Runnable{
 
     public void stop() {
         isRunning = false;
+        if (Thread.currentThread().getState() == Thread.State.TIMED_WAITING){
+            Thread.
+        }
     }
 
     public boolean isRunning(){
@@ -57,10 +61,11 @@ public class TaskRunnable implements Runnable{
     }
 
     @Override
-    public void run() {
+    public Void call() {
         if (callback != null) callback.onStart();
         runTask(task);
         if (callback != null) callback.onEnd(isRunning);
+        return null;
     }
 
     private boolean runTask(@NonNull Task task){

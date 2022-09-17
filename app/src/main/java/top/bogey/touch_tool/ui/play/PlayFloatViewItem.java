@@ -20,7 +20,7 @@ import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
-import top.bogey.touch_tool.room.data.TaskRunnable;
+import top.bogey.touch_tool.room.data.TaskCallable;
 import top.bogey.touch_tool.utils.TaskCallback;
 
 @SuppressLint("ViewConstructor")
@@ -29,7 +29,7 @@ public class PlayFloatViewItem extends FrameLayout {
     private final Task task;
 
     private boolean playing = false;
-    private TaskRunnable taskRunnable;
+    private TaskCallable taskCallable;
 
     public PlayFloatViewItem(@NonNull Context context, Task task) {
         super(context);
@@ -80,12 +80,12 @@ public class PlayFloatViewItem extends FrameLayout {
         MainAccessibilityService service = MainApplication.getService();
         if (service != null && service.isServiceConnected()){
             if (playing){
-                if (taskRunnable != null && taskRunnable.isRunning()){
-                    taskRunnable.stop();
+                if (taskCallable != null && taskCallable.isRunning()){
+                    service.stopTask(taskCallable);
                 }
                 playing = false;
             } else {
-                taskRunnable = service.runTask(task, new TaskCallback() {
+                taskCallable = service.runTask(task, new TaskCallback() {
                     @Override
                     public void onStart() {
                         playing = true;

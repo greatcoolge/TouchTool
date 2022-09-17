@@ -15,9 +15,9 @@ import top.bogey.touch_tool.room.bean.Task;
 
 public class FindRunnable implements Runnable{
     private final MainAccessibilityService service;
-    private final List<TaskRunnable> tasks;
+    private final List<TaskCallable> tasks;
     private final String pkgName;
-    public FindRunnable(MainAccessibilityService service, List<TaskRunnable> tasks, String pkgName) {
+    public FindRunnable(MainAccessibilityService service, List<TaskCallable> tasks, String pkgName) {
         this.service = service;
         this.tasks = tasks;
         this.pkgName = pkgName;
@@ -37,7 +37,7 @@ public class FindRunnable implements Runnable{
             String packageName = String.valueOf(root.getPackageName());
             if (!(packageName.equals("null") || packageName.equals(pkgName))){
                 // 取消所有非当前包下的任务
-                for (TaskRunnable task : tasks) {
+                for (TaskCallable task : tasks) {
                     if (task.isRunning()) task.stop();
                 }
                 tasks.clear();

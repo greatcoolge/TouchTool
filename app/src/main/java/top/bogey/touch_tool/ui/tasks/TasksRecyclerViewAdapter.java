@@ -194,7 +194,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             add.setOnLongClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
-                new RecordFloatView(itemView.getContext(), task, result -> notifyItemChanged(index)).show();
+                new RecordFloatView(itemView.getContext(), task, result -> {
+                    viewModel.saveTask(task);
+                    notifyItemChanged(index);
+                }).show();
                 return true;
             });
         }
