@@ -1,6 +1,6 @@
 package top.bogey.touch_tool.room.bean.node;
 
-public class TimeArea {
+public class TimeArea{
     private int min;
     private int max;
 

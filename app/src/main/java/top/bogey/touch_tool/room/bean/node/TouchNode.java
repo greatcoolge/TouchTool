@@ -50,6 +50,11 @@ public class TouchNode extends Node {
         return getPath(service);
     }
 
+    @Override
+    public Object cloneValue() {
+        return getValue();
+    }
+
     public List<Point> getPoints(){
         List<Point> points = new ArrayList<>();
         try{

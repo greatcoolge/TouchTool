@@ -35,6 +35,12 @@ public class TaskNode extends Node{
         return taskMap.get(getValue().getId());
     }
 
+    @Override
+    public TaskInfo cloneValue() {
+        TaskInfo value = getValue();
+        return new TaskInfo(value.id, value.title);
+    }
+
     private static Map<String, Task> toTaskMap(Object obj){
         Map<String, Task> map = new HashMap<>();
         if (obj instanceof HashMap<?, ?>){

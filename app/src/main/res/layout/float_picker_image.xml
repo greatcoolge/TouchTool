@@ -13,14 +13,14 @@
 
         <ImageView
             android:id="@+id/move_left"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             app:srcCompat="@drawable/icon_drag_left_top" />
 
         <ImageView
             android:id="@+id/move_right"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             app:srcCompat="@drawable/icon_drag_right_bottom" />
     </FrameLayout>
 

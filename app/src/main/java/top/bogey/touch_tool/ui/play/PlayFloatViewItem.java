@@ -121,7 +121,7 @@ public class PlayFloatViewItem extends FrameLayout {
 
     private synchronized void refreshProgress(int percent){
         post(() -> {
-            binding.playButton.setLabelText(percent == 0 ? getPivotalTitle(task.getTitle()) : String.valueOf(percent));
+            binding.playButton.setLabelText(!playing && percent == 0 ? getPivotalTitle(task.getTitle()) : String.valueOf(percent));
             binding.playButton.showAnimation(binding.playButton.getProgress(), percent, 100);
         });
     }

@@ -32,4 +32,10 @@ public class DelayNode extends Node {
         if (checkNode(obj)) return getValue().getRandomTime();
         return null;
     }
+
+    @Override
+    public TimeArea cloneValue() {
+        TimeArea value = getValue();
+        return new TimeArea(value.getMin(), value.getMax());
+    }
 }

@@ -173,7 +173,7 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public void stopTask(TaskCallable callable){
-        if (Boolean.TRUE.equals(serviceEnabled.getValue())){
+        if (callable != null && Boolean.TRUE.equals(serviceEnabled.getValue())){
             tasks.remove(callable);
             callable.stop();
             try {

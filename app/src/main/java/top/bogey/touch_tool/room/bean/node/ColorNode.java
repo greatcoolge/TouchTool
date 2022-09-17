@@ -59,6 +59,12 @@ public class ColorNode extends Node{
         return null;
     }
 
+    @Override
+    public ColorInfo cloneValue() {
+        ColorInfo value = getValue();
+        return new ColorInfo(new int[]{value.color[0], value.color[1], value.color[2]}, value.minSize, value.maxSize);
+    }
+
     public String getTitle(){
         ColorInfo colorInfo = getValue();
         return colorInfo.getMinSize() + "-" + colorInfo.getMaxSize();

@@ -54,6 +54,12 @@ public class ImageNode extends Node{
         return null;
     }
 
+    @Override
+    public ImageInfo cloneValue() {
+        ImageInfo value = getValue();
+        return new ImageInfo(value.image, value.value);
+    }
+
     public static class ImageInfo{
         private transient Bitmap bitmap;
         private String image;

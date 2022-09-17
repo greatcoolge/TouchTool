@@ -51,9 +51,7 @@ public class TaskCallable implements Callable<Void> {
 
     public void stop() {
         isRunning = false;
-        if (Thread.currentThread().getState() == Thread.State.TIMED_WAITING){
-            Thread.
-        }
+        Thread.currentThread().interrupt();
     }
 
     public boolean isRunning(){

@@ -18,7 +18,7 @@ import top.bogey.touch_tool.room.bean.Task;
 public abstract class TaskDatabase extends RoomDatabase {
     private static final String DB_NAME = "TASKS_DB";
     private static volatile TaskDatabase instance;
-    public static final ThreadPoolExecutor service = new ThreadPoolExecutor(1, 5, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
+    public static final ThreadPoolExecutor service = new ThreadPoolExecutor(2, 5, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20));
 
     static synchronized TaskDatabase getInstance(Context context){
         if (instance == null) instance = create(context);

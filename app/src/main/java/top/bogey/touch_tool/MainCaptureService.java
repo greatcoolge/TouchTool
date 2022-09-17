@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.utils.AppUtils;
+import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.MatchResult;
 
 public class MainCaptureService extends Service {
@@ -42,8 +43,10 @@ public class MainCaptureService extends Service {
     private static final int NOTIFICATION_ID = 10000;
 
     private MediaProjection projection;
-    private VirtualDisplay virtualDisplay;
-    private ImageReader imageReader;
+    private VirtualDisplay virtualDisplayP;
+    private ImageReader imageReaderP;
+    private VirtualDisplay virtualDisplayL;
+    private ImageReader imageReaderL;
 
     @Nullable
     @Override
@@ -71,7 +74,8 @@ public class MainCaptureService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (virtualDisplay != null) virtualDisplay.release();
+        if (virtualDisplayP != null) virtualDisplayP.release();
+        if (virtualDisplayL != null) virtualDisplayL.release();
         if (projection != null) projection.stop();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -121,8 +125,10 @@ public class MainCaptureService extends Service {
         WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
         manager.getDefaultDisplay().getRealMetrics(metrics);
-        imageReader = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 2);
-        virtualDisplay = projection.createVirtualDisplay("CaptureService", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
+        imageReaderP = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 2);
+        virtualDisplayP = projection.createVirtualDisplay("CaptureServiceP", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReaderP.getSurface(), null, null);
+        imageReaderL = ImageReader.newInstance(metrics.heightPixels, metrics.widthPixels, PixelFormat.RGBA_8888, 2);
+        virtualDisplayL = projection.createVirtualDisplay("CaptureServiceL", metrics.heightPixels, metrics.widthPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReaderL.getSurface(), null, null);
     }
 
     public class CaptureServiceBinder extends Binder{
@@ -160,7 +166,12 @@ public class MainCaptureService extends Service {
         }
 
         public Bitmap getCurrImage(){
-            Image currImage = imageReader.acquireLatestImage();
+            Image currImage;
+            if (DisplayUtils.isPortrait(getBaseContext())) {
+                currImage = imageReaderP.acquireLatestImage();
+            } else {
+                currImage = imageReaderL.acquireLatestImage();
+            }
             if (currImage == null) return null;
             Image.Plane[] planes = currImage.getPlanes();
             ByteBuffer buffer = planes[0].getBuffer();

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 public class DisplayUtils {
-    private static boolean isDefaultPortrait = true;
+    public static boolean isDefaultPortrait = true;
 
     public static void initParams(Context context){
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -64,7 +64,11 @@ public class DisplayUtils {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
         // 绝对坐标和相对坐标一致，则状态栏高度为0，否则就是有状态栏
-        if (location[1] > params.y) return getStatusBarHeight(view.getContext());
+        if (isPortrait(view.getContext())){
+            if (location[1] > params.y) return getStatusBarHeight(view.getContext());
+        } else {
+            if (location[0] > params.x) return getStatusBarHeight(view.getContext());
+        }
         return 0;
     }
 

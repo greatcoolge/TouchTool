@@ -70,9 +70,21 @@
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
+        style="@style/Theme.AutoTouch.Button"
+        android:clickable="false"
+        android:focusable="false"
+        android:backgroundTint="?attr/colorSurfaceVariant"
+        android:layout_width="3dp"
+        android:layout_height="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/lock_button"
         style="@style/Theme.AutoTouch.Button"
-        android:backgroundTint="?attr/colorSurfaceVariant"
+        android:backgroundTint="#00ffffff"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:insetTop="0dp"

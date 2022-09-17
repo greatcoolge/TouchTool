@@ -106,19 +106,21 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TaskNode.TaskInfo taskInfo = conditionAdapter.getItem(i);
                 NodeType nodeType = NodeType.valueOf(taskInfo.getId());
-                switch (nodeType){
-                    case NULL:
-                        refreshCondition(new NullNode());
-                        break;
-                    case NUMBER:
-                        refreshCondition(new NumberNode(1));
-                        break;
-                    case TEXT:
-                        refreshCondition(new TextNode(""));
-                        break;
-                    case IMAGE:
-                        refreshCondition(new ImageNode(null));
-                        break;
+                if (condition.getType() != nodeType){
+                    switch (nodeType){
+                        case NULL:
+                            refreshCondition(new NullNode());
+                            break;
+                        case NUMBER:
+                            refreshCondition(new NumberNode(1));
+                            break;
+                        case TEXT:
+                            refreshCondition(new TextNode(""));
+                            break;
+                        case IMAGE:
+                            refreshCondition(new ImageNode(new ImageNode.ImageInfo(95)));
+                            break;
+                    }
                 }
             }
 
@@ -219,7 +221,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
     }
 
     private void refreshCondition(Node newCondition){
-        if (newCondition != null) condition = newCondition;
+        if (newCondition != null) condition = newCondition.clone();
         conditionAdapter.clear();
         NodeType[] nodeTypes;
         String[] keys = getContext().getResources().getStringArray(R.array.node_condition);

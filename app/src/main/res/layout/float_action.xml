@@ -206,7 +206,7 @@
 
                 <include
                     android:id="@+id/condition_spinner"
-                    android:layout_width="96dp"
+                    android:layout_width="116dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     layout="@layout/float_action_spinner" />

@@ -24,4 +24,9 @@ public class KeyNode extends Node{
     public Object getNodeTarget(Object obj) {
         return getValue();
     }
+
+    @Override
+    public Integer cloneValue() {
+        return getValue();
+    }
 }

@@ -98,11 +98,13 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                     int[] location = new int[2];
                     getLocationOnScreen(location);
                     Point size = DisplayUtils.getScreenSize(getContext());
-                    showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
-                    Rect rect = service.binder.matchImage(showBitmap, imageNode.getValue().getBitmap(), imageNode.getValue().getValue());
-                    if (rect != null){
-                        markArea = new RectF(rect);
-                        isMarked = true;
+                    if (size.x == bitmap.getWidth() && size.y == bitmap.getHeight()){
+                        showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
+                        Rect rect = service.binder.matchImage(showBitmap, imageNode.getValue().getBitmap(), imageNode.getValue().getValue());
+                        if (rect != null){
+                            markArea = new RectF(rect);
+                            isMarked = true;
+                        }
                     }
                     refreshUI();
                     bitmap.recycle();

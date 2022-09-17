@@ -36,16 +36,7 @@ public class TasksExportView extends BottomSheetDialogFragment {
         TasksExportRecyclerViewAdapter adapter = new TasksExportRecyclerViewAdapter(this);
         binding.tasksRecycleView.setAdapter(adapter);
 
-        binding.selectAll.addOnCheckedStateChangedListener((checkBox, state) -> {
-            switch (state){
-                case MaterialCheckBox.STATE_CHECKED:
-                    adapter.selectAll(true);
-                    break;
-                case MaterialCheckBox.STATE_UNCHECKED:
-                    adapter.selectAll(false);
-                    break;
-            }
-        });
+        binding.selectAll.setOnClickListener(v -> adapter.selectAll(binding.selectAll.isChecked()));
 
         binding.exportButton.setOnClickListener(v -> {
             List<Task> selectTasks = adapter.selectTasks;

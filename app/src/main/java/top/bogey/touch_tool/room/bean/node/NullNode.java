@@ -19,4 +19,9 @@ public class NullNode extends Node{
     public Object getNodeTarget(Object obj) {
         return null;
     }
+
+    @Override
+    public Object cloneValue() {
+        return null;
+    }
 }

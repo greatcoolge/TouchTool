@@ -12,18 +12,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatActionItemBinding;
+import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.bean.node.ColorNode;
@@ -204,6 +208,25 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 }
             });
 
+            binding.textInclude.playButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Node node = nodes.get(index);
+                TouchNode touchNode = (TouchNode) node;
+                MainAccessibilityService service = MainApplication.getService();
+                if (touchNode.isValid()){
+                    if (service != null){
+                        Task task = new Task();
+                        Action action = new Action();
+                        action.setTargets(Collections.singletonList(touchNode));
+                        task.setActions(Collections.singletonList(action));
+
+                        service.runTask(task, null);
+                    } else {
+                        Toast.makeText(itemView.getContext(), R.string.capture_service_on_tips_3, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
             binding.textInclude.pickerButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Node node = nodes.get(index);
@@ -339,11 +362,13 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.timeInclude.setVisibility(View.VISIBLE);
                     switch (node.getType()) {
                         case TEXT:
+                            binding.textInclude.playButton.setVisibility(View.GONE);
                             binding.textInclude.pickerButton.setIconResource(R.drawable.icon_text);
                             binding.textInclude.textBaseInclude.textInputLayout.setEnabled(true);
                             binding.textInclude.textBaseInclude.titleEdit.setText(((TextNode) node).getValue());
                             break;
                         case TOUCH:
+                            binding.textInclude.playButton.setVisibility(View.VISIBLE);
                             binding.textInclude.pickerButton.setIconResource(R.drawable.icon_touch);
                             binding.textInclude.textBaseInclude.textInputLayout.setEnabled(false);
                             binding.textInclude.textBaseInclude.titleEdit.setText(((TouchNode) node).getTitle());

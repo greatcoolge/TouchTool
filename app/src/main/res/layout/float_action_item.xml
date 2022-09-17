@@ -90,7 +90,7 @@
 
         <top.bogey.touch_tool.ui.custom.DelayActionItemView
             android:id="@+id/time_include"
-            android:layout_width="88dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             app:layout_constraintBottom_toBottomOf="parent"

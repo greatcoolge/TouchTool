@@ -113,6 +113,6 @@ public class FindRunnable implements Runnable{
                 }
             }
         }
-        return tasks;
+        return pkgTasks;
     }
 }

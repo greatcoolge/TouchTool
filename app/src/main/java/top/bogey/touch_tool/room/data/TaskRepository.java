@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
@@ -23,8 +25,8 @@ public class TaskRepository {
     public List<Task> getAllTasks(){
         Future<List<Task>> future = TaskDatabase.service.submit(taskDao::getAllTasks);
         try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
+            return future.get(1000, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
         }
         return null;
@@ -33,8 +35,8 @@ public class TaskRepository {
     public List<Task> getTasksByPackageName(String pkgName){
         Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksByPackageName(pkgName));
         try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
+            return future.get(1000, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
         }
         return new ArrayList<>();
@@ -43,8 +45,8 @@ public class TaskRepository {
     public List<Task> getTasksById(String id){
         Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksById(id));
         try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
+            return future.get(1000, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
         }
         return null;
@@ -61,8 +63,8 @@ public class TaskRepository {
     public List<TaskNode.TaskGroup> getTaskGroups(){
         Future<List<TaskNode.TaskGroup>> future = TaskDatabase.service.submit(taskDao::getTaskGroups);
         try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
+            return future.get(1000, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
             e.printStackTrace();
         }
         return null;

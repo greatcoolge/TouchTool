@@ -26,6 +26,8 @@ public class FloatViewHelper {
     LayoutParams params = null;
     FloatViewParent floatViewParent = null;
 
+    Boolean isPortrait = null;
+
     public FloatViewHelper(Context context, FloatConfig config) {
         this.context = context;
         this.config = config;
@@ -44,6 +46,9 @@ public class FloatViewHelper {
         params.format = PixelFormat.RGBA_8888;
         params.gravity = Gravity.START | Gravity.TOP;
         params.flags = EasyFloat.NOT_FOCUSABLE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            params.layoutInDisplayCutoutMode = LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
         params.width = config.matchWidth ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT;
         params.height = config.matchHeight ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT;
 
@@ -61,6 +66,8 @@ public class FloatViewHelper {
         floatViewParent.touchCallback = event -> touchUtils.updateFloatPosition(floatViewParent, event, manager, params);
         floatViewParent.layoutCallback = () -> {
             initGravity();
+
+            isPortrait = DisplayUtils.isPortrait(context);
 
             if (config.callback != null){
                 config.callback.onCreate(true);
@@ -100,14 +107,27 @@ public class FloatViewHelper {
                 }
             }
         };
+
+        setViewChangedListener();
+    }
+
+    private void setViewChangedListener(){
+        floatViewParent.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (isPortrait == null || isPortrait.equals(DisplayUtils.isPortrait(context))){
+                return;
+            }
+            isPortrait = DisplayUtils.isPortrait(context);
+
+            initGravity();
+        });
     }
 
     private void initGravity(){
         Rect showSize = DisplayUtils.getScreenArea(context);
         int statusBarHeight = DisplayUtils.getStatusBarHeight(floatViewParent, params);
         showSize.top += config.topBorder;
-        showSize.bottom -= (statusBarHeight + config.bottomBorder);
         showSize.left += config.leftBorder;
+        showSize.bottom -= (statusBarHeight + config.bottomBorder);
         showSize.right -= config.rightBorder;
 
         switch (config.gravity){

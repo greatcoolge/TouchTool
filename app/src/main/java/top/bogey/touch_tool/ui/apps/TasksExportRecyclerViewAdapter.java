@@ -127,6 +127,18 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         notifyDataSetChanged();
     }
 
+    public void selectSomeByPackageName(String pkgName){
+        List<Task> tasks = getTasksByPackageName(pkgName);
+        if (getSelectCountByPackageName(pkgName) == tasks.size()){
+            selectTasks.removeIf(task -> task.getPkgName().equals(pkgName));
+        } else {
+            for (Task task : tasks) {
+                if (!selectTasks.contains(task)) selectTasks.add(task);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     protected class ViewHolder extends RecyclerView.ViewHolder{
         private SheetTasksExportAppItemBinding appBinding;
         private SheetTasksExportTaskItemBinding taskBinding;
@@ -147,6 +159,13 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
                     refreshShowData();
                     notifyItemRangeRemoved(index + 1, size);
                 }
+            });
+
+            binding.numberText.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) showData.get(index);
+                selectSomeByPackageName(taskGroup.getPkgName());
+                refreshSelectAllBox();
             });
         }
 

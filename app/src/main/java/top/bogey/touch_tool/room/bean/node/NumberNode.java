@@ -25,4 +25,9 @@ public class NumberNode extends Node{
         if (checkNode(obj)) return getValue();
         return null;
     }
+
+    @Override
+    public Integer cloneValue() {
+        return getValue();
+    }
 }

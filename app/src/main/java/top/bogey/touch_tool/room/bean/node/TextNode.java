@@ -42,6 +42,11 @@ public class TextNode extends Node{
         return searchClickableNode(nodes);
     }
 
+    @Override
+    public String cloneValue() {
+        return getValue();
+    }
+
     public AccessibilityNodeInfo searchClickableNode(List<AccessibilityNodeInfo> nodes){
         if (nodes == null || nodes.isEmpty()) return null;
         for (AccessibilityNodeInfo node : nodes) {
