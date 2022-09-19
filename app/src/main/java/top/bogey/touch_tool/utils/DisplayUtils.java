@@ -43,6 +43,7 @@ public class DisplayUtils {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
         manager.getDefaultDisplay().getRealSize(point);
+        // 为了解决有些手机横竖屏切换时，后台应用获得的屏幕大小不变这个问题。
         if (isDefaultPortrait){
             // 适用于竖屏手机
             if (isPortrait(context)){
@@ -57,6 +58,11 @@ public class DisplayUtils {
     public static Rect getScreenArea(Context context){
         Point size = getScreenSize(context);
         return new Rect(0, 0, size.x, size.y);
+    }
+
+    public static int getScreenWidth(Context context){
+        Point size = getScreenSize(context);
+        return Math.min(size.x, size.y);
     }
 
     public static int getStatusBarHeight(View view, WindowManager.LayoutParams params){

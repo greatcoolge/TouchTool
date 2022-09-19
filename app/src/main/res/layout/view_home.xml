@@ -277,6 +277,70 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewFilledStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_background_pop"
+                            android:tint="?attr/colorPrimary" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="4.1"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/background_pop"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="32dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/background_pop_tips"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="32dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/background_pop_tips_2"
+                        android:textColor="?attr/colorTertiary"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/open_background_pop_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="16dp"
+                        app:icon="@drawable/icon_background_pop"
+                        android:text="@string/open_background_pop"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
 
     </LinearLayout>

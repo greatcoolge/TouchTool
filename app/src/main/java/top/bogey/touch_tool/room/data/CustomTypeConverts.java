@@ -54,43 +54,80 @@ public class CustomTypeConverts {
             String type = jsonObject.get("type").getAsString();
             NodeType nodeType = NodeType.valueOf(type);
             Node node = new NullNode();
-            switch (nodeType) {
-                case NUMBER:
-                    node = new NumberNode(jsonObject.get("value").getAsInt());
-                    break;
-                case DELAY:
-                    JsonObject delayArea = jsonObject.get("value").getAsJsonObject();
-                    node = new DelayNode(new TimeArea(delayArea.get("min").getAsInt(), delayArea.get("max").getAsInt()));
-                    break;
-                case TEXT:
-                    node = new TextNode(jsonObject.get("value").getAsString());
-                    break;
-                case IMAGE:
-                    JsonObject imageInfo = jsonObject.get("value").getAsJsonObject();
-                    node = new ImageNode(new ImageNode.ImageInfo(imageInfo.get("image").getAsString(), imageInfo.get("value").getAsInt()));
-                    break;
-                case TOUCH:
-                    node = new TouchNode(jsonObject.get("value").getAsString());
-                    break;
-                case COLOR:
-                    JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
-                    JsonArray colorArray = colorInfo.getAsJsonArray("color");
-                    int[] color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
-                    int minSize = colorInfo.get("minSize").getAsInt();
-                    int maxSize = colorInfo.get("maxSize").getAsInt();
-                    node = new ColorNode(new ColorNode.ColorInfo(color, minSize, maxSize));
-                    break;
-                case KEY:
-                    node = new KeyNode(jsonObject.get("value").getAsInt());
-                    break;
-                case TASK:
-                    JsonObject taskInfo = jsonObject.get("value").getAsJsonObject();
-                    node = new TaskNode(new TaskNode.TaskInfo(taskInfo.get("id").getAsString(), taskInfo.get("title").getAsString()));
-                    break;
+
+            if (nodeType == NodeType.NUMBER) {
+                node = new NumberNode(jsonObject.get("value").getAsInt());
+
+
+            } else if (nodeType == NodeType.DELAY) {
+                JsonObject delayArea = jsonObject.get("value").getAsJsonObject();
+                int min = 1000, max = 1000;
+                JsonElement minElement = delayArea.get("min");
+                if (minElement != null) min = minElement.getAsInt();
+                JsonElement maxElement = delayArea.get("max");
+                if (maxElement != null) max = maxElement.getAsInt();
+                node = new DelayNode(new TimeArea(min, max));
+
+
+            } else if (nodeType == NodeType.TEXT) {
+                node = new TextNode(jsonObject.get("value").getAsString());
+
+
+            } else if (nodeType == NodeType.IMAGE) {
+                JsonObject imageInfo = jsonObject.get("value").getAsJsonObject();
+                String image = null;
+                int value = 95, screenWidth = 1080;
+                JsonElement imageElement = imageInfo.get("image");
+                if (imageElement != null) image = imageElement.getAsString();
+                JsonElement valueElement = imageInfo.get("value");
+                if (valueElement != null) value = valueElement.getAsInt();
+                JsonElement screenWidthElement = imageInfo.get("screenWidth");
+                if (screenWidthElement != null) screenWidth = screenWidthElement.getAsInt();
+                node = new ImageNode(new ImageNode.ImageInfo(image, value, screenWidth));
+
+
+            } else if (nodeType == NodeType.TOUCH) {
+                node = new TouchNode(jsonObject.get("value").getAsString());
+
+
+            } else if (nodeType == NodeType.COLOR) {
+                JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
+                int[] color = {0, 0, 0};
+                int minSize = 0, maxSize = 81;
+                JsonArray colorArray = colorInfo.getAsJsonArray("color");
+                if (colorArray != null)
+                    color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
+                JsonElement minSizeElement = colorInfo.get("minSize");
+                if (minSizeElement != null) minSize = minSizeElement.getAsInt();
+                JsonElement maxSizeElement = colorInfo.get("maxSize");
+                if (maxSizeElement != null) maxSize = maxSizeElement.getAsInt();
+                node = new ColorNode(new ColorNode.ColorInfo(color, minSize, maxSize));
+
+
+            } else if (nodeType == NodeType.KEY) {
+                node = new KeyNode(jsonObject.get("value").getAsInt());
+
+
+            } else if (nodeType == NodeType.TASK) {
+                JsonObject taskInfo = jsonObject.get("value").getAsJsonObject();
+                String id = null, title = null;
+                JsonElement idElement = taskInfo.get("id");
+                if (idElement != null) id = idElement.getAsString();
+                JsonElement titleElement = taskInfo.get("title");
+                if (titleElement != null) title = titleElement.getAsString();
+                node = new TaskNode(new TaskNode.TaskInfo(id, title));
             }
+
             JsonObject timeArea = jsonObject.get("timeArea").getAsJsonObject();
-            node.getTimeArea().setMin(timeArea.get("min").getAsInt());
-            node.getTimeArea().setMax(timeArea.get("max").getAsInt());
+            int min = 1000, max = 1000;
+            JsonElement minElement = timeArea.get("min");
+            if (minElement != null) min = minElement.getAsInt();
+            JsonElement maxElement = timeArea.get("max");
+            if (maxElement != null) max = maxElement.getAsInt();
+            node.getTimeArea().setMin(min);
+            node.getTimeArea().setMax(max);
+
+
             return node;
         }
     }

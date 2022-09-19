@@ -2,6 +2,7 @@ package top.bogey.touch_tool.room.bean.node;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -10,6 +11,7 @@ import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class ImageNode extends Node{
     public ImageNode(ImageInfo value) {
@@ -31,7 +33,7 @@ public class ImageNode extends Node{
         if (obj != null){
             MainAccessibilityService service = (MainAccessibilityService) obj;
             if (service.isCaptureEnabled() && service.binder != null){
-                return service.binder.matchImage(getValue().getBitmap(), getValue().getValue()) != null;
+                return matchImage(service) != null;
             }
         }
         return false;
@@ -42,7 +44,7 @@ public class ImageNode extends Node{
         if (obj != null){
             MainAccessibilityService service = (MainAccessibilityService) obj;
             if (service.isCaptureEnabled() && service.binder != null){
-                Rect rect = service.binder.matchImage(getValue().getBitmap(), getValue().getValue());
+                Rect rect = matchImage(service);
                 if (rect != null){
                     Path path = new Path();
                     Point fixedPosition = service.getFixedPosition(rect.centerX(), rect.centerY());
@@ -54,24 +56,42 @@ public class ImageNode extends Node{
         return null;
     }
 
+    private Rect matchImage(MainAccessibilityService service){
+        ImageInfo imageInfo = getValue();
+        int width = DisplayUtils.getScreenWidth(service);
+        float scale = ((float) width) / imageInfo.screenWidth;
+        if (scale == 1){
+            return service.binder.matchImage(imageInfo.getBitmap(), imageInfo.getValue());
+        } else {
+            Bitmap scaleBitmap = imageInfo.getScaleBitmap(scale);
+            return service.binder.matchImage(scaleBitmap, imageInfo.getValue());
+        }
+    }
+
     @Override
     public ImageInfo cloneValue() {
         ImageInfo value = getValue();
-        return new ImageInfo(value.image, value.value);
+        return new ImageInfo(value.image, value.value, value.screenWidth);
     }
 
     public static class ImageInfo{
         private transient Bitmap bitmap;
+
+        private transient Bitmap scaleBitmap;
+        private transient float scale = 1;
+
         private String image;
         private int value;
+        private int screenWidth;
 
         public ImageInfo(int value) {
             this.value = value;
         }
 
-        public ImageInfo(String image, int value) {
+        public ImageInfo(String image, int value, int screenWidth) {
             this.image = image;
             this.value = value;
+            this.screenWidth = screenWidth;
         }
 
         public Bitmap getBitmap() {
@@ -84,7 +104,7 @@ public class ImageNode extends Node{
             return bitmap;
         }
 
-        public void setBitmap(Bitmap bitmap) {
+        public void setBitmap(Bitmap bitmap, int screenWidth) {
             if (bitmap == null) image = "";
             else {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -93,6 +113,20 @@ public class ImageNode extends Node{
                 image = Base64.encodeToString(bytes, Base64.DEFAULT);
             }
             this.bitmap = bitmap;
+            this.screenWidth = screenWidth;
+        }
+
+        public Bitmap getScaleBitmap(float scale) {
+            if (scaleBitmap == null || scale != this.scale){
+                Bitmap bitmap = getBitmap();
+                if (bitmap != null){
+                    Matrix matrix = new Matrix();
+                    matrix.postScale(scale, scale);
+                    scaleBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                }
+            }
+            this.scale = scale;
+            return scaleBitmap;
         }
 
         public int getValue() {
@@ -107,8 +141,8 @@ public class ImageNode extends Node{
             return image;
         }
 
-        public void setImage(String image) {
-            this.image = image;
+        public int getScreenWidth() {
+            return screenWidth;
         }
     }
 }

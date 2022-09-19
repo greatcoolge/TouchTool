@@ -34,6 +34,7 @@ import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.ui.picker.ImagePickerFloatView;
 import top.bogey.touch_tool.ui.picker.TouchPickerFloatView;
 import top.bogey.touch_tool.ui.picker.WordPickerFloatView;
+import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
 import top.bogey.touch_tool.utils.ResultCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
@@ -176,7 +177,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
             new ImagePickerFloatView(getContext(), picker -> {
                 ImagePickerFloatView imagePicker = (ImagePickerFloatView) picker;
                 Bitmap bitmap = imagePicker.getBitmap();
-                imageNode.getValue().setBitmap(bitmap);
+                imageNode.getValue().setBitmap(bitmap, DisplayUtils.getScreenWidth(getContext()));
                 binding.imageInclude.image.setImageBitmap(bitmap);
             }, imageNode).show();
         });

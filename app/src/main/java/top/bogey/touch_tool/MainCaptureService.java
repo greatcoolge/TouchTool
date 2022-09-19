@@ -37,16 +37,24 @@ import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.MatchResult;
 
 public class MainCaptureService extends Service {
+    private static final String RUNNING_CHANNEL_ID = "RUNNING_CHANNEL_ID";
+    private static final String RUNNING_CHANNEL_NAME = "录屏前台服务";
+    private static final String RUNNING_CHANNEL_DES = "软件服务正在前台运行的通知，建议禁用";
+
     private static final String NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID";
-    private static final String NOTIFICATION_CHANNEL_NAME = "录屏服务";
-    private static final String NOTIFICATION_CHANNEL_DES = "快速关闭录屏服务";
+    private static final String NOTIFICATION_CHANNEL_NAME = "录屏服务快捷关闭通知";
+    private static final String NOTIFICATION_CHANNEL_DES = "能在通知栏快速关闭录屏服务";
+
     private static final int NOTIFICATION_ID = 10000;
 
     private MediaProjection projection;
     private VirtualDisplay virtualDisplayP;
-    private ImageReader imageReaderP;
+    private Image imageP;
+    private static final Boolean lockP = Boolean.FALSE;
+
     private VirtualDisplay virtualDisplayL;
-    private ImageReader imageReaderL;
+    private Image imageL;
+    private static final Boolean lockL = Boolean.FALSE;
 
     @Nullable
     @Override
@@ -95,13 +103,17 @@ public class MainCaptureService extends Service {
 
     private void createNotification(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            NotificationChannel runningChannel = new NotificationChannel(RUNNING_CHANNEL_ID, RUNNING_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            runningChannel.setDescription(RUNNING_CHANNEL_DES);
+            notificationManager.createNotificationChannel(runningChannel);
+
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(NOTIFICATION_CHANNEL_DES);
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);
 
-            Notification foregroundNotification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).build();
+            Notification foregroundNotification = new NotificationCompat.Builder(this, RUNNING_CHANNEL_ID).build();
             startForeground(NOTIFICATION_ID, foregroundNotification);
 
             Intent intent = new Intent(this, MainCaptureService.class);
@@ -109,10 +121,12 @@ public class MainCaptureService extends Service {
             PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
             Notification closeNotification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                    .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(getString(R.string.capture_service_notification_title))
+                    .setContentText(getString(R.string.capture_service_notification_text))
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
                     .build();
 
             closeNotification.flags |= Notification.FLAG_NO_CLEAR;
@@ -125,9 +139,22 @@ public class MainCaptureService extends Service {
         WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
         manager.getDefaultDisplay().getRealMetrics(metrics);
-        imageReaderP = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 2);
+        ImageReader imageReaderP = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 1);
+        imageReaderP.setOnImageAvailableListener(reader -> {
+            synchronized (lockP){
+                if (imageP != null) imageP.close();
+                imageP =reader.acquireLatestImage();
+            }
+        }, null);
         virtualDisplayP = projection.createVirtualDisplay("CaptureServiceP", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReaderP.getSurface(), null, null);
-        imageReaderL = ImageReader.newInstance(metrics.heightPixels, metrics.widthPixels, PixelFormat.RGBA_8888, 2);
+
+        ImageReader imageReaderL = ImageReader.newInstance(metrics.heightPixels, metrics.widthPixels, PixelFormat.RGBA_8888, 1);
+        imageReaderL.setOnImageAvailableListener(reader -> {
+            synchronized (lockL){
+                if (imageL != null) imageL.close();
+                imageL = reader.acquireLatestImage();
+            }
+        }, null);
         virtualDisplayL = projection.createVirtualDisplay("CaptureServiceL", metrics.heightPixels, metrics.widthPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReaderL.getSurface(), null, null);
     }
 
@@ -168,24 +195,28 @@ public class MainCaptureService extends Service {
         public Bitmap getCurrImage(){
             Image currImage;
             if (DisplayUtils.isPortrait(getBaseContext())) {
-                currImage = imageReaderP.acquireLatestImage();
+                currImage = imageP;
+                synchronized (lockP){
+                    imageP = null;
+                }
             } else {
-                currImage = imageReaderL.acquireLatestImage();
+                currImage = imageL;
+                synchronized (lockP){
+                    imageL = null;
+                }
             }
             if (currImage == null) return null;
+
             Image.Plane[] planes = currImage.getPlanes();
             ByteBuffer buffer = planes[0].getBuffer();
             int pixelStride = planes[0].getPixelStride();
             int rowStride = planes[0].getRowStride();
-            try {
-                Bitmap bitmap = Bitmap.createBitmap(currImage.getWidth() + (rowStride - pixelStride * currImage.getWidth()) / pixelStride, currImage.getHeight(), Bitmap.Config.ARGB_8888);
-                bitmap.copyPixelsFromBuffer(buffer);
-                return bitmap;
-            } catch (Exception ignored){
-                return null;
-            } finally {
-                currImage.close();
-            }
+            int width = currImage.getWidth();
+            int height = currImage.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(width + (rowStride - pixelStride * width) / pixelStride, height, Bitmap.Config.ARGB_8888);
+            bitmap.copyPixelsFromBuffer(buffer);
+            currImage.close();
+            return bitmap;
         }
     }
 }

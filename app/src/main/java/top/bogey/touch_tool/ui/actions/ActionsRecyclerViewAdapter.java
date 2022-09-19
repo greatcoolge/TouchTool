@@ -272,7 +272,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 new ImagePickerFloatView(itemView.getContext(), picker -> {
                     ImagePickerFloatView imagePicker = (ImagePickerFloatView) picker;
                     Bitmap bitmap = imagePicker.getBitmap();
-                    imageNode.getValue().setBitmap(bitmap);
+                    imageNode.getValue().setBitmap(bitmap, DisplayUtils.getScreenWidth(itemView.getContext()));
                     binding.imageInclude.image.setImageBitmap(bitmap);
                 }, imageNode).show();
             });

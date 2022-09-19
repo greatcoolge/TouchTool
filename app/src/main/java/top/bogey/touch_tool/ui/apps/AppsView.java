@@ -1,6 +1,7 @@
 package top.bogey.touch_tool.ui.apps;
 
 import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.List;
 
@@ -23,12 +25,19 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewAppsBinding;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class AppsView extends Fragment {
-
+    private ViewAppsBinding binding;
     private MainViewModel viewModel;
     private AppsRecyclerViewAdapter adapter;
     private String searchText = "";
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        refreshSpawnCount();
+    }
 
     @Nullable
     @Override
@@ -85,14 +94,23 @@ public class AppsView extends Fragment {
             }
         }, getViewLifecycleOwner());
 
-        ViewAppsBinding binding = ViewAppsBinding.inflate(inflater, container, false);
+        binding = ViewAppsBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         adapter = new AppsRecyclerViewAdapter();
         binding.appsView.setAdapter(adapter);
+        refreshSpawnCount();
         adapter.refreshApps(viewModel.searchAppList(""));
         searchText = "";
 
         viewModel.taskGroups.observe(getViewLifecycleOwner(), taskGroups -> adapter.refreshItems(taskGroups));
         return binding.getRoot();
+    }
+
+    private void refreshSpawnCount(){
+        GridLayoutManager layoutManager = (GridLayoutManager) binding.appsView.getLayoutManager();
+        if (layoutManager != null) {
+            if (!DisplayUtils.isPortrait(requireContext()))layoutManager.setSpanCount(5);
+            else layoutManager.setSpanCount(3);
+        }
     }
 }

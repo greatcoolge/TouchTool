@@ -64,6 +64,7 @@ public class HomeView extends Fragment {
         });
         MainAccessibilityService.captureEnabled.observe(getViewLifecycleOwner(), this::setCaptureChecked);
 
+        binding.openBackgroundPopButton.setOnClickListener(v -> AppUtils.gotoAppDetailSetting(requireActivity()));
         binding.autoRunButton.setOnClickListener(v -> AppUtils.gotoAppDetailSetting(requireActivity()));
 
         binding.lockTaskButton.setOnClickListener(v -> {

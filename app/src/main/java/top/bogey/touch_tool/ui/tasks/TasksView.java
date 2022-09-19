@@ -1,6 +1,7 @@
 package top.bogey.touch_tool.ui.tasks;
 
 import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
@@ -24,11 +26,19 @@ import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.ui.apps.AppInfo;
 import top.bogey.touch_tool.ui.record.QuickRecordFloatView;
 import top.bogey.touch_tool.ui.record.RecordFloatView;
+import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class TasksView extends Fragment {
     private AppInfo appInfo = null;
 
+    private ViewTasksBinding binding;
     private MainViewModel viewModel;
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        refreshSpawnCount();
+    }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Nullable
@@ -64,7 +74,7 @@ public class TasksView extends Fragment {
         }, getViewLifecycleOwner());
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        ViewTasksBinding binding = ViewTasksBinding.inflate(inflater, container, false);
+        binding = ViewTasksBinding.inflate(inflater, container, false);
 
         Bundle arguments = getArguments();
         if (arguments != null){
@@ -81,6 +91,7 @@ public class TasksView extends Fragment {
 
         TasksRecyclerViewAdapter adapter = new TasksRecyclerViewAdapter();
         binding.tasksBox.setAdapter(adapter);
+        refreshSpawnCount();
 
         viewModel.getTasksLiveByPackageName(appInfo.packageName).observe(getViewLifecycleOwner(), adapter::setTasks);
 
@@ -116,6 +127,14 @@ public class TasksView extends Fragment {
         ActionBar actionBar = MainApplication.getActivity().getSupportActionBar();
         if (actionBar != null) {
             actionBar.setSubtitle(null);
+        }
+    }
+
+    private void refreshSpawnCount(){
+        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) binding.tasksBox.getLayoutManager();
+        if (layoutManager != null) {
+            if (!DisplayUtils.isPortrait(requireContext()))layoutManager.setSpanCount(3);
+            else layoutManager.setSpanCount(2);
         }
     }
 }
