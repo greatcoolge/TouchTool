@@ -73,10 +73,10 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
             FloatViewHelper helper = EasyFloat.getHelper(DebugFloatView.class.getCanonicalName());
 
             int buttonY = DisplayUtils.dp2px(context, 2);
-            int buttonX = buttonY * 4;
-            int buttonXY = buttonY * 3;
-            int minWidth = buttonX * 4;
-            int maxWidth = buttonX * 30;
+            int buttonX = DisplayUtils.dp2px(context, 8);
+            int buttonXY = DisplayUtils.dp2px(context, 4);
+            int minWidth = DisplayUtils.dp2px(context, 32);
+            int maxWidth = DisplayUtils.dp2px(context, 240);
 
             MaterialCardView root = binding.getRoot();
             ViewGroup.LayoutParams rootLayoutParams = root.getLayoutParams();
