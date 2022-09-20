@@ -14,13 +14,13 @@
     </queries>
 
     <application
-        android:name="top.bogey.touch_tool.MainApplication"
+        android:name=".MainApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AutoTouch">
 
         <activity
-            android:name="top.bogey.touch_tool.MainActivity"
+            android:name=".MainActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -39,7 +39,7 @@
 
         </activity>
 
-        <service android:name="top.bogey.touch_tool.MainAccessibilityService"
+        <service android:name=".MainAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:label="@string/app_name"
             android:exported="false">
@@ -51,7 +51,7 @@
             <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibility_service"/>
         </service>
 
-        <service android:name="top.bogey.touch_tool.MainCaptureService"
+        <service android:name=".MainCaptureService"
             android:exported="false"
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"/>

@@ -44,6 +44,7 @@ import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.data.CustomTypeConverts;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
+import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.PermissionResultCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
@@ -245,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPlayFloatView(String pkgName){
         binding.getRoot().post(() -> new PlayFloatView(this, pkgName).show());
+        LogUtils.log(this, getString(R.string.log_show_manual_task), 0, pkgName);
     }
 
     public void dismissPlayFloatView(){

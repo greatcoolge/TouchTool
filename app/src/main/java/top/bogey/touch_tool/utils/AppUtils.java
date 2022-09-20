@@ -15,6 +15,7 @@ import java.util.List;
 import top.bogey.touch_tool.R;
 
 public class AppUtils {
+
     public static native MatchResult nativeMatchTemplate(Bitmap bitmap, Bitmap temp, int method);
     public static native List<MatchResult> nativeMatchColor(Bitmap bitmap, int[] hsvColor);
 
@@ -54,4 +55,5 @@ public class AppUtils {
     public static String getIdentityCode(Object obj){
         return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
     }
+
 }

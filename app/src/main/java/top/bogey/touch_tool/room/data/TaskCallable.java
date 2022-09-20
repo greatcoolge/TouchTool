@@ -1,7 +1,6 @@
 package top.bogey.touch_tool.room.data;
 
 import android.graphics.Path;
-import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
@@ -22,9 +21,8 @@ import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
 import top.bogey.touch_tool.room.bean.node.NumberNode;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
-import top.bogey.touch_tool.ui.debug.DebugFloatView;
+import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.TaskCallback;
-import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class TaskCallable implements Callable<Void> {
     private boolean isRunning = true;
@@ -148,7 +146,7 @@ public class TaskCallable implements Callable<Void> {
         if (targets.size() > index){
             boolean result = false;
             Node target = targets.get(index);
-            addDebugTips("["+ task.getTitle() +"]["+ percent +"]" + action.getTargetTitle(service, target));
+            LogUtils.log(service, task.getTitle(), percent + 1, action.getTargetTitle(service, target));
             Object nodeTarget = getNodeTarget(target);
             if (nodeTarget != null){
                 result = true;
@@ -191,14 +189,6 @@ public class TaskCallable implements Callable<Void> {
             return result;
         }
         return false;
-    }
-
-    private void addDebugTips(String tips){
-        View view = EasyFloat.getView(DebugFloatView.class.getCanonicalName());
-        if (view != null){
-            DebugFloatView debugFloatView = (DebugFloatView) view;
-            debugFloatView.addTips(tips);
-        }
     }
 
     private boolean checkNode(@NonNull Node node){

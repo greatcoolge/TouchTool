@@ -16,7 +16,7 @@ import androidx.preference.SwitchPreferenceCompat;
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.ui.debug.DebugFloatView;
+import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class SettingView extends PreferenceFragmentCompat {
@@ -27,15 +27,40 @@ public class SettingView extends PreferenceFragmentCompat {
         preferenceManager.setSharedPreferencesName(MainAccessibilityService.SAVE_PATH);
         setPreferencesFromResource(R.xml.setting, null);
 
-        SwitchPreferenceCompat actionDebug = findPreference("action_debug");
+        SwitchPreferenceCompat showDebugDialog = findPreference("show_debug_dialog");
+        Preference showDebug = findPreference("show_debug");
+        SwitchPreferenceCompat actionDebug = findPreference(LogUtils.ACTION_DEBUG);
         if (actionDebug != null){
             actionDebug.setOnPreferenceChangeListener((preference, newValue) -> {
+                if (Boolean.FALSE.equals(newValue)) LogUtils.closeLog(requireContext());
+                if (showDebugDialog != null) showDebugDialog.setVisible(Boolean.TRUE.equals(newValue));
+                if (showDebug != null) showDebug.setVisible(Boolean.TRUE.equals(newValue));
+                return true;
+            });
+            if (showDebugDialog != null) showDebugDialog.setVisible(actionDebug.isChecked());
+            if (showDebug != null) showDebug.setVisible(actionDebug.isChecked());
+        }
+
+        if (showDebug != null){
+            showDebug.setOnPreferenceClickListener(preference -> {
+                new DebugInfoView().show(getParentFragmentManager(), "");
+                return true;
+            });
+        }
+
+        if (showDebugDialog != null){
+            if (actionDebug != null){
+                showDebugDialog.setOnPreferenceChangeListener((preference, newValue) -> {
                 EasyFloat.dismiss(DebugFloatView.class.getCanonicalName());
-                if (Boolean.TRUE.equals(newValue)){
+                if (Boolean.TRUE.equals(newValue) && actionDebug.isChecked()){
                     new DebugFloatView(requireContext()).show();
                 }
                 return true;
             });
+                showDebugDialog.setChecked(EasyFloat.getView(DebugFloatView.class.getCanonicalName()) != null && actionDebug.isChecked());
+            } else {
+                showDebugDialog.setVisible(false);
+            }
         }
 
         DropDownPreference nightMode = findPreference(MainApplication.NIGHT_MODE);

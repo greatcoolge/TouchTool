@@ -26,7 +26,7 @@ import top.bogey.touch_tool.databinding.SheetTasksExportBinding;
 import top.bogey.touch_tool.room.bean.Task;
 
 public class TasksExportView extends BottomSheetDialogFragment {
-    private static final String SAVE_FILE = "Share.txt";
+    private static final String SAVE_FILE = "Share";
     private SheetTasksExportBinding binding;
 
     @Nullable

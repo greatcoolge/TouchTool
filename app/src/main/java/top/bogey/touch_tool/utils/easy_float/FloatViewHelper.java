@@ -22,9 +22,9 @@ public class FloatViewHelper {
     FloatConfig config;
 
     FloatTouchUtils touchUtils = null;
-    WindowManager manager = null;
-    LayoutParams params = null;
-    FloatViewParent floatViewParent = null;
+    public WindowManager manager = null;
+    public LayoutParams params = null;
+    public FloatViewParent floatViewParent = null;
 
     Boolean isPortrait = null;
 

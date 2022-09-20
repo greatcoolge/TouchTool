@@ -117,7 +117,7 @@ public class EasyFloat {
         }, 100);
     }
 
-    static FloatViewHelper getHelper(String tag){
+    public static FloatViewHelper getHelper(String tag){
         return views.get(tag);
     }
 

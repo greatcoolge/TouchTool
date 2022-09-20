@@ -2,33 +2,50 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/action_config">
+    <PreferenceCategory
+        android:title="@string/action_config">
 
         <SeekBarPreference
-            android:icon="@drawable/icon_touch_offset"
             android:key="action_touch_offset"
             android:max="10"
             android:summary="@string/action_touch_offset_tips"
             android:title="@string/action_touch_offset"
+            android:icon="@drawable/icon_touch_offset"
             app:selectable="false"
             app:showSeekBarValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/debug_config">
 
         <SwitchPreferenceCompat
             android:key="action_debug"
             android:summary="@string/action_debug_tips"
             android:title="@string/action_debug"
-            android:widgetLayout="@layout/widget_switch"
-            app:icon="@drawable/icon_debug" />
+            android:icon="@drawable/icon_debug"
+            android:widgetLayout="@layout/widget_switch" />
+
+        <Preference
+            android:key="show_debug"
+            android:title="@string/action_show_debug"
+            android:summary="@string/action_show_debug_tips"/>
+
+        <SwitchPreferenceCompat
+            android:key="show_debug_dialog"
+            android:title="@string/action_show_debug_dialog"
+            android:widgetLayout="@layout/widget_switch" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/theme" >
+    <PreferenceCategory
+        android:title="@string/theme">
 
         <DropDownPreference
             android:key="night_mode"
             android:title="@string/night_mode"
-            android:entries="@array/night_mode"
             android:icon="@drawable/icon_dark_mode"
+            android:entries="@array/night_mode"
             android:entryValues="@array/night_mode_value"/>
 
     </PreferenceCategory>
