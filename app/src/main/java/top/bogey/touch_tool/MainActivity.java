@@ -1,8 +1,11 @@
 package top.bogey.touch_tool;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
@@ -43,9 +46,11 @@ import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.data.CustomTypeConverts;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.PermissionResultCallback;
+import top.bogey.touch_tool.utils.SelectCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    private ActivityResultLauncher<Intent> captureLauncher;
-    private ActivityResultLauncher<Intent> floatLauncher;
+    private ActivityResultLauncher<Intent> intentLauncher;
+    private ActivityResultLauncher<String> permissionLauncher;
     private PermissionResultCallback resultCallback;
 
     @Override
@@ -78,16 +83,14 @@ public class MainActivity extends AppCompatActivity {
 
         MainApplication.setActivity(this);
 
-        captureLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        intentLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (resultCallback != null){
                 resultCallback.onResult(result.getResultCode(), result.getData());
             }
         });
 
-        floatLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (resultCallback != null){
-                resultCallback.onResult(result.getResultCode(), result.getData());
-            }
+        permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+            if (result && resultCallback != null) resultCallback.onResult(Activity.RESULT_OK, null);
         });
 
         binding.getRoot().post(() -> handleIntent(getIntent()));
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
     public void launchCapture(PermissionResultCallback callback){
         resultCallback = callback;
         MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        captureLauncher.launch(manager.createScreenCaptureIntent());
+        intentLauncher.launch(manager.createScreenCaptureIntent());
     }
 
     public void launchFloat(PermissionResultCallback callback){
@@ -238,9 +241,36 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(Objects.requireNonNull(field.get(null)).toString());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setData(Uri.parse("package:" + getPackageName()));
-            floatLauncher.launch(intent);
+            intentLauncher.launch(intent);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void launchNotification(PermissionResultCallback callback){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            String permission = Manifest.permission.POST_NOTIFICATIONS;
+            if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED){
+                callback.onResult(Activity.RESULT_OK, null);
+            } else if (shouldShowRequestPermissionRationale(permission)){
+                AppUtils.showDialog(this, R.string.capture_service_on_tips_4, new SelectCallback(){
+                    @Override
+                    public void onEnter() {
+                        resultCallback = callback;
+                        permissionLauncher.launch(permission);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        callback.onResult(Activity.RESULT_CANCELED, null);
+                    }
+                });
+            } else {
+                resultCallback = callback;
+                permissionLauncher.launch(permission);
+            }
+        } else {
+            callback.onResult(Activity.RESULT_OK, null);
         }
     }
 

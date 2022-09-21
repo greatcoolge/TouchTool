@@ -113,6 +113,10 @@ public class ImageNode extends Node{
                 image = Base64.encodeToString(bytes, Base64.DEFAULT);
             }
             this.bitmap = bitmap;
+            if (scaleBitmap != null){
+                scaleBitmap.recycle();
+                scaleBitmap = null;
+            }
             this.screenWidth = screenWidth;
         }
 

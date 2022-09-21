@@ -28,6 +28,7 @@
     <string name="capture_service_on_tips_1">需要授予屏幕录制权限才能使用检测图片的能力</string>
     <string name="capture_service_on_tips_2">当前任务需要检测图片，请开启屏幕录制</string>
     <string name="capture_service_on_tips_3">未开启无障碍服务，暂时无法使用</string>
+    <string name="capture_service_on_tips_4">屏幕录制需要发送通知，请授予应用发送通知的权限</string>
     <string name="capture_service_notification_title">自动点击器 录屏服务 正在运行</string>
     <string name="capture_service_notification_text">点按即可关闭服务和通知</string>
 

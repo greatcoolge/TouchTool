@@ -1,6 +1,7 @@
 package top.bogey.touch_tool.ui.home;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewHomeBinding;
@@ -49,18 +51,23 @@ public class HomeView extends Fragment {
         MainAccessibilityService.serviceEnabled.observe(getViewLifecycleOwner(), this::setServiceChecked);
 
         binding.captureServiceButton.setOnClickListener(view -> {
-            MainAccessibilityService service = MainApplication.getService();
-            if (service != null && service.isServiceConnected()){
-                boolean enabled = Boolean.TRUE.equals(MainAccessibilityService.captureEnabled.getValue());
-                if (enabled){
-                    service.stopCaptureService();
-                } else {
-                    Toast.makeText(requireActivity(), R.string.capture_service_on_tips_1, Toast.LENGTH_LONG).show();
-                    service.startCaptureService(false, null);
+            MainActivity activity = MainApplication.getActivity();
+            if (activity != null) activity.launchNotification((code, intent) -> {
+                if (code == Activity.RESULT_OK) {
+                    MainAccessibilityService service = MainApplication.getService();
+                    if (service != null && service.isServiceConnected()){
+                        boolean enabled = Boolean.TRUE.equals(MainAccessibilityService.captureEnabled.getValue());
+                        if (enabled){
+                            service.stopCaptureService();
+                        } else {
+                            Toast.makeText(requireActivity(), R.string.capture_service_on_tips_1, Toast.LENGTH_LONG).show();
+                            service.startCaptureService(false, null);
+                        }
+                    } else {
+                        Toast.makeText(requireActivity(), R.string.capture_service_on_tips_3, Toast.LENGTH_LONG).show();
+                    }
                 }
-            } else {
-                Toast.makeText(requireActivity(), R.string.capture_service_on_tips_3, Toast.LENGTH_LONG).show();
-            }
+            });
         });
         MainAccessibilityService.captureEnabled.observe(getViewLifecycleOwner(), this::setCaptureChecked);
 

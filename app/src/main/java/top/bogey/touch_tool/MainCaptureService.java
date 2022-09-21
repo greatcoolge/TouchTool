@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.utils.AppUtils;
-import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.MatchResult;
 
 public class MainCaptureService extends Service {
@@ -48,13 +48,10 @@ public class MainCaptureService extends Service {
     private static final int NOTIFICATION_ID = 10000;
 
     private MediaProjection projection;
-    private VirtualDisplay virtualDisplayP;
-    private Image imageP;
-    private static final Boolean lockP = Boolean.FALSE;
-
-    private VirtualDisplay virtualDisplayL;
-    private Image imageL;
-    private static final Boolean lockL = Boolean.FALSE;
+    private ImageReader imageReader;
+    private VirtualDisplay virtualDisplay;
+    private Image image;
+    private static final Boolean lock = Boolean.FALSE;
 
     @Nullable
     @Override
@@ -82,8 +79,7 @@ public class MainCaptureService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (virtualDisplayP != null) virtualDisplayP.release();
-        if (virtualDisplayL != null) virtualDisplayL.release();
+        if (virtualDisplay != null) virtualDisplay.release();
         if (projection != null) projection.stop();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -99,6 +95,20 @@ public class MainCaptureService extends Service {
             }
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (virtualDisplay != null) virtualDisplay.release();
+        if (imageReader != null) imageReader.close();
+        if (image != null) {
+            synchronized (lock) {
+                image.close();
+                image = null;
+            }
+        }
+        setVirtualDisplay();
     }
 
     private void createNotification(){
@@ -139,23 +149,15 @@ public class MainCaptureService extends Service {
         WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
         manager.getDefaultDisplay().getRealMetrics(metrics);
-        ImageReader imageReaderP = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 1);
-        imageReaderP.setOnImageAvailableListener(reader -> {
-            synchronized (lockP){
-                if (imageP != null) imageP.close();
-                imageP =reader.acquireLatestImage();
+        imageReader = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 1);
+        imageReader.setOnImageAvailableListener(reader -> {
+            synchronized (lock){
+                if (image != null) image.close();
+                image = reader.acquireLatestImage();
+                Log.d("TAG", "setVirtualDisplay: " + image);
             }
         }, null);
-        virtualDisplayP = projection.createVirtualDisplay("CaptureServiceP", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReaderP.getSurface(), null, null);
-
-        ImageReader imageReaderL = ImageReader.newInstance(metrics.heightPixels, metrics.widthPixels, PixelFormat.RGBA_8888, 1);
-        imageReaderL.setOnImageAvailableListener(reader -> {
-            synchronized (lockL){
-                if (imageL != null) imageL.close();
-                imageL = reader.acquireLatestImage();
-            }
-        }, null);
-        virtualDisplayL = projection.createVirtualDisplay("CaptureServiceL", metrics.heightPixels, metrics.widthPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReaderL.getSurface(), null, null);
+        virtualDisplay = projection.createVirtualDisplay("CaptureService", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
     }
 
     public class CaptureServiceBinder extends Binder{
@@ -193,30 +195,20 @@ public class MainCaptureService extends Service {
         }
 
         public Bitmap getCurrImage(){
-            Image currImage;
-            if (DisplayUtils.isPortrait(getBaseContext())) {
-                currImage = imageP;
-                synchronized (lockP){
-                    imageP = null;
-                }
-            } else {
-                currImage = imageL;
-                synchronized (lockP){
-                    imageL = null;
-                }
-            }
+            Image currImage = image;
             if (currImage == null) return null;
 
-            Image.Plane[] planes = currImage.getPlanes();
-            ByteBuffer buffer = planes[0].getBuffer();
-            int pixelStride = planes[0].getPixelStride();
-            int rowStride = planes[0].getRowStride();
-            int width = currImage.getWidth();
-            int height = currImage.getHeight();
-            Bitmap bitmap = Bitmap.createBitmap(width + (rowStride - pixelStride * width) / pixelStride, height, Bitmap.Config.ARGB_8888);
-            bitmap.copyPixelsFromBuffer(buffer);
-            currImage.close();
-            return bitmap;
+            synchronized (lock){
+                Image.Plane[] planes = currImage.getPlanes();
+                ByteBuffer buffer = planes[0].getBuffer();
+                int pixelStride = planes[0].getPixelStride();
+                int rowStride = planes[0].getRowStride();
+                int width = currImage.getWidth();
+                int height = currImage.getHeight();
+                Bitmap bitmap = Bitmap.createBitmap(width + (rowStride - pixelStride * width) / pixelStride, height, Bitmap.Config.ARGB_8888);
+                bitmap.copyPixelsFromBuffer(buffer);
+                return bitmap;
+            }
         }
     }
 }

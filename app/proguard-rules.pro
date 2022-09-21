@@ -46,11 +46,13 @@
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ImageNode$ImageInfo{
     private java.lang.String image;
     private int value;
+    private int screenWidth;
 }
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ColorNode$ColorInfo{
     private int[] color;
     private int minSize;
+    private int maxSize;
 }
 
 -keepclassmembers class android.graphics.Point{
