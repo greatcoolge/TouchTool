@@ -7,26 +7,20 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import top.bogey.touch_tool.databinding.ViewDebugBinding;
 
-import java.util.List;
-
-import top.bogey.touch_tool.databinding.SheetDebugBinding;
-import top.bogey.touch_tool.utils.LogUtils;
-
-public class DebugInfoView extends BottomSheetDialogFragment {
+public class DebugInfoView extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        SheetDebugBinding binding = SheetDebugBinding.inflate(inflater);
-        List<DebugInfo> logs = LogUtils.getLogs(requireContext(), null);
-        StringBuilder buffer = new StringBuilder();
-        for (DebugInfo log : logs) {
-            buffer.append(log.getDebugInfo()).append('\n');
-        }
-        binding.debugInfo.setText(buffer.toString());
+        ViewDebugBinding binding = ViewDebugBinding.inflate(inflater);
+
+        DebugInfoRecyclerViewAdapter adapter = new DebugInfoRecyclerViewAdapter(this);
+        binding.getRoot().setAdapter(adapter);
+
         return binding.getRoot();
     }
 }

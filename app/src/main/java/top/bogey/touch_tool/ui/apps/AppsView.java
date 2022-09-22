@@ -17,10 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.List;
 
+import top.bogey.touch_tool.MainActivity;
+import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewAppsBinding;
@@ -78,7 +82,11 @@ public class AppsView extends Fragment {
                         adapter.refreshApps(viewModel.searchAppList(searchText));
                         return true;
                     case R.id.export_actions:
-                        new TasksExportView().show(getParentFragmentManager(), "");
+                        MainActivity activity = MainApplication.getActivity();
+                        if (activity != null){
+                            NavController controller = Navigation.findNavController(activity, R.id.con_view);
+                            controller.navigate(AppsViewDirections.actionAppsToTasksExport());
+                        }
                         return true;
                     case R.id.clean_actions:
                         List<String> pkgNames = viewModel.getAllPkgNames();

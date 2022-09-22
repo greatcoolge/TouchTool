@@ -86,13 +86,13 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
                 valueAnimator = ValueAnimator.ofInt(100, 0);
                 binding.closeButton.setVisibility(GONE);
                 binding.markBox.setVisibility(GONE);
-                binding.shapeableImageView.setVisibility(GONE);
+                binding.drag.setVisibility(GONE);
 
             } else {
                 valueAnimator = ValueAnimator.ofInt(0, 100);
                 binding.closeButton.setVisibility(VISIBLE);
                 binding.markBox.setVisibility(VISIBLE);
-                binding.shapeableImageView.setVisibility(VISIBLE);
+                binding.drag.setVisibility(VISIBLE);
 
                 helper.params.width = maxWidth;
                 helper.params.height = maxWidth;

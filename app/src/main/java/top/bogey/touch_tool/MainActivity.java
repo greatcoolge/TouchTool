@@ -113,10 +113,11 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.apps, R.id.setting).build();
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         controller.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.tasks){
-                binding.menuView.setVisibility(View.GONE);
-            } else {
+            int id = navDestination.getId();
+            if (id == R.id.home || id == R.id.apps || id == R.id.setting){
                 binding.menuView.setVisibility(View.VISIBLE);
+            } else {
+                binding.menuView.setVisibility(View.GONE);
             }
         });
     }

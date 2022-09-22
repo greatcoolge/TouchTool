@@ -17,8 +17,8 @@ import java.util.Map;
 
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.databinding.SheetTasksExportAppItemBinding;
-import top.bogey.touch_tool.databinding.SheetTasksExportTaskItemBinding;
+import top.bogey.touch_tool.databinding.ViewTasksExportAppItemBinding;
+import top.bogey.touch_tool.databinding.ViewTasksExportTaskItemBinding;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
 
@@ -51,9 +51,9 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == APP) {
-            return new ViewHolder(SheetTasksExportAppItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+            return new ViewHolder(ViewTasksExportAppItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
-        return new ViewHolder(SheetTasksExportTaskItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(ViewTasksExportTaskItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -140,10 +140,10 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder{
-        private SheetTasksExportAppItemBinding appBinding;
-        private SheetTasksExportTaskItemBinding taskBinding;
+        private ViewTasksExportAppItemBinding appBinding;
+        private ViewTasksExportTaskItemBinding taskBinding;
 
-        public ViewHolder(SheetTasksExportAppItemBinding binding) {
+        public ViewHolder(ViewTasksExportAppItemBinding binding) {
             super(binding.getRoot());
             appBinding = binding;
             binding.getRoot().setOnClickListener(v -> {
@@ -169,7 +169,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
             });
         }
 
-        public ViewHolder(SheetTasksExportTaskItemBinding binding){
+        public ViewHolder(ViewTasksExportTaskItemBinding binding){
             super(binding.getRoot());
             taskBinding = binding;
             binding.checkBox.addOnCheckedStateChangedListener((checkBox, state) -> {

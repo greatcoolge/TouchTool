@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.preference.DropDownPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -14,6 +16,7 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.utils.LogUtils;
@@ -43,7 +46,11 @@ public class SettingView extends PreferenceFragmentCompat {
 
         if (showDebug != null){
             showDebug.setOnPreferenceClickListener(preference -> {
-                new DebugInfoView().show(getParentFragmentManager(), "");
+                MainActivity activity = MainApplication.getActivity();
+                if (activity != null){
+                    NavController controller = Navigation.findNavController(activity, R.id.con_view);
+                    controller.navigate(SettingViewDirections.actionSettingToDebugInfo());
+                }
                 return true;
             });
         }

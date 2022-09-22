@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.gson.Gson;
 
@@ -22,21 +22,27 @@ import java.io.IOException;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.databinding.SheetTasksExportBinding;
+import top.bogey.touch_tool.databinding.ViewTasksExportBinding;
 import top.bogey.touch_tool.room.bean.Task;
 
-public class TasksExportView extends BottomSheetDialogFragment {
-    private static final String SAVE_FILE = "Share";
-    private SheetTasksExportBinding binding;
+public class TasksExportView extends Fragment {
+    private static final String SAVE_FILE = "Share.txt";
+    private ViewTasksExportBinding binding;
+    private int checkState = MaterialCheckBox.STATE_CHECKED;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = SheetTasksExportBinding.inflate(inflater);
+        binding = ViewTasksExportBinding.inflate(inflater);
         TasksExportRecyclerViewAdapter adapter = new TasksExportRecyclerViewAdapter(this);
         binding.tasksRecycleView.setAdapter(adapter);
 
-        binding.selectAll.setOnClickListener(v -> adapter.selectAll(binding.selectAll.isChecked()));
+        binding.selectAll.setOnClickListener(v -> {
+            boolean selectAll = checkState == MaterialCheckBox.STATE_CHECKED;
+            adapter.selectAll(!selectAll);
+            if (selectAll) refreshSelectAllBox(MaterialCheckBox.STATE_UNCHECKED);
+            else refreshSelectAllBox(MaterialCheckBox.STATE_CHECKED);
+        });
 
         binding.exportButton.setOnClickListener(v -> {
             List<Task> selectTasks = adapter.selectTasks;
@@ -67,6 +73,17 @@ public class TasksExportView extends BottomSheetDialogFragment {
     }
 
     public void refreshSelectAllBox(int checkState){
-        binding.selectAll.setCheckedState(checkState);
+        this.checkState = checkState;
+        switch (checkState) {
+            case MaterialCheckBox.STATE_UNCHECKED:
+                binding.selectAll.setImageResource(R.drawable.icon_check_box_unchecked);
+                break;
+            case MaterialCheckBox.STATE_CHECKED:
+                binding.selectAll.setImageResource(R.drawable.icon_check_box_checked);
+                break;
+            case MaterialCheckBox.STATE_INDETERMINATE:
+                binding.selectAll.setImageResource(R.drawable.icon_check_box_inchecked);
+                break;
+        }
     }
 }

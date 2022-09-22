@@ -2,7 +2,6 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation_main"
     app:startDestination="@id/home">
     <fragment
         android:id="@+id/home"
@@ -17,6 +16,9 @@
         <action
             android:id="@+id/action_apps_to_tasks"
             app:destination="@id/tasks" />
+        <action
+            android:id="@+id/action_apps_to_tasksExport"
+            app:destination="@id/tasksExport" />
     </fragment>
     <fragment
         android:id="@+id/tasks"
@@ -31,5 +33,19 @@
         android:id="@+id/setting"
         android:name="top.bogey.touch_tool.ui.setting.SettingView"
         android:label="@string/setting"
-        tools:layout="@layout/view_setting" />
+        tools:layout="@layout/view_setting" >
+        <action
+            android:id="@+id/action_setting_to_debugInfo"
+            app:destination="@id/debugInfo" />
+    </fragment>
+    <fragment
+        android:id="@+id/tasksExport"
+        android:name="top.bogey.touch_tool.ui.apps.TasksExportView"
+        android:label="@string/export_tasks"
+        tools:layout="@layout/view_tasks_export"/>
+    <fragment
+        android:id="@+id/debugInfo"
+        android:name="top.bogey.touch_tool.ui.setting.DebugInfoView"
+        android:label="@string/action_show_debug"
+        tools:layout="@layout/view_debug"/>
 </navigation>
