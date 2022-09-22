@@ -57,6 +57,7 @@ public class DebugRecyclerViewAdapter extends RecyclerView.Adapter<DebugRecycler
 
         public void refreshItem(DebugInfo tip){
             title.setText(tip.getSimpleInfo());
+            title.setTextColor(tip.getLevelColor(title.getContext()));
         }
     }
 }

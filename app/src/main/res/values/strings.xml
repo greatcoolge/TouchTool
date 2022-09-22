@@ -144,6 +144,7 @@
     <string name="log_get_all_task">获取所有任务</string>
     <string name="log_tasks_count">任务数：%1$d</string>
     <string name="log_run_auto_task">执行自动任务</string>
+    <string name="log_do_action">正在执行动作</string>
     <string name="log_show_manual_task">显示手动任务浮窗</string>
 
 </resources>

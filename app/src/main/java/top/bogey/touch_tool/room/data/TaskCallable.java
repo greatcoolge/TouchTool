@@ -14,6 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.ActionMode;
 import top.bogey.touch_tool.room.bean.Task;
@@ -21,6 +22,7 @@ import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
 import top.bogey.touch_tool.room.bean.node.NumberNode;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
+import top.bogey.touch_tool.ui.setting.DebugLevel;
 import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.TaskCallback;
 
@@ -49,7 +51,6 @@ public class TaskCallable implements Callable<Void> {
 
     public void stop() {
         isRunning = false;
-        Thread.currentThread().interrupt();
     }
 
     public boolean isRunning(){
@@ -60,7 +61,7 @@ public class TaskCallable implements Callable<Void> {
     public Void call() {
         if (callback != null) callback.onStart();
         runTask(task);
-        if (callback != null) callback.onEnd(isRunning);
+        if (callback != null) callback.onEnd(isRunning());
         return null;
     }
 
@@ -146,7 +147,7 @@ public class TaskCallable implements Callable<Void> {
         if (targets.size() > index){
             boolean result = false;
             Node target = targets.get(index);
-            LogUtils.log(service, task.getTitle(), percent + 1, action.getTargetTitle(service, target));
+            LogUtils.log(service, DebugLevel.MIDDLE, task.getTitle(), percent + 1, action.getTargetTitle(service, target));
             Object nodeTarget = getNodeTarget(target);
             if (nodeTarget != null){
                 result = true;
@@ -154,6 +155,7 @@ public class TaskCallable implements Callable<Void> {
                 switch (target.getType()) {
                     case DELAY:
                         sleep((Integer) nodeTarget);
+                        LogUtils.log(service, DebugLevel.LOW, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
                         break;
                     case TEXT:
                         AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) nodeTarget;
@@ -163,18 +165,21 @@ public class TaskCallable implements Callable<Void> {
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
                         }
                         sleep(randomTime);
+                        LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
                         break;
                     case IMAGE:
                     case TOUCH:
                         Path path = (Path) nodeTarget;
                         service.runGesture(path, randomTime, null);
                         sleep(randomTime);
+                        LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
                         break;
                     case COLOR:
                         Path[] paths = (Path[]) nodeTarget;
                         for (Path path1 : paths) {
                             service.runGesture(path1, 100, null);
                             sleep(randomTime);
+                            LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
                         }
                         break;
                     case KEY:
@@ -218,6 +223,7 @@ public class TaskCallable implements Callable<Void> {
     }
 
     private void addTaskProgress(@NonNull Node node, boolean skip){
+        if (!isRunning()) return;
         if (node.getType() != NodeType.TASK){
             percent++;
             if (callback != null) callback.onProgress((percent) * 100 / allPercent);

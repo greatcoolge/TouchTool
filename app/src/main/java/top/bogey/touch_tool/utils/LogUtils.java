@@ -21,6 +21,7 @@ import java.util.List;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.ui.setting.DebugInfo;
+import top.bogey.touch_tool.ui.setting.DebugLevel;
 
 public class LogUtils {
     public static final String ACTION_DEBUG = "action_debug";
@@ -35,10 +36,10 @@ public class LogUtils {
         return dir.getAbsolutePath() + File.separator + LOG_PRE_NAME + format.format(date);
     }
 
-    public static synchronized void log(Context context, String title, int percent, String content){
+    public static synchronized void log(Context context, DebugLevel level, String title, int percent, String content){
         SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
         boolean enabledLog = preferences.getBoolean(ACTION_DEBUG, false);
-        DebugInfo log = new DebugInfo(title, percent, content);
+        DebugInfo log = new DebugInfo(level, title, percent, content);
         Log.d(ACTION_DEBUG, log.getDebugInfo());
         if (enabledLog){
             File file = new File(getLogFileName(context));

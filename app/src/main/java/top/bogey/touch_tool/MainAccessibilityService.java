@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.data.FindRunnable;
 import top.bogey.touch_tool.room.data.TaskCallable;
-import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.ResultCallback;
 import top.bogey.touch_tool.utils.TaskCallback;
 
@@ -49,11 +48,12 @@ public class MainAccessibilityService extends AccessibilityService {
     // 任务
     private String currPkgName = "";
     private final ExecutorService findService;
+    private FindRunnable findRunnable = null;
     public final ExecutorService taskService;
     private final List<TaskCallable> tasks = new ArrayList<>();
 
     public MainAccessibilityService() {
-        findService = Executors.newFixedThreadPool(4);
+        findService = Executors.newFixedThreadPool(2);
         taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
     }
 
@@ -61,8 +61,9 @@ public class MainAccessibilityService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event != null && Boolean.TRUE.equals(serviceEnabled.getValue())){
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED){
-                LogUtils.log(this, getString(R.string.log_surface_changed), 0, getString(R.string.log_last_surface, currPkgName));
-                findService.execute(new FindRunnable(this, tasks, currPkgName));
+                if (findRunnable != null) findRunnable.stop();
+                findRunnable = new FindRunnable(this, tasks, currPkgName);
+                findService.execute(findRunnable);
             }
         }
     }
