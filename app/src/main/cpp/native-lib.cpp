@@ -39,9 +39,11 @@ Java_top_bogey_touch_1tool_utils_AppUtils_nativeMatchTemplate(JNIEnv *env, jclas
     int scale = 2;
 
     Mat src = bitmap2Mat(env, bitmap);
+    Mat tmp = bitmap2Mat(env, temp);
+    if (src.empty() || tmp.empty()) return createMatchResult(env, 0, 0, 0, 0, 0);
+
     cvtColor(src, src, COLOR_RGBA2GRAY);
     resize(src, src, Size(src.cols / scale, src.rows / scale));
-    Mat tmp = bitmap2Mat(env, temp);
     cvtColor(tmp, tmp, COLOR_RGBA2GRAY);
     resize(tmp, tmp, Size(tmp.cols / scale, tmp.rows / scale));
 
@@ -74,6 +76,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_top_bogey_touch_1tool_utils_AppUtils_nativeMatchColor(JNIEnv *env, jclass clazz, jobject bitmap, jintArray hsvColor) {
     Mat src = bitmap2Mat(env, bitmap);
+    if (src.empty()) return nullptr;
     cvtColor(src, src, COLOR_RGBA2BGR);
     cvtColor(src, src, COLOR_BGR2HSV);
     GaussianBlur(src, src, Size(5, 5), 0);

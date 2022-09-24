@@ -196,6 +196,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                         binding.slider.setValueFrom(0);
                         binding.slider.setValueTo(size);
                         binding.slider.setValues(0f, (float) size);
+                    } else {
+                        dismiss();
                     }
                 }
                 drag = false;

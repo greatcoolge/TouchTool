@@ -164,12 +164,15 @@ public class MainCaptureService extends Service {
 
         public List<Rect> matchColor(Bitmap bitmap, int[] color){
             List<MatchResult> matchResults = AppUtils.nativeMatchColor(bitmap, color);
-            matchResults.sort((o1, o2) -> o2.value - o1.value);
-            List<Rect> rectList = new ArrayList<>();
-            for (MatchResult matchResult : matchResults) {
-                rectList.add(matchResult.rect);
+            if (matchResults != null){
+                matchResults.sort((o1, o2) -> o2.value - o1.value);
+                List<Rect> rectList = new ArrayList<>();
+                for (MatchResult matchResult : matchResults) {
+                    rectList.add(matchResult.rect);
+                }
+                return rectList;
             }
-            return rectList;
+            return null;
         }
 
         public List<Rect> matchColor(int[] color){
@@ -180,7 +183,7 @@ public class MainCaptureService extends Service {
         }
 
         public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue){
-            if (matchBitmap == null) return null;
+            if (sourceBitmap == null || matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
             Log.d("MatchImage", "" + matchResult.value);
             if (Math.min(100, matchValue) > matchResult.value) return null;
