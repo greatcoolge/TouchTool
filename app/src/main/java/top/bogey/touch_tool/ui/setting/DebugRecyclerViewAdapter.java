@@ -2,7 +2,6 @@ package top.bogey.touch_tool.ui.setting;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,16 +47,16 @@ public class DebugRecyclerViewAdapter extends RecyclerView.Adapter<DebugRecycler
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView title;
+        public final FloatDebugItemBinding binding;
 
         public ViewHolder(@NonNull FloatDebugItemBinding binding) {
             super(binding.getRoot());
-            title = binding.titleText;
+            this.binding = binding;
         }
 
         public void refreshItem(DebugInfo tip){
-            title.setText(tip.getSimpleInfo());
-            title.setTextColor(tip.getLevelColor(title.getContext()));
+            binding.titleText.setText(tip.getSimpleInfo());
+            binding.titleText.setTextColor(tip.getLevelColor(binding.titleText.getContext()));
         }
     }
 }

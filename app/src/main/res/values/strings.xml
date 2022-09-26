@@ -63,7 +63,7 @@
     <!-- 任务 -->
     <string name="add">添加</string>
     <string name="record">记录</string>
-    <string name="record_smart">录制</string>
+    <string name="record_smart">模拟录制</string>
 
     <string name="task_title_default">默认标题</string>
     <string name="run_close">禁用</string>

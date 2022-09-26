@@ -110,6 +110,11 @@ public class AppsView extends Fragment {
         adapter.refreshApps(viewModel.searchAppList(""));
         searchText = "";
 
+        binding.refreshButton.setOnClickListener(v -> {
+            viewModel.refreshAppList();
+            adapter.refreshApps(viewModel.searchAppList(searchText));
+        });
+
         viewModel.taskGroups.observe(getViewLifecycleOwner(), taskGroups -> adapter.refreshItems(taskGroups));
         return binding.getRoot();
     }

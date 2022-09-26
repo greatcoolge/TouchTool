@@ -57,11 +57,13 @@ public class FindRunnable implements Runnable{
             if (!(packageName.equals("null") || packageName.equals(pkgName))){
                 LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_surface_changed), 0, service.getString(R.string.log_last_surface, pkgName));
 
-                // 取消所有非当前包下的任务
+                // 取消所有非当前包下的普通任务
                 for (TaskCallable task : tasks) {
-                    if (task.isRunning()) task.stop();
+                    if (task.isRunning()) {
+                        task.stop();
+                        tasks.remove(task);
+                    }
                 }
-                tasks.clear();
 
                 service.setCurrPkgName(packageName);
 
@@ -81,7 +83,6 @@ public class FindRunnable implements Runnable{
 
                 LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_get_all_task), 0, service.getString(R.string.log_tasks_count, tasks.size()));
 
-                String comPkgName = service.getString(R.string.common_package_name);
                 boolean isManual = false;
                 for (Task task : tasks) {
                     if (task.getActions() != null && !task.getActions().isEmpty()){
@@ -91,10 +92,7 @@ public class FindRunnable implements Runnable{
                                 LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_run_auto_task), 0, task.getTitle());
                                 break;
                             case MANUAL:
-                                String name = task.getPkgName();
-                                if (!name.equals(comPkgName)){
-                                    isManual = true;
-                                }
+                                isManual = true;
                                 break;
                         }
                     }

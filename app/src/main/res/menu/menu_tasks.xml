@@ -11,10 +11,10 @@
         android:id="@+id/record"
         android:icon="@drawable/icon_record"
         android:title="@string/record"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/record_smart"
         android:icon="@drawable/icon_record_smart"
         android:title="@string/record_smart"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom"  />
 </menu>

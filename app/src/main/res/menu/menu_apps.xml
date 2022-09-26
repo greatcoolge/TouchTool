@@ -12,7 +12,6 @@
 
     <item
         android:id="@+id/show_system"
-        android:icon="@drawable/icon_show_system"
         android:title="@string/show_system"
         android:checkable="true"/>
 

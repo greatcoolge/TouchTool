@@ -44,6 +44,16 @@ public class TasksView extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        binding = ViewTasksBinding.inflate(inflater, container, false);
+
+        Bundle arguments = getArguments();
+        if (arguments != null){
+            String pkgName = arguments.getString("pkgName");
+            appInfo = viewModel.getAppInfoByPkgName(pkgName);
+        }
+
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -73,21 +83,11 @@ public class TasksView extends Fragment {
             }
         }, getViewLifecycleOwner());
 
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        binding = ViewTasksBinding.inflate(inflater, container, false);
-
-        Bundle arguments = getArguments();
-        if (arguments != null){
-            String pkgName = arguments.getString("pkgName");
-            appInfo = viewModel.getAppInfoByPkgName(pkgName);
-        }
-
         ActionBar actionBar = MainApplication.getActivity().getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(appInfo.appName);
             actionBar.setSubtitle(appInfo.packageName);
         }
-
 
         TasksRecyclerViewAdapter adapter = new TasksRecyclerViewAdapter();
         binding.tasksBox.setAdapter(adapter);

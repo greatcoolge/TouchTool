@@ -15,7 +15,6 @@ public class Task {
     @PrimaryKey
     private String id;
     private String pkgName;
-
     private String title;
     private List<Action> actions = new ArrayList<>();
     private TaskStatus status = TaskStatus.CLOSED;
@@ -36,7 +35,7 @@ public class Task {
 
         title = task.getTitle();
         actions.addAll(task.getActions());
-        status =task.getStatus();
+        status = task.getStatus();
     }
 
     @NonNull

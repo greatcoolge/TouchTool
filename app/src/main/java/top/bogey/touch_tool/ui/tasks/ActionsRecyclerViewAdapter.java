@@ -6,7 +6,6 @@ import android.content.res.ColorStateList;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,17 +64,13 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
-        private final MaterialButton enabledToggle;
-        private final TextView title;
-        private final ShapeableImageView modeImage;
+        private final ViewTasksActionBinding binding;
         private boolean isDeleteMode = false;
 
         @SuppressLint("PrivateResource")
         public ViewHolder(ViewTasksActionBinding binding) {
             super(binding.getRoot());
-            enabledToggle = binding.enabledToggle;
-            title = binding.titleText;
-            modeImage = binding.modeImage;
+            this.binding = binding;
 
             itemView.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
@@ -111,7 +105,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 action.setEnable(!action.isEnable());
-                setChecked(enabledToggle, action.isEnable());
+                setChecked(binding.enabledToggle, action.isEnable());
                 viewModel.saveTask(task);
             });
 
@@ -175,18 +169,18 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
 
         public void refreshItem(Action action, int position){
-            title.setText(action.getTitle(itemView.getContext()));
-            setChecked(enabledToggle, action.isEnable());
-            enabledToggle.setText(String.valueOf(position + 1));
+            binding.titleText.setText(action.getTitle(itemView.getContext()));
+            setChecked(binding.enabledToggle, action.isEnable());
+            binding.enabledToggle.setText(String.valueOf(position + 1));
             switch (action.getActionMode()) {
                 case CONDITION:
-                    modeImage.setImageResource(R.drawable.icon_condition);
+                    binding.modeImage.setImageResource(R.drawable.icon_condition);
                     break;
                 case LOOP:
-                    modeImage.setImageResource(R.drawable.icon_loop);
+                    binding.modeImage.setImageResource(R.drawable.icon_loop);
                     break;
                 case PARALLEL:
-                    modeImage.setImageResource(R.drawable.icon_parallel);
+                    binding.modeImage.setImageResource(R.drawable.icon_parallel);
                     break;
             }
         }

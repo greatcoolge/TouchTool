@@ -2,12 +2,9 @@ package top.bogey.touch_tool.ui.record;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,28 +37,28 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
         Node target = action.getTargets().get(0);
         switch (target.getType()){
             case DELAY:
-                holder.delete.setIconResource(R.drawable.icon_delay);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_delay);
                 break;
             case TEXT:
-                holder.delete.setIconResource(R.drawable.icon_text);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_text);
                 break;
             case IMAGE:
-                holder.delete.setIconResource(R.drawable.icon_image);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_image);
                 break;
             case TOUCH:
-                holder.delete.setIconResource(R.drawable.icon_touch);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_touch);
                 break;
             case COLOR:
-                holder.delete.setIconResource(R.drawable.icon_color);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_color);
                 break;
             case KEY:
-                holder.delete.setIconResource(R.drawable.icon_key);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_key);
                 break;
             case TASK:
-                holder.delete.setIconResource(R.drawable.icon_task);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_task);
                 break;
         }
-        holder.indexText.setText(String.valueOf(position + 1));
+        holder.binding.numberText.setText(String.valueOf(position + 1));
     }
 
     @Override
@@ -75,21 +72,19 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
-        public final MaterialButton delete;
-        public final TextView indexText;
+        public final FloatRecordItemBinding binding;
 
         public ViewHolder(@NonNull FloatRecordItemBinding binding) {
             super(binding.getRoot());
-            delete = binding.deleteButton;
-            indexText = binding.numberText;
+            this.binding = binding;
 
-            delete.setOnClickListener(v -> {
+            binding.deleteButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 new ActionFloatView(itemView.getContext(), task, action, result -> notifyItemChanged(index)).show();
             });
 
-            delete.setOnLongClickListener(v -> {
+            binding.deleteButton.setOnLongClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 actions.remove(index);
                 notifyDataSetChanged();
