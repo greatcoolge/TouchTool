@@ -21,6 +21,8 @@ public class DebugInfoView extends Fragment {
         DebugInfoRecyclerViewAdapter adapter = new DebugInfoRecyclerViewAdapter(this);
         binding.getRoot().setAdapter(adapter);
 
+        binding.getRoot().postDelayed(() -> binding.getRoot().scrollToPosition(adapter.getItemCount() - 1), 200);
+
         return binding.getRoot();
     }
 }

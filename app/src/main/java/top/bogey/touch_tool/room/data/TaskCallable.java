@@ -155,7 +155,7 @@ public class TaskCallable implements Callable<Void> {
                 switch (target.getType()) {
                     case DELAY:
                         sleep((Integer) nodeTarget);
-                        LogUtils.log(service, DebugLevel.LOW, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
+                        LogUtils.log(service, DebugLevel.LOW, task.getTitle(), percent + 1, service.getString(R.string.log_do_action, action.getTitle()));
                         break;
                     case TEXT:
                         AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) nodeTarget;
@@ -165,21 +165,21 @@ public class TaskCallable implements Callable<Void> {
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
                         }
                         sleep(randomTime);
-                        LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
+                        LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action, action.getTitle()));
                         break;
                     case IMAGE:
                     case TOUCH:
                         Path path = (Path) nodeTarget;
                         service.runGesture(path, randomTime, null);
                         sleep(randomTime);
-                        LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
+                        LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action, action.getTitle()));
                         break;
                     case COLOR:
                         Path[] paths = (Path[]) nodeTarget;
                         for (Path path1 : paths) {
                             service.runGesture(path1, 100, null);
                             sleep(randomTime);
-                            LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action));
+                            LogUtils.log(service, DebugLevel.HEIGHT, task.getTitle(), percent + 1, service.getString(R.string.log_do_action, action.getTitle()));
                         }
                         break;
                     case KEY:

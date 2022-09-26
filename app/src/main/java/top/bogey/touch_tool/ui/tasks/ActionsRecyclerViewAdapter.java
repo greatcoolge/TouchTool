@@ -3,6 +3,7 @@ package top.bogey.touch_tool.ui.tasks;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.List;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.databinding.ViewActionTextBaseBinding;
 import top.bogey.touch_tool.databinding.ViewTasksActionBinding;
 import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.Task;
@@ -82,6 +85,26 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     notifyItemChanged(index);
                     viewModel.saveTask(task);
                 }).show();
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Action action = actions.get(index);
+                ViewActionTextBaseBinding textBaseBinding = ViewActionTextBaseBinding.inflate(LayoutInflater.from(itemView.getContext()));
+                textBaseBinding.textInputLayout.setHint(R.string.action_name);
+                textBaseBinding.titleEdit.setText(action.getTitle());
+                new MaterialAlertDialogBuilder(itemView.getContext())
+                        .setPositiveButton(R.string.enter, (dialog, which) -> {
+                            Editable text = textBaseBinding.titleEdit.getText();
+                            if (text != null) action.setTitle(String.valueOf(text));
+                            notifyItemChanged(index);
+                            viewModel.saveTask(task);
+                            dialog.dismiss();
+                        })
+                        .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
+                        .setView(textBaseBinding.getRoot())
+                        .show();
+                return true;
             });
 
             binding.enabledToggle.setOnClickListener(v -> {
@@ -152,7 +175,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
 
         public void refreshItem(Action action, int position){
-            title.setText(action.getDefaultTitle(itemView.getContext()));
+            title.setText(action.getTitle(itemView.getContext()));
             setChecked(enabledToggle, action.isEnable());
             enabledToggle.setText(String.valueOf(position + 1));
             switch (action.getActionMode()) {

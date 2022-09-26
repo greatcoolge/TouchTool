@@ -23,7 +23,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
@@ -33,19 +32,17 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import top.bogey.touch_tool.ui.setting.DebugLevel;
 import top.bogey.touch_tool.utils.AppUtils;
+import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.MatchResult;
 
 public class MainCaptureService extends Service {
-    private static final String RUNNING_CHANNEL_ID = "RUNNING_CHANNEL_ID";
-    private static final String RUNNING_CHANNEL_NAME = "录屏前台服务";
-    private static final String RUNNING_CHANNEL_DES = "软件服务正在前台运行的通知，建议禁用";
+    public static final String RUNNING_CHANNEL_ID = "RUNNING_CHANNEL_ID";
 
     private static final String NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID";
-    private static final String NOTIFICATION_CHANNEL_NAME = "录屏服务快捷关闭通知";
-    private static final String NOTIFICATION_CHANNEL_DES = "能在通知栏快速关闭录屏服务";
 
-    private static final int NOTIFICATION_ID = 10000;
+    public static final int NOTIFICATION_ID = 10000;
 
     private MediaProjection projection;
     private ImageReader imageReader;
@@ -115,12 +112,15 @@ public class MainCaptureService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            NotificationChannel runningChannel = new NotificationChannel(RUNNING_CHANNEL_ID, RUNNING_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-            runningChannel.setDescription(RUNNING_CHANNEL_DES);
-            notificationManager.createNotificationChannel(runningChannel);
+            NotificationChannel runningChannel = notificationManager.getNotificationChannel(RUNNING_CHANNEL_ID);
+            if (runningChannel == null){
+                runningChannel = new NotificationChannel(RUNNING_CHANNEL_ID, getString(R.string.capture_service_running_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+                runningChannel.setDescription(getString(R.string.capture_service_running_channel_tips));
+                notificationManager.createNotificationChannel(runningChannel);
+            }
 
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(NOTIFICATION_CHANNEL_DES);
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, getString(R.string.capture_service_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(getString(R.string.capture_service_running_channel_tips));
             notificationManager.createNotificationChannel(channel);
 
             Notification foregroundNotification = new NotificationCompat.Builder(this, RUNNING_CHANNEL_ID).build();
@@ -149,12 +149,11 @@ public class MainCaptureService extends Service {
         WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
         manager.getDefaultDisplay().getRealMetrics(metrics);
-        imageReader = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 1);
+        imageReader = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 2);
         imageReader.setOnImageAvailableListener(reader -> {
             synchronized (lock){
                 if (image != null) image.close();
                 image = reader.acquireLatestImage();
-                Log.d("TAG", "setVirtualDisplay: " + image);
             }
         }, null);
         virtualDisplay = projection.createVirtualDisplay("CaptureService", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
@@ -185,7 +184,7 @@ public class MainCaptureService extends Service {
         public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue){
             if (sourceBitmap == null || matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
-            Log.d("MatchImage", "" + matchResult.value);
+            LogUtils.log(MainCaptureService.this, DebugLevel.MIDDLE, getString(R.string.log_match_image), 0, getString(R.string.log_match_image_value, matchValue, matchResult.value));
             if (Math.min(100, matchValue) > matchResult.value) return null;
             return matchResult.rect;
         }

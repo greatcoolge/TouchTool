@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        android:title="@string/action_config">
+        android:title="@string/app_config">
+
+        <SwitchPreferenceCompat
+            android:key="keep_alive"
+            android:title="@string/keep_alive"
+            android:summary="@string/keep_alive_tips"
+            android:icon="@drawable/icon_keep_alive"
+            android:widgetLayout="@layout/widget_switch" />
 
         <SeekBarPreference
             android:key="action_touch_offset"

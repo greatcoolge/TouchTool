@@ -30,6 +30,7 @@
     private java.util.List targets;
     private top.bogey.touch_tool.room.bean.node.Node condition;
     private int times;
+    private java.lang.String title;
 }
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.Node{

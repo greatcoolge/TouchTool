@@ -21,6 +21,8 @@ public class Action {
     private int times = 1;
     private Node condition;
 
+    private String title = "";
+
     public String getDefaultTitle(Context context){
         if (targets == null || targets.isEmpty()) return "";
         StringBuilder builder = new StringBuilder();
@@ -146,5 +148,18 @@ public class Action {
 
     public void setCondition(Node condition) {
         this.condition = condition;
+    }
+
+    public String getTitle(Context context) {
+        if (title.isEmpty()) return getDefaultTitle(context);
+        return title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

@@ -8,11 +8,15 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.color.DynamicColors;
 
+import top.bogey.touch_tool.ui.setting.KeepAliveService;
+
 public class MainApplication extends Application {
     public static final String NIGHT_MODE = "night_mode";
 
     private static MainActivity activity;
     private static MainAccessibilityService service;
+
+    private static KeepAliveService aliveService;
 
     @Override
     public void onCreate() {
@@ -45,5 +49,13 @@ public class MainApplication extends Application {
 
     public static void setService(MainAccessibilityService service) {
         MainApplication.service = service;
+    }
+
+    public static KeepAliveService getAliveService() {
+        return aliveService;
+    }
+
+    public static void setAliveService(KeepAliveService aliveService) {
+        MainApplication.aliveService = aliveService;
     }
 }

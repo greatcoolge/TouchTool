@@ -30,6 +30,19 @@ public class SettingView extends PreferenceFragmentCompat {
         preferenceManager.setSharedPreferencesName(MainAccessibilityService.SAVE_PATH);
         setPreferencesFromResource(R.xml.setting, null);
 
+        SwitchPreferenceCompat keepAlive = findPreference("keep_alive");
+        if (keepAlive != null){
+            KeepAliveService aliveService = MainApplication.getAliveService();
+            keepAlive.setChecked(aliveService != null);
+            keepAlive.setOnPreferenceChangeListener((preference, newValue) -> {
+                requireContext().stopService(new Intent(requireContext(), KeepAliveService.class));
+                if (Boolean.TRUE.equals(newValue)){
+                    requireContext().startService(new Intent(requireContext(), KeepAliveService.class));
+                }
+                return true;
+            });
+        }
+
         SwitchPreferenceCompat showDebugDialog = findPreference("show_debug_dialog");
         Preference showDebug = findPreference("show_debug");
         SwitchPreferenceCompat actionDebug = findPreference(LogUtils.ACTION_DEBUG);
