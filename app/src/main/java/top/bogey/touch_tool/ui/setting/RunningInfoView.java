@@ -9,16 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import top.bogey.touch_tool.databinding.ViewDebugBinding;
+import top.bogey.touch_tool.databinding.ViewRunningBinding;
 
-public class DebugInfoView extends Fragment {
+public class RunningInfoView extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewDebugBinding binding = ViewDebugBinding.inflate(inflater);
+        ViewRunningBinding binding = ViewRunningBinding.inflate(inflater);
 
-        DebugInfoRecyclerViewAdapter adapter = new DebugInfoRecyclerViewAdapter(this);
+        RunningInfoRecyclerViewAdapter adapter = new RunningInfoRecyclerViewAdapter(this);
         binding.getRoot().setAdapter(adapter);
 
         binding.getRoot().postDelayed(() -> binding.getRoot().scrollToPosition(adapter.getItemCount() - 1), 200);

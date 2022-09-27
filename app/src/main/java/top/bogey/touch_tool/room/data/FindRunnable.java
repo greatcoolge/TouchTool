@@ -11,8 +11,8 @@ import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.ui.setting.DebugLevel;
-import top.bogey.touch_tool.utils.LogUtils;
+import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.RunningUtils;
 
 public class FindRunnable implements Runnable{
     private boolean isRunning = true;
@@ -34,9 +34,9 @@ public class FindRunnable implements Runnable{
         return isRunning;
     }
 
-    private void sleep(int time){
+    private void sleep(){
         try {
-            Thread.sleep(time);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -49,23 +49,20 @@ public class FindRunnable implements Runnable{
         while (root == null && isRunning()){
             times++;
             if (times > 20) break;
-            sleep(50);
+            sleep();
             root = service.getRootInActiveWindow();
         }
         if (root != null && isRunning()){
             String packageName = String.valueOf(root.getPackageName());
             if (!(packageName.equals("null") || packageName.equals(pkgName))){
-                LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_surface_changed), 0, service.getString(R.string.log_last_surface, pkgName));
+                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_surface_changed, pkgName));
 
                 // 取消所有非当前包下的普通任务
                 for (TaskCallable task : tasks) {
-                    if (task.isRunning()) {
-                        task.stop();
-                        tasks.remove(task);
-                    }
+                    if (task.isRunning()) task.stop();
                 }
-
-                service.setCurrPkgName(packageName);
+                tasks.clear();
+                service.currPkgName = packageName;
 
                 MainActivity activity = MainApplication.getActivity();
                 if (activity != null){
@@ -75,13 +72,13 @@ public class FindRunnable implements Runnable{
                 // APP自己不执行任何任务
                 if (packageName.equals(service.getPackageName())) return;
 
-                LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_surface_entered), 0, service.getString(R.string.log_curr_surface, packageName));
+                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_surface_entered, packageName));
 
                 List<Task> tasks = getAppTaskByPkgName(packageName);
 
                 if (!isRunning()) return;
 
-                LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_get_all_task), 0, service.getString(R.string.log_tasks_count, tasks.size()));
+                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_get_all_task, tasks.size()));
 
                 boolean isManual = false;
                 for (Task task : tasks) {
@@ -89,7 +86,7 @@ public class FindRunnable implements Runnable{
                         switch (task.getStatus()) {
                             case AUTO:
                                 service.runTask(task, null);
-                                LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_run_auto_task), 0, task.getTitle());
+                                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_run_auto_task, task.getTitle()));
                                 break;
                             case MANUAL:
                                 isManual = true;
@@ -118,20 +115,16 @@ public class FindRunnable implements Runnable{
         List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
         if (pkgTasks != null){
             tasks.addAll(pkgTasks);
-            LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_get_pkg_task), 0, service.getString(R.string.log_tasks_count, pkgTasks.size()));
         }
         String conPkgName = service.getString(R.string.common_package_name);
         List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
         if (comTasks != null){
-            LogUtils.log(service, DebugLevel.MIDDLE, service.getString(R.string.log_get_common_task), 0, service.getString(R.string.log_tasks_count, comTasks.size()));
             for (Task comTask : comTasks) {
                 boolean flag = true;
-                if (comTask.getTitle() != null){
-                    for (Task task : tasks) {
-                        if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
-                            flag = false;
-                            break;
-                        }
+                for (Task task : tasks) {
+                    if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
+                        flag = false;
+                        break;
                     }
                 }
                 if (flag){

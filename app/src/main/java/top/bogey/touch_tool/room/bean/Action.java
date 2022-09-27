@@ -3,6 +3,7 @@ package top.bogey.touch_tool.room.bean;
 import android.content.Context;
 
 import java.util.List;
+import java.util.UUID;
 
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.room.bean.node.DelayNode;

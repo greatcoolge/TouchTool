@@ -57,7 +57,7 @@
     <string name="export_tasks">导出任务</string>
     <string name="export_tips">导出配置文件并发送</string>
     <string name="export_tasks_count" translatable="false">%1$d/%2$d</string>
-    <string name="clean_tasks">清理任务</string>
+    <string name="clean_tasks">清理冗余任务</string>
     <string name="clean_tips">冗余任务清理完成</string>
 
     <!-- 任务 -->
@@ -136,25 +136,23 @@
     <string name="action_touch_offset">点击偏移</string>
     <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移</string>
 
-    <string name="debug_config">应用调试</string>
-    <string name="action_debug">记录日志</string>
-    <string name="action_debug_tips">记录应用执行的信息，日常使用时建议关闭</string>
-    <string name="action_show_debug">查看日志</string>
-    <string name="action_show_debug_tips">点击查看开启记录后当天的日志</string>
-    <string name="action_show_debug_dialog">实时日志悬浮窗</string>
+    <string name="app_running">运行状况</string>
+    <string name="running_log">记录日志</string>
+    <string name="running_log_tips">记录应用执行的信息，日常使用时建议关闭</string>
+    <string name="running_log_dialog">实时日志悬浮窗</string>
+    <string name="running_log_dialog_tips">查看记录的日志信息</string>
+    <string name="running_task_info">查看任务统计</string>
+    <string name="running_task_info_tips">点击查看任务执行情况统计</string>
 
-    <string name="log_surface_changed">界面变动</string>
-    <string name="log_last_surface">上一个界面是：%1$s</string>
-    <string name="log_surface_entered">进入界面</string>
-    <string name="log_curr_surface">当前界面是：%1$s</string>
-    <string name="log_get_pkg_task">获取应用任务</string>
-    <string name="log_get_common_task">获取通用任务</string>
-    <string name="log_get_all_task">获取所有任务</string>
-    <string name="log_tasks_count">任务数：%1$d</string>
-    <string name="log_run_auto_task">执行自动任务</string>
-    <string name="log_do_action">正在执行动作%1$s</string>
+    <string name="log_surface_changed">界面变动，上一个界面是：%1$s</string>
+    <string name="log_surface_entered">进入界面，当前界面是：%1$s</string>
+    <string name="log_get_all_task">获取所有任务，任务数：%1$d</string>
+    <string name="log_run_auto_task">执行自动任务 %1$s</string>
+    <string name="log_run_manual_task">执行手动任务 %1$s</string>
+    <string name="log_do_action">执行 %1$s</string>
+    <string name="log_do_action_fail">%1$s 失败</string>
     <string name="log_show_manual_task">显示手动任务浮窗</string>
-    <string name="log_match_image">图片匹配结果</string>
-    <string name="log_match_image_value">需求相似度为：%1$d，匹配相似度为：%2$d</string>
+    <string name="log_task_format">%1$s-%2$s\n[%3$d]%4$s</string>
+    <string name="log_match_image">图片匹配，需求相似度为：%1$d，匹配相似度为：%2$d</string>
 
 </resources>

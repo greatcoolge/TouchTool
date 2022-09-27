@@ -36,7 +36,7 @@
         tools:layout="@layout/view_setting" >
         <action
             android:id="@+id/action_setting_to_debugInfo"
-            app:destination="@id/debugInfo" />
+            app:destination="@id/runningInfo" />
     </fragment>
     <fragment
         android:id="@+id/tasksExport"
@@ -44,8 +44,8 @@
         android:label="@string/export_tasks"
         tools:layout="@layout/view_tasks_export"/>
     <fragment
-        android:id="@+id/debugInfo"
-        android:name="top.bogey.touch_tool.ui.setting.DebugInfoView"
-        android:label="@string/action_show_debug"
-        tools:layout="@layout/view_debug"/>
+        android:id="@+id/runningInfo"
+        android:name="top.bogey.touch_tool.ui.setting.RunningInfoView"
+        android:label="@string/running_task_info"
+        tools:layout="@layout/view_running"/>
 </navigation>

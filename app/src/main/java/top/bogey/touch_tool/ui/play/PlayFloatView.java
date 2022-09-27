@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
@@ -76,9 +77,28 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
 
     private List<Task> getManualTasks(String pkgName){
         TaskRepository repository = new TaskRepository(getContext());
-        List<Task> tasks = repository.getTasksByPackageName(pkgName);
-        for (int i = tasks.size() - 1; i >= 0; i--) {
-            if (tasks.get(i).getStatus() != TaskStatus.MANUAL) tasks.remove(i);
+        List<Task> tasks = new ArrayList<>();
+        List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
+        if (pkgTasks != null){
+            for (Task task : pkgTasks) {
+                if (task.getStatus() == TaskStatus.MANUAL) tasks.add(task);
+            }
+        }
+        String conPkgName = getContext().getString(R.string.common_package_name);
+        List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
+        if (comTasks != null){
+            for (Task comTask : comTasks) {
+                boolean flag = true;
+                for (Task task : tasks) {
+                    if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag){
+                    tasks.add(comTask);
+                }
+            }
         }
         return tasks;
     }

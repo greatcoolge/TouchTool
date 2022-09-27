@@ -13,9 +13,9 @@ import java.util.UUID;
 public class Task {
     @NonNull
     @PrimaryKey
-    private String id;
+    private final String id;
     private String pkgName;
-    private String title;
+    private String title = "";
     private List<Action> actions = new ArrayList<>();
     private TaskStatus status = TaskStatus.CLOSED;
 
@@ -41,10 +41,6 @@ public class Task {
     @NonNull
     public String getId() {
         return id;
-    }
-
-    public void setId(@NonNull String id) {
-        this.id = id;
     }
 
     public String getPkgName() {

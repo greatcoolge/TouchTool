@@ -46,7 +46,7 @@ public class MainAccessibilityService extends AccessibilityService {
     private ServiceConnection connection = null;
 
     // 任务
-    private String currPkgName = "";
+    public String currPkgName = "";
     private final ExecutorService findService;
     private FindRunnable findRunnable = null;
     public final ExecutorService taskService;
@@ -201,10 +201,6 @@ public class MainAccessibilityService extends AccessibilityService {
                 if (callback != null) callback.onResult(false);
             }
         }, null);
-    }
-
-    public void setCurrPkgName(String currPkgName) {
-        this.currPkgName = currPkgName;
     }
 
     public Point getFixedPosition(int x, int y){

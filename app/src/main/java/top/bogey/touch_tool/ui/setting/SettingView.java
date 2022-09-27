@@ -19,7 +19,6 @@ import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.utils.LogUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class SettingView extends PreferenceFragmentCompat {
@@ -43,22 +42,36 @@ public class SettingView extends PreferenceFragmentCompat {
             });
         }
 
-        SwitchPreferenceCompat showDebugDialog = findPreference("show_debug_dialog");
-        Preference showDebug = findPreference("show_debug");
-        SwitchPreferenceCompat actionDebug = findPreference(LogUtils.ACTION_DEBUG);
-        if (actionDebug != null){
-            actionDebug.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (Boolean.FALSE.equals(newValue)) LogUtils.closeLog(requireContext());
-                if (showDebugDialog != null) showDebugDialog.setVisible(Boolean.TRUE.equals(newValue));
-                if (showDebug != null) showDebug.setVisible(Boolean.TRUE.equals(newValue));
+        SwitchPreferenceCompat runningLogDialog = findPreference("running_log_dialog");
+        SwitchPreferenceCompat runningLog = findPreference(RunningUtils.RUNNING_LOG);
+        if (runningLog != null){
+            runningLog.setOnPreferenceChangeListener((preference, newValue) -> {
+                if (Boolean.FALSE.equals(newValue)) RunningUtils.closeLog(requireContext());
+                if (runningLogDialog != null) {
+                    runningLogDialog.setVisible(Boolean.TRUE.equals(newValue));
+                    runningLogDialog.setChecked(EasyFloat.getView(LogFloatView.class.getCanonicalName()) != null && Boolean.TRUE.equals(newValue));
+                }
                 return true;
             });
-            if (showDebugDialog != null) showDebugDialog.setVisible(actionDebug.isChecked());
-            if (showDebug != null) showDebug.setVisible(actionDebug.isChecked());
+            if (runningLogDialog != null) runningLogDialog.setVisible(runningLog.isChecked());
         }
 
-        if (showDebug != null){
-            showDebug.setOnPreferenceClickListener(preference -> {
+        if (runningLogDialog != null){
+            if (runningLog != null){
+                runningLogDialog.setOnPreferenceChangeListener((preference, newValue) -> {
+                    EasyFloat.dismiss(LogFloatView.class.getCanonicalName());
+                    if (Boolean.TRUE.equals(newValue) && runningLog.isChecked()){
+                        new LogFloatView(requireContext()).show();
+                    }
+                    return true;
+                });
+                runningLogDialog.setChecked(EasyFloat.getView(LogFloatView.class.getCanonicalName()) != null && runningLog.isChecked());
+            }
+        }
+
+        Preference runningTaskInfo = findPreference("running_task_info");
+        if (runningTaskInfo != null){
+            runningTaskInfo.setOnPreferenceClickListener(preference -> {
                 MainActivity activity = MainApplication.getActivity();
                 if (activity != null){
                     NavController controller = Navigation.findNavController(activity, R.id.con_view);
@@ -66,21 +79,6 @@ public class SettingView extends PreferenceFragmentCompat {
                 }
                 return true;
             });
-        }
-
-        if (showDebugDialog != null){
-            if (actionDebug != null){
-                showDebugDialog.setOnPreferenceChangeListener((preference, newValue) -> {
-                EasyFloat.dismiss(DebugFloatView.class.getCanonicalName());
-                if (Boolean.TRUE.equals(newValue) && actionDebug.isChecked()){
-                    new DebugFloatView(requireContext()).show();
-                }
-                return true;
-            });
-                showDebugDialog.setChecked(EasyFloat.getView(DebugFloatView.class.getCanonicalName()) != null && actionDebug.isChecked());
-            } else {
-                showDebugDialog.setVisible(false);
-            }
         }
 
         DropDownPreference nightMode = findPreference(MainApplication.NIGHT_MODE);

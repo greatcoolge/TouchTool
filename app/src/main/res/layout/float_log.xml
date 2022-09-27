@@ -68,7 +68,7 @@
                 android:padding="8dp"
                 android:clipToPadding="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/float_debug_item" />
+                tools:listitem="@layout/float_log_item" />
 
         </com.google.android.material.card.MaterialCardView>
 

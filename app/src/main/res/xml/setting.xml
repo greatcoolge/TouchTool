@@ -15,8 +15,8 @@
         <SeekBarPreference
             android:key="action_touch_offset"
             android:max="10"
-            android:summary="@string/action_touch_offset_tips"
             android:title="@string/action_touch_offset"
+            android:summary="@string/action_touch_offset_tips"
             android:icon="@drawable/icon_touch_offset"
             app:selectable="false"
             app:showSeekBarValue="true" />
@@ -24,24 +24,26 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/debug_config">
+        android:title="@string/app_running">
 
         <SwitchPreferenceCompat
-            android:key="action_debug"
-            android:summary="@string/action_debug_tips"
-            android:title="@string/action_debug"
+            android:key="running_log"
+            android:title="@string/running_log"
+            android:summary="@string/running_log_tips"
             android:icon="@drawable/icon_debug"
             android:widgetLayout="@layout/widget_switch" />
 
-        <Preference
-            android:key="show_debug"
-            android:title="@string/action_show_debug"
-            android:summary="@string/action_show_debug_tips"/>
-
         <SwitchPreferenceCompat
-            android:key="show_debug_dialog"
-            android:title="@string/action_show_debug_dialog"
+            android:key="running_log_dialog"
+            android:title="@string/running_log_dialog"
+            android:summary="@string/running_log_dialog_tips"
             android:widgetLayout="@layout/widget_switch" />
+
+        <Preference
+            android:key="running_task_info"
+            android:title="@string/running_task_info"
+            android:summary="@string/running_task_info_tips"/>
+
 
     </PreferenceCategory>
 

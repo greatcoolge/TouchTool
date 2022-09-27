@@ -1,6 +1,5 @@
 package top.bogey.touch_tool.ui.setting;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,15 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.card.MaterialCardView;
 
-import top.bogey.touch_tool.databinding.FloatDebugBinding;
+import top.bogey.touch_tool.databinding.FloatLogBinding;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 import top.bogey.touch_tool.utils.easy_float.FloatViewHelper;
 import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
-public class DebugFloatView extends FrameLayout implements FloatViewInterface {
-    private final FloatDebugBinding binding;
+public class LogFloatView extends FrameLayout implements FloatViewInterface {
+    private final FloatLogBinding binding;
 
     private float lastY = 0f;
     private boolean isToBottom = false;
@@ -30,12 +29,14 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
 
     private boolean isMin = false;
 
-    @SuppressLint("ClickableViewAccessibility")
-    public DebugFloatView(@NonNull Context context) {
-        super(context);
-        binding = FloatDebugBinding.inflate(LayoutInflater.from(context), this, true);
+    private boolean isExpand = false;
 
-        DebugRecyclerViewAdapter adapter = new DebugRecyclerViewAdapter(this);
+    @SuppressLint("ClickableViewAccessibility")
+    public LogFloatView(@NonNull Context context) {
+        super(context);
+        binding = FloatLogBinding.inflate(LayoutInflater.from(context), this, true);
+
+        LogRecyclerViewAdapter adapter = new LogRecyclerViewAdapter(this);
         binding.recyclerView.setAdapter(adapter);
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
@@ -69,57 +70,13 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.minButton.setOnClickListener(v -> {
             isMin = !isMin;
+            doAni();
+        });
 
-            FloatViewHelper helper = EasyFloat.getHelper(DebugFloatView.class.getCanonicalName());
-
-            int buttonY = DisplayUtils.dp2px(context, 2);
-            int buttonX = DisplayUtils.dp2px(context, 8);
-            int buttonXY = DisplayUtils.dp2px(context, 4);
-            int minWidth = DisplayUtils.dp2px(context, 32);
-            int maxWidth = DisplayUtils.dp2px(context, 240);
-
-            MaterialCardView root = binding.getRoot();
-            ViewGroup.LayoutParams rootLayoutParams = root.getLayoutParams();
-
-            ValueAnimator valueAnimator;
-            if (isMin){
-                valueAnimator = ValueAnimator.ofInt(100, 0);
-                binding.closeButton.setVisibility(GONE);
-                binding.markBox.setVisibility(GONE);
-                binding.drag.setVisibility(GONE);
-
-            } else {
-                valueAnimator = ValueAnimator.ofInt(0, 100);
-                binding.closeButton.setVisibility(VISIBLE);
-                binding.markBox.setVisibility(VISIBLE);
-                binding.drag.setVisibility(VISIBLE);
-
-                helper.params.width = maxWidth;
-                helper.params.height = maxWidth;
-                helper.manager.updateViewLayout(helper.floatViewParent, helper.params);
-            }
-
-            valueAnimator.addUpdateListener(animation -> {
-                int value = (int) animation.getAnimatedValue();
-                int size = minWidth + (int) ((maxWidth - minWidth) * value / 100f);
-                rootLayoutParams.width = size;
-                rootLayoutParams.height = size;
-                root.setLayoutParams(rootLayoutParams);
-
-                int x = buttonXY + (int) ((buttonX - buttonXY) * value / 100f);
-                int y = buttonXY + (int) ((buttonY - buttonXY) * value / 100f);
-
-                binding.minButton.setX(x);
-                binding.minButton.setY(y);
-                binding.minButton.setRotation(180 * (100 - value) / 100f);
-
-                if (isMin && value == 0){
-                    helper.params.width = minWidth;
-                    helper.params.height = minWidth;
-                    helper.manager.updateViewLayout(helper.floatViewParent, helper.params);
-                }
-            });
-            valueAnimator.start();
+        binding.minButton.setOnLongClickListener(v -> {
+            isExpand = !isExpand;
+            doAni();
+            return true;
         });
     }
 
@@ -127,7 +84,7 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
     public void show() {
         EasyFloat.with(getContext())
                 .setLayout(this)
-                .setTag(DebugFloatView.class.getCanonicalName())
+                .setTag(LogFloatView.class.getCanonicalName())
                 .setDragEnable(true)
                 .setGravity(FloatGravity.CENTER, 0, 0)
                 .hasEditText(true)
@@ -138,7 +95,7 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
 
     @Override
     public void dismiss() {
-        EasyFloat.dismiss(DebugFloatView.class.getCanonicalName());
+        EasyFloat.dismiss(LogFloatView.class.getCanonicalName());
     }
 
     private void checkPosition(float nowY){
@@ -166,5 +123,37 @@ public class DebugFloatView extends FrameLayout implements FloatViewInterface {
                 isToBottom = true;
             }
         }
+    }
+
+    private void doAni(){
+        FloatViewHelper helper = EasyFloat.getHelper(LogFloatView.class.getCanonicalName());
+
+        int buttonX = DisplayUtils.dp2px(getContext(), isMin ? 4 : 8);
+        int buttonY = DisplayUtils.dp2px(getContext(), isMin ? 4 : 2);
+        int bgWidth = DisplayUtils.dp2px(getContext(), isMin ? 32 : isExpand ? 320 : 240);
+        int bgHeight = DisplayUtils.dp2px(getContext(), isMin ? 32 : isExpand ? 480 : 240);
+
+        MaterialCardView root = binding.getRoot();
+        ViewGroup.LayoutParams rootLayoutParams = root.getLayoutParams();
+
+        if (isMin){
+            binding.closeButton.setVisibility(GONE);
+            binding.markBox.setVisibility(GONE);
+            binding.drag.setVisibility(GONE);
+            binding.minButton.setRotation(180);
+        } else {
+            binding.closeButton.setVisibility(VISIBLE);
+            binding.markBox.setVisibility(VISIBLE);
+            binding.drag.setVisibility(VISIBLE);
+            binding.minButton.setRotation(0);
+        }
+        binding.minButton.setX(buttonX);
+        binding.minButton.setY(buttonY);
+        rootLayoutParams.width = bgWidth;
+        rootLayoutParams.height = bgHeight;
+        root.setLayoutParams(rootLayoutParams);
+        helper.params.width = bgWidth;
+        helper.params.height = bgHeight;
+        helper.manager.updateViewLayout(helper.floatViewParent, helper.params);
     }
 }
