@@ -35,8 +35,8 @@
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.Node{
     protected top.bogey.touch_tool.room.bean.node.NodeType type;
-    protected java.lang.Object value;
     protected top.bogey.touch_tool.room.bean.node.TimeArea timeArea;
+    protected java.lang.Object value;
 }
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.TaskNode$TaskInfo{
@@ -50,10 +50,19 @@
     private int screen;
 }
 
+-keepclassmembers class top.bogey.touch_tool.room.bean.node.TouchNode$TouchPath{
+    private java.util.List path;
+    private top.bogey.touch_tool.utils.easy_float.FloatGravity gravity;
+    private android.graphics.Point offset;
+    private int screen;
+    private boolean touchOffset;
+}
+
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ColorNode$ColorInfo{
     private int[] color;
     private int minSize;
     private int maxSize;
+    private int screen;
 }
 
 -keepclassmembers class android.graphics.Point{
