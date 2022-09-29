@@ -35,15 +35,6 @@
             android:insetBottom="0dp"
             app:icon="@drawable/icon_save" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/close_button"
-            style="@style/Theme.AutoTouch.Button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginHorizontal="8dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            app:icon="@drawable/icon_close" />
     </LinearLayout>
 
     <com.google.android.material.slider.RangeSlider

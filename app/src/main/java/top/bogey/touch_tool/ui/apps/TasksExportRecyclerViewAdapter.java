@@ -1,5 +1,6 @@
 package top.bogey.touch_tool.ui.apps;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import top.bogey.touch_tool.databinding.ViewTasksExportAppItemBinding;
 import top.bogey.touch_tool.databinding.ViewTasksExportTaskItemBinding;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
+import top.bogey.touch_tool.room.data.TaskRepository;
 
 public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksExportRecyclerViewAdapter.ViewHolder> {
     private static final int APP = 1;
@@ -37,10 +39,10 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
     public TasksExportRecyclerViewAdapter(TasksExportView parent) {
         this.parent = parent;
         viewModel = new ViewModelProvider(parent.requireActivity()).get(MainViewModel.class);
-        tasks = viewModel.getAllTasks();
+        tasks = TaskRepository.getInstance(parent.getContext()).getAllTasks();
         selectTasks.addAll(tasks);
 
-        List<TaskNode.TaskGroup> originData = viewModel.getTaskGroups();
+        List<TaskNode.TaskGroup> originData = TaskRepository.getInstance(parent.getContext()).getTaskGroups();
         for (TaskNode.TaskGroup taskGroup : originData) {
             showData.add(taskGroup);
             showInfo.put(taskGroup.getPkgName(), Boolean.FALSE);
@@ -142,10 +144,12 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
     protected class ViewHolder extends RecyclerView.ViewHolder{
         private ViewTasksExportAppItemBinding appBinding;
         private ViewTasksExportTaskItemBinding taskBinding;
+        private final Context context;
 
         public ViewHolder(ViewTasksExportAppItemBinding binding) {
             super(binding.getRoot());
             appBinding = binding;
+            context = binding.getRoot().getContext();
             binding.getRoot().setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) showData.get(index);
@@ -172,6 +176,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         public ViewHolder(ViewTasksExportTaskItemBinding binding){
             super(binding.getRoot());
             taskBinding = binding;
+            context = binding.getRoot().getContext();
             binding.checkBox.addOnCheckedStateChangedListener((checkBox, state) -> {
                 int index = getBindingAdapterPosition();
                 Task task = (Task) showData.get(index);
@@ -199,13 +204,13 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
                     TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) data;
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(taskGroup.getPkgName());
                     appBinding.appName.setText(appInfo.appName);
-                    PackageManager manager = itemView.getContext().getPackageManager();
-                    if (appInfo.packageName.equals(itemView.getContext().getString(R.string.common_package_name))){
-                        appBinding.icon.setImageDrawable(itemView.getContext().getApplicationInfo().loadIcon(manager));
+                    PackageManager manager = context.getPackageManager();
+                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                        appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
                     } else {
                         appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
                     }
-                    String string = itemView.getContext().getString(R.string.export_tasks_count, getSelectCountByPackageName(taskGroup.getPkgName()), taskGroup.getCount());
+                    String string = context.getString(R.string.export_tasks_count, getSelectCountByPackageName(taskGroup.getPkgName()), taskGroup.getCount());
                     appBinding.numberText.setText(string);
                     break;
                 case TASK:

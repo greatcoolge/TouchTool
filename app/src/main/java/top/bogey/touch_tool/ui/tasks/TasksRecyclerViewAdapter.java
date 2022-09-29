@@ -24,6 +24,7 @@ import top.bogey.touch_tool.databinding.ViewTasksItemBinding;
 import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.TaskStatus;
+import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.actions.ActionFloatView;
 import top.bogey.touch_tool.ui.record.RecordFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
@@ -114,7 +115,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     if (text != null && text.length() > 0){
                         task.setTitle(text.toString());
                         notifyItemChanged(index);
-                        viewModel.saveTask(task);
+                        TaskRepository.getInstance(context).saveTask(task);
                     }
                     binding.titleEdit.setText(task.getTitle());
                     itemView.requestFocus();
@@ -140,7 +141,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     }
                     refreshItem(task);
                     if (status != task.getStatus()){
-                        viewModel.saveTask(task);
+                        TaskRepository.getInstance(context).saveTask(task);
                     }
                 }
             });
@@ -151,7 +152,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     Task task = tasks.get(index);
                     tasks.remove(index);
                     notifyItemRemoved(index);
-                    viewModel.deleteTask(task);
+                    TaskRepository.getInstance(context).deleteTask(task);
                 } else {
                     isDeleteMode = true;
                     binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorError, 0)));
@@ -177,7 +178,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 new ActionFloatView(context, task, action, result -> {
                     task.getActions().add(action);
                     adapter.notifyNew();
-                    viewModel.saveTask(task);
+                    TaskRepository.getInstance(context).saveTask(task);
                 }).show();
             });
 
@@ -185,7 +186,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 new RecordFloatView(context, task, result -> {
-                    viewModel.saveTask(task);
+                    TaskRepository.getInstance(context).saveTask(task);
                     notifyItemChanged(index);
                 }).show();
                 return true;

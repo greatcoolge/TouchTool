@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 
 public abstract class Node implements Cloneable {
     protected final NodeType type;
+    protected final TimeArea timeArea = new TimeArea(100, 100);
     protected Object value;
-    protected TimeArea timeArea = new TimeArea(100, 100);
 
     protected Node(NodeType type){
         this.type = type;
@@ -16,21 +16,19 @@ public abstract class Node implements Cloneable {
         this.value = value;
     }
 
-    public Object getValue(){
-        return value;
-    }
-
-    public void setValue(Object value){
-        this.value = value;
+    public NodeType getType() {
+        return type;
     }
 
     public TimeArea getTimeArea() {
         return timeArea;
     }
 
-    public NodeType getType() {
-        return type;
+    public void setValue(Object value){
+        this.value = value;
     }
+
+    public abstract Object getValue();
 
     public abstract boolean isValid();
 
@@ -48,7 +46,7 @@ public abstract class Node implements Cloneable {
             Node newNode = getClass().cast(super.clone());
             if (newNode != null) {
                 newNode.setValue(cloneValue());
-                newNode.timeArea = new TimeArea(timeArea.getMin(), timeArea.getMax());
+                newNode.timeArea.setTime(timeArea.getMin(), timeArea.getMax());
                 node = newNode;
             }
         } catch (Exception e) {

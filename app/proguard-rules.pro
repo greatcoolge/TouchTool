@@ -47,7 +47,7 @@
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ImageNode$ImageInfo{
     private java.lang.String image;
     private int value;
-    private int screenWidth;
+    private int screen;
 }
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ColorNode$ColorInfo{

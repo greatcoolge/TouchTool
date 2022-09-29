@@ -45,6 +45,7 @@ import top.bogey.touch_tool.databinding.ActivityMainBinding;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.data.CustomTypeConverts;
+import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.utils.AppUtils;
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            viewModel.saveTask(newTasks);
+            TaskRepository.getInstance(this).saveTask(newTasks);
         }
     }
 

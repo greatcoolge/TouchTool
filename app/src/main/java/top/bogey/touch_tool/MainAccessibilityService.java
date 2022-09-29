@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.os.IBinder;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -34,7 +33,6 @@ import top.bogey.touch_tool.utils.TaskCallback;
 public class MainAccessibilityService extends AccessibilityService {
     public static final String SAVE_PATH = "Save";
     private static final String SERVICE_ENABLED = "service_enabled";
-    public static final String ACTION_TOUCH_OFFSET = "action_touch_offset";
 
     // 服务
     private boolean serviceConnected = false;
@@ -201,11 +199,5 @@ public class MainAccessibilityService extends AccessibilityService {
                 if (callback != null) callback.onResult(false);
             }
         }, null);
-    }
-
-    public Point getFixedPosition(int x, int y){
-        SharedPreferences preferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        int offset = preferences.getInt(ACTION_TOUCH_OFFSET, 0);
-        return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
     }
 }

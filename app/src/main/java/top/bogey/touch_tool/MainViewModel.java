@@ -93,22 +93,6 @@ public class MainViewModel extends AndroidViewModel {
         return repository.getTasksLiveByPackageName(pkgName);
     }
 
-    public List<Task> getAllTasks(){
-        return repository.getAllTasks();
-    }
-
-    public void saveTask(Task task){
-        repository.saveTask(task);
-    }
-
-    public void saveTask(List<Task> tasks){
-        repository.saveTask(tasks);
-    }
-
-    public void deleteTask(Task task){
-        repository.deleteTask(task);
-    }
-
     public Task getCopyTask() {
         return copyTask.getValue();
     }
@@ -116,9 +100,5 @@ public class MainViewModel extends AndroidViewModel {
     public void setCopyTask(Task task) {
         if (task != null) copyTask.setValue(new Task(task));
         else copyTask.setValue(null);
-    }
-
-    public List<TaskNode.TaskGroup> getTaskGroups(){
-        return repository.getTaskGroups();
     }
 }

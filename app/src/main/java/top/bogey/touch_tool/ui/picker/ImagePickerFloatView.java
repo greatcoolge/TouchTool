@@ -61,12 +61,6 @@ public class ImagePickerFloatView extends BasePickerFloatView {
             dismiss();
         });
 
-        binding.closeButton.setOnClickListener(v -> {
-            isMarked = false;
-            markArea = new RectF();
-            refreshUI();
-        });
-
         binding.backButton.setOnClickListener(v -> dismiss());
 
         markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -100,8 +94,8 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                     Point size = DisplayUtils.getScreenSize(service);
                     if (bitmap.getWidth() >= size.x && bitmap.getHeight() >= size.y){
                         showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
-                        int width = DisplayUtils.getScreenWidth(service);
-                        float scale = ((float) width) / imageNode.getValue().getScreenWidth();
+                        int width = DisplayUtils.getScreen(service);
+                        float scale = ((float) width) / imageNode.getValue().getScreen();
                         Rect rect = service.binder.matchImage(showBitmap, imageNode.getValue().getScaleBitmap(scale), imageNode.getValue().getValue());
                         if (rect != null){
                             markArea = new RectF(rect);
@@ -141,7 +135,9 @@ public class ImagePickerFloatView extends BasePickerFloatView {
         }
         canvas.saveLayer(getLeft(), getTop(), getRight(), getBottom(), bitmapPaint);
         super.dispatchDraw(canvas);
-        canvas.drawRect(markArea, markPaint);
+        RectF rectF = new RectF(markArea);
+        rectF.sort();
+        canvas.drawRect(rectF, markPaint);
         canvas.restore();
     }
 
@@ -176,6 +172,10 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                             rect = new Rect(location[0], location[1], location[0] + binding.markBox.getWidth(), location[1] + binding.markBox.getHeight());
                             if (rect.contains((int) rawX, (int) rawY)) {
                                 adjustMode = AdjustMode.DRAG;
+                            } else {
+                                adjustMode = AdjustMode.NONE;
+                                markArea = new RectF(x, y, x, y);
+                                isMarked = false;
                             }
                         }
                     }
@@ -210,7 +210,6 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                 } else {
                     markArea.right = x;
                     markArea.bottom = y;
-                    markArea.sort();
                 }
                 break;
 

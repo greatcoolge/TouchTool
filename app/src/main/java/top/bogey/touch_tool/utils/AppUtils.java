@@ -1,9 +1,13 @@
 package top.bogey.touch_tool.utils;
 
+import static top.bogey.touch_tool.MainAccessibilityService.SAVE_PATH;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.provider.Settings;
 
@@ -15,6 +19,7 @@ import java.util.List;
 import top.bogey.touch_tool.R;
 
 public class AppUtils {
+    public static final String ACTION_TOUCH_OFFSET = "action_touch_offset";
 
     public static native MatchResult nativeMatchTemplate(Bitmap bitmap, Bitmap temp, int method);
     public static native List<MatchResult> nativeMatchColor(Bitmap bitmap, int[] hsvColor);
@@ -56,4 +61,9 @@ public class AppUtils {
         return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
     }
 
+    public static Point getFixedPosition(Context context, int x, int y){
+        SharedPreferences preferences = context.getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
+        int offset = preferences.getInt(ACTION_TOUCH_OFFSET, 0);
+        return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
+    }
 }

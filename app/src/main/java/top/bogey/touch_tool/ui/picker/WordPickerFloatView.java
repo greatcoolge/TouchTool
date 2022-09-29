@@ -35,7 +35,6 @@ import top.bogey.touch_tool.utils.FloatClickCallback;
 public class WordPickerFloatView extends BasePickerFloatView{
     private final FloatPickerWordBinding binding;
     private final TextNode textNode;
-    private boolean addEnabled = true;
 
     private TreeNodeManager manager;
     private boolean showList = false;
@@ -53,17 +52,15 @@ public class WordPickerFloatView extends BasePickerFloatView{
         binding = FloatPickerWordBinding.inflate(LayoutInflater.from(context), this, true);
 
         floatCallback = new WordPickerClickCallback((rawX, rawY) -> binding.getRoot().postDelayed(() -> {
-            if (addEnabled && !showList){
+            if (!showList){
                 AccessibilityNodeInfo node = getClickableNodeIn(rawX, rawY);
                 if (node != null){
                     showWordView(node, true);
                 }
             }
-            addEnabled = true;
         }, 50));
 
         binding.saveButton.setOnClickListener(v -> {
-            addEnabled = false;
             if (pickerCallback != null){
                 pickerCallback.onComplete(this);
             }
@@ -73,7 +70,6 @@ public class WordPickerFloatView extends BasePickerFloatView{
         binding.backButton.setOnClickListener(v -> dismiss());
 
         binding.switchButton.setOnClickListener(v -> {
-            addEnabled = false;
             ViewGroup.LayoutParams params = binding.constraintLayout.getLayoutParams();
             int px = DisplayUtils.dp2px(context, 300);
             int start = showList ? px : 0;
@@ -103,7 +99,6 @@ public class WordPickerFloatView extends BasePickerFloatView{
         });
 
         binding.titleText.setOnClickListener(v -> {
-            addEnabled = false;
             CharSequence text = binding.titleText.getText();
             if (text != null && text.length() > 0){
                 if (text.toString().equals(selectKey)){
@@ -117,7 +112,6 @@ public class WordPickerFloatView extends BasePickerFloatView{
         });
 
         binding.markBox.setOnClickListener(v -> {
-            addEnabled = false;
             showWordView(null, false);
         });
     }

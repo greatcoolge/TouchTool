@@ -15,11 +15,17 @@ import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
 
 public class TaskRepository {
+    private static TaskRepository repository;
     private final TaskDao taskDao;
 
     public TaskRepository(Context context){
         TaskDatabase database = TaskDatabase.getInstance(context.getApplicationContext());
         taskDao = database.getTaskDao();
+    }
+
+    public static TaskRepository getInstance(Context context){
+        if (repository == null) repository = new TaskRepository(context);
+        return repository;
     }
 
     public List<Task> getAllTasks(){

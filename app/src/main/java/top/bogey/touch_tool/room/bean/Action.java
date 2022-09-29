@@ -3,7 +3,6 @@ package top.bogey.touch_tool.room.bean;
 import android.content.Context;
 
 import java.util.List;
-import java.util.UUID;
 
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.room.bean.node.DelayNode;
@@ -91,7 +90,7 @@ public class Action {
             case IMAGE:
                 return context.getString(R.string.image_target, touch);
             case TOUCH:
-                String slide = ((TouchNode) node).getPoints().size() > 1 ? context.getString(R.string.slide) : context.getString(R.string.touch);
+                String slide = ((TouchNode) node).getValue().getPathLen() > 1 ? context.getString(R.string.slide) : context.getString(R.string.touch);
                 return context.getString(R.string.pos_target, slide);
             case COLOR:
                 return context.getString(R.string.color_target);

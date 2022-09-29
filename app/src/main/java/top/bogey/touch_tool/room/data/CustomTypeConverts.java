@@ -1,5 +1,7 @@
 package top.bogey.touch_tool.room.data;
 
+import android.graphics.Point;
+
 import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
@@ -30,6 +32,7 @@ import top.bogey.touch_tool.room.bean.node.TaskNode;
 import top.bogey.touch_tool.room.bean.node.TextNode;
 import top.bogey.touch_tool.room.bean.node.TimeArea;
 import top.bogey.touch_tool.room.bean.node.TouchNode;
+import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
 public class CustomTypeConverts {
     @TypeConverter
@@ -60,12 +63,15 @@ public class CustomTypeConverts {
 
 
             } else if (nodeType == NodeType.DELAY) {
-                JsonObject delayArea = jsonObject.get("value").getAsJsonObject();
                 int min = 1000, max = 1000;
-                JsonElement minElement = delayArea.get("min");
-                if (minElement != null) min = minElement.getAsInt();
-                JsonElement maxElement = delayArea.get("max");
-                if (maxElement != null) max = maxElement.getAsInt();
+
+                JsonObject delayArea = jsonObject.get("value").getAsJsonObject();
+                if (delayArea != null){
+                    JsonElement minElement = delayArea.get("min");
+                    if (minElement != null) min = minElement.getAsInt();
+                    JsonElement maxElement = delayArea.get("max");
+                    if (maxElement != null) max = maxElement.getAsInt();
+                }
                 node = new DelayNode(new TimeArea(min, max));
 
 
@@ -74,34 +80,66 @@ public class CustomTypeConverts {
 
 
             } else if (nodeType == NodeType.IMAGE) {
-                JsonObject imageInfo = jsonObject.get("value").getAsJsonObject();
                 String image = null;
-                int value = 95, screenWidth = 1080;
-                JsonElement imageElement = imageInfo.get("image");
-                if (imageElement != null) image = imageElement.getAsString();
-                JsonElement valueElement = imageInfo.get("value");
-                if (valueElement != null) value = valueElement.getAsInt();
-                JsonElement screenWidthElement = imageInfo.get("screenWidth");
-                if (screenWidthElement != null) screenWidth = screenWidthElement.getAsInt();
-                node = new ImageNode(new ImageNode.ImageInfo(image, value, screenWidth));
+                int value = 95, screen = 1080;
+
+                JsonObject imageInfo = jsonObject.get("value").getAsJsonObject();
+                if (imageInfo != null){
+                    JsonElement imageElement = imageInfo.get("image");
+                    if (imageElement != null) image = imageElement.getAsString();
+                    JsonElement valueElement = imageInfo.get("value");
+                    if (valueElement != null) value = valueElement.getAsInt();
+                    JsonElement screenWidthElement = imageInfo.get("screen");
+                    if (screenWidthElement != null) screen = screenWidthElement.getAsInt();
+                }
+                node = new ImageNode(new ImageNode.ImageInfo(image, value, screen));
 
 
             } else if (nodeType == NodeType.TOUCH) {
-                node = new TouchNode(jsonObject.get("value").getAsString());
+                List<Point> points = new ArrayList<>();
+                FloatGravity gravity = FloatGravity.TOP_LEFT;
+                int screen = 1080;
+                Point offset = new Point(0, 0);
+                boolean touchOffset = true;
 
+                JsonObject touchPath = jsonObject.get("value").getAsJsonObject();
+                if (touchPath != null) {
+                    JsonArray pathArray = touchPath.getAsJsonArray("path");
+                    if (pathArray != null) {
+                        for (JsonElement element : pathArray) {
+                            JsonObject point = element.getAsJsonObject();
+                            if (point != null)
+                                points.add(new Point(point.get("x").getAsInt(), point.get("y").getAsInt()));
+                        }
+                    }
+                    JsonElement gravityElement = touchPath.get("gravity");
+                    if (gravityElement != null)
+                        gravity = FloatGravity.valueOf(gravityElement.getAsString());
+                    JsonElement offsetElement = touchPath.get("offset");
+                    if (offsetElement != null)
+                        offset.set(offsetElement.getAsJsonObject().get("x").getAsInt(), offsetElement.getAsJsonObject().get("y").getAsInt());
+                    JsonElement screenWidthElement = touchPath.get("screen");
+                    if (screenWidthElement != null) screen = screenWidthElement.getAsInt();
+                }
+                node = new TouchNode(new TouchNode.TouchPath(points, gravity, offset, screen, touchOffset));
 
             } else if (nodeType == NodeType.COLOR) {
-                JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
                 int[] color = {0, 0, 0};
-                int minSize = 0, maxSize = 81;
-                JsonArray colorArray = colorInfo.getAsJsonArray("color");
-                if (colorArray != null)
-                    color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
-                JsonElement minSizeElement = colorInfo.get("minSize");
-                if (minSizeElement != null) minSize = minSizeElement.getAsInt();
-                JsonElement maxSizeElement = colorInfo.get("maxSize");
-                if (maxSizeElement != null) maxSize = maxSizeElement.getAsInt();
-                node = new ColorNode(new ColorNode.ColorInfo(color, minSize, maxSize));
+                int minSize = 0, maxSize = 81, screen = 1080;
+
+                JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
+                if (colorInfo != null){
+                    JsonArray colorArray = colorInfo.getAsJsonArray("color");
+                    if (colorArray != null)
+                        color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
+                    JsonElement minSizeElement = colorInfo.get("minSize");
+                    if (minSizeElement != null) minSize = minSizeElement.getAsInt();
+                    JsonElement maxSizeElement = colorInfo.get("maxSize");
+                    if (maxSizeElement != null) maxSize = maxSizeElement.getAsInt();
+                    JsonElement screenWidthElement = colorInfo.get("screen");
+                    if (screenWidthElement != null) screen = screenWidthElement.getAsInt();
+                }
+                node = new ColorNode(new ColorNode.ColorInfo(color, minSize, maxSize, screen));
 
 
             } else if (nodeType == NodeType.KEY) {
@@ -109,24 +147,26 @@ public class CustomTypeConverts {
 
 
             } else if (nodeType == NodeType.TASK) {
-                JsonObject taskInfo = jsonObject.get("value").getAsJsonObject();
                 String id = null, title = null;
-                JsonElement idElement = taskInfo.get("id");
-                if (idElement != null) id = idElement.getAsString();
-                JsonElement titleElement = taskInfo.get("title");
-                if (titleElement != null) title = titleElement.getAsString();
+                JsonObject taskInfo = jsonObject.get("value").getAsJsonObject();
+                if (taskInfo != null){
+                    JsonElement idElement = taskInfo.get("id");
+                    if (idElement != null) id = idElement.getAsString();
+                    JsonElement titleElement = taskInfo.get("title");
+                    if (titleElement != null) title = titleElement.getAsString();
+                }
                 node = new TaskNode(new TaskNode.TaskInfo(id, title));
             }
 
-            JsonObject timeArea = jsonObject.get("timeArea").getAsJsonObject();
             int min = 1000, max = 1000;
-            JsonElement minElement = timeArea.get("min");
-            if (minElement != null) min = minElement.getAsInt();
-            JsonElement maxElement = timeArea.get("max");
-            if (maxElement != null) max = maxElement.getAsInt();
-            node.getTimeArea().setMin(min);
-            node.getTimeArea().setMax(max);
-
+            JsonObject timeArea = jsonObject.get("timeArea").getAsJsonObject();
+            if (timeArea != null){
+                JsonElement minElement = timeArea.get("min");
+                if (minElement != null) min = minElement.getAsInt();
+                JsonElement maxElement = timeArea.get("max");
+                if (maxElement != null) max = maxElement.getAsInt();
+            }
+            node.getTimeArea().setTime(min, max);
 
             return node;
         }

@@ -93,8 +93,8 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         binding.delayButton.setOnClickListener(v -> addAction(new DelayNode(new TimeArea(1000, 1000))));
         binding.wordButton.setOnClickListener(v -> addAction(new TextNode("")));
         binding.imageButton.setOnClickListener(v -> addAction(new ImageNode(new ImageNode.ImageInfo(95))));
-        binding.posButton.setOnClickListener(v -> addAction(new TouchNode("")));
-        binding.colorButton.setOnClickListener(v -> addAction(new ColorNode(new ColorNode.ColorInfo())));
+        binding.posButton.setOnClickListener(v -> addAction(new TouchNode(new TouchNode.TouchPath(context))));
+        binding.colorButton.setOnClickListener(v -> addAction(new ColorNode(new ColorNode.ColorInfo(context))));
         binding.keyButton.setOnClickListener(v -> addAction(new KeyNode(1)));
         binding.taskButton.setOnClickListener(v -> addAction(new TaskNode(null)));
 

@@ -11,6 +11,7 @@ import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class ImageNode extends Node{
@@ -47,7 +48,7 @@ public class ImageNode extends Node{
                 Rect rect = matchImage(service);
                 if (rect != null){
                     Path path = new Path();
-                    Point fixedPosition = service.getFixedPosition(rect.centerX(), rect.centerY());
+                    Point fixedPosition = AppUtils.getFixedPosition(service, rect.centerX(), rect.centerY());
                     path.moveTo(fixedPosition.x, fixedPosition.y);
                     return path;
                 }
@@ -58,8 +59,8 @@ public class ImageNode extends Node{
 
     private Rect matchImage(MainAccessibilityService service){
         ImageInfo imageInfo = getValue();
-        int width = DisplayUtils.getScreenWidth(service);
-        float scale = ((float) width) / imageInfo.screenWidth;
+        int width = DisplayUtils.getScreen(service);
+        float scale = ((float) width) / imageInfo.screen;
         if (scale == 1){
             return service.binder.matchImage(imageInfo.getBitmap(), imageInfo.getValue());
         } else {
@@ -71,7 +72,7 @@ public class ImageNode extends Node{
     @Override
     public ImageInfo cloneValue() {
         ImageInfo value = getValue();
-        return new ImageInfo(value.image, value.value, value.screenWidth);
+        return new ImageInfo(value.image, value.value, value.screen);
     }
 
     public static class ImageInfo{
@@ -82,16 +83,16 @@ public class ImageNode extends Node{
 
         private String image;
         private int value;
-        private int screenWidth;
+        private int screen;
 
         public ImageInfo(int value) {
             this.value = value;
         }
 
-        public ImageInfo(String image, int value, int screenWidth) {
+        public ImageInfo(String image, int value, int screen) {
             this.image = image;
             this.value = value;
-            this.screenWidth = screenWidth;
+            this.screen = screen;
         }
 
         public Bitmap getBitmap() {
@@ -117,7 +118,7 @@ public class ImageNode extends Node{
                 scaleBitmap.recycle();
                 scaleBitmap = null;
             }
-            this.screenWidth = screenWidth;
+            this.screen = screenWidth;
         }
 
         public Bitmap getScaleBitmap(float scale) {
@@ -145,8 +146,8 @@ public class ImageNode extends Node{
             return image;
         }
 
-        public int getScreenWidth() {
-            return screenWidth;
+        public int getScreen() {
+            return screen;
         }
     }
 }

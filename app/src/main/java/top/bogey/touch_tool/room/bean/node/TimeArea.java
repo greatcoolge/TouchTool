@@ -13,21 +13,13 @@ public class TimeArea{
         this.max = max;
     }
 
-    public int getRandomTime(){
-        return (int) Math.round(Math.random() * Math.abs(max - min) + Math.min(min, max));
+    public void setTime(int min, int max){
+        this.min = min;
+        this.max = max;
     }
 
     public void setTime(int time){
-        min = time;
-        max = time;
-    }
-
-    public String getTitle(){
-        if (Math.min(min, max) == min){
-            return min + "-" + max;
-        } else {
-            return max + "-" + min;
-        }
+        setTime(time, time);
     }
 
     public int getRealMax(){
@@ -36,6 +28,10 @@ public class TimeArea{
 
     public int getRealMin(){
         return Math.min(min, max);
+    }
+
+    public int getRandomTime(){
+        return (int) Math.round(Math.random() * Math.abs(max - min) + getRealMin());
     }
 
     public int getMin() {
@@ -52,5 +48,10 @@ public class TimeArea{
 
     public void setMax(int max) {
         this.max = max;
+    }
+
+    public String getTitle(){
+        if (min == max) return String.valueOf(min);
+        return getRealMin() + "-" + getRealMax();
     }
 }

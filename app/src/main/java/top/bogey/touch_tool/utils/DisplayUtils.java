@@ -11,6 +11,8 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.util.List;
+
 public class DisplayUtils {
     public static boolean isDefaultPortrait = true;
 
@@ -60,7 +62,7 @@ public class DisplayUtils {
         return new Rect(0, 0, size.x, size.y);
     }
 
-    public static int getScreenWidth(Context context){
+    public static int getScreen(Context context){
         Point size = getScreenSize(context);
         return Math.min(size.x, size.y);
     }
@@ -111,5 +113,22 @@ public class DisplayUtils {
     public static int getColorFromHsv(int[] hsv){
         float[] tmp = new float[]{hsv[0] * 2, hsv[1] / 255f, hsv[2] / 255f};
         return Color.HSVToColor(tmp);
+    }
+
+    public static Rect calculatePointArea(List<Point> points){
+        boolean isInit = true;
+        Rect area = new Rect();
+        for (Point point : points) {
+            if (isInit){
+                area.set(point.x, point.y, point.x, point.y);
+                isInit = false;
+            } else {
+                if (point.x < area.left) area.left = point.x;
+                if (point.x > area.right) area.right = point.x;
+                if (point.y < area.top) area.top = point.y;
+                if (point.y > area.bottom) area.bottom = point.y;
+            }
+        }
+        return area;
     }
 }

@@ -71,6 +71,11 @@
                 layout="@layout/float_action_text" />
 
             <include
+                android:id="@+id/touch_include"
+                layout="@layout/float_action_touch"
+                android:visibility="invisible" />
+
+            <include
                 android:id="@+id/image_include"
                 layout="@layout/float_action_image"
                 android:visibility="invisible" />

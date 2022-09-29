@@ -29,6 +29,7 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewAppsBinding;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class AppsView extends Fragment {
@@ -73,7 +74,7 @@ public class AppsView extends Fragment {
             @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                List<Task> tasks = viewModel.getAllTasks();
+                List<Task> tasks = TaskRepository.getInstance(getContext()).getAllTasks();
                 switch (menuItem.getItemId()) {
                     case R.id.show_system:
                         viewModel.showSystem.setValue(!Boolean.TRUE.equals(viewModel.showSystem.getValue()));
@@ -92,7 +93,7 @@ public class AppsView extends Fragment {
                         List<String> pkgNames = viewModel.getAllPkgNames();
                         for (Task task : tasks) {
                             if (!pkgNames.contains(task.getPkgName())){
-                                viewModel.deleteTask(task);
+                                TaskRepository.getInstance(getContext()).deleteTask(task);
                             }
                         }
                         Toast.makeText(requireContext(), R.string.clean_tips, Toast.LENGTH_LONG).show();

@@ -21,6 +21,8 @@ import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
 import top.bogey.touch_tool.room.data.TaskCallable;
+import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.RunningUtils;
 import top.bogey.touch_tool.utils.TaskCallback;
 
 @SuppressLint("ViewConstructor")
@@ -103,6 +105,7 @@ public class PlayFloatViewItem extends FrameLayout {
                         refreshProgress(percent);
                     }
                 });
+                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_run_manual_task, task.getTitle()));
             }
             refreshProgress(0);
         }

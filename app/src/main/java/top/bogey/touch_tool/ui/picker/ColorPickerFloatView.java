@@ -60,12 +60,6 @@ public class ColorPickerFloatView extends BasePickerFloatView {
             dismiss();
         });
 
-        binding.closeButton.setOnClickListener(v -> {
-            isMarked = false;
-            markArea.clear();
-            refreshUI();
-        });
-
         binding.backButton.setOnClickListener(v -> dismiss());
 
         binding.slider.addOnChangeListener((slider, value, fromUser) -> {
@@ -89,7 +83,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     }
 
     public ColorNode.ColorInfo getColor(){
-        return new ColorNode.ColorInfo(color, minSize, maxSize);
+        return new ColorNode.ColorInfo(color, minSize, maxSize, DisplayUtils.getScreen(service));
     }
 
     public void realShow(int delay){
@@ -170,10 +164,9 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!isMarked) {
-                    lastX = x;
-                    lastY = y;
-                }
+                lastX = x;
+                lastY = y;
+                isMarked = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!isMarked){

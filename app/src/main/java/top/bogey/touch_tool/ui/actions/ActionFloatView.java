@@ -3,7 +3,6 @@ package top.bogey.touch_tool.ui.actions;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.text.Editable;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -30,9 +29,7 @@ import top.bogey.touch_tool.room.bean.node.NullNode;
 import top.bogey.touch_tool.room.bean.node.NumberNode;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
 import top.bogey.touch_tool.room.bean.node.TextNode;
-import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.ui.picker.ImagePickerFloatView;
-import top.bogey.touch_tool.ui.picker.TouchPickerFloatView;
 import top.bogey.touch_tool.ui.picker.WordPickerFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
@@ -87,13 +84,13 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         binding.modeGroup.check(ids[action.getActionMode().ordinal()]);
 
         adapter = new ActionsRecyclerViewAdapter(task, action.getTargets());
-        binding.delayButton.setOnClickListener(v -> adapter.addNode(NodeType.DELAY));
-        binding.textButton.setOnClickListener(v -> adapter.addNode(NodeType.TEXT));
-        binding.imageButton.setOnClickListener(v -> adapter.addNode(NodeType.IMAGE));
-        binding.touchButton.setOnClickListener(v -> adapter.addNode(NodeType.TOUCH));
-        binding.colorButton.setOnClickListener(v -> adapter.addNode(NodeType.COLOR));
-        binding.keyButton.setOnClickListener(v -> adapter.addNode(NodeType.KEY));
-        binding.taskButton.setOnClickListener(v -> adapter.addNode(NodeType.TASK));
+        binding.delayButton.setOnClickListener(v -> adapter.addNode(context, NodeType.DELAY));
+        binding.textButton.setOnClickListener(v -> adapter.addNode(context,NodeType.TEXT));
+        binding.imageButton.setOnClickListener(v -> adapter.addNode(context,NodeType.IMAGE));
+        binding.touchButton.setOnClickListener(v -> adapter.addNode(context,NodeType.TOUCH));
+        binding.colorButton.setOnClickListener(v -> adapter.addNode(context,NodeType.COLOR));
+        binding.keyButton.setOnClickListener(v -> adapter.addNode(context,NodeType.KEY));
+        binding.taskButton.setOnClickListener(v -> adapter.addNode(context,NodeType.TASK));
 
         binding.recyclerView.setAdapter(adapter);
 
@@ -141,23 +138,13 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         });
 
         binding.textInclude.pickerButton.setOnClickListener(v -> {
-            if (condition.getType() == NodeType.TEXT){
-                TextNode textNode = (TextNode) condition;
-                new WordPickerFloatView(getContext(), picker -> {
-                    WordPickerFloatView wordPicker = (WordPickerFloatView) picker;
-                    String word = wordPicker.getWord();
-                    textNode.setValue(word);
-                    binding.textInclude.textBaseInclude.titleEdit.setText(word);
-                }, textNode).show();
-            } else if (condition.getType() == NodeType.TOUCH){
-                TouchNode touchNode = (TouchNode) condition;
-                new TouchPickerFloatView(getContext(), picker -> {
-                    TouchPickerFloatView touchPicker = (TouchPickerFloatView) picker;
-                    List<Point> points = touchPicker.getPoints();
-                    touchNode.setValue(getContext(), points);
-                    binding.textInclude.textBaseInclude.titleEdit.setText(touchNode.getTitle());
-                }, touchNode.getPoints(getContext())).show();
-            }
+            TextNode textNode = (TextNode) condition;
+            new WordPickerFloatView(getContext(), picker -> {
+                WordPickerFloatView wordPicker = (WordPickerFloatView) picker;
+                String word = wordPicker.getWord();
+                textNode.setValue(word);
+                binding.textInclude.textBaseInclude.titleEdit.setText(word);
+            }, textNode).show();
         });
 
         binding.imageInclude.similarText.addTextChangedListener(new ActionsRecyclerViewAdapter.TextChangedWatcher(){
@@ -177,7 +164,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
             new ImagePickerFloatView(getContext(), picker -> {
                 ImagePickerFloatView imagePicker = (ImagePickerFloatView) picker;
                 Bitmap bitmap = imagePicker.getBitmap();
-                imageNode.getValue().setBitmap(bitmap, DisplayUtils.getScreenWidth(getContext()));
+                imageNode.getValue().setBitmap(bitmap, DisplayUtils.getScreen(getContext()));
                 binding.imageInclude.image.setImageBitmap(bitmap);
             }, imageNode).show();
         });

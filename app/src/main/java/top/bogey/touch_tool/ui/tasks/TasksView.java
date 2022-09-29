@@ -23,6 +23,7 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewTasksBinding;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.apps.AppInfo;
 import top.bogey.touch_tool.ui.record.QuickRecordFloatView;
 import top.bogey.touch_tool.ui.record.RecordFloatView;
@@ -68,13 +69,13 @@ public class TasksView extends Fragment {
                 task.setTitle(getString(R.string.task_title_default));
                 switch (menuItem.getItemId()) {
                     case R.id.add:
-                        viewModel.saveTask(task);
+                        TaskRepository.getInstance(getContext()).saveTask(task);
                         break;
                     case R.id.record:
-                        new RecordFloatView(requireContext(), task, result -> viewModel.saveTask(task)).show();
+                        new RecordFloatView(requireContext(), task, result -> TaskRepository.getInstance(getContext()).saveTask(task)).show();
                         break;
                     case R.id.record_smart:
-                        new QuickRecordFloatView(requireContext(), task, result -> viewModel.saveTask(task)).show();
+                        new QuickRecordFloatView(requireContext(), task, result -> TaskRepository.getInstance(getContext()).saveTask(task)).show();
                         break;
                     default:
                         return false;
@@ -108,7 +109,7 @@ public class TasksView extends Fragment {
             Task copyTask = viewModel.getCopyTask();
             if (copyTask != null){
                 copyTask.setPkgName(appInfo.packageName);
-                viewModel.saveTask(copyTask);
+                TaskRepository.getInstance(getContext()).saveTask(task);
             }
             viewModel.setCopyTask(null);
         });

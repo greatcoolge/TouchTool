@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
@@ -17,24 +16,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.touch_tool.MainApplication;
-import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewActionTextBaseBinding;
 import top.bogey.touch_tool.databinding.ViewTasksActionBinding;
 import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.actions.ActionFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecyclerViewAdapter.ViewHolder> {
-    private final MainViewModel viewModel;
     private List<Action> actions = new ArrayList<>();
     private Task task;
-
-    public ActionsRecyclerViewAdapter(){
-        viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
-    }
 
     @NonNull
     @Override
@@ -65,19 +58,21 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewTasksActionBinding binding;
+        private final Context context;
         private boolean isDeleteMode = false;
 
         @SuppressLint("PrivateResource")
         public ViewHolder(ViewTasksActionBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            context = binding.getRoot().getContext();
 
             itemView.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
                 new ActionFloatView(itemView.getContext(), task, action, result -> {
                     notifyItemChanged(index);
-                    viewModel.saveTask(task);
+                    TaskRepository.getInstance(context).saveTask(task);
                 }).show();
             });
 
@@ -92,7 +87,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                             Editable text = textBaseBinding.titleEdit.getText();
                             if (text != null) action.setTitle(String.valueOf(text));
                             notifyItemChanged(index);
-                            viewModel.saveTask(task);
+                            TaskRepository.getInstance(context).saveTask(task);
                             dialog.dismiss();
                         })
                         .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
@@ -106,7 +101,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 Action action = actions.get(index);
                 action.setEnable(!action.isEnable());
                 setChecked(binding.enabledToggle, action.isEnable());
-                viewModel.saveTask(task);
+                TaskRepository.getInstance(context).saveTask(task);
             });
 
             binding.upButton.setOnClickListener(v -> {
@@ -114,7 +109,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 int newIndex = Math.max(0, index - 1);
                 actions.add(newIndex, actions.remove(index));
                 notifyItemRangeChanged(newIndex, 2);
-                viewModel.saveTask(task);
+                TaskRepository.getInstance(context).saveTask(task);
             });
 
             binding.downButton.setOnClickListener(v -> {
@@ -122,7 +117,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 int newIndex = Math.min(actions.size() - 1, index + 1);
                 actions.add(newIndex, actions.remove(index));
                 notifyItemRangeChanged(index, 2);
-                viewModel.saveTask(task);
+                TaskRepository.getInstance(context).saveTask(task);
             });
 
             binding.deleteButton.setOnClickListener(v -> {
@@ -140,7 +135,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                             notifyItemChanged(index);
                         }
                     }
-                    viewModel.saveTask(task);
+                    TaskRepository.getInstance(context).saveTask(task);
                 } else {
                     isDeleteMode = true;
                     binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorError, 0)));

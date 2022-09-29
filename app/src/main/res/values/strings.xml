@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name_release">自动点击器</string>
-    <string name="app_name_debug">自动点击器DEBUG</string>
+    <string name="app_name_release">点击助手</string>
+    <string name="app_name_debug">点击助手DEBUG</string>
 
     <string name="common_name">通用</string>
     <string name="common_package_name" translatable="false">configs.common</string>
@@ -35,7 +35,7 @@
 
     <string name="capture_service_notification_channel_name">录屏服务快捷关闭通知</string>
     <string name="capture_service_notification_channel_tips">能在通知栏快速关闭录屏服务</string>
-    <string name="capture_service_notification_title">自动点击器 录屏服务 正在运行</string>
+    <string name="capture_service_notification_title">录屏服务 正在运行</string>
     <string name="capture_service_notification_text">点按即可关闭服务和通知</string>
 
     <string name="background_pop">后台弹出界面</string>
@@ -88,12 +88,6 @@
     <string name="delay_target">延迟%1$s毫秒</string>
     <string name="text_target">%1$s %2$s</string>
     <string name="image_target">%1$s图片</string>
-    <string name="pos_target">使用 %1$s 手势</string>
-    <string name="color_target">点击颜色</string>
-    <string name="key_target">使用 %1$s 按键</string>
-    <string name="task_target">执行 %1$s 任务</string>
-
-    <string name="touch">点击</string>
     <string name="long_touch">长按</string>
     <string name="slide">滑动</string>
 
@@ -107,6 +101,14 @@
 
     <string name="time_min">最小</string>
     <string name="time_max">最大</string>
+
+    <string name="pos_target">使用 %1$s 手势</string>
+    <string name="color_target">点击颜色</string>
+    <string name="key_target">使用 %1$s 按键</string>
+    <string name="task_target">执行 %1$s 任务</string>
+
+    <string name="touch">点击</string>
+
     <string name="similar">相似度</string>
     <string name="range">范围</string>
 

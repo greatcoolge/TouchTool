@@ -88,15 +88,17 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
         List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
         if (comTasks != null){
             for (Task comTask : comTasks) {
-                boolean flag = true;
-                for (Task task : tasks) {
-                    if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
-                        flag = false;
-                        break;
+                if (comTask.getStatus() == TaskStatus.MANUAL){
+                    boolean flag = true;
+                    for (Task task : tasks) {
+                        if (comTask.getTitle().equals(task.getTitle())){
+                            flag = false;
+                            break;
+                        }
                     }
-                }
-                if (flag){
-                    tasks.add(comTask);
+                    if (flag){
+                        tasks.add(comTask);
+                    }
                 }
             }
         }

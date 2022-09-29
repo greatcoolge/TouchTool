@@ -1,42 +1,34 @@
 package top.bogey.touch_tool.room.bean.node;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Path;
 import android.graphics.Point;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
+import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
 public class TouchNode extends Node {
-    public TouchNode(String value) {
-        super(NodeType.TOUCH, value);
+    public TouchNode(TouchPath touchPath) {
+        super(NodeType.TOUCH, touchPath);
     }
 
-    public void setValue(Context context, List<Point> value){
-        List<Point> points = new ArrayList<>();
-        for (Point point : value) {
-            points.add(DisplayUtils.px2percent(context, point));
-        }
-        this.value = new Gson().toJson(points);
+    public void setValue(Context context, List<Point> points) {
+        setValue(new TouchPath(context, points));
     }
 
     @Override
-    public String getValue() {
-        return (String) value;
+    public TouchPath getValue() {
+        return (TouchPath) value;
     }
 
     @Override
     public boolean isValid() {
-        List<Point> points = getPoints();
-        return points != null && !points.isEmpty();
+        TouchPath touchPath = getValue();
+        return touchPath != null && touchPath.getPathLen() > 0;
     }
 
     @Override
@@ -46,8 +38,8 @@ public class TouchNode extends Node {
 
     @Override
     public Object getNodeTarget(Object obj) {
-        MainAccessibilityService service = (MainAccessibilityService) obj;
-        return getPath(service);
+        Context context = (Context) obj;
+        return getValue().getPath(context, true);
     }
 
     @Override
@@ -55,63 +47,108 @@ public class TouchNode extends Node {
         return getValue();
     }
 
-    public List<Point> getPoints(){
-        List<Point> points = new ArrayList<>();
-        try{
-            List<Point> pointList = new Gson().fromJson(getValue(), new TypeToken<List<Point>>() {}.getType());
-            if (pointList != null) points = pointList;
-        } catch (JsonSyntaxException ignored){}
-        return points;
-    }
+    public static class TouchPath{
+        private final List<Point> path;
+        private final FloatGravity gravity;
 
-    public List<Point> getPoints(Context context){
-        List<Point> points = new ArrayList<>();
-        for (Point point : getPoints()) {
-            points.add(DisplayUtils.percent2px(context, point));
+        private final Point offset;
+        private final int screen;
+
+        private boolean touchOffset = true;
+
+        public TouchPath(Context context) {
+            path = new ArrayList<>();
+            gravity = FloatGravity.TOP_LEFT;
+            offset = new Point(0, 0);
+            screen = DisplayUtils.getScreen(context);
         }
-        return points;
-    }
 
-    public Path getPath(MainAccessibilityService service){
-        List<Point> value = getPoints();
-        if (value != null && !value.isEmpty()){
-            Path path = new Path();
-            Point firstPoint = DisplayUtils.percent2px(service, value.get(0));
-            firstPoint = service.getFixedPosition(firstPoint.x, firstPoint.y);
-            path.moveTo(firstPoint.x, firstPoint.y);
-            for (int i = 1; i < value.size(); i++) {
-                Point point = DisplayUtils.percent2px(service, value.get(i));
-                point = service.getFixedPosition(point.x, point.y);
-                path.lineTo(point.x, point.y);
+        public TouchPath(Context context, List<Point> points) {
+            path = points;
+            gravity = FloatGravity.TOP_LEFT;
+            offset = new Point(0, 0);
+            screen = DisplayUtils.getScreen(context);
+        }
+
+        public TouchPath(List<Point> path, FloatGravity gravity, Point offset, int screen, boolean touchOffset) {
+            this.path = path;
+            this.gravity = gravity;
+            this.offset = offset;
+            this.screen = screen;
+            this.touchOffset = touchOffset;
+        }
+
+        public int getPathLen() {
+            return path.size();
+        }
+
+        public Path getPath(Context context, boolean fixed){
+            List<Point> points = getPoints(context);
+            Path tmp = null;
+            for (Point point : points) {
+                point = getPoint(context, point, fixed);
+                if (tmp == null) {
+                    tmp = new Path();
+                    tmp.moveTo(point.x, point.y);
+                } else {
+                    tmp.lineTo(point.x, point.y);
+                }
             }
+            return tmp;
+        }
+
+        public List<Point> getPoints(){
             return path;
         }
-        return null;
-    }
 
-    public Path getPath(Context context){
-        List<Point> value = getPoints();
-        if (value != null && !value.isEmpty()){
-            Path path = new Path();
-            Point firstPoint = DisplayUtils.percent2px(context, value.get(0));
-            path.moveTo(firstPoint.x, firstPoint.y);
-            for (int i = 1; i < value.size(); i++) {
-                Point point = DisplayUtils.percent2px(context, value.get(i));
-                path.lineTo(point.x, point.y);
+        private Point getPoint(Context context, Point point, boolean fixed){
+            if (fixed) return AppUtils.getFixedPosition(context, point.x, point.y);
+            return point;
+        }
+
+        public List<Point> getPoints(Context context) {
+            Point start = getStartScreenPoint(context);
+            int width = DisplayUtils.getScreen(context);
+            float scale = width * 1f / screen;
+            List<Point> points = new ArrayList<>();
+            for (Point point : path) {
+                points.add(new Point((int) (point.x * scale) + start.x, (int) (point.y * scale) + start.y));
             }
-            return path;
+            return points;
         }
-        return null;
-    }
 
-    @SuppressLint("DefaultLocale")
-    public String getTitle(){
-        List<Point> value = getPoints();
-        if (value == null || value.size() == 0) return "";
-        StringBuilder builder = new StringBuilder();
-        for (Point point : value) {
-            builder.append(String.format("(%d,%d)->", point.x, point.y));
+        private Point getStartScreenPoint(Context context){
+            int width = DisplayUtils.getScreen(context);
+            float scale = width * 1f / screen;
+            Point start = new Point((int) (offset.x * scale), (int) (offset.y * scale));
+            Point size = DisplayUtils.getScreenSize(context);
+            switch (gravity) {
+                case TOP_LEFT:
+                    break;
+                case TOP_RIGHT:
+                    start.x = start.x + size.x;
+                    break;
+                case BOTTOM_LEFT:
+                    start.y = start.y + size.y;
+                    break;
+                case BOTTOM_RIGHT:
+                    start.x = start.x + size.x;
+                    start.y = start.y + size.y;
+                    break;
+            }
+            return start;
         }
-        return builder.substring(0, builder.length() - 2);
+
+        public FloatGravity getGravity() {
+            return gravity;
+        }
+
+        public boolean isTouchOffset() {
+            return touchOffset;
+        }
+
+        public void setTouchOffset(boolean touchOffset) {
+            this.touchOffset = touchOffset;
+        }
     }
 }
