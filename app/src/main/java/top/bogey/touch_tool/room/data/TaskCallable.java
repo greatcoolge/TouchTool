@@ -157,13 +157,13 @@ public class TaskCallable implements Callable<Void> {
                 int randomTime = target.getTimeArea().getRandomTime();
                 switch (target.getType()) {
                     case DELAY:
-                        RunningUtils.log(service, LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), service.currPkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
+                        RunningUtils.log(service, LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
                         break;
                     case TEXT:
                     case IMAGE:
                     case TOUCH:
                     case COLOR:
-                        RunningUtils.log(service, LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), service.currPkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
+                        RunningUtils.log(service, LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
                         break;
                 }
                 switch (target.getType()) {
@@ -200,7 +200,7 @@ public class TaskCallable implements Callable<Void> {
                         break;
                 }
             } else {
-                RunningUtils.log(service, LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), service.currPkgName, percent, service.getString(R.string.log_do_action_fail, action.getTargetTitle(service, target))));
+                RunningUtils.log(service, LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, service.getString(R.string.log_do_action_fail, action.getTargetTitle(service, target))));
             }
             addTaskProgress(target, nodeTarget == null);
             return result;

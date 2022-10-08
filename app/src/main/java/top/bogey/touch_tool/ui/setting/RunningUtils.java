@@ -42,7 +42,7 @@ public class RunningUtils {
     public static void run(Context context, Task task, String pkgName, boolean success){
         RunningInfo runningInfo = new RunningInfo(task.getId(), pkgName, success);
         taskMMKV.encode(runningInfo.getId(), runningInfo);
-        log(context, LogLevel.MIDDLE,  String.format("%s-%s\n%s", task.getTitle(), task.getPkgName(), context.getString(R.string.log_run_task_result, context.getString(success ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail))));
+        log(context, LogLevel.MIDDLE,  String.format("%s-%s\n%s", task.getTitle(), pkgName, context.getString(R.string.log_run_task_result, context.getString(success ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail))));
     }
 
     public static Map<String, Map<String, List<RunningInfo>>> getRunningInfo(){
@@ -57,7 +57,7 @@ public class RunningUtils {
                     List<RunningInfo> taskList = pkgMap.get(runningInfo.getTaskId());
                     if (taskList == null) taskList = new ArrayList<>();
                     taskList.add(runningInfo);
-                    taskList.sort((o1, o2) -> o1.getDate() < o2.getDate() ? 1 : 0);
+                    taskList.sort((o1, o2) -> (int) (o1.getDate() - o2.getDate()));
                     pkgMap.put(runningInfo.getTaskId(), taskList);
                     map.put(runningInfo.getPkgName(), pkgMap);
                 }
@@ -68,10 +68,10 @@ public class RunningUtils {
 
     public static void log(Context context, LogLevel level, String log){
         SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
-        boolean enabledLog = preferences.getBoolean(RUNNING_TASKS, false);
+        boolean enabledLog = preferences.getBoolean(RUNNING_LOG, false);
         if (enabledLog){
             LogInfo logInfo = new LogInfo(log, level);
-            Log.d(RUNNING_TASKS, logInfo.getLog());
+            Log.d(RUNNING_LOG, logInfo.getLog());
             logMMKV.encode(logInfo.getId(), logInfo);
             for (int i = listenerList.size() - 1; i >= 0 ; i--) {
                 LogListener logListener = listenerList.get(i);
@@ -96,11 +96,16 @@ public class RunningUtils {
                 logs.add(logMMKV.decodeParcelable(key, LogInfo.class));
             }
         }
+        logs.sort((o1, o2) -> (int) (o1.getDate() - o2.getDate()));
         return logs;
     }
 
     public static void closeLog(){
         logMMKV.clearAll();
+    }
+
+    public static void cleanRunningInfo(){
+        taskMMKV.clearAll();
     }
 
     public interface LogListener {

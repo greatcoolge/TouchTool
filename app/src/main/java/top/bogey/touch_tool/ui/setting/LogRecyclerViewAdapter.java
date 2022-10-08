@@ -75,7 +75,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         }
 
         public void refreshItem(LogInfo log){
-            binding.titleText.setText(String.format("%s\n%s", log.getDate(), log.getLog()));
+            binding.titleText.setText(String.format("%s\n%s", log.getDateString(), log.getLog()));
             binding.titleText.setTextColor(log.getLevel().getLevelColor(binding.getRoot().getContext()));
         }
     }

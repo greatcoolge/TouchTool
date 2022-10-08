@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class LogInfo implements Parcelable {
     private final String id;
-    private final String date;
+    private final long date;
     private final String log;
 
     private final LogLevel level;
@@ -20,14 +20,12 @@ public class LogInfo implements Parcelable {
         id = UUID.randomUUID().toString();
         this.log = log;
         this.level = level;
-        DateFormat dateFormat = DateFormat.getDateTimeInstance();
-        Date date = new Date(System.currentTimeMillis());
-        this.date = dateFormat.format(date);
+        this.date = System.currentTimeMillis();
     }
 
     protected LogInfo(Parcel in) {
         id = in.readString();
-        date = in.readString();
+        date = in.readLong();
         log = in.readString();
         level = LogLevel.valueOf(in.readString());
     }
@@ -44,8 +42,14 @@ public class LogInfo implements Parcelable {
         }
     };
 
-    public String getDate() {
+    public long getDate() {
         return date;
+    }
+
+    public String getDateString(){
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        Date date = new Date(this.date);
+        return dateFormat.format(date);
     }
 
     public String getId() {
@@ -68,7 +72,7 @@ public class LogInfo implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeString(date);
+        dest.writeLong(date);
         dest.writeString(log);
         dest.writeString(level.name());
     }
