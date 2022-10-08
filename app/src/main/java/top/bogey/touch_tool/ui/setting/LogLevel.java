@@ -7,7 +7,7 @@ import top.bogey.touch_tool.utils.DisplayUtils;
 public enum LogLevel {
     LOW,
     MIDDLE,
-    HEIGHT;
+    HIGH;
 
     public int getLevelColor(Context context){
         int color = 0;
@@ -18,7 +18,7 @@ public enum LogLevel {
             case MIDDLE:
                 color = DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorOnSurface, 0);
                 break;
-            case HEIGHT:
+            case HIGH:
                 color = DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorError, 0);
                 break;
         }

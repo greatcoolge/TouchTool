@@ -33,7 +33,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/up_button"
-                style="@style/Theme.AutoTouch.Button.IconOnly"
+                style="@style/Theme.TouchTool.Button.IconOnly"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:insetTop="0dp"
@@ -42,7 +42,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/down_button"
-                style="@style/Theme.AutoTouch.Button.IconOnly"
+                style="@style/Theme.TouchTool.Button.IconOnly"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:insetTop="0dp"
@@ -103,7 +103,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_button"
-            style="@style/Theme.AutoTouch.Button.OutlinedButton"
+            style="@style/Theme.TouchTool.Button.OutlinedButton"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:insetTop="0dp"

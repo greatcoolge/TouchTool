@@ -44,7 +44,8 @@ public class ColorNode extends Node{
                 if (rectList != null && rectList.size() > 0){
                     for (int i = rectList.size() - 1; i >= 0; i--) {
                         Rect rect = rectList.get(i);
-                        if (rect.width() * rect.height() < colorInfo.getMinSize()){
+                        int size = rect.width() * rect.height();
+                        if (size < colorInfo.getMinSize(service) || size > colorInfo.getMaxsize(service)){
                             rectList.remove(i);
                         }
                     }
@@ -63,28 +64,30 @@ public class ColorNode extends Node{
     @Override
     public ColorInfo cloneValue() {
         ColorInfo value = getValue();
-        return new ColorInfo(new int[]{value.color[0], value.color[1], value.color[2]}, value.minSize, value.maxSize, value.screen);
+        return new ColorInfo(new int[]{value.color[0], value.color[1], value.color[2]}, value.minPercent, value.maxPercent, value.size, value.screen);
     }
 
     public String getTitle(){
         ColorInfo colorInfo = getValue();
-        return colorInfo.getMinSize() + "-" + colorInfo.getMaxSize();
+        return colorInfo.getMinPercent() + "-" + colorInfo.getMaxPercent();
     }
 
     public static class ColorInfo{
         private int[] color = new int[]{-1, -1, -1};
-        private int minSize = 0;
-        private int maxSize = 81;
+        private int minPercent = 0;
+        private int maxPercent = 100;
+        private int size = 0;
         private final int screen;
 
         public ColorInfo(Context context) {
             screen = DisplayUtils.getScreen(context);
         }
 
-        public ColorInfo(int[] color, int minSize, int maxSize, int screen) {
+        public ColorInfo(int[] color, int minPercent, int maxPercent, int size, int screen) {
             this.color = color;
-            this.minSize = minSize;
-            this.maxSize = maxSize;
+            this.minPercent = minPercent;
+            this.maxPercent = maxPercent;
+            this.size = size;
             this.screen = screen;
         }
 
@@ -92,16 +95,29 @@ public class ColorNode extends Node{
             return color;
         }
 
-        public void setColor(int[] color) {
-            this.color = color;
+        public int getMinPercent() {
+            return minPercent;
         }
 
-        public int getMinSize() {
-            return minSize;
+        public int getMaxPercent() {
+            return maxPercent;
         }
 
-        public int getMaxSize() {
-            return maxSize;
+        public int getSize() {
+            return size;
+        }
+
+        public int getSize(Context context){
+            int screen = DisplayUtils.getScreen(context);
+            return (int) (size * 1f * screen / this.screen);
+        }
+
+        public int getMinSize(Context context){
+            return (int) (getSize(context) * minPercent / 100f);
+        }
+
+        public int getMaxsize(Context context){
+            return (int) (getSize(context) * maxPercent / 100f);
         }
     }
 }

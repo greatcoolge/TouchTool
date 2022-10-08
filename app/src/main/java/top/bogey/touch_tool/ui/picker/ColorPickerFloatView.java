@@ -41,11 +41,10 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     private boolean isMarked = false;
 
     private int[] color = new int[3];
-    private int minSize = 1;
-    private int maxSize = 1;
 
-    private float lastX, lastY;
-    private boolean drag = false;
+    private int minPercent = 0;
+    private int maxPercent = 100;
+    private int size = 0;
 
     public ColorPickerFloatView(Context context, PickerCallback pickerCallback, ColorNode colorNode) {
         super(context, pickerCallback);
@@ -65,8 +64,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         binding.slider.addOnChangeListener((slider, value, fromUser) -> {
             List<Float> values = slider.getValues();
             if (values.size() >= 2){
-                minSize = values.get(0).intValue();
-                maxSize = values.get(values.size() - 1).intValue();
+                minPercent = values.get(0).intValue();
+                maxPercent = values.get(values.size() - 1).intValue();
             }
             refreshUI();
         });
@@ -83,7 +82,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     }
 
     public ColorNode.ColorInfo getColor(){
-        return new ColorNode.ColorInfo(color, minSize, maxSize, DisplayUtils.getScreen(service));
+        return new ColorNode.ColorInfo(color, minPercent, maxPercent, size, DisplayUtils.getScreen(getContext()));
     }
 
     public void realShow(int delay){
@@ -102,10 +101,8 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                         if (markArea != null && markArea.size() > 0) {
                             isMarked = true;
                             color = colorInfo.getColor();
-                            Rect rect = markArea.get(0);
-                            binding.slider.setValueFrom(0);
-                            binding.slider.setValueTo(rect.width() * rect.height());
-                            binding.slider.setValues((float) colorInfo.getMinSize(), (float) colorInfo.getMaxSize());
+                            this.size = colorInfo.getSize(service);
+                            binding.slider.setValues((float) colorInfo.getMinPercent(), (float) colorInfo.getMaxPercent());
                         }
                     }
                     refreshUI();
@@ -139,17 +136,20 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         if (showBitmap != null && !showBitmap.isRecycled()){
             canvas.drawBitmap(showBitmap, 0, 0, bitmapPaint);
         }
+
         canvas.saveLayer(getLeft(), getTop(), getRight(), getBottom(), bitmapPaint);
         long drawingTime = getDrawingTime();
         drawChild(canvas, binding.getRoot(), drawingTime);
+
         for (int i = 0; i < markArea.size(); i++) {
             Rect rect = markArea.get(i);
             int size = rect.width() * rect.height();
-            if (size >= minSize && size <= maxSize){
-                canvas.drawRect(markArea.get(i), markPaint);
+            if (size >= (minPercent * this.size / 100) && size <= (maxPercent * this.size / 100)){
+                canvas.drawRect(rect, markPaint);
             }
         }
         canvas.restore();
+
         if (isMarked){
             drawChild(canvas, binding.buttonBox, drawingTime);
             drawChild(canvas, binding.slider, drawingTime);
@@ -164,36 +164,21 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                lastX = x;
-                lastY = y;
                 isMarked = false;
                 break;
-            case MotionEvent.ACTION_MOVE:
-                if (!isMarked){
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-                    if (!drag && dx * dx + dy * dy < 81) break;
-                    drag = true;
-                    lastX = x;
-                    lastY = y;
-                }
-                break;
             case MotionEvent.ACTION_UP:
-                if (!isMarked && !drag && service.isCaptureEnabled() && service.binder != null){
-                    color = DisplayUtils.getHsvColor(showBitmap, (int) lastX, (int) lastY);
+                if (service.isCaptureEnabled() && service.binder != null){
+                    color = DisplayUtils.getHsvColor(showBitmap, (int) x, (int) y);
                     markArea = service.binder.matchColor(showBitmap, color);
                     if (markArea != null && markArea.size() > 0) {
-                        isMarked = true;
                         Rect rect = markArea.get(0);
-                        int size = rect.width() * rect.height();
-                        binding.slider.setValueFrom(0);
-                        binding.slider.setValueTo(size);
-                        binding.slider.setValues(0f, (float) size);
+                        size = rect.width() * rect.height();
+                        isMarked = true;
+                        binding.slider.setValues(0f, 100f);
                     } else {
                         dismiss();
                     }
                 }
-                drag = false;
                 break;
         }
         refreshUI();

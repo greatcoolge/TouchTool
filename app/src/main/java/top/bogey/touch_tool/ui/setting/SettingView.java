@@ -46,7 +46,7 @@ public class SettingView extends PreferenceFragmentCompat {
         SwitchPreferenceCompat runningLog = findPreference(RunningUtils.RUNNING_LOG);
         if (runningLog != null){
             runningLog.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (Boolean.FALSE.equals(newValue)) RunningUtils.closeLog(requireContext());
+                if (Boolean.FALSE.equals(newValue)) RunningUtils.closeLog();
                 if (runningLogDialog != null) {
                     runningLogDialog.setVisible(Boolean.TRUE.equals(newValue));
                     runningLogDialog.setChecked(EasyFloat.getView(LogFloatView.class.getCanonicalName()) != null && Boolean.TRUE.equals(newValue));

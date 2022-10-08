@@ -60,8 +60,9 @@
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.node.ColorNode$ColorInfo{
     private int[] color;
-    private int minSize;
-    private int maxSize;
+    private int minPercent;
+    private int maxPercent;
+    private int size;
     private int screen;
 }
 

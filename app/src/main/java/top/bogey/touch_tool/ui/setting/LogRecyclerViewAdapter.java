@@ -13,14 +13,22 @@ import top.bogey.touch_tool.databinding.FloatLogItemBinding;
 
 public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerViewAdapter.ViewHolder> {
     private List<LogInfo> logs = new ArrayList<>();
+    private final List<LogInfo> showLogs = new ArrayList<>();
+
     private RecyclerView recyclerView = null;
 
-    public LogRecyclerViewAdapter(LogFloatView parent) {
-        logs = RunningUtils.getLogs(parent.getContext(), log -> recyclerView.post(() -> {
+    private int level;
+
+    public LogRecyclerViewAdapter(int level) {
+        logs = RunningUtils.getLogs(log -> recyclerView.post(() -> {
             logs.add(log);
-            notifyItemInserted(logs.size());
-            if (recyclerView != null) recyclerView.scrollToPosition(logs.size() - 1);
+            if (((1 << log.getLevel().ordinal()) & this.level) > 0){
+                showLogs.add(log);
+                notifyItemInserted(showLogs.size());
+                if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
+            }
         }));
+        setLevel(level);
     }
 
     @NonNull
@@ -31,7 +39,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        holder.refreshItem(logs.get(position));
+        holder.refreshItem(showLogs.get(position));
     }
 
     @Override
@@ -43,7 +51,19 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     @Override
     public int getItemCount() {
-        return logs.size();
+        return showLogs.size();
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+        showLogs.clear();
+        for (LogInfo log : logs) {
+            if (((1 << log.getLevel().ordinal()) & level) > 0){
+                showLogs.add(log);
+            }
+        }
+        notifyDataSetChanged();
+        if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {

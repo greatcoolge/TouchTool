@@ -116,7 +116,7 @@ public class AppsView extends Fragment {
             adapter.refreshApps(viewModel.searchAppList(searchText));
         });
 
-        viewModel.taskGroups.observe(getViewLifecycleOwner(), taskGroups -> adapter.refreshItems(taskGroups));
+        TaskRepository.getInstance(getContext()).getTaskGroupsLive().observe(getViewLifecycleOwner(), taskGroups -> adapter.refreshItems(taskGroups));
         return binding.getRoot();
     }
 

@@ -8,22 +8,16 @@ import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.node.TaskNode;
-import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.apps.AppInfo;
 
 public class MainViewModel extends AndroidViewModel {
     public final MutableLiveData<Boolean> showSystem = new MutableLiveData<>(false);
-
-    private final TaskRepository repository;
-    public final LiveData<List<TaskNode.TaskGroup>> taskGroups;
 
     private final List<PackageInfo> allApp = new ArrayList<>();
 
@@ -31,8 +25,6 @@ public class MainViewModel extends AndroidViewModel {
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        repository = new TaskRepository(application);
-        taskGroups = repository.getTaskGroupsLive();
         refreshAppList();
     }
 
@@ -87,10 +79,6 @@ public class MainViewModel extends AndroidViewModel {
                 names.add(info.packageName);
         }
         return names;
-    }
-
-    public LiveData<List<Task>> getTasksLiveByPackageName(String pkgName){
-        return repository.getTasksLiveByPackageName(pkgName);
     }
 
     public Task getCopyTask() {

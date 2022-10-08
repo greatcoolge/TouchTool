@@ -5,7 +5,7 @@
     android:layout_width="240dp"
     android:layout_height="240dp"
     style="?attr/materialCardViewFilledStyle"
-    app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
+    app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Large">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,6 +15,7 @@
             android:id="@+id/drag"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
+            android:layout_marginTop="2dp"
             android:src="@drawable/shape_drag"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +23,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_button"
-            style="@style/Theme.AutoTouch.Button.IconOnly"
+            style="@style/Theme.TouchTool.Button.IconOnly"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="2dp"
@@ -34,18 +35,76 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/min_button"
-            style="@style/Theme.AutoTouch.Button.IconOnly"
+            android:id="@+id/expand_button"
+            style="@style/Theme.TouchTool.Button.IconOnly"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="2dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            app:icon="@drawable/icon_max_min"
-            app:iconSize="12dp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:icon="@drawable/icon_remove"
+            app:layout_constraintEnd_toStartOf="@+id/close_button"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/zoom_button"
+            style="@style/Theme.TouchTool.Button.IconOnly"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="4dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:icon="@drawable/icon_zoom_out"
+            app:iconSize="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/expand_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/high_button"
+            style="@style/Theme.TouchTool.Button.IconOnly"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:insetLeft="4dp"
+            android:insetTop="4dp"
+            android:insetRight="4dp"
+            android:insetBottom="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Medium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/middle_button"
+            style="@style/Theme.TouchTool.Button.IconOnly"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:insetLeft="4dp"
+            android:insetTop="4dp"
+            android:insetRight="4dp"
+            android:insetBottom="4dp"
+            app:layout_constraintStart_toEndOf="@+id/high_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Medium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/low_button"
+            style="@style/Theme.TouchTool.Button.IconOnly"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:insetLeft="4dp"
+            android:insetTop="4dp"
+            android:insetRight="4dp"
+            android:insetBottom="4dp"
+            app:layout_constraintStart_toEndOf="@+id/middle_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Medium" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mark_box"

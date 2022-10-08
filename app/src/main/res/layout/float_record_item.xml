@@ -24,7 +24,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/number_text"
-        style="@style/Theme.AutoTouch.Badge"
+        style="@style/Theme.TouchTool.Badge"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:insetTop="0dp"

@@ -40,7 +40,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/save_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -50,7 +50,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/delay_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -60,7 +60,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/word_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -70,7 +70,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/image_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -80,7 +80,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/pos_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -90,7 +90,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/color_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -100,7 +100,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/key_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -110,7 +110,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/task_button"
-                    style="@style/Theme.AutoTouch.Button.IconOnly"
+                    style="@style/Theme.TouchTool.Button.IconOnly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

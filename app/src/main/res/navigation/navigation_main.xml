@@ -47,5 +47,5 @@
         android:id="@+id/runningInfo"
         android:name="top.bogey.touch_tool.ui.setting.RunningInfoView"
         android:label="@string/running_task_info"
-        tools:layout="@layout/view_running"/>
+        tools:layout="@layout/view_setting_running"/>
 </navigation>

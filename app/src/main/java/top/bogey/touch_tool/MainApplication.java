@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.color.DynamicColors;
+import com.tencent.mmkv.MMKV;
 
 import top.bogey.touch_tool.ui.setting.KeepAliveService;
 
@@ -23,6 +24,7 @@ public class MainApplication extends Application {
         super.onCreate();
         DynamicColors.applyToActivitiesIfAvailable(this);
         initNightMode(this);
+        MMKV.initialize(this);
     }
 
     public static void initNightMode(Context context){

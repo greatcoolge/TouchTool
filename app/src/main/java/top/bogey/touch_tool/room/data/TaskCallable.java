@@ -32,6 +32,7 @@ public class TaskCallable implements Callable<Void> {
 
     private final MainAccessibilityService service;
     private final Task task;
+    private final String pkgName;
     private final TaskCallback callback;
 
     private final TaskRepository repository;
@@ -40,9 +41,10 @@ public class TaskCallable implements Callable<Void> {
     private final int allPercent;
     private int percent = 0;
 
-    public TaskCallable(MainAccessibilityService service, Task task, TaskCallback callback) {
+    public TaskCallable(MainAccessibilityService service, Task task, String pkgName, TaskCallback callback) {
         this.service = service;
         this.task = task;
+        this.pkgName = pkgName;
         this.callback = callback;
 
         repository = new TaskRepository(service);
@@ -63,7 +65,7 @@ public class TaskCallable implements Callable<Void> {
         if (callback != null) callback.onStart();
         boolean result = runTask(task);
         if (callback != null) callback.onEnd(isRunning());
-        RunningUtils.run(task, result || task.getStatus() == TaskStatus.MANUAL);
+        RunningUtils.run(service, task, pkgName, result || task.getStatus() == TaskStatus.MANUAL);
         return null;
     }
 
@@ -161,7 +163,7 @@ public class TaskCallable implements Callable<Void> {
                     case IMAGE:
                     case TOUCH:
                     case COLOR:
-                        RunningUtils.log(service, LogLevel.HEIGHT, service.getString(R.string.log_task_format, task.getTitle(), service.currPkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
+                        RunningUtils.log(service, LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), service.currPkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
                         break;
                 }
                 switch (target.getType()) {

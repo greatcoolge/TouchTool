@@ -42,7 +42,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/back_button"
-            style="@style/Theme.AutoTouch.Button"
+            style="@style/Theme.TouchTool.Button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginHorizontal="8dp"
@@ -52,7 +52,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
-            style="@style/Theme.AutoTouch.Button"
+            style="@style/Theme.TouchTool.Button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginHorizontal="8dp"

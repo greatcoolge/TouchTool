@@ -2,6 +2,9 @@ package top.bogey.touch_tool.ui.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -11,8 +14,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
+import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatLogBinding;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
@@ -21,22 +27,29 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewHelper;
 import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 public class LogFloatView extends FrameLayout implements FloatViewInterface {
+    private static final String LOG_LEVEL = "log_level";
+
     private final FloatLogBinding binding;
 
     private float lastY = 0f;
     private boolean isToBottom = false;
     private boolean isToTop = true;
 
-    private boolean isMin = false;
+    private boolean isExpand = true;
 
-    private boolean isExpand = false;
+    private boolean isZoom = false;
+
+    private int level = (1 << LogLevel.values().length) - 1;
 
     @SuppressLint("ClickableViewAccessibility")
     public LogFloatView(@NonNull Context context) {
         super(context);
         binding = FloatLogBinding.inflate(LayoutInflater.from(context), this, true);
 
-        LogRecyclerViewAdapter adapter = new LogRecyclerViewAdapter(this);
+        SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
+        level = preferences.getInt(LOG_LEVEL, level);
+
+        LogRecyclerViewAdapter adapter = new LogRecyclerViewAdapter(level);
         binding.recyclerView.setAdapter(adapter);
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
@@ -68,15 +81,50 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.closeButton.setOnClickListener(v -> dismiss());
 
-        binding.minButton.setOnClickListener(v -> {
-            isMin = !isMin;
-            doAni();
+        binding.expandButton.setOnClickListener(v -> {
+            isExpand = !isExpand;
+            refreshUI();
         });
 
-        binding.minButton.setOnLongClickListener(v -> {
-            isExpand = !isExpand;
-            doAni();
-            return true;
+        binding.zoomButton.setOnClickListener(v -> {
+            isZoom = !isZoom;
+            refreshUI();
+        });
+
+        MaterialButton[] buttons = {binding.lowButton, binding.middleButton, binding.highButton};
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setAlpha((level & (1 << i)) > 0 ? 1f : 0.25f);
+            buttons[i].setBackgroundTintList(ColorStateList.valueOf(LogLevel.values()[i].getLevelColor(context)));
+        }
+
+        binding.highButton.setOnClickListener(v -> {
+            SharedPreferences.Editor edit = preferences.edit();
+            int value = 1 << LogLevel.HIGH.ordinal();
+            level = level ^ value;
+            binding.highButton.setAlpha((level & value) > 0 ? 1f : 0.25f);
+            edit.putInt(LOG_LEVEL, level);
+            edit.apply();
+            adapter.setLevel(level);
+        });
+
+        binding.middleButton.setOnClickListener(v -> {
+            SharedPreferences.Editor edit = preferences.edit();
+            int value = 1 << LogLevel.MIDDLE.ordinal();
+            level = level ^ value;
+            binding.middleButton.setAlpha((level & value) > 0 ? 1f : 0.25f);
+            edit.putInt(LOG_LEVEL, level);
+            edit.apply();
+            adapter.setLevel(level);
+        });
+
+        binding.lowButton.setOnClickListener(v -> {
+            SharedPreferences.Editor edit = preferences.edit();
+            int value = 1 << LogLevel.LOW.ordinal();
+            level = level ^ value;
+            binding.lowButton.setAlpha((level & value) > 0 ? 1f : 0.25f);
+            edit.putInt(LOG_LEVEL, level);
+            edit.apply();
+            adapter.setLevel(level);
         });
     }
 
@@ -125,35 +173,47 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
         }
     }
 
-    private void doAni(){
+    private void refreshUI(){
         FloatViewHelper helper = EasyFloat.getHelper(LogFloatView.class.getCanonicalName());
 
-        int buttonX = DisplayUtils.dp2px(getContext(), isMin ? 4 : 8);
-        int buttonY = DisplayUtils.dp2px(getContext(), isMin ? 4 : 2);
-        int bgWidth = DisplayUtils.dp2px(getContext(), isMin ? 32 : isExpand ? 320 : 240);
-        int bgHeight = DisplayUtils.dp2px(getContext(), isMin ? 32 : isExpand ? 480 : 240);
+        Point size = DisplayUtils.getScreenSize(getContext());
+        int height = DisplayUtils.getStatusBarHeight(getContext());
+
+        int bgWidth = DisplayUtils.dp2px(getContext(), isExpand ? (isZoom ? 320 : 240) : 32);
+        int bgHeight = DisplayUtils.dp2px(getContext(), isExpand ? (isZoom ? 640 : 240) : 30);
+        bgHeight = Math.min(bgHeight, size.y - height);
 
         MaterialCardView root = binding.getRoot();
         ViewGroup.LayoutParams rootLayoutParams = root.getLayoutParams();
 
-        if (isMin){
-            binding.closeButton.setVisibility(GONE);
-            binding.markBox.setVisibility(GONE);
-            binding.drag.setVisibility(GONE);
-            binding.minButton.setRotation(180);
-        } else {
-            binding.closeButton.setVisibility(VISIBLE);
+        if (isExpand){
             binding.markBox.setVisibility(VISIBLE);
             binding.drag.setVisibility(VISIBLE);
-            binding.minButton.setRotation(0);
+            binding.zoomButton.setVisibility(VISIBLE);
+            binding.closeButton.setVisibility(VISIBLE);
+            binding.highButton.setVisibility(VISIBLE);
+            binding.middleButton.setVisibility(VISIBLE);
+            binding.lowButton.setVisibility(VISIBLE);
+            binding.expandButton.setIconResource(R.drawable.icon_remove);
+        } else {
+            binding.markBox.setVisibility(GONE);
+            binding.drag.setVisibility(GONE);
+            binding.zoomButton.setVisibility(GONE);
+            binding.closeButton.setVisibility(GONE);
+            binding.highButton.setVisibility(GONE);
+            binding.middleButton.setVisibility(GONE);
+            binding.lowButton.setVisibility(GONE);
+            binding.expandButton.setIconResource(R.drawable.icon_add);
         }
-        binding.minButton.setX(buttonX);
-        binding.minButton.setY(buttonY);
+
+        binding.zoomButton.setIconResource(isZoom ? R.drawable.icon_zoom_in : R.drawable.icon_zoom_out);
+
         rootLayoutParams.width = bgWidth;
         rootLayoutParams.height = bgHeight;
         root.setLayoutParams(rootLayoutParams);
         helper.params.width = bgWidth;
         helper.params.height = bgHeight;
         helper.manager.updateViewLayout(helper.floatViewParent, helper.params);
+        postDelayed(helper::initGravity, 50);
     }
 }

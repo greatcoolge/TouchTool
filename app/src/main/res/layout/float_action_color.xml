@@ -47,7 +47,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/picker_button"
-        style="@style/Theme.AutoTouch.Button.OutlinedButton"
+        style="@style/Theme.TouchTool.Button.OutlinedButton"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:insetTop="0dp"

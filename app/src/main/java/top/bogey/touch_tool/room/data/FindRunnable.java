@@ -78,7 +78,7 @@ public class FindRunnable implements Runnable{
 
                 if (!isRunning()) return;
 
-                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_get_all_task, tasks.size()));
+                RunningUtils.log(service, LogLevel.LOW, service.getString(R.string.log_get_all_task, tasks.size()));
 
                 boolean isManual = false;
                 for (Task task : tasks) {

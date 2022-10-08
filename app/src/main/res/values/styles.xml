@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.AutoTouch.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="Theme.TouchTool.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:textScaleX">0</item>
@@ -8,7 +8,7 @@
         <item name="strokeWidth">0.75dp</item>
     </style>
 
-    <style name="Theme.AutoTouch.Button.IconOnly" parent="Widget.Material3.Button.TextButton">
+    <style name="Theme.TouchTool.Button.IconOnly" parent="Widget.Material3.Button.TextButton">
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:textScaleX">0</item>
@@ -16,7 +16,7 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
-    <style name="Theme.AutoTouch.Button" parent="Widget.Material3.Button">
+    <style name="Theme.TouchTool.Button" parent="Widget.Material3.Button">
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:textScaleX">0</item>
@@ -24,35 +24,35 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
-    <style name="Theme.AutoTouch.Badge" parent="Widget.Material3.Button">
+    <style name="Theme.TouchTool.Badge" parent="Widget.Material3.Button">
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:padding">0dp</item>
     </style>
 
-    <style name="Theme.AutoTouch.ShapeAppearance.CornerLeft.Full" parent="">
+    <style name="Theme.TouchTool.ShapeAppearance.CornerLeft.Full" parent="">
         <item name="cornerSizeTopLeft">50%</item>
         <item name="cornerSizeBottomLeft">50%</item>
         <item name="cornerSizeTopRight">0%</item>
         <item name="cornerSizeBottomRight">0%</item>
     </style>
 
-    <style name="Theme.AutoTouch.ShapeAppearance.CornerRight.Full" parent="">
+    <style name="Theme.TouchTool.ShapeAppearance.CornerRight.Full" parent="">
         <item name="cornerSizeTopLeft">0%</item>
         <item name="cornerSizeBottomLeft">0%</item>
         <item name="cornerSizeTopRight">50%</item>
         <item name="cornerSizeBottomRight">50%</item>
     </style>
 
-    <style name="Theme.AutoTouch.ShapeAppearance.Corner.Large" parent="">
+    <style name="Theme.TouchTool.ShapeAppearance.Corner.Large" parent="">
         <item name="cornerSizeTopLeft">?attr/largeCornerRadius</item>
         <item name="cornerSizeBottomLeft">?attr/largeCornerRadius</item>
         <item name="cornerSizeTopRight">?attr/largeCornerRadius</item>
         <item name="cornerSizeBottomRight">?attr/largeCornerRadius</item>
     </style>
 
-    <style name="Theme.AutoTouch.ShapeAppearance.Corner.Medium" parent="">
+    <style name="Theme.TouchTool.ShapeAppearance.Corner.Medium" parent="">
         <item name="cornerSizeTopLeft">?attr/mediumCornerRadius</item>
         <item name="cornerSizeBottomLeft">?attr/mediumCornerRadius</item>
         <item name="cornerSizeTopRight">?attr/mediumCornerRadius</item>

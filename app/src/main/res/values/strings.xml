@@ -143,7 +143,7 @@
     <string name="running_log_tips">记录应用执行的信息，日常使用时建议关闭</string>
     <string name="running_log_dialog">实时日志悬浮窗</string>
     <string name="running_log_dialog_tips">查看记录的日志信息</string>
-    <string name="running_task_info">查看任务统计</string>
+    <string name="running_task_info">任务统计</string>
     <string name="running_task_info_tips">点击查看任务执行情况统计</string>
 
     <string name="log_surface_changed">界面变动，上一个界面是：%1$s</string>
@@ -151,6 +151,9 @@
     <string name="log_get_all_task">获取所有任务，任务数：%1$d</string>
     <string name="log_run_auto_task">执行自动任务 %1$s</string>
     <string name="log_run_manual_task">执行手动任务 %1$s</string>
+    <string name="log_run_task_result">任务执行 %1$s</string>
+    <string name="log_run_task_result_success">成功</string>
+    <string name="log_run_task_result_fail">失败</string>
     <string name="log_do_action">执行 %1$s</string>
     <string name="log_do_action_fail">%1$s 失败</string>
     <string name="log_show_manual_task">显示手动任务浮窗</string>

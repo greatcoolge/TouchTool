@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -16,7 +17,6 @@ import androidx.annotation.Nullable;
 
 import com.amrdeveloper.treeview.TreeNode;
 import com.amrdeveloper.treeview.TreeNodeManager;
-import com.amrdeveloper.treeview.TreeViewHolderFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatPickerWordBinding;
 import top.bogey.touch_tool.room.bean.node.TextNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
-import top.bogey.touch_tool.utils.FloatClickCallback;
+import top.bogey.touch_tool.utils.FloatBaseCallback;
 
 @SuppressLint("ViewConstructor")
 public class WordPickerFloatView extends BasePickerFloatView{
@@ -51,14 +51,7 @@ public class WordPickerFloatView extends BasePickerFloatView{
 
         binding = FloatPickerWordBinding.inflate(LayoutInflater.from(context), this, true);
 
-        floatCallback = new WordPickerClickCallback((rawX, rawY) -> binding.getRoot().postDelayed(() -> {
-            if (!showList){
-                AccessibilityNodeInfo node = getClickableNodeIn(rawX, rawY);
-                if (node != null){
-                    showWordView(node, true);
-                }
-            }
-        }, 50));
+        floatCallback = new WordPickerCallback();
 
         binding.saveButton.setOnClickListener(v -> {
             if (pickerCallback != null){
@@ -111,9 +104,7 @@ public class WordPickerFloatView extends BasePickerFloatView{
             }
         });
 
-        binding.markBox.setOnClickListener(v -> {
-            showWordView(null, false);
-        });
+        binding.markBox.setOnClickListener(v -> showWordView(null, false));
     }
 
     public String getWord(){
@@ -128,9 +119,8 @@ public class WordPickerFloatView extends BasePickerFloatView{
         MainAccessibilityService service = MainApplication.getService();
         if (service != null){
             rootNode = service.getRootInActiveWindow();
-            TreeViewHolderFactory factory = (view, layoutId) -> new WordPickerTreeAdapter.ViewHolder(view);
             manager = new TreeNodeManager();
-            WordPickerTreeAdapter adapter = new WordPickerTreeAdapter(factory, manager, this);
+            WordPickerTreeAdapter adapter = new WordPickerTreeAdapter(manager, this);
             binding.wordRecyclerView.setAdapter(adapter);
             adapter.setRoot(rootNode);
         }
@@ -186,6 +176,23 @@ public class WordPickerFloatView extends BasePickerFloatView{
                 }
             }
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getRawX();
+        float y = event.getRawY();
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (!showList){
+                AccessibilityNodeInfo node = getClickableNodeIn((int) x, (int) y);
+                if (node != null){
+                    showWordView(node, true);
+                }
+            }
+        }
+        return true;
     }
 
     private TreeNode findTreeNode(TreeNode treeNode, Object value){
@@ -273,11 +280,7 @@ public class WordPickerFloatView extends BasePickerFloatView{
         }
     }
 
-    protected class WordPickerClickCallback extends FloatClickCallback{
-        public WordPickerClickCallback(ClickCallback callback) {
-            super(callback);
-        }
-
+    protected class WordPickerCallback extends FloatBaseCallback {
         @Override
         public void onCreate(boolean succeed) {
             super.onCreate(succeed);

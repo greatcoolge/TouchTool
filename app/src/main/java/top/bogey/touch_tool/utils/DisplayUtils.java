@@ -90,16 +90,6 @@ public class DisplayUtils {
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 
-    public static Point px2percent(Context context, Point point){
-        Point size = getScreenSize(context);
-        return new Point(Math.round(point.x * 100f / size.x), Math.round(point.y * 100f / size.y));
-    }
-
-    public static Point percent2px(Context context, Point point){
-        Point size = getScreenSize(context);
-        return new Point(Math.round(size.x * point.x / 100f), Math.round(size.y * point.y / 100f));
-    }
-
     public static int[] getHsvColor(Bitmap bitmap, int x, int y){
         int pixel = bitmap.getPixel(x, y);
         int red = (pixel & 0x00ff0000) >> 16;

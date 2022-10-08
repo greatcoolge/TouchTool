@@ -94,7 +94,7 @@ public class TasksView extends Fragment {
         binding.tasksBox.setAdapter(adapter);
         refreshSpawnCount();
 
-        viewModel.getTasksLiveByPackageName(appInfo.packageName).observe(getViewLifecycleOwner(), adapter::setTasks);
+        TaskRepository.getInstance(getContext()).getTasksLiveByPackageName(appInfo.packageName).observe(getViewLifecycleOwner(), adapter::setTasks);
 
         viewModel.copyTask.observe(getViewLifecycleOwner(), task -> {
             if (task == null) binding.pasteButton.hide();
@@ -109,7 +109,7 @@ public class TasksView extends Fragment {
             Task copyTask = viewModel.getCopyTask();
             if (copyTask != null){
                 copyTask.setPkgName(appInfo.packageName);
-                TaskRepository.getInstance(getContext()).saveTask(task);
+                TaskRepository.getInstance(getContext()).saveTask(copyTask);
             }
             viewModel.setCopyTask(null);
         });

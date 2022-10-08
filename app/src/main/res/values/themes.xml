@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.AutoTouch.Base" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.TouchTool.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
 
@@ -8,7 +8,7 @@
         <item name="mediumCornerRadius">16dp</item>
     </style>
 
-    <style name="Theme.AutoTouch" parent="Theme.AutoTouch.Base">
+    <style name="Theme.TouchTool" parent="Theme.TouchTool.Base">
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

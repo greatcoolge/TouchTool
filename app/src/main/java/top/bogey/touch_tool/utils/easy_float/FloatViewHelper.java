@@ -122,7 +122,7 @@ public class FloatViewHelper {
         });
     }
 
-    private void initGravity(){
+    public void initGravity(){
         Rect showSize = DisplayUtils.getScreenArea(context);
         int statusBarHeight = DisplayUtils.getStatusBarHeight(floatViewParent, params);
         showSize.top += config.topBorder;

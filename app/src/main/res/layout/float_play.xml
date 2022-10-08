@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     style="?attr/materialCardViewFilledStyle"
-    app:shapeAppearanceOverlay="@style/Theme.AutoTouch.ShapeAppearance.Corner.Large">
+    app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Large">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_button"
-            style="@style/Theme.AutoTouch.Button.IconOnly"
+            style="@style/Theme.TouchTool.Button.IconOnly"
             android:layout_width="32dp"
             android:layout_height="24dp"
             android:insetTop="0dp"

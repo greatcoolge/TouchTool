@@ -165,7 +165,7 @@ public class MainAccessibilityService extends AccessibilityService {
 
     public TaskCallable runTask(Task task, TaskCallback callback){
         if (Boolean.TRUE.equals(serviceEnabled.getValue())){
-            TaskCallable callable = new TaskCallable(this, task, callback);
+            TaskCallable callable = new TaskCallable(this, task, currPkgName, callback);
             tasks.add(callable);
             taskService.submit(callable);
             return callable;

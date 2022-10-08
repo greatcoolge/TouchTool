@@ -125,7 +125,7 @@ public class CustomTypeConverts {
 
             } else if (nodeType == NodeType.COLOR) {
                 int[] color = {0, 0, 0};
-                int minSize = 0, maxSize = 81, screen = 1080;
+                int minPercent = 0, maxPercent = 100, size = 0, screen = 1080;
 
                 JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
                 if (colorInfo != null){
@@ -133,13 +133,15 @@ public class CustomTypeConverts {
                     if (colorArray != null)
                         color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
                     JsonElement minSizeElement = colorInfo.get("minSize");
-                    if (minSizeElement != null) minSize = minSizeElement.getAsInt();
+                    if (minSizeElement != null) minPercent = minSizeElement.getAsInt();
                     JsonElement maxSizeElement = colorInfo.get("maxSize");
-                    if (maxSizeElement != null) maxSize = maxSizeElement.getAsInt();
+                    if (maxSizeElement != null) maxPercent = maxSizeElement.getAsInt();
+                    JsonElement sizeWidthElement = colorInfo.get("size");
+                    if (sizeWidthElement != null) size = sizeWidthElement.getAsInt();
                     JsonElement screenWidthElement = colorInfo.get("screen");
                     if (screenWidthElement != null) screen = screenWidthElement.getAsInt();
                 }
-                node = new ColorNode(new ColorNode.ColorInfo(color, minSize, maxSize, screen));
+                node = new ColorNode(new ColorNode.ColorInfo(color, minPercent, maxPercent, size, screen));
 
 
             } else if (nodeType == NodeType.KEY) {
