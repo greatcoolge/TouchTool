@@ -49,12 +49,14 @@ public class ColorNode extends Node{
                             rectList.remove(i);
                         }
                     }
-                    Path path = new Path();
+                    Path[] paths = new Path[rectList.size()];
                     for (int i = 0; i < rectList.size(); i++) {
+                        Path path = new Path();
                         Point fixedPosition = AppUtils.getFixedPosition(rectList.get(i).centerX(), rectList.get(i).centerY());
                         path.moveTo(fixedPosition.x, fixedPosition.y);
+                        paths[i] = path;
                     }
-                    return path;
+                    return paths;
                 }
             }
         }

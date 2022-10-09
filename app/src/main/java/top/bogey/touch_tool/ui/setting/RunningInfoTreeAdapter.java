@@ -112,11 +112,13 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
             if (level == 0) {
                 TreeNodeInfo nodeInfo = (TreeNodeInfo) node.getValue();
                 AppInfo appInfo = viewModel.getAppInfoByPkgName(nodeInfo.getKey());
-                appBinding.appName.setText(appInfo.appName);
-                if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
-                    appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
-                } else {
-                    appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
+                if (appInfo != null){
+                    appBinding.appName.setText(appInfo.appName);
+                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                        appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
+                    } else {
+                        appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
+                    }
                 }
                 appBinding.numberText.setText(String.valueOf(nodeInfo.getValue()));
             } else if (level == 1) {
@@ -126,10 +128,12 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                     Task task = taskList.get(0);
                     taskBinding.appName.setText(task.getTitle());
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(task.getPkgName());
-                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
-                        taskBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
-                    } else {
-                        taskBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
+                    if (appInfo != null){
+                        if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                            taskBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
+                        } else {
+                            taskBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
+                        }
                     }
                 }
                 taskBinding.numberText.setText(String.valueOf(nodeInfo.getValue()));

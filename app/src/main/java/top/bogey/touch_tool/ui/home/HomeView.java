@@ -83,7 +83,7 @@ public class HomeView extends Fragment {
 
         binding.bookButton.setOnClickListener(v -> {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.qq.com/doc/DUkVCYXBBa09aZ3VX"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.qq.com/doc/p/0f4de9e03534db3780876b90965e9373e4af93f0"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             } catch (Exception ignored){ }
