@@ -1,17 +1,15 @@
 package top.bogey.touch_tool.utils;
 
-import static top.bogey.touch_tool.MainAccessibilityService.SAVE_PATH;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 import android.provider.Settings;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.tencent.mmkv.MMKV;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -61,9 +59,8 @@ public class AppUtils {
         return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
     }
 
-    public static Point getFixedPosition(Context context, int x, int y){
-        SharedPreferences preferences = context.getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        int offset = preferences.getInt(ACTION_TOUCH_OFFSET, 0);
+    public static Point getFixedPosition(int x, int y){
+        int offset = MMKV.defaultMMKV().decodeInt(ACTION_TOUCH_OFFSET, 0);
         return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
     }
 }

@@ -48,7 +48,7 @@ public class ImageNode extends Node{
                 Rect rect = matchImage(service);
                 if (rect != null){
                     Path path = new Path();
-                    Point fixedPosition = AppUtils.getFixedPosition(service, rect.centerX(), rect.centerY());
+                    Point fixedPosition = AppUtils.getFixedPosition(rect.centerX(), rect.centerY());
                     path.moveTo(fixedPosition.x, fixedPosition.y);
                     return path;
                 }

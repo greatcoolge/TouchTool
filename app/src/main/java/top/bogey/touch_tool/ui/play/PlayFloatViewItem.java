@@ -105,7 +105,7 @@ public class PlayFloatViewItem extends FrameLayout {
                         refreshProgress(percent);
                     }
                 });
-                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_run_manual_task, task.getTitle()));
+                RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_manual_task, task.getTitle()));
             }
             refreshProgress(0);
         }

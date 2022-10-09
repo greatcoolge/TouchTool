@@ -51,7 +51,7 @@ public class ColorNode extends Node{
                     }
                     Path path = new Path();
                     for (int i = 0; i < rectList.size(); i++) {
-                        Point fixedPosition = AppUtils.getFixedPosition(service, rectList.get(i).centerX(), rectList.get(i).centerY());
+                        Point fixedPosition = AppUtils.getFixedPosition(rectList.get(i).centerX(), rectList.get(i).centerY());
                         path.moveTo(fixedPosition.x, fixedPosition.y);
                     }
                     return path;

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
@@ -28,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.mmkv.MMKV;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -48,9 +48,9 @@ import top.bogey.touch_tool.room.data.CustomTypeConverts;
 import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
 import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.RunningUtils;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
-import top.bogey.touch_tool.ui.setting.RunningUtils;
 import top.bogey.touch_tool.utils.PermissionResultCallback;
 import top.bogey.touch_tool.utils.SelectCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
@@ -58,7 +58,6 @@ import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 public class MainActivity extends AppCompatActivity {
     static {System.loadLibrary("auto_touch");}
 
-    private static final String SAVE_PATH = "Save";
     private static final String FIRST_RUN = "first_run";
 
     private ActivityMainBinding binding;
@@ -136,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runFirstTimes(){
-        SharedPreferences preferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        boolean firstRun = preferences.getBoolean(FIRST_RUN, false);
+        boolean firstRun = MMKV.defaultMMKV().decodeBool(FIRST_RUN, false);
         if (!firstRun){
             StringBuilder buffer = new StringBuilder();
             try {
@@ -154,9 +152,7 @@ public class MainActivity extends AppCompatActivity {
             }
             saveTasks(buffer.toString());
 
-            SharedPreferences.Editor edit = preferences.edit();
-            edit.putBoolean(FIRST_RUN, true);
-            edit.apply();
+            MMKV.defaultMMKV().encode(FIRST_RUN, true);
         }
     }
 
@@ -279,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPlayFloatView(String pkgName){
         binding.getRoot().post(() -> new PlayFloatView(this, pkgName).show());
-        RunningUtils.log(this, LogLevel.LOW, getString(R.string.log_show_manual_task));
+        RunningUtils.log(LogLevel.LOW, getString(R.string.log_show_manual_task));
     }
 
     public void dismissPlayFloatView(){

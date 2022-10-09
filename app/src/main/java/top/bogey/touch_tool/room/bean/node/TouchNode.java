@@ -86,7 +86,7 @@ public class TouchNode extends Node {
             List<Point> points = getPoints(context);
             Path tmp = null;
             for (Point point : points) {
-                point = getPoint(context, point, fixed);
+                point = getPoint(point, fixed);
                 if (tmp == null) {
                     tmp = new Path();
                     tmp.moveTo(point.x, point.y);
@@ -101,8 +101,8 @@ public class TouchNode extends Node {
             return path;
         }
 
-        private Point getPoint(Context context, Point point, boolean fixed){
-            if (fixed) return AppUtils.getFixedPosition(context, point.x, point.y);
+        private Point getPoint(Point point, boolean fixed){
+            if (fixed) return AppUtils.getFixedPosition(point.x, point.y);
             return point;
         }
 

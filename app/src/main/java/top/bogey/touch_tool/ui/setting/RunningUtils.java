@@ -2,7 +2,6 @@ package top.bogey.touch_tool.ui.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.tencent.mmkv.MMKV;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.room.bean.Task;
 
@@ -42,7 +40,7 @@ public class RunningUtils {
     public static void run(Context context, Task task, String pkgName, boolean success){
         RunningInfo runningInfo = new RunningInfo(task.getId(), pkgName, success);
         taskMMKV.encode(runningInfo.getId(), runningInfo);
-        log(context, LogLevel.MIDDLE,  String.format("%s-%s\n%s", task.getTitle(), pkgName, context.getString(R.string.log_run_task_result, context.getString(success ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail))));
+        log(LogLevel.MIDDLE,  String.format("%s-%s\n%s", task.getTitle(), pkgName, context.getString(R.string.log_run_task_result, context.getString(success ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail))));
     }
 
     public static Map<String, Map<String, List<RunningInfo>>> getRunningInfo(){
@@ -66,9 +64,8 @@ public class RunningUtils {
         return map;
     }
 
-    public static void log(Context context, LogLevel level, String log){
-        SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
-        boolean enabledLog = preferences.getBoolean(RUNNING_LOG, false);
+    public static void log(LogLevel level, String log){
+        boolean enabledLog = MMKV.defaultMMKV().decodeBool(RUNNING_LOG, false);
         if (enabledLog){
             LogInfo logInfo = new LogInfo(log, level);
             Log.d(RUNNING_LOG, logInfo.getLog());
@@ -82,8 +79,8 @@ public class RunningUtils {
     }
 
     @SuppressLint("DefaultLocale")
-    public static void log(Context context, Task task, int percent, String content, LogLevel level){
-        log(context, level, String.format("%s-%s\n[%d]%s", task.getTitle(), task.getPkgName(), percent, content));
+    public static void log(Task task, int percent, String content, LogLevel level){
+        log(level, String.format("%s-%s\n[%d]%s", task.getTitle(), task.getPkgName(), percent, content));
     }
 
     public static List<LogInfo> getLogs(LogListener listener){

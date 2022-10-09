@@ -2,7 +2,6 @@ package top.bogey.touch_tool.ui.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.view.LayoutInflater;
@@ -16,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.tencent.mmkv.MMKV;
 
-import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatLogBinding;
 import top.bogey.touch_tool.utils.DisplayUtils;
@@ -46,8 +45,7 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
         super(context);
         binding = FloatLogBinding.inflate(LayoutInflater.from(context), this, true);
 
-        SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
-        level = preferences.getInt(LOG_LEVEL, level);
+        level = MMKV.defaultMMKV().decodeInt(LOG_LEVEL, level);
 
         LogRecyclerViewAdapter adapter = new LogRecyclerViewAdapter(level);
         binding.recyclerView.setAdapter(adapter);
@@ -98,32 +96,26 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
         }
 
         binding.highButton.setOnClickListener(v -> {
-            SharedPreferences.Editor edit = preferences.edit();
             int value = 1 << LogLevel.HIGH.ordinal();
             level = level ^ value;
             binding.highButton.setAlpha((level & value) > 0 ? 1f : 0.25f);
-            edit.putInt(LOG_LEVEL, level);
-            edit.apply();
+            MMKV.defaultMMKV().encode(LOG_LEVEL, level);
             adapter.setLevel(level);
         });
 
         binding.middleButton.setOnClickListener(v -> {
-            SharedPreferences.Editor edit = preferences.edit();
             int value = 1 << LogLevel.MIDDLE.ordinal();
             level = level ^ value;
             binding.middleButton.setAlpha((level & value) > 0 ? 1f : 0.25f);
-            edit.putInt(LOG_LEVEL, level);
-            edit.apply();
+            MMKV.defaultMMKV().encode(LOG_LEVEL, level);
             adapter.setLevel(level);
         });
 
         binding.lowButton.setOnClickListener(v -> {
-            SharedPreferences.Editor edit = preferences.edit();
             int value = 1 << LogLevel.LOW.ordinal();
             level = level ^ value;
             binding.lowButton.setAlpha((level & value) > 0 ? 1f : 0.25f);
-            edit.putInt(LOG_LEVEL, level);
-            edit.apply();
+            MMKV.defaultMMKV().encode(LOG_LEVEL, level);
             adapter.setLevel(level);
         });
     }

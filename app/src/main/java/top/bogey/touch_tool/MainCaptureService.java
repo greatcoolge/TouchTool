@@ -184,7 +184,7 @@ public class MainCaptureService extends Service {
         public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue){
             if (sourceBitmap == null || matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
-            RunningUtils.log(MainCaptureService.this, LogLevel.MIDDLE, getString(R.string.log_match_image, matchValue, matchResult.value));
+            RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_match_image, matchValue, matchResult.value));
             if (Math.min(100, matchValue) > matchResult.value) return null;
             return matchResult.rect;
         }

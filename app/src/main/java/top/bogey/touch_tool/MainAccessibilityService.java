@@ -7,12 +7,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.graphics.Path;
 import android.os.IBinder;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
+
+import com.tencent.mmkv.MMKV;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +32,6 @@ import top.bogey.touch_tool.utils.ResultCallback;
 import top.bogey.touch_tool.utils.TaskCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
-    public static final String SAVE_PATH = "Save";
     private static final String SERVICE_ENABLED = "service_enabled";
 
     // 服务
@@ -75,8 +75,7 @@ public class MainAccessibilityService extends AccessibilityService {
         MainApplication.setService(this);
         serviceConnected = true;
 
-        SharedPreferences preferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        serviceEnabled.setValue(preferences.getBoolean(SERVICE_ENABLED, false));
+        serviceEnabled.setValue(MMKV.defaultMMKV().decodeBool(SERVICE_ENABLED, false));
     }
 
     @Override
@@ -106,11 +105,7 @@ public class MainAccessibilityService extends AccessibilityService {
 
     public void setServiceEnabled(boolean enabled){
         serviceEnabled.setValue(enabled);
-
-        SharedPreferences preferences = getSharedPreferences(SAVE_PATH, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putBoolean(SERVICE_ENABLED, enabled);
-        edit.apply();
+        MMKV.defaultMMKV().encode(SERVICE_ENABLED, enabled);
     }
 
     public void startCaptureService(boolean moveBack, ResultCallback callback){

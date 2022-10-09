@@ -1,8 +1,6 @@
 package top.bogey.touch_tool;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -22,15 +20,14 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DynamicColors.applyToActivitiesIfAvailable(this);
-        initNightMode(this);
         MMKV.initialize(this);
+        DynamicColors.applyToActivitiesIfAvailable(this);
+        initNightMode();
     }
 
-    public static void initNightMode(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(MainAccessibilityService.SAVE_PATH, Context.MODE_PRIVATE);
-        String nightMode = preferences.getString(NIGHT_MODE, "-1");
-        initNightMode(Integer.parseInt(nightMode));
+    public static void initNightMode(){
+        String nightMode = MMKV.defaultMMKV().decodeString(NIGHT_MODE, "-1");
+        if (nightMode != null) initNightMode(Integer.parseInt(nightMode));
     }
 
     public static void initNightMode(int nightMode){

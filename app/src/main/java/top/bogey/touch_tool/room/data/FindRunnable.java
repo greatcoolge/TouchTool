@@ -55,7 +55,7 @@ public class FindRunnable implements Runnable{
         if (root != null && isRunning()){
             String packageName = String.valueOf(root.getPackageName());
             if (!(packageName.equals("null") || packageName.equals(pkgName))){
-                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_surface_changed, pkgName));
+                RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_surface_changed, pkgName));
 
                 // 取消所有非当前包下的普通任务
                 for (TaskCallable task : tasks) {
@@ -72,13 +72,13 @@ public class FindRunnable implements Runnable{
                 // APP自己不执行任何任务
                 if (packageName.equals(service.getPackageName())) return;
 
-                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_surface_entered, packageName));
+                RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_surface_entered, packageName));
 
                 List<Task> tasks = getAppTaskByPkgName(packageName);
 
                 if (!isRunning()) return;
 
-                RunningUtils.log(service, LogLevel.LOW, service.getString(R.string.log_get_all_task, tasks.size()));
+                RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_get_all_task, tasks.size()));
 
                 boolean isManual = false;
                 for (Task task : tasks) {
@@ -86,7 +86,7 @@ public class FindRunnable implements Runnable{
                         switch (task.getStatus()) {
                             case AUTO:
                                 service.runTask(task, null);
-                                RunningUtils.log(service, LogLevel.MIDDLE, service.getString(R.string.log_run_auto_task, task.getTitle()));
+                                RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_auto_task, task.getTitle()));
                                 break;
                             case MANUAL:
                                 isManual = true;

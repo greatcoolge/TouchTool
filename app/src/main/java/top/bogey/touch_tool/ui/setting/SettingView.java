@@ -15,7 +15,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
-import top.bogey.touch_tool.MainAccessibilityService;
+import com.tencent.mmkv.MMKV;
+
+import java.lang.reflect.Field;
+
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
@@ -26,7 +29,15 @@ public class SettingView extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setSharedPreferencesName(MainAccessibilityService.SAVE_PATH);
+        preferenceManager.setSharedPreferencesName("setting");
+        try {
+            Field preferences = preferenceManager.getClass().getDeclaredField("mSharedPreferences");
+            preferences.setAccessible(true);
+            preferences.set(preferenceManager, MMKV.defaultMMKV());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         setPreferencesFromResource(R.xml.setting, null);
 
         SwitchPreferenceCompat keepAlive = findPreference("keep_alive");
@@ -118,7 +129,7 @@ public class SettingView extends PreferenceFragmentCompat {
         if (sourceCode != null){
             sourceCode.setOnPreferenceClickListener(preference -> {
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mr-bogey/AutoTouch"));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mr-bogey/TouchTool"));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } catch (Exception ignored){ }
