@@ -52,8 +52,14 @@ public class TaskCallable implements Callable<Void> {
         allPercent = getAllPercent(task);
     }
 
-    public void stop() {
-        isRunning = false;
+    public boolean stop() {
+        return stop(false);
+    }
+
+    public boolean stop(boolean force){
+        if (force) isRunning = false;
+        else if (task.getStatus() != TaskStatus.TIME) isRunning = false;
+        return !isRunning;
     }
 
     public boolean isRunning(){
@@ -64,8 +70,9 @@ public class TaskCallable implements Callable<Void> {
     public Void call() {
         if (callback != null) callback.onStart();
         boolean result = runTask(task);
-        if (callback != null) callback.onEnd(isRunning());
+        if (callback != null) callback.onEnd(result);
         RunningUtils.run(service, task, pkgName, result || task.getStatus() == TaskStatus.MANUAL);
+        isRunning = false;
         return null;
     }
 

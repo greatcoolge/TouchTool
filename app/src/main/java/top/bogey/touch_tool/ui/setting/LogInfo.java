@@ -9,6 +9,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import top.bogey.touch_tool.utils.AppUtils;
+
 public class LogInfo implements Parcelable {
     private final String id;
     private final long date;
@@ -47,9 +49,7 @@ public class LogInfo implements Parcelable {
     }
 
     public String getDateString(){
-        DateFormat dateFormat = DateFormat.getDateTimeInstance();
-        Date date = new Date(this.date);
-        return dateFormat.format(date);
+        return AppUtils.formatDateSecond(date);
     }
 
     public String getId() {

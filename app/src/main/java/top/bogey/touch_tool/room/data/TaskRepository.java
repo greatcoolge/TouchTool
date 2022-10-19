@@ -11,7 +11,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
 
 public class TaskRepository {
@@ -50,6 +53,22 @@ public class TaskRepository {
 
     public List<Task> getTasksById(String id){
         Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksById(id));
+        try {
+            return future.get(1000, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Task getTaskById(String id){
+        List<Task> tasks = getTasksById(id);
+        if (tasks != null && tasks.size() > 0) return tasks.get(0);
+        return null;
+    }
+
+    public List<Task> getTasksByStatus(TaskStatus status){
+        Future<List<Task>> future = TaskDatabase.service.submit(() -> taskDao.getTasksByStatus(status));
         try {
             return future.get(1000, TimeUnit.MILLISECONDS);
         } catch (ExecutionException | InterruptedException | TimeoutException e) {

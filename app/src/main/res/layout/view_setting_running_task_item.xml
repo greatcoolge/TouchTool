@@ -30,7 +30,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/number_text"
             style="@style/Widget.Material3.Button"
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginEnd="16dp"
             android:insetTop="0dp"

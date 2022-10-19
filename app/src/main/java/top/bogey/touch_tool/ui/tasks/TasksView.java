@@ -23,6 +23,7 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewTasksBinding;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.apps.AppInfo;
 import top.bogey.touch_tool.ui.record.QuickRecordFloatView;
@@ -109,6 +110,9 @@ public class TasksView extends Fragment {
             Task copyTask = viewModel.getCopyTask();
             if (copyTask != null){
                 copyTask.setPkgName(appInfo.packageName);
+                if (copyTask.getStatus() == TaskStatus.TIME && !appInfo.packageName.equals(getString(R.string.common_package_name))){
+                    copyTask.setStatus(TaskStatus.CLOSED);
+                }
                 TaskRepository.getInstance(getContext()).saveTask(copyTask);
             }
             viewModel.setCopyTask(null);

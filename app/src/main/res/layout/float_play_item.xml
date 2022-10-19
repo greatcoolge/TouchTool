@@ -7,21 +7,26 @@
     app:cardBackgroundColor="?attr/colorSurface"
     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">
 
-    <com.king.view.circleprogressview.CircleProgressView
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/play_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        app:cpvCirclePadding="0dp"
-        app:cpvLabelTextColor="?attr/colorPrimary"
-        app:cpvLabelTextSize="11sp"
-        app:cpvNormalColor="?attr/colorSurface"
-        app:cpvProgress="0"
-        app:cpvProgressColor="?attr/colorPrimary"
-        app:cpvShowTick="false"
-        app:cpvStrokeWidth="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:max="100"
+        app:indicatorInset="0dp"
+        app:indicatorSize="32dp"
+        app:trackThickness="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:trackCornerRadius="2dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="11sp"
+        android:textColor="?attr/colorPrimary"/>
 
 </com.google.android.material.card.MaterialCardView>

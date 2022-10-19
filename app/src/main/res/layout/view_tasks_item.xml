@@ -85,7 +85,59 @@
                 app:icon="@drawable/icon_run_manual"
                 app:iconTint="@color/container_tint_check" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/time_button"
+                style="@style/Theme.TouchTool.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/background_tint_check"
+                app:icon="@drawable/icon_time"
+                app:iconTint="@color/container_tint_check" />
+
         </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <LinearLayout
+            android:id="@+id/time_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/status_group">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/calendar_button"
+                style="@style/Theme.TouchTool.Button.IconOnly"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_calendar"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/date_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textSize="11sp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/date_button"
+                style="@style/Theme.TouchTool.Button.IconOnly"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_time"/>
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/action_box"
@@ -98,7 +150,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/status_group"
+            app:layout_constraintTop_toBottomOf="@+id/time_box"
             tools:listitem="@layout/view_tasks_action" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

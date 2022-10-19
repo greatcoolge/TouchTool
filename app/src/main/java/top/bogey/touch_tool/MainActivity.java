@@ -43,6 +43,7 @@ import java.util.Objects;
 
 import top.bogey.touch_tool.databinding.ActivityMainBinding;
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.data.CustomTypeConverts;
 import top.bogey.touch_tool.room.data.TaskRepository;
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> intentLauncher;
     private ActivityResultLauncher<String> permissionLauncher;
     private PermissionResultCallback resultCallback;
+
+    private boolean removeFloatView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,12 +217,16 @@ public class MainActivity extends AppCompatActivity {
         try {
             tasks = gson.fromJson(tasksString, new TypeToken<List<Task>>(){}.getType());
         } catch (JsonParseException ignored){}
+        MainAccessibilityService service = MainApplication.getService();
         if (tasks != null){
             List<Task> newTasks = new ArrayList<>();
             for (Task task : tasks) {
                 if (pkgNames.contains(task.getPkgName())){
                     if (task.getActions() != null && !task.getActions().isEmpty()){
                         newTasks.add(task);
+                        if (task.getStatus() == TaskStatus.TIME && service != null && service.isServiceEnabled()){
+                            service.addJob(task);
+                        }
                     }
                 }
             }
@@ -274,11 +281,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPlayFloatView(String pkgName){
-        binding.getRoot().post(() -> new PlayFloatView(this, pkgName).show());
+        binding.getRoot().post(() -> {
+            removeFloatView = false;
+            PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
+            if (view == null){
+                new PlayFloatView(this, pkgName).show();
+            } else {
+                view.setPkgName(pkgName);
+            }
+        });
         RunningUtils.log(LogLevel.LOW, getString(R.string.log_show_manual_task));
     }
 
     public void dismissPlayFloatView(){
-        binding.getRoot().post(() -> EasyFloat.dismiss(PlayFloatView.class.getCanonicalName()));
+        removeFloatView = true;
+        binding.getRoot().postDelayed(() -> {
+            if (removeFloatView){
+                EasyFloat.dismiss(PlayFloatView.class.getCanonicalName());
+            }
+        }, 100);
     }
 }

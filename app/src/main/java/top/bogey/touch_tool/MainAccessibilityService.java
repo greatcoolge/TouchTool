@@ -3,12 +3,16 @@ package top.bogey.touch_tool;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.app.Activity;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Path;
 import android.os.IBinder;
+import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
@@ -26,8 +30,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.data.FindRunnable;
 import top.bogey.touch_tool.room.data.TaskCallable;
+import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.utils.ResultCallback;
 import top.bogey.touch_tool.utils.TaskCallback;
 
@@ -50,6 +56,9 @@ public class MainAccessibilityService extends AccessibilityService {
     public final ExecutorService taskService;
     private final List<TaskCallable> tasks = new ArrayList<>();
 
+    private int jobId = 1000;
+
+
     public MainAccessibilityService() {
         findService = Executors.newFixedThreadPool(2);
         taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
@@ -57,7 +66,7 @@ public class MainAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (event != null && Boolean.TRUE.equals(serviceEnabled.getValue())){
+        if (event != null && isServiceEnabled()){
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED){
                 if (findRunnable != null) findRunnable.stop();
                 findRunnable = new FindRunnable(this, tasks, currPkgName);
@@ -72,16 +81,21 @@ public class MainAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        MainApplication.setService(this);
         serviceConnected = true;
+        MainApplication.setService(this);
 
-        serviceEnabled.setValue(MMKV.defaultMMKV().decodeBool(SERVICE_ENABLED, false));
+        setServiceEnabled(MMKV.defaultMMKV().decodeBool(SERVICE_ENABLED, false));
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        MainApplication.setService(null);
         serviceConnected = false;
+        MainApplication.setService(null);
+        stopCaptureService();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancelAll();
+
         return super.onUnbind(intent);
     }
 
@@ -97,6 +111,9 @@ public class MainAccessibilityService extends AccessibilityService {
         serviceConnected = false;
         MainApplication.setService(null);
         stopCaptureService();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancelAll();
     }
 
     public boolean isServiceConnected() {
@@ -106,6 +123,20 @@ public class MainAccessibilityService extends AccessibilityService {
     public void setServiceEnabled(boolean enabled){
         serviceEnabled.setValue(enabled);
         MMKV.defaultMMKV().encode(SERVICE_ENABLED, enabled);
+
+        if (isServiceEnabled()){
+            List<Task> tasks = TaskRepository.getInstance(this).getTasksByStatus(TaskStatus.TIME);
+            for (Task task : tasks) {
+                addJob(task);
+            }
+        } else {
+            JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            jobScheduler.cancelAll();
+        }
+    }
+
+    public boolean isServiceEnabled(){
+        return isServiceConnected() && Boolean.TRUE.equals(serviceEnabled.getValue());
     }
 
     public void startCaptureService(boolean moveBack, ResultCallback callback){
@@ -155,27 +186,57 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public boolean isCaptureEnabled(){
-        return Boolean.TRUE.equals(captureEnabled.getValue());
+        return isServiceConnected() && Boolean.TRUE.equals(captureEnabled.getValue());
     }
 
     public TaskCallable runTask(Task task, TaskCallback callback){
-        if (Boolean.TRUE.equals(serviceEnabled.getValue())){
-            TaskCallable callable = new TaskCallable(this, task, currPkgName, callback);
-            tasks.add(callable);
-            taskService.submit(callable);
-            return callable;
-        }
-        return null;
+        if (task == null || !isServiceEnabled()) return null;
+        TaskCallable callable = new TaskCallable(this, task, currPkgName, callback);
+        tasks.add(callable);
+        taskService.submit(callable);
+        return callable;
     }
 
     public void stopTask(TaskCallable callable){
-        if (callable != null && Boolean.TRUE.equals(serviceEnabled.getValue())){
-            tasks.remove(callable);
-            callable.stop();
-            try {
-                taskService.invokeAny(Collections.singletonList(callable));
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+        if (callable == null || !isServiceEnabled()) return;
+        tasks.remove(callable);
+        callable.stop(true);
+        try {
+            taskService.invokeAny(Collections.singletonList(callable));
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addJob(Task task){
+        if (task == null || !isServiceEnabled()) return;
+        removeJob(task);
+        long timeMillis = System.currentTimeMillis();
+        if (task.getStatus() == TaskStatus.TIME && task.getTime() > timeMillis) {
+            JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            PersistableBundle bundle = new PersistableBundle();
+            bundle.putString("id", task.getId());
+            JobInfo jobInfo = new JobInfo.Builder(jobId++, new ComponentName(getPackageName(), MainJobService.class.getName()))
+                    .setMinimumLatency(task.getTime() - timeMillis)
+                    .setOverrideDeadline(task.getTime() - timeMillis + 1000)
+                    .setExtras(bundle)
+                    .build();
+
+            Log.d("TAG", "addJob: " + (task.getTime() - timeMillis));
+            if (jobScheduler.schedule(jobInfo) > 0){
+                Log.d("TAG", "addJob: " + task.getTitle() + task.getId());
+            }
+        }
+    }
+
+    public void removeJob(Task task){
+        if (task == null || !isServiceEnabled()) return;
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        for (JobInfo jobInfo : jobScheduler.getAllPendingJobs()) {
+            PersistableBundle extras = jobInfo.getExtras();
+            if (task.getId().equals(extras.getString("id"))){
+                jobScheduler.cancel(jobInfo.getId());
+                break;
             }
         }
     }

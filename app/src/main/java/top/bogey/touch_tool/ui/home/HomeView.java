@@ -36,8 +36,7 @@ public class HomeView extends Fragment {
         binding.accessibilityServiceButton.setOnClickListener(view -> {
             MainAccessibilityService service = MainApplication.getService();
             if (service != null && service.isServiceConnected()){
-                boolean enabled = Boolean.TRUE.equals(MainAccessibilityService.serviceEnabled.getValue());
-                service.setServiceEnabled(!enabled);
+                service.setServiceEnabled(!service.isServiceEnabled());
             } else {
                 AppUtils.showDialog(requireContext(), R.string.accessibility_service_on_tips, new SelectCallback(){
                     @Override

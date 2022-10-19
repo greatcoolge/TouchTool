@@ -14,9 +14,17 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
@@ -27,6 +35,7 @@ import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.actions.ActionFloatView;
 import top.bogey.touch_tool.ui.record.RecordFloatView;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder> {
@@ -138,12 +147,81 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         case R.id.manual_button:
                             task.setStatus(TaskStatus.MANUAL);
                             break;
+                        case R.id.time_button:
+                            task.setStatus(TaskStatus.TIME);
+                            break;
                     }
                     refreshItem(task);
                     if (status != task.getStatus()){
                         TaskRepository.getInstance(context).saveTask(task);
+                        MainAccessibilityService service = MainApplication.getService();
+                        if (service != null && service.isServiceEnabled()){
+                            if (status == TaskStatus.TIME){
+                                service.removeJob(task);
+                            }
+                            if (task.getStatus() == TaskStatus.TIME){
+                                service.addJob(task);
+                            }
+                        }
                     }
                 }
+            });
+
+            binding.calendarButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Task task = tasks.get(index);
+
+                CalendarConstraints calendarConstraints = new CalendarConstraints.Builder()
+                        .setValidator(DateValidatorPointForward.now())
+                        .build();
+
+                MaterialDatePicker<Long> picker = MaterialDatePicker.Builder
+                        .datePicker()
+                        .setSelection(task.getTime())
+                        .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+                        .setCalendarConstraints(calendarConstraints)
+                        .build();
+
+                picker.show(MainApplication.getActivity().getSupportFragmentManager(), null);
+
+                picker.addOnPositiveButtonClickListener(selection -> {
+                    task.setTime(AppUtils.mergeDateTime(selection, task.getTime()));
+                    binding.dateText.setText(AppUtils.formatDateMinute(task.getTime()));
+                    TaskRepository.getInstance(context).saveTask(task);
+                    MainAccessibilityService service = MainApplication.getService();
+                    if (service != null && service.isServiceEnabled()){
+                        service.addJob(task);
+                    }
+                });
+            });
+
+            binding.dateButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Task task = tasks.get(index);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(task.getTime());
+
+                MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                        .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                        .setTimeFormat(TimeFormat.CLOCK_24H)
+                        .setHour(calendar.get(Calendar.HOUR_OF_DAY))
+                        .setMinute(calendar.get(Calendar.MINUTE))
+                        .build();
+
+                picker.show(MainApplication.getActivity().getSupportFragmentManager(), null);
+
+                picker.addOnPositiveButtonClickListener(view -> {
+                    calendar.set(Calendar.HOUR_OF_DAY, picker.getHour());
+                    calendar.set(Calendar.MINUTE, picker.getMinute());
+                    calendar.set(Calendar.SECOND, 0);
+                    task.setTime(calendar.getTimeInMillis());
+                    binding.dateText.setText(AppUtils.formatDateMinute(task.getTime()));
+                    TaskRepository.getInstance(context).saveTask(task);
+                    MainAccessibilityService service = MainApplication.getService();
+                    if (service != null && service.isServiceEnabled()){
+                        service.addJob(task);
+                    }
+                });
             });
 
             binding.deleteButton.setOnClickListener(v -> {
@@ -196,11 +274,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         public void refreshItem(Task task){
             View child = binding.statusGroup.getChildAt(task.getStatus().ordinal());
             binding.statusGroup.check(child.getId());
-//            boolean isCommon = task.getPkgName().equals(context.getString(R.string.common_package_name));
-
+            boolean isCommon = task.getPkgName().equals(context.getString(R.string.common_package_name));
+            binding.timeButton.setVisibility(isCommon ? View.VISIBLE : View.GONE);
             binding.titleEdit.setText(task.getTitle());
             adapter.setTask(task);
 
+            binding.timeBox.setVisibility(View.GONE);
             String hint = "";
             switch (task.getStatus()){
                 case CLOSED:
@@ -211,6 +290,11 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     break;
                 case MANUAL:
                     hint = context.getString(R.string.run_manual);
+                    break;
+                case TIME:
+                    hint = context.getString(R.string.run_time);
+                    binding.timeBox.setVisibility(View.VISIBLE);
+                    binding.dateText.setText(AppUtils.formatDateMinute(task.getTime()));
                     break;
             }
             binding.textInputLayout.setHint(hint);

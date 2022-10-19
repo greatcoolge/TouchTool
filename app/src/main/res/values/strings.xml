@@ -18,13 +18,14 @@
 
     <string name="accessibility_service_on">功能已开启</string>
     <string name="accessibility_service_off">功能已关闭</string>
+    <string name="accessibility_service_des">自动点击服务，开启之后能够使用自动点击功能</string>
     <string name="accessibility_service_on_2">无障碍服务已开启</string>
     <string name="accessibility_service_off_2">无障碍服务已关闭</string>
     <string name="accessibility_service_on_tips">本应用需要先开启应用提供的无障碍服务才能使用</string>
-    <string name="accessibility_service_des">自动点击服务，开启之后能够使用自动点击功能</string>
 
     <string name="capture_service_on">录屏已开启</string>
     <string name="capture_service_off">录屏已关闭</string>
+    <string name="capture_service_des">屏幕录制服务，开启之后能够使用图片点击与检测功能</string>
     <string name="capture_service_on_tips_1">需要授予屏幕录制权限才能使用检测图片的能力</string>
     <string name="capture_service_on_tips_2">当前任务需要检测图片，请开启屏幕录制</string>
     <string name="capture_service_on_tips_3">未开启无障碍服务，暂时无法使用</string>
@@ -69,6 +70,7 @@
     <string name="run_close">禁用</string>
     <string name="run_auto">自动任务</string>
     <string name="run_manual">手动任务</string>
+    <string name="run_time">定时任务</string>
 
     <string name="action_name">自定义动作名称</string>
 

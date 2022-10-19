@@ -9,6 +9,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import top.bogey.touch_tool.utils.AppUtils;
+
 public class RunningInfo implements Parcelable {
     private final String id;
     private final String taskId;
@@ -53,9 +55,7 @@ public class RunningInfo implements Parcelable {
     }
 
     public String getDateString(){
-        DateFormat dateFormat = DateFormat.getDateTimeInstance();
-        Date date = new Date(this.date);
-        return dateFormat.format(date);
+        return AppUtils.formatDateSecond(date);
     }
 
     public static final Creator<RunningInfo> CREATOR = new Creator<RunningInfo>() {

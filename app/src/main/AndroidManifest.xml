@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="top.bogey.touch_tool">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <queries>
         <intent>
@@ -40,6 +40,7 @@
         </activity>
 
         <service android:name=".MainAccessibilityService"
+            android:description="@string/accessibility_service_des"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:label="@string/app_name"
             android:exported="false">
@@ -52,14 +53,19 @@
         </service>
 
         <service android:name=".MainCaptureService"
+            android:description="@string/capture_service_des"
             android:exported="false"
             android:enabled="true"
             android:foregroundServiceType="mediaProjection"/>
 
         <service android:name=".ui.setting.KeepAliveService"
+            android:description="@string/keep_alive_tips"
             android:exported="false"
             android:enabled="true"
             android:foregroundServiceType="mediaPlayback"/>
+
+        <service android:name=".MainJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

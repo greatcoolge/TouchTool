@@ -24,12 +24,13 @@ import top.bogey.touch_tool.utils.easy_float.SidePattern;
 
 @SuppressLint("ViewConstructor")
 public class PlayFloatView extends FrameLayout implements FloatViewInterface {
+    private final FloatPlayBinding binding;
     private boolean clickFirst = false;
 
     public PlayFloatView(@NonNull Context context, String pkgName) {
         super(context);
 
-        FloatPlayBinding binding = FloatPlayBinding.inflate(LayoutInflater.from(context), this, true);
+        binding = FloatPlayBinding.inflate(LayoutInflater.from(context), this, true);
         binding.closeButton.setOnClickListener(v -> {
             if (clickFirst) dismiss();
             else{
@@ -51,10 +52,7 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
             }
         });
 
-        List<Task> tasks = getManualTasks(pkgName);
-        for (Task task : tasks) {
-            binding.buttonBox.addView(new PlayFloatViewItem(getContext(), task));
-        }
+        setPkgName(pkgName);
     }
 
     @Override
@@ -73,6 +71,18 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
     @Override
     public void dismiss() {
         EasyFloat.dismiss(PlayFloatView.class.getCanonicalName());
+    }
+
+    public void setPkgName(String pkgName){
+        for (int i = 0; i < binding.buttonBox.getChildCount(); i++) {
+            PlayFloatViewItem view = (PlayFloatViewItem) binding.buttonBox.getChildAt(i);
+            if (view.isPlaying()) view.startPlay();
+        }
+        binding.buttonBox.removeAllViews();
+        List<Task> tasks = getManualTasks(pkgName);
+        for (Task task : tasks) {
+            binding.buttonBox.addView(new PlayFloatViewItem(getContext(), task));
+        }
     }
 
     private List<Task> getManualTasks(String pkgName){

@@ -39,7 +39,7 @@ public class PlayFloatViewItem extends FrameLayout {
 
         binding = FloatPlayItemBinding.inflate(LayoutInflater.from(context), this, true);
 
-        binding.playButton.setLabelText(getPivotalTitle(task.getTitle()));
+        binding.percent.setText(getPivotalTitle(task.getTitle()));
 
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
@@ -78,7 +78,7 @@ public class PlayFloatViewItem extends FrameLayout {
         refreshProgress(0);
     }
 
-    private void startPlay(){
+    public void startPlay(){
         MainAccessibilityService service = MainApplication.getService();
         if (service != null && service.isServiceConnected()){
             if (playing){
@@ -111,6 +111,10 @@ public class PlayFloatViewItem extends FrameLayout {
         }
     }
 
+    public boolean isPlaying() {
+        return playing;
+    }
+
     private String getPivotalTitle(String title){
         if (title == null || title.isEmpty()) return "?";
         Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
@@ -124,8 +128,8 @@ public class PlayFloatViewItem extends FrameLayout {
 
     private synchronized void refreshProgress(int percent){
         post(() -> {
-            binding.playButton.setLabelText(!playing && percent == 0 ? getPivotalTitle(task.getTitle()) : String.valueOf(percent));
-            binding.playButton.showAnimation(binding.playButton.getProgress(), percent, 100);
+            binding.percent.setText(!playing && percent == 0 ? getPivotalTitle(task.getTitle()) : String.valueOf(percent));
+            binding.playButton.setProgress(percent, percent != 0);
         });
     }
 

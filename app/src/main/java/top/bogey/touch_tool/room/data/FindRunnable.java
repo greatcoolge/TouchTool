@@ -57,11 +57,13 @@ public class FindRunnable implements Runnable{
             if (!(packageName.equals("null") || packageName.equals(pkgName))){
                 RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_surface_changed, pkgName));
 
-                // 取消所有非当前包下的普通任务
-                for (TaskCallable task : tasks) {
-                    if (task.isRunning()) task.stop();
+                // 尝试停止任务并取消所有非运行中任务
+                for (int i = tasks.size() - 1; i >= 0; i--) {
+                    TaskCallable task = tasks.get(i);
+                    if (task.isRunning()){
+                        if (task.stop()) tasks.remove(i);
+                    }
                 }
-                tasks.clear();
                 service.currPkgName = packageName;
 
                 MainActivity activity = MainApplication.getActivity();

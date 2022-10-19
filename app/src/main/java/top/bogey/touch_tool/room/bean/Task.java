@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import top.bogey.touch_tool.utils.AppUtils;
+
 @Entity
 public class Task {
     @NonNull
@@ -18,6 +20,7 @@ public class Task {
     private String title = "";
     private List<Action> actions = new ArrayList<>();
     private TaskStatus status = TaskStatus.CLOSED;
+    private long time = AppUtils.mergeDateTime(System.currentTimeMillis(), System.currentTimeMillis());
 
     @Ignore
     public Task() {
@@ -36,6 +39,7 @@ public class Task {
         title = task.getTitle();
         actions.addAll(task.getActions());
         status = task.getStatus();
+        time = task.getTime();
     }
 
     @NonNull
@@ -73,5 +77,13 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

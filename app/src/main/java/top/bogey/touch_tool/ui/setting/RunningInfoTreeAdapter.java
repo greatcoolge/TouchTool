@@ -64,16 +64,25 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
         Map<String, Map<String, List<RunningInfo>>> pkgMap = RunningUtils.getRunningInfo();
         for (Map.Entry<String, Map<String, List<RunningInfo>>> pkgEntry : pkgMap.entrySet()) {
             Map<String, List<RunningInfo>> taskMap = pkgEntry.getValue();
-            TreeNode pkgTreeNode = new TreeNode(new TreeNodeInfo(pkgEntry.getKey(), pkgEntry.getValue().size()), R.layout.view_setting_running_app_item);
+            TreeNode pkgTreeNode = new TreeNode(null, R.layout.view_setting_running_app_item);
+            int totalTaskCount = 0;
+            int totalSuccessCount = 0;
             for (Map.Entry<String, List<RunningInfo>> taskEntry : taskMap.entrySet()) {
                 List<RunningInfo> taskList = taskEntry.getValue();
-                TreeNode taskTreeNode = new TreeNode(new TreeNodeInfo(taskEntry.getKey(), taskEntry.getValue().size()), R.layout.view_setting_running_task_item);
+                int taskCount = taskList.size();
+                int successCount = 0;
+                TreeNode taskTreeNode = new TreeNode(null, R.layout.view_setting_running_task_item);
                 for (RunningInfo runningInfo : taskList) {
                     TreeNode infoTreeNode = new TreeNode(runningInfo, R.layout.view_setting_running_item);
                     taskTreeNode.addChild(infoTreeNode);
+                    if (runningInfo.isSuccess()) successCount++;
                 }
+                totalTaskCount += taskCount;
+                totalSuccessCount += successCount;
+                taskTreeNode.setValue(new TreeNodeInfo(taskEntry.getKey(), taskCount, successCount));
                 pkgTreeNode.addChild(taskTreeNode);
             }
+            pkgTreeNode.setValue(new TreeNodeInfo(pkgEntry.getKey(), totalTaskCount, totalSuccessCount));
             treeNodes.add(pkgTreeNode);
         }
         updateTreeNodes(treeNodes);
@@ -106,6 +115,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
             setNodePadding(0);
         }
 
+        @SuppressLint("DefaultLocale")
         public void refreshItem(TreeNode node, MainViewModel viewModel){
             int level = node.getLevel();
             PackageManager manager = context.getPackageManager();
@@ -120,7 +130,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                         appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
                     }
                 }
-                appBinding.numberText.setText(String.valueOf(nodeInfo.getValue()));
+                appBinding.numberText.setText(String.format("%d/%d", nodeInfo.getSuccess(), nodeInfo.getValue()));
             } else if (level == 1) {
                 TreeNodeInfo nodeInfo = (TreeNodeInfo) node.getValue();
                 List<Task> taskList = TaskRepository.getInstance(context).getTasksById(nodeInfo.getKey());
@@ -136,7 +146,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                         }
                     }
                 }
-                taskBinding.numberText.setText(String.valueOf(nodeInfo.getValue()));
+                taskBinding.numberText.setText(String.format("%d/%d", nodeInfo.getSuccess(), nodeInfo.getValue()));
             } else if (level == 2) {
                 RunningInfo runningInfo = (RunningInfo) node.getValue();
                 binding.time.setText(runningInfo.getDateString());

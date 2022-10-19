@@ -10,6 +10,7 @@ import androidx.room.Query;
 import java.util.List;
 
 import top.bogey.touch_tool.room.bean.Task;
+import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
 
 @Dao
@@ -31,6 +32,9 @@ public interface TaskDao {
 
     @Query("select pkgName, count(*) as count from Task group by pkgName")
     List<TaskNode.TaskGroup> getTaskGroups();
+
+    @Query("select * from Task where status = :status")
+    List<Task> getTasksByStatus(TaskStatus status);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Task task);

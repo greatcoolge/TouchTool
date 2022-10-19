@@ -38,7 +38,7 @@ public class SettingView extends PreferenceFragmentCompat {
             e.printStackTrace();
         }
 
-        setPreferencesFromResource(R.xml.setting, null);
+        setPreferencesFromResource(R.xml.setting, rootKey);
 
         SwitchPreferenceCompat keepAlive = findPreference("keep_alive");
         if (keepAlive != null){
