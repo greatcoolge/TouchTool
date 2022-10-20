@@ -5,11 +5,18 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.preference.DropDownPreference;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -22,6 +29,7 @@ import java.lang.reflect.Field;
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.ui.record.RecordFloatView;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class SettingView extends PreferenceFragmentCompat {
@@ -51,6 +59,42 @@ public class SettingView extends PreferenceFragmentCompat {
                 }
                 return true;
             });
+        }
+
+        EditTextPreference recordDelay = findPreference(RecordFloatView.ACTION_RECORD_DELAY);
+        if (recordDelay != null){
+            recordDelay.setOnBindEditTextListener(editText -> {
+                editText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (s != null && !s.toString().isEmpty()){
+                            int delay = Integer.parseInt(s.toString());
+                            if (delay > 1000) {
+                                editText.setText(String.valueOf(1000));
+                            }
+                        }
+                    }
+                });
+            });
+
+            recordDelay.setOnPreferenceChangeListener((preference, newValue) -> {
+                recordDelay.setSummary(requireContext().getString(R.string.action_record_delay_curr_value, newValue));
+                return true;
+            });
+
+            String value = MMKV.defaultMMKV().decodeString(RecordFloatView.ACTION_RECORD_DELAY);
+            recordDelay.setSummary(requireContext().getString(R.string.action_record_delay_curr_value, value));
         }
 
         SwitchPreferenceCompat runningLogDialog = findPreference("running_log_dialog");

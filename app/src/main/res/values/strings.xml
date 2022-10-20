@@ -73,6 +73,8 @@
     <string name="run_time">定时任务</string>
 
     <string name="action_name">自定义动作名称</string>
+    <string name="task_start_time">自%1$s开始</string>
+    <string name="task_periodic_time">间隔%1$d时%2$d分</string>
 
     <!-- 动作 -->
     <string name="condition_title_1">如果%1$s\n则</string>
@@ -106,8 +108,18 @@
 
     <string name="pos_target">使用 %1$s 手势</string>
     <string name="color_target">点击颜色</string>
-    <string name="key_target">使用 %1$s 按键</string>
     <string name="task_target">执行 %1$s 任务</string>
+
+    <string name="key_target_back">使用 返回 按键</string>
+    <string name="key_target_home">使用 主页 按键</string>
+    <string name="key_target_task">使用 最近应用 按键</string>
+    <string name="key_target_weak">点亮屏幕</string>
+    <string name="key_target_lock">锁定屏幕</string>
+    <string name="key_target_snap">手机截屏</string>
+    <string name="key_target_goto">打开应用 %1$s</string>
+
+    <string name="action_device_not_support_lock">当前设备不支持调用锁屏功能</string>
+    <string name="action_device_not_support_snap">当前设备不支持调用系统截图</string>
 
     <string name="touch">点击</string>
 
@@ -139,6 +151,9 @@
     <string name="keep_alive_tips">如果开启自启动和锁定后台之后，应用还是被频繁关闭，可开启前台服务保持应用运行</string>
     <string name="action_touch_offset">点击偏移</string>
     <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移</string>
+    <string name="action_record_delay">录制延迟</string>
+    <string name="action_record_delay_tips">当录制动作的时候，每个录制的动作之后都会默认添加一个延迟动作，0为不添加</string>
+    <string name="action_record_delay_curr_value">当前值为：%1$sms</string>
 
     <string name="app_running">运行状况</string>
     <string name="running_log">记录日志</string>
@@ -161,5 +176,8 @@
     <string name="log_show_manual_task">显示手动任务浮窗</string>
     <string name="log_task_format">%1$s-%2$s\n[%3$d]%4$s</string>
     <string name="log_match_image">图片匹配，需求相似度为：%1$d，匹配相似度为：%2$d</string>
-
+    <string name="log_add_job">添加定时任务 %1$s, 设定在 %2$s 执行</string>
+    <string name="log_add_periodic_job">添加重复定时任务 %1$s, 设定在 %2$s 执行, 间隔%3$d时%4$d分</string>
+    <string name="log_remove_job">移除定时任务 %1$s-%2$s</string>
+    <string name="log_do_job">定时任务 %1$s 正在被执行</string>
 </resources>

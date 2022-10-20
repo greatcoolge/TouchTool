@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tencent.mmkv.MMKV;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -36,6 +38,8 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 @SuppressLint("ViewConstructor")
 public class RecordFloatView extends FrameLayout implements FloatViewInterface {
+    public static final String ACTION_RECORD_DELAY = "action_record_delay";
+
     public final Task task;
 
     private final FloatRecordBinding binding;
@@ -45,10 +49,15 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
     private boolean isToLeft = true;
     private boolean isToRight = false;
 
+    private final int delay;
+
     @SuppressLint("ClickableViewAccessibility")
     public RecordFloatView(@NonNull Context context, Task task, ResultCallback callback) {
         super(context);
         this.task = task;
+        String string = MMKV.defaultMMKV().decodeString(ACTION_RECORD_DELAY, "0");
+        if (string != null && !string.isEmpty()) delay = Integer.parseInt(string);
+        else delay = 0;
 
         binding = FloatRecordBinding.inflate(LayoutInflater.from(context), this, true);
 
@@ -95,7 +104,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         binding.imageButton.setOnClickListener(v -> addAction(new ImageNode(new ImageNode.ImageInfo(95))));
         binding.posButton.setOnClickListener(v -> addAction(new TouchNode(new TouchNode.TouchPath(context))));
         binding.colorButton.setOnClickListener(v -> addAction(new ColorNode(new ColorNode.ColorInfo(context))));
-        binding.keyButton.setOnClickListener(v -> addAction(new KeyNode(1)));
+        binding.keyButton.setOnClickListener(v -> addAction(new KeyNode(KeyNode.KeyType.BACK)));
         binding.taskButton.setOnClickListener(v -> addAction(new TaskNode(null)));
 
     }
@@ -122,6 +131,11 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         action.setTargets(Collections.singletonList(node));
         new ActionFloatView(getContext(), task, action, result -> {
             adapter.addAction(action);
+            if (delay > 0){
+                Action delayAction = new Action();
+                delayAction.setTargets(Collections.singletonList(new DelayNode(new TimeArea(delay))));
+                adapter.addAction(delayAction);
+            }
             binding.recyclerView.scrollToPosition(adapter.getItemCount() - 1);
         }).show();
     }

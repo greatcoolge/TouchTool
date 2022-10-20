@@ -21,6 +21,15 @@
             app:selectable="false"
             app:showSeekBarValue="true" />
 
+        <EditTextPreference
+            android:key="action_record_delay"
+            android:title="@string/action_record_delay"
+            android:dialogTitle="@string/action_record_delay"
+            android:dialogMessage="@string/action_record_delay_tips"
+            android:positiveButtonText="@string/enter"
+            android:negativeButtonText="@string/cancel"
+            app:defaultValue="0" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

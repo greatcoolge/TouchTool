@@ -3,19 +3,21 @@ package top.bogey.touch_tool;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.app.Activity;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Path;
 import android.os.IBinder;
-import android.os.PersistableBundle;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.tencent.mmkv.MMKV;
 
@@ -34,6 +36,10 @@ import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.data.FindRunnable;
 import top.bogey.touch_tool.room.data.TaskCallable;
 import top.bogey.touch_tool.room.data.TaskRepository;
+import top.bogey.touch_tool.room.data.TaskWorker;
+import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.ResultCallback;
 import top.bogey.touch_tool.utils.TaskCallback;
 
@@ -55,9 +61,6 @@ public class MainAccessibilityService extends AccessibilityService {
     private FindRunnable findRunnable = null;
     public final ExecutorService taskService;
     private final List<TaskCallable> tasks = new ArrayList<>();
-
-    private int jobId = 1000;
-
 
     public MainAccessibilityService() {
         findService = Executors.newFixedThreadPool(2);
@@ -93,8 +96,7 @@ public class MainAccessibilityService extends AccessibilityService {
         MainApplication.setService(null);
         stopCaptureService();
 
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.cancelAll();
+        WorkManager.getInstance(this).cancelAllWork();
 
         return super.onUnbind(intent);
     }
@@ -112,8 +114,7 @@ public class MainAccessibilityService extends AccessibilityService {
         MainApplication.setService(null);
         stopCaptureService();
 
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.cancelAll();
+        WorkManager.getInstance(this).cancelAllWork();
     }
 
     public boolean isServiceConnected() {
@@ -126,12 +127,13 @@ public class MainAccessibilityService extends AccessibilityService {
 
         if (isServiceEnabled()){
             List<Task> tasks = TaskRepository.getInstance(this).getTasksByStatus(TaskStatus.TIME);
-            for (Task task : tasks) {
-                addJob(task);
+            if (tasks != null){
+                for (Task task : tasks) {
+                    addWork(task);
+                }
             }
         } else {
-            JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            jobScheduler.cancelAll();
+            WorkManager.getInstance(this).cancelAllWork();
         }
     }
 
@@ -208,37 +210,44 @@ public class MainAccessibilityService extends AccessibilityService {
         }
     }
 
-    public void addJob(Task task){
+    public void addWork(Task task){
         if (task == null || !isServiceEnabled()) return;
-        removeJob(task);
         long timeMillis = System.currentTimeMillis();
-        if (task.getStatus() == TaskStatus.TIME && task.getTime() > timeMillis) {
-            JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            PersistableBundle bundle = new PersistableBundle();
-            bundle.putString("id", task.getId());
-            JobInfo jobInfo = new JobInfo.Builder(jobId++, new ComponentName(getPackageName(), MainJobService.class.getName()))
-                    .setMinimumLatency(task.getTime() - timeMillis)
-                    .setOverrideDeadline(task.getTime() - timeMillis + 1000)
-                    .setExtras(bundle)
-                    .build();
-
-            Log.d("TAG", "addJob: " + (task.getTime() - timeMillis));
-            if (jobScheduler.schedule(jobInfo) > 0){
-                Log.d("TAG", "addJob: " + task.getTitle() + task.getId());
+        if (task.getStatus() == TaskStatus.TIME) {
+            WorkManager workManager = WorkManager.getInstance(this);
+            if (task.getPeriodic() > 0){
+                // 尽量小延迟的执行间隔任务
+                PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(TaskWorker.class, task.getPeriodic(), TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
+                        .setInitialDelay(task.getTime() - timeMillis, TimeUnit.MILLISECONDS)
+                        .setInputData(new Data.Builder()
+                                .putString("id", task.getId())
+                                .putString("title", task.getTitle())
+                                .build())
+                        .build();
+                workManager.enqueueUniquePeriodicWork(task.getId(), ExistingPeriodicWorkPolicy.REPLACE, workRequest);
+                RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_periodic_job, task.getTitle(), AppUtils.formatDateMinute(task.getTime()), task.getPeriodic() / 60, task.getPeriodic() % 60));
+            } else if(task.getTime() > timeMillis) {
+                OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TaskWorker.class)
+                        .setInitialDelay(task.getTime() - timeMillis, TimeUnit.MILLISECONDS)
+                        .setInputData(new Data.Builder()
+                                .putString("id", task.getId())
+                                .putString("title", task.getTitle())
+                                .build())
+                        .build();
+                workManager.enqueueUniqueWork(task.getId(), ExistingWorkPolicy.REPLACE, workRequest);
+                RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_job, task.getTitle(), AppUtils.formatDateMinute(task.getTime())));
+            } else {
+                // 所有条件都未达到，任务无效，尝试移除已有的任务
+                removeWork(task);
             }
         }
     }
 
-    public void removeJob(Task task){
+    public void removeWork(Task task){
         if (task == null || !isServiceEnabled()) return;
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        for (JobInfo jobInfo : jobScheduler.getAllPendingJobs()) {
-            PersistableBundle extras = jobInfo.getExtras();
-            if (task.getId().equals(extras.getString("id"))){
-                jobScheduler.cancel(jobInfo.getId());
-                break;
-            }
-        }
+        WorkManager workManager = WorkManager.getInstance(this);
+        workManager.cancelUniqueWork(task.getId());
+        RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_remove_job, task.getTitle(), task.getId()));
     }
 
     public void runGesture(Path path, int time, ResultCallback callback){

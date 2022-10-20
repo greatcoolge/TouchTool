@@ -64,9 +64,6 @@
             android:enabled="true"
             android:foregroundServiceType="mediaPlayback"/>
 
-        <service android:name=".MainJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.file_provider"

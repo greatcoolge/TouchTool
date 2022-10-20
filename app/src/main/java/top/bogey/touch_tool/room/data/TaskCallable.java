@@ -19,6 +19,7 @@ import top.bogey.touch_tool.room.bean.Action;
 import top.bogey.touch_tool.room.bean.ActionMode;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.TaskStatus;
+import top.bogey.touch_tool.room.bean.node.KeyNode;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
 import top.bogey.touch_tool.room.bean.node.NumberNode;
@@ -200,7 +201,8 @@ public class TaskCallable implements Callable<Void> {
                         }
                         break;
                     case KEY:
-                        service.performGlobalAction((Integer) nodeTarget);
+                        KeyNode.KeyTask keyTask = (KeyNode.KeyTask) nodeTarget;
+                        result = keyTask.getKeyType().doKeyTask(service, keyTask.getExtras());
                         break;
                     case TASK:
                         result = runTask((Task) nodeTarget);

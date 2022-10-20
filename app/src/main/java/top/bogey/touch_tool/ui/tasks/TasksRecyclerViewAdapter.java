@@ -157,10 +157,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         MainAccessibilityService service = MainApplication.getService();
                         if (service != null && service.isServiceEnabled()){
                             if (status == TaskStatus.TIME){
-                                service.removeJob(task);
+                                service.removeWork(task);
                             }
                             if (task.getStatus() == TaskStatus.TIME){
-                                service.addJob(task);
+                                service.addWork(task);
                             }
                         }
                     }
@@ -186,11 +186,11 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
                 picker.addOnPositiveButtonClickListener(selection -> {
                     task.setTime(AppUtils.mergeDateTime(selection, task.getTime()));
-                    binding.dateText.setText(AppUtils.formatDateMinute(task.getTime()));
+                    binding.dateText.setText(context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime())));
                     TaskRepository.getInstance(context).saveTask(task);
                     MainAccessibilityService service = MainApplication.getService();
                     if (service != null && service.isServiceEnabled()){
-                        service.addJob(task);
+                        service.addWork(task);
                     }
                 });
             });
@@ -215,11 +215,38 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     calendar.set(Calendar.MINUTE, picker.getMinute());
                     calendar.set(Calendar.SECOND, 0);
                     task.setTime(calendar.getTimeInMillis());
-                    binding.dateText.setText(AppUtils.formatDateMinute(task.getTime()));
+                    binding.dateText.setText(context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime())));
                     TaskRepository.getInstance(context).saveTask(task);
                     MainAccessibilityService service = MainApplication.getService();
                     if (service != null && service.isServiceEnabled()){
-                        service.addJob(task);
+                        service.addWork(task);
+                    }
+                });
+            });
+
+            binding.everyDayButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Task task = tasks.get(index);
+                int periodic = task.getPeriodic();
+
+                MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                        .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                        .setTimeFormat(TimeFormat.CLOCK_24H)
+                        .setHour(periodic / 60)
+                        .setMinute(periodic % 60)
+                        .build();
+
+                picker.show(MainApplication.getActivity().getSupportFragmentManager(), null);
+
+                picker.addOnPositiveButtonClickListener(view -> {
+                    task.setPeriodic(picker.getHour() * 60 + picker.getMinute());
+                    if (task.getPeriodic() > 0 && task.getPeriodic() < 15) task.setPeriodic(15);
+                    if (task.getPeriodic() > 0) binding.periodicText.setText(context.getString(R.string.task_periodic_time, task.getPeriodic() / 60, task.getPeriodic() % 60));
+                    else binding.periodicText.setText("");
+                    TaskRepository.getInstance(context).saveTask(task);
+                    MainAccessibilityService service = MainApplication.getService();
+                    if (service != null && service.isServiceEnabled()){
+                        service.addWork(task);
                     }
                 });
             });
@@ -294,7 +321,9 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 case TIME:
                     hint = context.getString(R.string.run_time);
                     binding.timeBox.setVisibility(View.VISIBLE);
-                    binding.dateText.setText(AppUtils.formatDateMinute(task.getTime()));
+                    binding.dateText.setText(context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime())));
+                    if (task.getPeriodic() > 0) binding.periodicText.setText(context.getString(R.string.task_periodic_time, task.getPeriodic() / 60, task.getPeriodic() % 60));
+                    else binding.periodicText.setText("");
                     break;
             }
             binding.textInputLayout.setHint(hint);

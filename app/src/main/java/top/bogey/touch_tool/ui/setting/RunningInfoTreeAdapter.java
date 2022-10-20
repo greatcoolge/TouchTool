@@ -63,6 +63,11 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
         ArrayList<TreeNode> treeNodes = new ArrayList<>();
         Map<String, Map<String, List<RunningInfo>>> pkgMap = RunningUtils.getRunningInfo();
         for (Map.Entry<String, Map<String, List<RunningInfo>>> pkgEntry : pkgMap.entrySet()) {
+            String pkgName = pkgEntry.getKey();
+            if (viewModel.getAppInfoByPkgName(pkgName) == null){
+                continue;
+            }
+
             Map<String, List<RunningInfo>> taskMap = pkgEntry.getValue();
             TreeNode pkgTreeNode = new TreeNode(null, R.layout.view_setting_running_app_item);
             int totalTaskCount = 0;
@@ -82,7 +87,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                 taskTreeNode.setValue(new TreeNodeInfo(taskEntry.getKey(), taskCount, successCount));
                 pkgTreeNode.addChild(taskTreeNode);
             }
-            pkgTreeNode.setValue(new TreeNodeInfo(pkgEntry.getKey(), totalTaskCount, totalSuccessCount));
+            pkgTreeNode.setValue(new TreeNodeInfo(pkgName, totalTaskCount, totalSuccessCount));
             treeNodes.add(pkgTreeNode);
         }
         updateTreeNodes(treeNodes);
@@ -122,13 +127,11 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
             if (level == 0) {
                 TreeNodeInfo nodeInfo = (TreeNodeInfo) node.getValue();
                 AppInfo appInfo = viewModel.getAppInfoByPkgName(nodeInfo.getKey());
-                if (appInfo != null){
-                    appBinding.appName.setText(appInfo.appName);
-                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
-                        appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
-                    } else {
-                        appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
-                    }
+                appBinding.appName.setText(appInfo.appName);
+                if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                    appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
+                } else {
+                    appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
                 }
                 appBinding.numberText.setText(String.format("%d/%d", nodeInfo.getSuccess(), nodeInfo.getValue()));
             } else if (level == 1) {
@@ -138,12 +141,10 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                     Task task = taskList.get(0);
                     taskBinding.appName.setText(task.getTitle());
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(task.getPkgName());
-                    if (appInfo != null){
-                        if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
-                            taskBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
-                        } else {
-                            taskBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
-                        }
+                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                        taskBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
+                    } else {
+                        taskBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
                     }
                 }
                 taskBinding.numberText.setText(String.format("%d/%d", nodeInfo.getSuccess(), nodeInfo.getValue()));

@@ -6,6 +6,7 @@ import java.util.List;
 
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.room.bean.node.DelayNode;
+import top.bogey.touch_tool.room.bean.node.KeyNode;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.bean.node.NodeType;
 import top.bogey.touch_tool.room.bean.node.NumberNode;
@@ -95,15 +96,7 @@ public class Action {
             case COLOR:
                 return context.getString(R.string.color_target);
             case KEY:
-                String[] keys = context.getResources().getStringArray(R.array.keys);
-                String[] ids = context.getResources().getStringArray(R.array.key_ids);
-                String str = String.valueOf(node.getValue());
-                int index = 0;
-                for (String id : ids) {
-                    if (id.equals(str)) break;
-                    index++;
-                }
-                return context.getString(R.string.key_target, keys[index]);
+                return ((KeyNode) node).getValue().getKeyType().getTitle(context, ((KeyNode) node).getValue().getExtras());
             case TASK:
                 return context.getString(R.string.task_target, ((TaskNode) node).getValue().getTitle());
         }

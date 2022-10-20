@@ -22,6 +22,8 @@
     private java.lang.String title;
     private java.util.List actions;
     private top.bogey.touch_tool.room.bean.TaskStatus status;
+    private long time;
+    private int periodic;
 }
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.Action{
@@ -64,6 +66,11 @@
     private int maxPercent;
     private int size;
     private int screen;
+}
+
+-keepclassmembers class top.bogey.touch_tool.room.bean.node.KeyNode$KeyTask{
+    private top.bogey.touch_tool.room.bean.node.KeyNode$KeyType keyType;
+    private java.lang.String extras;
 }
 
 -keepclassmembers class android.graphics.Point{

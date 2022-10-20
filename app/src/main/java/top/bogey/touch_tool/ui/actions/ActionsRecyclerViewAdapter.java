@@ -1,8 +1,9 @@
 package top.bogey.touch_tool.ui.actions;
 
-import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -23,7 +25,9 @@ import java.util.Collections;
 import java.util.List;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatActionItemBinding;
 import top.bogey.touch_tool.room.bean.Action;
@@ -40,10 +44,13 @@ import top.bogey.touch_tool.room.bean.node.TextNode;
 import top.bogey.touch_tool.room.bean.node.TimeArea;
 import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.room.data.TaskRepository;
+import top.bogey.touch_tool.ui.apps.AppInfo;
+import top.bogey.touch_tool.ui.picker.AppPickerFloatView;
 import top.bogey.touch_tool.ui.picker.ColorPickerFloatView;
 import top.bogey.touch_tool.ui.picker.ImagePickerFloatView;
 import top.bogey.touch_tool.ui.picker.TouchPickerFloatView;
 import top.bogey.touch_tool.ui.picker.WordPickerFloatView;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
@@ -95,7 +102,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     node = new ColorNode(new ColorNode.ColorInfo(context));
                     break;
                 case KEY:
-                    node = new KeyNode(AccessibilityService.GLOBAL_ACTION_BACK);
+                    node = new KeyNode(KeyNode.KeyType.BACK);
                     break;
                 case TASK:
                     node = new TaskNode(null);
@@ -298,7 +305,29 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     Node node = nodes.get(index);
                     TaskNode.TaskInfo taskInfo = adapter.getItem(position);
                     if (node.getType() == NodeType.KEY) {
-                        node.setValue(Integer.valueOf(taskInfo.getId()));
+                        KeyNode keyNode = (KeyNode) node;
+                        KeyNode.KeyType keyType = KeyNode.KeyType.valueOf(taskInfo.getId());
+                        if (keyType != keyNode.getValue().getKeyType()){
+                            keyNode.setValue(new KeyNode.KeyTask(keyType));
+                        }
+
+                        if (keyType == KeyNode.KeyType.GOTO){
+                            binding.spinnerInclude.pickerButton.setVisibility(View.VISIBLE);
+                            binding.spinnerInclude.image.setVisibility(View.VISIBLE);
+
+                            MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+                            if (keyNode.getValue().getExtras() != null){
+                                AppInfo info = viewModel.getAppInfoByPkgName(keyNode.getValue().getExtras());
+                                if (info != null){
+                                    PackageManager manager = context.getPackageManager();
+                                    binding.spinnerInclude.image.setImageDrawable(info.info.applicationInfo.loadIcon(manager));
+                                }
+                            }
+
+                        } else {
+                            binding.spinnerInclude.pickerButton.setVisibility(View.GONE);
+                            binding.spinnerInclude.image.setVisibility(View.GONE);
+                        }
                     } else if (node.getType() == NodeType.TASK){
                         node.setValue(taskInfo);
                     }
@@ -308,6 +337,36 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 public void onNothingSelected(AdapterView<?> parent) {
 
                 }
+            });
+
+            binding.spinnerInclude.pickerButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Node node = nodes.get(index);
+                KeyNode keyNode = (KeyNode) node;
+                new AppPickerFloatView(context, picker -> {
+                    AppPickerFloatView appPicker = (AppPickerFloatView) picker;
+                    AppInfo info = appPicker.getSelectApp();
+                    if (info != null){
+                        KeyNode.KeyTask value = keyNode.getValue();
+                        value.setExtras(info.packageName);
+
+                        PackageManager manager = context.getPackageManager();
+                        if (info.packageName.equals(context.getString(R.string.common_package_name))){
+                            binding.spinnerInclude.image.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
+                        } else {
+                            binding.spinnerInclude.image.setImageDrawable(info.info.applicationInfo.loadIcon(manager));
+                        }
+                    }
+                }).show();
+            });
+
+            binding.spinnerInclude.image.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Node node = nodes.get(index);
+                KeyNode keyNode = (KeyNode) node;
+                String extras = keyNode.getValue().getExtras();
+                if (extras == null || extras .isEmpty()) return;
+                AppUtils.gotoApp(context, extras);
             });
 
             binding.upButton.setOnClickListener(v -> {
@@ -399,13 +458,11 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.GONE);
                     if (node.getType() == NodeType.KEY){
-                        String[] ids = context.getResources().getStringArray(R.array.key_ids);
-                        String[] keys = context.getResources().getStringArray(R.array.keys);
                         adapter.clear();
-                        for (int i = 0; i < ids.length; i++) {
-                            adapter.add(new TaskNode.TaskInfo(String.valueOf(ids[i]), keys[i]));
+                        for (KeyNode.KeyType keyType : KeyNode.KeyType.values()) {
+                            adapter.add(new TaskNode.TaskInfo(keyType.name(), keyType.getTitle(context, "")));
                         }
-                        selectSpinner(String.valueOf(((KeyNode) node).getValue()));
+                        selectSpinner(((KeyNode) node).getValue().getKeyType().name());
                     } else {
                         adapter.clear();
                         for (Task taskItem : TaskRepository.getInstance(context).getAllTasks()) {

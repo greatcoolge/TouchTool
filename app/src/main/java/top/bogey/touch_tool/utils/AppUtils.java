@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
@@ -51,6 +52,14 @@ public class AppUtils {
         try{
             activity.startActivity(intent);
         }catch (Exception ignored){}
+    }
+
+    public static void gotoApp(Context context, String pkgName){
+        try {
+            PackageManager manager = context.getPackageManager();
+            Intent intent = manager.getLaunchIntentForPackage(pkgName);
+            if (intent != null) context.startActivity(intent);
+        } catch (Exception ignored){}
     }
 
     public static boolean checkFloatPermission(Context context){

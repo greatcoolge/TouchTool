@@ -145,8 +145,18 @@ public class CustomTypeConverts {
 
 
             } else if (nodeType == NodeType.KEY) {
-                node = new KeyNode(jsonObject.get("value").getAsInt());
+                KeyNode.KeyType keyType = KeyNode.KeyType.BACK;
+                String extras = "";
 
+                JsonObject keyTask = jsonObject.get("value").getAsJsonObject();
+                if (keyTask != null){
+                    JsonElement keyTypeElement = keyTask.get("keyType");
+                    if (keyTypeElement != null) keyType = KeyNode.KeyType.valueOf(keyTypeElement.getAsString());
+                    JsonElement extrasElement = keyTask.get("extras");
+                    if (extrasElement != null) extras = extrasElement.getAsString();
+
+                    node = new KeyNode(new KeyNode.KeyTask(keyType, extras));
+                }
 
             } else if (nodeType == NodeType.TASK) {
                 String id = null, title = null;

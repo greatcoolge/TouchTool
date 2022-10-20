@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                     if (task.getActions() != null && !task.getActions().isEmpty()){
                         newTasks.add(task);
                         if (task.getStatus() == TaskStatus.TIME && service != null && service.isServiceEnabled()){
-                            service.addJob(task);
+                            service.addWork(task);
                         }
                     }
                 }

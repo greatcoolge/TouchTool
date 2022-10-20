@@ -20,7 +20,10 @@ public class Task {
     private String title = "";
     private List<Action> actions = new ArrayList<>();
     private TaskStatus status = TaskStatus.CLOSED;
+    // 毫秒为单位
     private long time = AppUtils.mergeDateTime(System.currentTimeMillis(), System.currentTimeMillis());
+    // 间隔，分钟为单位
+    private int periodic = 0;
 
     @Ignore
     public Task() {
@@ -40,6 +43,7 @@ public class Task {
         actions.addAll(task.getActions());
         status = task.getStatus();
         time = task.getTime();
+        periodic = task.getPeriodic();
     }
 
     @NonNull
@@ -85,5 +89,13 @@ public class Task {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public int getPeriodic() {
+        return periodic;
+    }
+
+    public void setPeriodic(int periodic) {
+        this.periodic = periodic;
     }
 }

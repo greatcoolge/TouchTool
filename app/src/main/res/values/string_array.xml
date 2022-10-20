@@ -1,19 +1,4 @@
 <resources>
-    <string-array name="keys">
-        <item>返回</item>
-        <item>主页</item>
-        <item>任务</item>
-        <item>锁屏</item>
-        <item>截图</item>
-    </string-array>
-
-    <string-array name="key_ids">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>8</item>
-        <item>9</item>
-    </string-array>
 
     <string-array name="node_type">
         <item>无</item>
@@ -22,7 +7,7 @@
         <item>文本</item>
         <item>图片</item>
         <item>手势</item>
-        <item>按键</item>
+        <item>功能</item>
         <item>任务</item>
         <item>颜色</item>
     </string-array>
@@ -30,13 +15,13 @@
     <string-array name="node_condition">
         <item>无</item>
         <item>完成数</item>
-        <item>无</item>
+        <item />
         <item>出现文本</item>
         <item>出现图片</item>
-        <item>无</item>
-        <item>无</item>
-        <item>无</item>
-        <item>无</item>
+        <item />
+        <item />
+        <item />
+        <item />
     </string-array>
 
     <string-array name="night_mode">

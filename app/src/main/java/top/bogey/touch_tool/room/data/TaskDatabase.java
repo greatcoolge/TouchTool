@@ -30,6 +30,13 @@ public abstract class TaskDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("alter table Task add column periodic integer not null default 0");
+        }
+    };
+
     static synchronized TaskDatabase getInstance(Context context){
         if (instance == null) instance = create(context);
         return instance;
@@ -37,7 +44,7 @@ public abstract class TaskDatabase extends RoomDatabase {
 
     private static TaskDatabase create(final Context context){
         return Room.databaseBuilder(context, TaskDatabase.class, DB_NAME)
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build();
     }
 

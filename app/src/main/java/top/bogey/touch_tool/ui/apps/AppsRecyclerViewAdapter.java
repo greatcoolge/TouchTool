@@ -1,6 +1,7 @@
 package top.bogey.touch_tool.ui.apps;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,13 +85,15 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
 
     protected static class ViewHolder extends RecyclerView.ViewHolder{
         private final ViewAppsItemBinding binding;
+        private final Context context;
         private AppInfo info;
 
         public ViewHolder(ViewAppsItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            context = binding.getRoot().getContext();
 
-            itemView.setOnClickListener(v -> {
+            binding.getRoot().setOnClickListener(v -> {
                 MainActivity activity = MainApplication.getActivity();
                 if (activity != null){
                     NavController controller = Navigation.findNavController(activity, R.id.con_view);
@@ -103,9 +106,9 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
         public void refreshView(AppInfo appInfo, int count){
             info = appInfo;
             binding.appName.setText(appInfo.appName);
-            PackageManager manager = itemView.getContext().getPackageManager();
-            if (appInfo.packageName.equals(itemView.getContext().getString(R.string.common_package_name))){
-                binding.icon.setImageDrawable(itemView.getContext().getApplicationInfo().loadIcon(manager));
+            PackageManager manager = context.getPackageManager();
+            if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                binding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
             } else {
                 binding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
             }
