@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
@@ -38,6 +37,7 @@ import top.bogey.touch_tool.ui.record.RecordFloatView;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
+@SuppressLint("SetTextI18n")
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder> {
     private final MainViewModel viewModel;
     private final List<Task> tasks = new ArrayList<>();
@@ -124,7 +124,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     if (text != null && text.length() > 0){
                         task.setTitle(text.toString());
                         notifyItemChanged(index);
-                        TaskRepository.getInstance(context).saveTask(task);
+                        TaskRepository.getInstance(context).saveTask(task, true);
                     }
                     binding.titleEdit.setText(task.getTitle());
                     itemView.requestFocus();
@@ -153,16 +153,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     }
                     refreshItem(task);
                     if (status != task.getStatus()){
-                        TaskRepository.getInstance(context).saveTask(task);
-                        MainAccessibilityService service = MainApplication.getService();
-                        if (service != null && service.isServiceEnabled()){
-                            if (status == TaskStatus.TIME){
-                                service.removeWork(task);
-                            }
-                            if (task.getStatus() == TaskStatus.TIME){
-                                service.addWork(task);
-                            }
-                        }
+                        TaskRepository.getInstance(context).saveTask(task, true);
                     }
                 }
             });
@@ -186,12 +177,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
                 picker.addOnPositiveButtonClickListener(selection -> {
                     task.setTime(AppUtils.mergeDateTime(selection, task.getTime()));
-                    binding.dateText.setText(context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime())));
-                    TaskRepository.getInstance(context).saveTask(task);
-                    MainAccessibilityService service = MainApplication.getService();
-                    if (service != null && service.isServiceEnabled()){
-                        service.addWork(task);
-                    }
+                    refreshTime(task);
+                    TaskRepository.getInstance(context).saveTask(task, true);
                 });
             });
 
@@ -215,12 +202,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     calendar.set(Calendar.MINUTE, picker.getMinute());
                     calendar.set(Calendar.SECOND, 0);
                     task.setTime(calendar.getTimeInMillis());
-                    binding.dateText.setText(context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime())));
-                    TaskRepository.getInstance(context).saveTask(task);
-                    MainAccessibilityService service = MainApplication.getService();
-                    if (service != null && service.isServiceEnabled()){
-                        service.addWork(task);
-                    }
+                    refreshTime(task);
+                    TaskRepository.getInstance(context).saveTask(task, true);
                 });
             });
 
@@ -241,13 +224,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 picker.addOnPositiveButtonClickListener(view -> {
                     task.setPeriodic(picker.getHour() * 60 + picker.getMinute());
                     if (task.getPeriodic() > 0 && task.getPeriodic() < 15) task.setPeriodic(15);
-                    if (task.getPeriodic() > 0) binding.periodicText.setText(context.getString(R.string.task_periodic_time, task.getPeriodic() / 60, task.getPeriodic() % 60));
-                    else binding.periodicText.setText("");
-                    TaskRepository.getInstance(context).saveTask(task);
-                    MainAccessibilityService service = MainApplication.getService();
-                    if (service != null && service.isServiceEnabled()){
-                        service.addWork(task);
-                    }
+                    refreshTime(task);
+                    TaskRepository.getInstance(context).saveTask(task, true);
                 });
             });
 
@@ -321,12 +299,17 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                 case TIME:
                     hint = context.getString(R.string.run_time);
                     binding.timeBox.setVisibility(View.VISIBLE);
-                    binding.dateText.setText(context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime())));
-                    if (task.getPeriodic() > 0) binding.periodicText.setText(context.getString(R.string.task_periodic_time, task.getPeriodic() / 60, task.getPeriodic() % 60));
-                    else binding.periodicText.setText("");
+                    refreshTime(task);
                     break;
             }
             binding.textInputLayout.setHint(hint);
+        }
+
+        public void refreshTime(Task task){
+            String startTime = context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime()));
+            String periodicTime = "";
+            if (task.getPeriodic() > 0) periodicTime = context.getString(R.string.task_periodic_time, task.getPeriodic() / 60, task.getPeriodic() % 60);
+            binding.dateText.setText(startTime + periodicTime);
         }
     }
 }

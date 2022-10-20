@@ -247,7 +247,7 @@ public class MainAccessibilityService extends AccessibilityService {
         if (task == null || !isServiceEnabled()) return;
         WorkManager workManager = WorkManager.getInstance(this);
         workManager.cancelUniqueWork(task.getId());
-        RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_remove_job, task.getTitle(), task.getId()));
+        RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_remove_job, task.getTitle()));
     }
 
     public void runGesture(Path path, int time, ResultCallback callback){

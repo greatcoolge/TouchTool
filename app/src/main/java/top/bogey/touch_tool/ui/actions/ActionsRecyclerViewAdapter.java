@@ -1,7 +1,6 @@
 package top.bogey.touch_tool.ui.actions;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import top.bogey.touch_tool.MainAccessibilityService;
-import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;

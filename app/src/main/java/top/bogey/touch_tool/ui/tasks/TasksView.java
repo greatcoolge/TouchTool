@@ -110,10 +110,10 @@ public class TasksView extends Fragment {
             Task copyTask = viewModel.getCopyTask();
             if (copyTask != null){
                 copyTask.setPkgName(appInfo.packageName);
-                if (copyTask.getStatus() == TaskStatus.TIME && !appInfo.packageName.equals(getString(R.string.common_package_name))){
-                    copyTask.setStatus(TaskStatus.CLOSED);
+                if (copyTask.getStatus() == TaskStatus.TIME){
+                    if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
                 }
-                TaskRepository.getInstance(getContext()).saveTask(copyTask);
+                TaskRepository.getInstance(getContext()).saveTask(copyTask, true);
             }
             viewModel.setCopyTask(null);
         });

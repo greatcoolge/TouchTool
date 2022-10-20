@@ -67,22 +67,22 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             this.binding = binding;
             context = binding.getRoot().getContext();
 
-            itemView.setOnClickListener(v -> {
+            binding.getRoot().setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
-                new ActionFloatView(itemView.getContext(), task, action, result -> {
+                new ActionFloatView(context, task, action, result -> {
                     notifyItemChanged(index);
                     TaskRepository.getInstance(context).saveTask(task);
                 }).show();
             });
 
-            itemView.setOnLongClickListener(v -> {
+            binding.getRoot().setOnLongClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Action action = actions.get(index);
-                ViewActionTextBaseBinding textBaseBinding = ViewActionTextBaseBinding.inflate(LayoutInflater.from(itemView.getContext()));
+                ViewActionTextBaseBinding textBaseBinding = ViewActionTextBaseBinding.inflate(LayoutInflater.from(context));
                 textBaseBinding.textInputLayout.setHint(R.string.action_name);
                 textBaseBinding.titleEdit.setText(action.getTitle());
-                new MaterialAlertDialogBuilder(itemView.getContext())
+                new MaterialAlertDialogBuilder(context)
                         .setPositiveButton(R.string.enter, (dialog, which) -> {
                             Editable text = textBaseBinding.titleEdit.getText();
                             if (text != null) action.setTitle(String.valueOf(text));
@@ -138,11 +138,11 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     TaskRepository.getInstance(context).saveTask(task);
                 } else {
                     isDeleteMode = true;
-                    binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorError, 0)));
-                    binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(itemView.getContext(), com.google.android.material.R.attr.colorErrorContainer, 0)));
+                    binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorError, 0)));
+                    binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorErrorContainer, 0)));
                     binding.deleteButton.postDelayed(() -> {
                         binding.deleteButton.setIconTintResource(com.google.android.material.R.color.m3_text_button_foreground_color_selector);
-                        binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(android.R.color.transparent, null)));
+                        binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(android.R.color.transparent, null)));
                         isDeleteMode = false;
                     }, 3000);
                 }
@@ -151,7 +151,6 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
 
         @SuppressLint("PrivateResource")
         private void setChecked(MaterialButton button, boolean checked){
-            Context context = itemView.getContext();
             if (checked){
                 button.setTextColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorOnPrimary, 0));
                 button.setBackgroundColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorPrimary, 0));
@@ -164,7 +163,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
 
         public void refreshItem(Action action, int position){
-            binding.titleText.setText(action.getTitle(itemView.getContext()));
+            binding.titleText.setText(action.getTitle(context));
             setChecked(binding.enabledToggle, action.isEnable());
             binding.enabledToggle.setText(String.valueOf(position + 1));
             switch (action.getActionMode()) {

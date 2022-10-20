@@ -96,14 +96,33 @@ public class TaskRepository {
     }
 
     public void saveTask(Task task){
+        saveTask(task, false);
+    }
+
+    public void saveTask(Task task, boolean baseChanged){
         TaskDatabase.service.execute(() -> taskDao.insert(task));
+        MainAccessibilityService service = MainApplication.getService();
+        if (service != null && baseChanged) {
+            if (task.getStatus() == TaskStatus.TIME) service.addWork(task);
+            else service.removeWork(task);
+        }
     }
 
     public void saveTask(List<Task> tasks){
         TaskDatabase.service.execute(() -> taskDao.insert(tasks));
+        MainAccessibilityService service = MainApplication.getService();
+        if (service != null){
+            for (Task task : tasks) {
+                if (task.getStatus() == TaskStatus.TIME) service.addWork(task);
+            }
+        }
     }
 
     public void deleteTask(Task task) {
         TaskDatabase.service.execute(() -> taskDao.delete(task));
+        MainAccessibilityService service = MainApplication.getService();
+        if (service != null && task.getStatus() == TaskStatus.TIME) {
+            service.removeWork(task);
+        }
     }
 }

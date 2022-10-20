@@ -43,7 +43,6 @@ import java.util.Objects;
 
 import top.bogey.touch_tool.databinding.ActivityMainBinding;
 import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.bean.node.Node;
 import top.bogey.touch_tool.room.data.CustomTypeConverts;
 import top.bogey.touch_tool.room.data.TaskRepository;
@@ -217,16 +216,12 @@ public class MainActivity extends AppCompatActivity {
         try {
             tasks = gson.fromJson(tasksString, new TypeToken<List<Task>>(){}.getType());
         } catch (JsonParseException ignored){}
-        MainAccessibilityService service = MainApplication.getService();
         if (tasks != null){
             List<Task> newTasks = new ArrayList<>();
             for (Task task : tasks) {
                 if (pkgNames.contains(task.getPkgName())){
                     if (task.getActions() != null && !task.getActions().isEmpty()){
                         newTasks.add(task);
-                        if (task.getStatus() == TaskStatus.TIME && service != null && service.isServiceEnabled()){
-                            service.addWork(task);
-                        }
                     }
                 }
             }
