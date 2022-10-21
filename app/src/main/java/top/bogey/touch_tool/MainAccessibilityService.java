@@ -200,13 +200,17 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public void stopTask(TaskCallable callable){
+        stopTask(callable, false);
+    }
+
+    public void stopTask(TaskCallable callable, boolean force){
         if (callable == null || !isServiceEnabled()) return;
-        tasks.remove(callable);
-        callable.stop(true);
-        try {
-            taskService.invokeAny(Collections.singletonList(callable));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+        if (callable.stop(force)){
+            tasks.remove(callable);try {
+                taskService.invokeAny(Collections.singletonList(callable));
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

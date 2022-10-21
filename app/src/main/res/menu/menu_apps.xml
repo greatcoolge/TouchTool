@@ -12,15 +12,18 @@
 
     <item
         android:id="@+id/show_system"
+        android:icon="@drawable/icon_show_system"
         android:title="@string/show_system"
         android:checkable="true"/>
 
     <item
         android:id="@+id/export_actions"
+        android:icon="@drawable/icon_export"
         android:title="@string/export_tasks"/>
 
     <item
         android:id="@+id/clean_actions"
+        android:icon="@drawable/icon_clean"
         android:title="@string/clean_tasks"/>
 
 </menu>

@@ -59,7 +59,7 @@ public class TaskCallable implements Callable<Void> {
 
     public boolean stop(boolean force){
         if (force) isRunning = false;
-        else if (task.getStatus() != TaskStatus.TIME) isRunning = false;
+        else if (task.getStatus() != TaskStatus.TIME && !task.isAcrossApp()) isRunning = false;
         return !isRunning;
     }
 
@@ -70,9 +70,9 @@ public class TaskCallable implements Callable<Void> {
     @Override
     public Void call() {
         if (callback != null) callback.onStart();
-        boolean result = runTask(task);
+        boolean result = runTask(task) || percent == allPercent;
         if (callback != null) callback.onEnd(result);
-        RunningUtils.run(service, task, pkgName, result || task.getStatus() == TaskStatus.MANUAL);
+        RunningUtils.run(service, task, pkgName, result);
         isRunning = false;
         return null;
     }
@@ -143,7 +143,7 @@ public class TaskCallable implements Callable<Void> {
             else runAction = null;
         }
 
-        return result && (isRunning() || actions.size() == 0);
+        return result;
     }
 
     private void sleep(int time){
@@ -165,13 +165,20 @@ public class TaskCallable implements Callable<Void> {
                 int randomTime = target.getTimeArea().getRandomTime();
                 switch (target.getType()) {
                     case DELAY:
-                        RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
+                        RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
                         break;
                     case TEXT:
                     case IMAGE:
                     case TOUCH:
                     case COLOR:
-                        RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
+                        RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, service.getString(R.string.log_do_action, action.getTargetTitle(service, target))));
+                        break;
+                    case KEY:
+                        KeyNode.KeyTask keyTask = (KeyNode.KeyTask) nodeTarget;
+                        RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, keyTask.getKeyType().getTitle(service, keyTask.getExtras())));
+                        break;
+                    case TASK:
+                        RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, service.getString(R.string.log_do_task, ((Task) nodeTarget).getTitle())));
                         break;
                 }
                 switch (target.getType()) {
@@ -209,7 +216,7 @@ public class TaskCallable implements Callable<Void> {
                         break;
                 }
             } else {
-                RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, service.getString(R.string.log_do_action_fail, action.getTargetTitle(service, target))));
+                RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, service.getString(R.string.log_do_action_fail, action.getTargetTitle(service, target))));
             }
             addTaskProgress(target, nodeTarget == null);
             return result;

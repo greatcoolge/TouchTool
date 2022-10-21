@@ -24,6 +24,7 @@
     private top.bogey.touch_tool.room.bean.TaskStatus status;
     private long time;
     private int periodic;
+    private boolean acrossApp;
 }
 
 -keepclassmembers class top.bogey.touch_tool.room.bean.Action{
@@ -72,6 +73,8 @@
     private top.bogey.touch_tool.room.bean.node.KeyNode$KeyType keyType;
     private java.lang.String extras;
 }
+
+-keep enum top.bogey.touch_tool.room.bean.node.KeyNode$KeyType{*;}
 
 -keepclassmembers class android.graphics.Point{
     public int x;

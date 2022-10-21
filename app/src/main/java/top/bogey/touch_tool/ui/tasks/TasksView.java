@@ -69,6 +69,8 @@ public class TasksView extends Fragment {
                 task.setPkgName(appInfo.packageName);
                 task.setTitle(getString(R.string.task_title_default));
                 switch (menuItem.getItemId()) {
+                    case R.id.add_special:
+                        task.setAcrossApp(true);
                     case R.id.add:
                         TaskRepository.getInstance(getContext()).saveTask(task);
                         break;
@@ -98,13 +100,25 @@ public class TasksView extends Fragment {
         TaskRepository.getInstance(getContext()).getTasksLiveByPackageName(appInfo.packageName).observe(getViewLifecycleOwner(), adapter::setTasks);
 
         viewModel.copyTask.observe(getViewLifecycleOwner(), task -> {
-            if (task == null) binding.pasteButton.hide();
-            else binding.pasteButton.show();
+            if (task == null) {
+                binding.pasteButton.hide();
+                binding.pasteSpecialButton.hide();
+            }
+            else {
+                binding.pasteButton.show();
+                binding.pasteSpecialButton.show();
+            }
         });
 
         Task task = viewModel.getCopyTask();
-        if (task == null) binding.pasteButton.hide();
-        else binding.pasteButton.show();
+        if (task == null) {
+            binding.pasteButton.hide();
+            binding.pasteSpecialButton.hide();
+        }
+        else {
+            binding.pasteButton.show();
+            binding.pasteSpecialButton.show();
+        }
 
         binding.pasteButton.setOnClickListener(v -> {
             Task copyTask = viewModel.getCopyTask();
@@ -113,6 +127,19 @@ public class TasksView extends Fragment {
                 if (copyTask.getStatus() == TaskStatus.TIME){
                     if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
                 }
+                TaskRepository.getInstance(getContext()).saveTask(copyTask, true);
+            }
+            viewModel.setCopyTask(null);
+        });
+
+        binding.pasteSpecialButton.setOnClickListener(v -> {
+            Task copyTask = viewModel.getCopyTask();
+            if (copyTask != null){
+                copyTask.setPkgName(appInfo.packageName);
+                if (copyTask.getStatus() == TaskStatus.TIME){
+                    if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
+                }
+                copyTask.setAcrossApp(!copyTask.isAcrossApp());
                 TaskRepository.getInstance(getContext()).saveTask(copyTask, true);
             }
             viewModel.setCopyTask(null);

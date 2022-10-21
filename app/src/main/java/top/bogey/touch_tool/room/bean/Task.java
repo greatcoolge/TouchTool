@@ -24,10 +24,11 @@ public class Task {
     private long time = AppUtils.mergeDateTime(System.currentTimeMillis(), System.currentTimeMillis());
     // 间隔，分钟为单位
     private int periodic = 0;
+    private boolean acrossApp = false;
 
     @Ignore
     public Task() {
-        id = UUID.randomUUID().toString();
+        this(UUID.randomUUID().toString());
     }
 
     public Task(@NonNull String id) {
@@ -44,6 +45,7 @@ public class Task {
         status = task.getStatus();
         time = task.getTime();
         periodic = task.getPeriodic();
+        acrossApp = task.isAcrossApp();
     }
 
     @NonNull
@@ -97,5 +99,13 @@ public class Task {
 
     public void setPeriodic(int periodic) {
         this.periodic = periodic;
+    }
+
+    public boolean isAcrossApp() {
+        return acrossApp;
+    }
+
+    public void setAcrossApp(boolean acrossApp) {
+        this.acrossApp = acrossApp;
     }
 }

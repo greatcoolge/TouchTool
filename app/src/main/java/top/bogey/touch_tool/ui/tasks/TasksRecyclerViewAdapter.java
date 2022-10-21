@@ -303,6 +303,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     break;
             }
             binding.textInputLayout.setHint(hint);
+            binding.getRoot().setCardBackgroundColor(DisplayUtils.getAttrColor(context, (!task.isAcrossApp() && task.getStatus() != TaskStatus.TIME) ? com.google.android.material.R.attr.colorSurfaceVariant : com.google.android.material.R.attr.colorSecondaryContainer, 0));
         }
 
         public void refreshTime(Task task){

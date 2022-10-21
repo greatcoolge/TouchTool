@@ -13,6 +13,11 @@
         android:title="@string/record"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/add_special"
+        android:icon="@drawable/icon_add_special_menu"
+        android:title="@string/add_special"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/record_smart"
         android:icon="@drawable/icon_record_smart"
         android:title="@string/record_smart"

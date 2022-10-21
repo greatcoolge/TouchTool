@@ -63,6 +63,7 @@
 
     <!-- 任务 -->
     <string name="add">添加</string>
+    <string name="add_special">添加跨应用任务</string>
     <string name="record">记录</string>
     <string name="record_smart">模拟录制</string>
 
@@ -171,10 +172,11 @@
     <string name="log_run_task_result">任务执行 %1$s</string>
     <string name="log_run_task_result_success">成功</string>
     <string name="log_run_task_result_fail">失败</string>
+    <string name="log_task_format">%1$s-%2$s\n[%3$d/%4$d]%5$s</string>
     <string name="log_do_action">执行 %1$s</string>
     <string name="log_do_action_fail">%1$s 失败</string>
+    <string name="log_do_task">执行内嵌任务 %1$s</string>
     <string name="log_show_manual_task">显示手动任务浮窗</string>
-    <string name="log_task_format">%1$s-%2$s\n[%3$d]%4$s</string>
     <string name="log_match_image">图片匹配，需求相似度为：%1$d，匹配相似度为：%2$d</string>
     <string name="log_add_job">添加定时任务 %1$s, 设定在 %2$s 执行</string>
     <string name="log_add_periodic_job">添加重复定时任务 %1$s, 设定在 %2$s 执行, 间隔%3$d时%4$d分</string>

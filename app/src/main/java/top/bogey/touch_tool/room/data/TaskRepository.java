@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -16,6 +18,8 @@ import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.room.bean.TaskStatus;
 import top.bogey.touch_tool.room.bean.node.TaskNode;
+import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.RunningUtils;
 
 public class TaskRepository {
     private static TaskRepository repository;
