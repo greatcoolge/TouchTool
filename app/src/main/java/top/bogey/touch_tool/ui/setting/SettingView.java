@@ -7,12 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.preference.DropDownPreference;
@@ -25,6 +23,9 @@ import androidx.preference.SwitchPreferenceCompat;
 import com.tencent.mmkv.MMKV;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
@@ -89,12 +90,23 @@ public class SettingView extends PreferenceFragmentCompat {
             });
 
             recordDelay.setOnPreferenceChangeListener((preference, newValue) -> {
-                recordDelay.setSummary(requireContext().getString(R.string.action_record_delay_curr_value, newValue));
+                recordDelay.setSummary(requireContext().getString(R.string.action_record_delay_tips, newValue));
                 return true;
             });
 
             String value = MMKV.defaultMMKV().decodeString(RecordFloatView.ACTION_RECORD_DELAY);
-            recordDelay.setSummary(requireContext().getString(R.string.action_record_delay_curr_value, value));
+            recordDelay.setSummary(requireContext().getString(R.string.action_record_delay_tips, value));
+        }
+
+        DropDownPreference overseeMode = findPreference(OverSeeFloatView.OVERSEE_MODE);
+        if (overseeMode != null){
+            CharSequence[] array = overseeMode.getEntries();
+            overseeMode.setOnPreferenceChangeListener((preference, newValue) -> {
+                int value = Integer.parseInt(String.valueOf(newValue));
+                overseeMode.setSummary(requireContext().getString(R.string.running_state_oversee_tips, array[value]));
+                return true;
+            });
+            overseeMode.setSummary(requireContext().getString(R.string.running_state_oversee_tips, array[Integer.parseInt(String.valueOf(overseeMode.getValue()))]));
         }
 
         SwitchPreferenceCompat runningLogDialog = findPreference("running_log_dialog");
@@ -138,14 +150,21 @@ public class SettingView extends PreferenceFragmentCompat {
 
         DropDownPreference nightMode = findPreference(MainApplication.NIGHT_MODE);
         if (nightMode != null){
+            CharSequence[] entries = nightMode.getEntries();
+            List<String> entryValues = new ArrayList<>();
+            for (CharSequence entryValue : nightMode.getEntryValues()) {
+                entryValues.add(String.valueOf(entryValue));
+            }
             nightMode.setOnPreferenceChangeListener((preference, newValue) -> {
                 int nightModeValue = Integer.parseInt(String.valueOf(newValue));
-                MainApplication.initNightMode(nightModeValue);
-                nightMode.setSummary(nightMode.getEntry());
-                MainApplication.getActivity().recreate();
+                AppCompatDelegate.setDefaultNightMode(nightModeValue);
+
+                int index = entryValues.indexOf(String.valueOf(newValue));
+                nightMode.setSummary(entries[index]);
                 return true;
             });
-            nightMode.setSummary(nightMode.getEntry());
+            int index = entryValues.indexOf(String.valueOf(nightMode.getValue()));
+            nightMode.setSummary(entries[index]);
         }
 
         Preference version = findPreference("version");
@@ -181,5 +200,4 @@ public class SettingView extends PreferenceFragmentCompat {
             });
         }
     }
-
 }

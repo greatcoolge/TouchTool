@@ -75,7 +75,8 @@
 
     <string name="action_name">自定义动作名称</string>
     <string name="task_start_time">自%1$s开始</string>
-    <string name="task_periodic_time">,间隔%1$d时%2$d分</string>
+    <string name="task_periodic_time">，间隔%1$d时%2$d分</string>
+    <string name="task_select_time_tips">小于15分钟为取消间隔，00:00点为间隔24小时</string>
 
     <!-- 动作 -->
     <string name="condition_title_1">如果%1$s\n则</string>
@@ -151,18 +152,19 @@
     <string name="keep_alive">前台服务</string>
     <string name="keep_alive_tips">如果开启自启动和锁定后台之后，应用还是被频繁关闭，可开启前台服务保持应用运行</string>
     <string name="action_touch_offset">点击偏移</string>
-    <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移</string>
+    <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移(单位：像素(px))</string>
     <string name="action_record_delay">录制延迟</string>
-    <string name="action_record_delay_tips">当录制动作的时候，每个录制的动作之后都会默认添加一个延迟动作，0为不添加</string>
-    <string name="action_record_delay_curr_value">当前值为：%1$sms</string>
+    <string name="action_record_delay_tips">录制动作的时候在每个新动作之后添加一个延迟动作，0为不添加\n当前为：%1$sms</string>
 
     <string name="app_running">运行状况</string>
+    <string name="running_state_oversee">状态监视</string>
+    <string name="running_state_oversee_tips">显示运行中任务的悬浮窗。一些任务可能因为多种原因而无法结束运行，可以在这强制结束\n当前为：%1$s</string>
     <string name="running_log">记录日志</string>
     <string name="running_log_tips">记录应用执行的信息，日常使用时建议关闭</string>
-    <string name="running_log_dialog">实时日志悬浮窗</string>
-    <string name="running_log_dialog_tips">查看记录的日志信息</string>
+    <string name="running_log_dialog">查看日志</string>
+    <string name="running_log_dialog_tips">显示任务执行的实时日志</string>
     <string name="running_task_info">任务统计</string>
-    <string name="running_task_info_tips">点击查看任务执行情况统计</string>
+    <string name="running_task_info_tips">查看任务执行情况统计</string>
 
     <string name="log_surface_changed">界面变动，上一个界面是：%1$s</string>
     <string name="log_surface_entered">进入界面，当前界面是：%1$s</string>
@@ -178,8 +180,8 @@
     <string name="log_do_task">执行内嵌任务 %1$s</string>
     <string name="log_show_manual_task">显示手动任务浮窗</string>
     <string name="log_match_image">图片匹配，需求相似度为：%1$d，匹配相似度为：%2$d</string>
-    <string name="log_add_job">添加定时任务 %1$s, 设定在 %2$s 执行</string>
-    <string name="log_add_periodic_job">添加重复定时任务 %1$s, 设定在 %2$s 执行, 间隔%3$d时%4$d分</string>
+    <string name="log_add_job">添加定时任务 %1$s，设定在 %2$s 执行</string>
+    <string name="log_add_periodic_job">添加重复定时任务 %1$s，设定在 %2$s 执行，间隔%3$d时%4$d分</string>
     <string name="log_remove_job">移除定时任务 %1$s</string>
     <string name="log_do_job">定时任务 %1$s 正在被执行</string>
 </resources>

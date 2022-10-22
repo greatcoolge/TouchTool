@@ -66,9 +66,9 @@ public class RunningUtils {
 
     public static void log(LogLevel level, String log){
         boolean enabledLog = MMKV.defaultMMKV().decodeBool(RUNNING_LOG, false);
+        LogInfo logInfo = new LogInfo(log, level);
+        Log.d(RUNNING_LOG, logInfo.getLog());
         if (enabledLog){
-            LogInfo logInfo = new LogInfo(log, level);
-            Log.d(RUNNING_LOG, logInfo.getLog());
             logMMKV.encode(logInfo.getId(), logInfo);
             for (int i = listenerList.size() - 1; i >= 0 ; i--) {
                 LogListener logListener = listenerList.get(i);

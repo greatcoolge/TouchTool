@@ -217,13 +217,15 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         .setTimeFormat(TimeFormat.CLOCK_24H)
                         .setHour(periodic / 60)
                         .setMinute(periodic % 60)
+                        .setTitleText(R.string.task_select_time_tips)
                         .build();
 
                 picker.show(MainApplication.getActivity().getSupportFragmentManager(), null);
 
                 picker.addOnPositiveButtonClickListener(view -> {
                     task.setPeriodic(picker.getHour() * 60 + picker.getMinute());
-                    if (task.getPeriodic() > 0 && task.getPeriodic() < 15) task.setPeriodic(15);
+                    if (picker.getHour() == 0 && picker.getMinute() == 0) task.setPeriodic(24 * 60);
+                    if (task.getPeriodic() < 15) task.setPeriodic(0);
                     refreshTime(task);
                     TaskRepository.getInstance(context).saveTask(task, true);
                 });

@@ -9,25 +9,25 @@
             android:key="keep_alive"
             android:title="@string/keep_alive"
             android:summary="@string/keep_alive_tips"
-            android:icon="@drawable/icon_keep_alive"
+            android:icon="@drawable/icon_setting_keep_alive"
             android:widgetLayout="@layout/widget_switch" />
 
         <SeekBarPreference
             android:key="action_touch_offset"
-            android:max="10"
             android:title="@string/action_touch_offset"
             android:summary="@string/action_touch_offset_tips"
-            android:icon="@drawable/icon_touch_offset"
+            android:icon="@drawable/icon_setting_touch_offset"
+            android:max="10"
             app:selectable="false"
             app:showSeekBarValue="true" />
 
         <EditTextPreference
             android:key="action_record_delay"
             android:title="@string/action_record_delay"
+            app:icon="@drawable/icon_setting_delay"
             android:dialogTitle="@string/action_record_delay"
-            android:dialogMessage="@string/action_record_delay_tips"
-            android:positiveButtonText="@string/enter"
             android:negativeButtonText="@string/cancel"
+            android:positiveButtonText="@string/enter"
             app:defaultValue="0" />
 
     </PreferenceCategory>
@@ -35,23 +35,33 @@
     <PreferenceCategory
         android:title="@string/app_running">
 
+        <DropDownPreference
+            android:key="oversee_mode"
+            android:title="@string/running_state_oversee"
+            android:summary="@string/running_state_oversee_tips"
+            android:icon="@drawable/icon_setting_oversee"
+            android:entries="@array/oversee_mode"
+            android:entryValues="@array/oversee_mode_value"/>
+
         <SwitchPreferenceCompat
             android:key="running_log"
             android:title="@string/running_log"
             android:summary="@string/running_log_tips"
-            android:icon="@drawable/icon_debug"
+            android:icon="@drawable/icon_setting_debug"
             android:widgetLayout="@layout/widget_switch" />
 
         <SwitchPreferenceCompat
             android:key="running_log_dialog"
             android:title="@string/running_log_dialog"
             android:summary="@string/running_log_dialog_tips"
+            app:icon="@drawable/icon_setting_log"
             android:widgetLayout="@layout/widget_switch" />
 
         <Preference
             android:key="running_task_info"
             android:title="@string/running_task_info"
-            android:summary="@string/running_task_info_tips"/>
+            android:summary="@string/running_task_info_tips"
+            app:icon="@drawable/icon_setting_running"/>
 
 
     </PreferenceCategory>
@@ -62,7 +72,7 @@
         <DropDownPreference
             android:key="night_mode"
             android:title="@string/night_mode"
-            android:icon="@drawable/icon_dark_mode"
+            android:icon="@drawable/icon_setting_dark_mode"
             android:entries="@array/night_mode"
             android:entryValues="@array/night_mode_value"/>
 

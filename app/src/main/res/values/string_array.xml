@@ -36,4 +36,18 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="oversee_mode">
+        <item>关闭</item>
+        <item>仅跨应用任务</item>
+        <item>非手动任务</item>
+        <item>所有任务</item>
+    </string-array>
+
+    <string-array name="oversee_mode_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
 </resources>
