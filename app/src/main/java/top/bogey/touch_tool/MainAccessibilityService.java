@@ -22,10 +22,8 @@ import androidx.work.WorkManager;
 import com.tencent.mmkv.MMKV;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -41,6 +39,7 @@ import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.RunningUtils;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.ResultCallback;
+import top.bogey.touch_tool.utils.RunStateCallback;
 import top.bogey.touch_tool.utils.TaskCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
@@ -61,6 +60,7 @@ public class MainAccessibilityService extends AccessibilityService {
     private FindRunnable findRunnable = null;
     public final ExecutorService taskService;
     private final List<TaskCallable> tasks = new ArrayList<>();
+    private final List<RunStateCallback> runStates = new ArrayList<>();
 
     public MainAccessibilityService() {
         findService = Executors.newFixedThreadPool(2);
@@ -72,7 +72,7 @@ public class MainAccessibilityService extends AccessibilityService {
         if (event != null && isServiceEnabled()){
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED){
                 if (findRunnable != null) findRunnable.stop();
-                findRunnable = new FindRunnable(this, tasks, currPkgName);
+                findRunnable = new FindRunnable(this, currPkgName);
                 findService.execute(findRunnable);
             }
         }
@@ -191,10 +191,53 @@ public class MainAccessibilityService extends AccessibilityService {
         return isServiceConnected() && Boolean.TRUE.equals(captureEnabled.getValue());
     }
 
+    public List<TaskCallable> getRunningTasks(RunStateCallback callback){
+        if (!runStates.contains(callback)) runStates.add(callback);
+        return tasks;
+    }
+
     public TaskCallable runTask(Task task, TaskCallback callback){
         if (task == null || !isServiceEnabled()) return null;
-        TaskCallable callable = new TaskCallable(this, task, currPkgName, callback);
-        tasks.add(callable);
+
+        TaskCallable callable = new TaskCallable(this, task, currPkgName);
+        callable.setCallback(new TaskCallback() {
+            @Override
+            public void onStart() {
+                if (callback != null) callback.onStart();
+                tasks.add(callable);
+                for (int i = runStates.size() - 1; i >= 0; i--) {
+                    RunStateCallback runStateCallback = runStates.get(i);
+                    if (runStateCallback != null) runStateCallback.onNewTask(callable);
+                    else runStates.remove(i);
+                }
+            }
+
+            @Override
+            public void onEnd(boolean succeed) {
+                if (callback != null) callback.onEnd(succeed);
+
+                for (int i = runStates.size() - 1; i >= 0; i--) {
+                    RunStateCallback runStateCallback = runStates.get(i);
+                    if (runStateCallback != null) runStateCallback.onTaskEnd(callable);
+                    else runStates.remove(i);
+                }
+
+                synchronized (tasks) {
+                    tasks.remove(callable);
+                }
+
+            }
+
+            @Override
+            public void onProgress(int percent) {
+                if (callback != null) callback.onProgress(percent);
+                for (int i = runStates.size() - 1; i >= 0; i--) {
+                    RunStateCallback runStateCallback = runStates.get(i);
+                    if (runStateCallback != null) runStateCallback.onTaskProgress(callable, percent);
+                    else runStates.remove(i);
+                }
+            }
+        });
         taskService.submit(callable);
         return callable;
     }
@@ -205,11 +248,13 @@ public class MainAccessibilityService extends AccessibilityService {
 
     public void stopTask(TaskCallable callable, boolean force){
         if (callable == null || !isServiceEnabled()) return;
-        if (callable.stop(force)){
-            tasks.remove(callable);try {
-                taskService.invokeAny(Collections.singletonList(callable));
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+        callable.stop(force);
+    }
+
+    public void stopAllTask(boolean force) {
+        synchronized (tasks){
+            for (int i = tasks.size() - 1; i >= 0; i--) {
+                stopTask(tasks.get(i), force);
             }
         }
     }

@@ -24,7 +24,6 @@ import com.tencent.mmkv.MMKV;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import top.bogey.touch_tool.MainActivity;
@@ -104,6 +103,11 @@ public class SettingView extends PreferenceFragmentCompat {
             overseeMode.setOnPreferenceChangeListener((preference, newValue) -> {
                 int value = Integer.parseInt(String.valueOf(newValue));
                 overseeMode.setSummary(requireContext().getString(R.string.running_state_oversee_tips, array[value]));
+                if (value > 0){
+                    OverSeeFloatView view = (OverSeeFloatView) EasyFloat.getView(OverSeeFloatView.class.getCanonicalName());
+                    if (view != null) view.setOverseeMode(OverseeMode.values()[value]);
+                    else new OverSeeFloatView(requireContext(), OverseeMode.values()[value]).show();
+                } else EasyFloat.dismiss(OverSeeFloatView.class.getCanonicalName());
                 return true;
             });
             overseeMode.setSummary(requireContext().getString(R.string.running_state_oversee_tips, array[Integer.parseInt(String.valueOf(overseeMode.getValue()))]));

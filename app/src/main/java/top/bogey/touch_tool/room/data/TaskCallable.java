@@ -34,7 +34,7 @@ public class TaskCallable implements Callable<Void> {
     private final MainAccessibilityService service;
     private final Task task;
     private final String pkgName;
-    private final TaskCallback callback;
+    private TaskCallback callback;
 
     private final TaskRepository repository;
     private final Map<String, Task> taskMap = new HashMap<>();
@@ -42,15 +42,22 @@ public class TaskCallable implements Callable<Void> {
     private final int allPercent;
     private int percent = 0;
 
-    public TaskCallable(MainAccessibilityService service, Task task, String pkgName, TaskCallback callback) {
+    public TaskCallable(MainAccessibilityService service, Task task, String pkgName) {
         this.service = service;
         this.task = task;
         this.pkgName = pkgName;
-        this.callback = callback;
 
         repository = new TaskRepository(service);
         getAllTasks(taskMap, task);
         allPercent = getAllPercent(task);
+    }
+
+    public void setCallback(TaskCallback callback){
+        this.callback = callback;
+    }
+
+    public Task getTask() {
+        return task;
     }
 
     public boolean stop() {
@@ -264,6 +271,10 @@ public class TaskCallable implements Callable<Void> {
                 }
             }
         }
+    }
+
+    public int getTaskProgress(){
+        return percent * 100 / allPercent;
     }
 
     private void getAllTasks(@NonNull Map<String, Task> taskMap, Task task){

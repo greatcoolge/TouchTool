@@ -18,11 +18,9 @@ public class FindRunnable implements Runnable{
     private boolean isRunning = true;
 
     private final MainAccessibilityService service;
-    private final List<TaskCallable> tasks;
     private final String pkgName;
-    public FindRunnable(MainAccessibilityService service, List<TaskCallable> tasks, String pkgName) {
+    public FindRunnable(MainAccessibilityService service, String pkgName) {
         this.service = service;
-        this.tasks = tasks;
         this.pkgName = pkgName;
     }
 
@@ -58,12 +56,7 @@ public class FindRunnable implements Runnable{
                 RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_surface_changed, pkgName));
 
                 // 尝试停止任务并取消所有非运行中任务
-                for (int i = tasks.size() - 1; i >= 0; i--) {
-                    TaskCallable task = tasks.get(i);
-                    if (task.isRunning()){
-                        if (task.stop()) tasks.remove(i);
-                    }
-                }
+                service.stopAllTask(false);
                 service.currPkgName = packageName;
 
                 MainActivity activity = MainApplication.getActivity();
