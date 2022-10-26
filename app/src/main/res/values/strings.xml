@@ -92,7 +92,7 @@
     <string name="image_con">出现图片</string>
 
     <string name="delay_target">延迟%1$s毫秒</string>
-    <string name="text_target">%1$s %2$s</string>
+    <string name="text_target" translatable="false">%1$s %2$s</string>
     <string name="image_target">%1$s图片</string>
     <string name="long_touch">长按</string>
     <string name="slide">滑动</string>
@@ -174,7 +174,7 @@
     <string name="log_run_task_result">任务执行 %1$s</string>
     <string name="log_run_task_result_success">成功</string>
     <string name="log_run_task_result_fail">失败</string>
-    <string name="log_task_format">%1$s-%2$s\n[%3$d/%4$d]%5$s</string>
+    <string name="log_task_format" translatable="false">%1$s-%2$s\n[%3$d/%4$d]%5$s</string>
     <string name="log_do_action">执行 %1$s</string>
     <string name="log_do_action_fail">%1$s 失败</string>
     <string name="log_do_task">执行内嵌任务 %1$s</string>

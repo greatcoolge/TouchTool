@@ -77,7 +77,7 @@ public class TaskCallable implements Callable<Void> {
     @Override
     public Void call() {
         if (callback != null) callback.onStart();
-        boolean result = runTask(task) || percent == allPercent;
+        boolean result = runTask(task);
         if (callback != null) callback.onEnd(result);
         RunningUtils.run(service, task, pkgName, result);
         isRunning = false;
@@ -185,7 +185,7 @@ public class TaskCallable implements Callable<Void> {
                         RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, keyTask.getKeyType().getTitle(service, keyTask.getExtras())));
                         break;
                     case TASK:
-                        RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, service.getString(R.string.log_do_task, ((Task) nodeTarget).getTitle())));
+                        RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_task_format, task.getTitle(), pkgName, percent, allPercent, service.getString(R.string.log_do_task, ((Task) nodeTarget).getTitle())));
                         break;
                 }
                 switch (target.getType()) {
