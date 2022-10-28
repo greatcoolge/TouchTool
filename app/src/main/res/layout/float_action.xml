@@ -34,7 +34,7 @@
                 android:textColor="@color/container_tint_check"
                 android:text="@string/action_condition"
                 app:icon="@drawable/icon_condition"
-                app:iconTint="@color/container_tint_check"/>
+                app:iconTint="@color/container_tint_check" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/loop_button"
@@ -47,7 +47,7 @@
                 android:textColor="@color/container_tint_check"
                 android:text="@string/action_loop"
                 app:icon="@drawable/icon_loop"
-                app:iconTint="@color/container_tint_check"/>
+                app:iconTint="@color/container_tint_check" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/parallel_button"
@@ -60,7 +60,7 @@
                 android:textColor="@color/container_tint_check"
                 android:text="@string/action_parallel"
                 app:icon="@drawable/icon_parallel"
-                app:iconTint="@color/container_tint_check"/>
+                app:iconTint="@color/container_tint_check" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 

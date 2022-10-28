@@ -1,4 +1,4 @@
 <resources>
-    <style name="Theme.TouchTool" parent="Theme.TouchTool.Base">
-    </style>
+
+    <style name="Theme.TouchTool" parent="Theme.TouchTool.Base"></style>
 </resources>

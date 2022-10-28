@@ -11,7 +11,7 @@ import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
-public class ColorNode extends Node{
+public class ColorNode extends Node {
     public ColorNode(ColorInfo colorInfo) {
         super(NodeType.COLOR, colorInfo);
     }
@@ -36,16 +36,16 @@ public class ColorNode extends Node{
 
     @Override
     public Object getNodeTarget(Object obj) {
-        if (obj != null){
+        if (obj != null) {
             MainAccessibilityService service = (MainAccessibilityService) obj;
             ColorInfo colorInfo = getValue();
-            if (service.isCaptureEnabled() && service.binder != null){
+            if (service.isCaptureEnabled() && service.binder != null) {
                 List<Rect> rectList = service.binder.matchColor(colorInfo.getColor());
-                if (rectList != null && rectList.size() > 0){
+                if (rectList != null && rectList.size() > 0) {
                     for (int i = rectList.size() - 1; i >= 0; i--) {
                         Rect rect = rectList.get(i);
                         int size = rect.width() * rect.height();
-                        if (size < colorInfo.getMinSize(service) || size > colorInfo.getMaxsize(service)){
+                        if (size < colorInfo.getMinSize(service) || size > colorInfo.getMaxsize(service)) {
                             rectList.remove(i);
                         }
                     }
@@ -69,12 +69,12 @@ public class ColorNode extends Node{
         return new ColorInfo(new int[]{value.color[0], value.color[1], value.color[2]}, value.minPercent, value.maxPercent, value.size, value.screen);
     }
 
-    public String getTitle(){
+    public String getTitle() {
         ColorInfo colorInfo = getValue();
         return colorInfo.getMinPercent() + "-" + colorInfo.getMaxPercent();
     }
 
-    public static class ColorInfo{
+    public static class ColorInfo {
         private int[] color = new int[]{-1, -1, -1};
         private int minPercent = 0;
         private int maxPercent = 100;
@@ -109,16 +109,16 @@ public class ColorNode extends Node{
             return size;
         }
 
-        public int getSize(Context context){
+        public int getSize(Context context) {
             int screen = DisplayUtils.getScreen(context);
             return (int) (size * 1f * screen / this.screen);
         }
 
-        public int getMinSize(Context context){
+        public int getMinSize(Context context) {
             return (int) (getSize(context) * minPercent / 100f);
         }
 
-        public int getMaxsize(Context context){
+        public int getMaxsize(Context context) {
             return (int) (getSize(context) * maxPercent / 100f);
         }
     }

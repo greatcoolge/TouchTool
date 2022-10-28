@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 import top.bogey.touch_tool.utils.AppUtils;
@@ -54,7 +52,7 @@ public class RunningInfo implements Parcelable {
         return date;
     }
 
-    public String getDateString(){
+    public String getDateString() {
         return AppUtils.formatDateSecond(date);
     }
 

@@ -83,8 +83,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         return nodes.size();
     }
 
-    public void addNode(Context context, NodeType type){
-        if (nodes.size() < maxCount){
+    public void addNode(Context context, NodeType type) {
+        if (nodes.size() < maxCount) {
             Node node;
             switch (type) {
                 case DELAY:
@@ -114,15 +114,15 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
     }
 
-    public void setMaxCount(int maxCount){
+    public void setMaxCount(int maxCount) {
         this.maxCount = maxCount;
-        while (nodes.size() > maxCount){
+        while (nodes.size() > maxCount) {
             nodes.remove(nodes.size() - 1);
             notifyItemRemoved(nodes.size());
         }
     }
 
-    public List<Node> getNodes(){
+    public List<Node> getNodes() {
         for (int i = nodes.size() - 1; i >= 0; i--) {
             Node node = nodes.get(i);
             TimeArea timeArea = node.getTimeArea();
@@ -136,7 +136,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         return nodes;
     }
 
-    protected static class TextChangedWatcher implements TextWatcher{
+    protected static class TextChangedWatcher implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -153,7 +153,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
     }
 
-    protected class ViewHolder extends RecyclerView.ViewHolder{
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private final FloatActionItemBinding binding;
         private final Context context;
         private final ArrayAdapter<TaskNode.TaskInfo> adapter;
@@ -168,14 +168,14 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             binding.timeInclude.setTextWatcher((isMin, editable) -> {
                 int index = getBindingAdapterPosition();
                 Node node = nodes.get(index);
-                if (isMin){
-                    if (editable != null && editable.length() > 0){
+                if (isMin) {
+                    if (editable != null && editable.length() > 0) {
                         node.getTimeArea().setMin(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getTimeArea().setMin(0);
                     }
                 } else {
-                    if (editable != null && editable.length() > 0){
+                    if (editable != null && editable.length() > 0) {
                         node.getTimeArea().setMax(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getTimeArea().setMax(0);
@@ -192,14 +192,14 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             binding.delayInclude.setTextWatcher((isMin, editable) -> {
                 int index = getBindingAdapterPosition();
                 DelayNode node = (DelayNode) nodes.get(index);
-                if (isMin){
-                    if (editable != null && editable.length() > 0){
+                if (isMin) {
+                    if (editable != null && editable.length() > 0) {
                         node.getValue().setMin(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getValue().setMin(0);
                     }
                 } else {
-                    if (editable != null && editable.length() > 0){
+                    if (editable != null && editable.length() > 0) {
                         node.getValue().setMax(Integer.parseInt(String.valueOf(editable)));
                     } else {
                         node.getValue().setMax(0);
@@ -207,7 +207,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 }
             });
 
-            binding.textInclude.textBaseInclude.titleEdit.addTextChangedListener(new TextChangedWatcher(){
+            binding.textInclude.textBaseInclude.titleEdit.addTextChangedListener(new TextChangedWatcher() {
                 @Override
                 public void afterTextChanged(Editable s) {
                     int index = getBindingAdapterPosition();
@@ -243,8 +243,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 Node node = nodes.get(index);
                 TouchNode touchNode = (TouchNode) node;
                 MainAccessibilityService service = MainApplication.getService();
-                if (touchNode.isValid()){
-                    if (service != null){
+                if (touchNode.isValid()) {
+                    if (service != null) {
                         Task task = new Task();
                         Action action = new Action();
                         action.setTargets(Collections.singletonList(touchNode));
@@ -256,12 +256,12 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 }
             });
 
-            binding.imageInclude.similarText.addTextChangedListener(new TextChangedWatcher(){
+            binding.imageInclude.similarText.addTextChangedListener(new TextChangedWatcher() {
                 @Override
                 public void afterTextChanged(Editable s) {
                     int index = getBindingAdapterPosition();
                     ImageNode node = (ImageNode) nodes.get(index);
-                    if (s != null && s.length() > 0){
+                    if (s != null && s.length() > 0) {
                         node.getValue().setValue(Integer.parseInt(String.valueOf(s)));
                     } else {
                         node.getValue().setValue(100);
@@ -305,18 +305,18 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     if (node.getType() == NodeType.KEY) {
                         KeyNode keyNode = (KeyNode) node;
                         KeyNode.KeyType keyType = KeyNode.KeyType.valueOf(taskInfo.getId());
-                        if (keyType != keyNode.getValue().getKeyType()){
+                        if (keyType != keyNode.getValue().getKeyType()) {
                             keyNode.setValue(new KeyNode.KeyTask(keyType));
                         }
 
-                        if (keyType == KeyNode.KeyType.GOTO){
+                        if (keyType == KeyNode.KeyType.GOTO) {
                             binding.spinnerInclude.pickerButton.setVisibility(View.VISIBLE);
                             binding.spinnerInclude.image.setVisibility(View.VISIBLE);
 
                             MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
-                            if (keyNode.getValue().getExtras() != null){
+                            if (keyNode.getValue().getExtras() != null) {
                                 AppInfo info = viewModel.getAppInfoByPkgName(keyNode.getValue().getExtras());
-                                if (info != null){
+                                if (info != null) {
                                     PackageManager manager = context.getPackageManager();
                                     binding.spinnerInclude.image.setImageDrawable(info.info.applicationInfo.loadIcon(manager));
                                 }
@@ -326,7 +326,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                             binding.spinnerInclude.pickerButton.setVisibility(View.GONE);
                             binding.spinnerInclude.image.setVisibility(View.GONE);
                         }
-                    } else if (node.getType() == NodeType.TASK){
+                    } else if (node.getType() == NodeType.TASK) {
                         node.setValue(taskInfo);
                     }
                 }
@@ -344,12 +344,12 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 new AppPickerFloatView(context, picker -> {
                     AppPickerFloatView appPicker = (AppPickerFloatView) picker;
                     AppInfo info = appPicker.getSelectApp();
-                    if (info != null){
+                    if (info != null) {
                         KeyNode.KeyTask value = keyNode.getValue();
                         value.setExtras(info.packageName);
 
                         PackageManager manager = context.getPackageManager();
-                        if (info.packageName.equals(context.getString(R.string.common_package_name))){
+                        if (info.packageName.equals(context.getString(R.string.common_package_name))) {
                             binding.spinnerInclude.image.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
                         } else {
                             binding.spinnerInclude.image.setImageDrawable(info.info.applicationInfo.loadIcon(manager));
@@ -363,7 +363,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 Node node = nodes.get(index);
                 KeyNode keyNode = (KeyNode) node;
                 String extras = keyNode.getValue().getExtras();
-                if (extras == null || extras .isEmpty()) return;
+                if (extras == null || extras.isEmpty()) return;
                 AppUtils.gotoApp(context, extras);
             });
 
@@ -382,7 +382,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             });
         }
 
-        public void refreshItem(Node node){
+        public void refreshItem(Node node) {
             String[] strings = context.getResources().getStringArray(R.array.node_type);
             binding.titleText.setText(strings[node.getType().ordinal()]);
 
@@ -442,7 +442,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.timeInclude.setVisibility(View.VISIBLE);
                     ImageNode.ImageInfo imageInfo = ((ImageNode) node).getValue();
                     binding.imageInclude.similarText.setText(String.valueOf(imageInfo.getValue()));
-                    if (imageInfo.getBitmap() != null){
+                    if (imageInfo.getBitmap() != null) {
                         binding.imageInclude.image.setImageBitmap(imageInfo.getBitmap());
                     }
                     break;
@@ -455,7 +455,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.spinnerInclude.getRoot().setVisibility(View.VISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.GONE);
-                    if (node.getType() == NodeType.KEY){
+                    if (node.getType() == NodeType.KEY) {
                         adapter.clear();
                         for (KeyNode.KeyType keyType : KeyNode.KeyType.values()) {
                             adapter.add(new TaskNode.TaskInfo(keyType.name(), keyType.getTitle(context, "")));
@@ -466,13 +466,13 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         for (Task taskItem : TaskRepository.getInstance(context).getAllTasks()) {
                             if (taskItem.getStatus() == TaskStatus.CLOSED
                                     && !taskItem.getId().equals(task.getId())
-                                    && (taskItem.getPkgName().equals(task.getPkgName()) || taskItem.getPkgName().equals(context.getString(R.string.common_package_name)))){
+                                    && (taskItem.getPkgName().equals(task.getPkgName()) || taskItem.getPkgName().equals(context.getString(R.string.common_package_name)))) {
                                 adapter.add(new TaskNode.TaskInfo(taskItem.getId(), taskItem.getTitle()));
                             }
                         }
 
                         TaskNode.TaskInfo taskInfo = ((TaskNode) node).getValue();
-                        if (taskInfo == null){
+                        if (taskInfo == null) {
                             selectSpinner("");
                         } else {
                             selectSpinner(taskInfo.getId());
@@ -482,20 +482,20 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             }
         }
 
-        private void initEditText(View view){
-            if (view instanceof ViewGroup){
+        private void initEditText(View view) {
+            if (view instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) view;
                 for (int i = 0; i < viewGroup.getChildCount(); i++) {
                     initEditText(viewGroup.getChildAt(i));
                 }
             } else {
-                if (view instanceof EditText){
+                if (view instanceof EditText) {
                     EasyFloat.initInput((EditText) view, ActionFloatView.class.getCanonicalName());
                 }
             }
         }
 
-        private void selectSpinner(String id){
+        private void selectSpinner(String id) {
             Spinner spinner = binding.spinnerInclude.spinner;
             for (int i = 0; i < adapter.getCount(); i++) {
                 TaskNode.TaskInfo item = adapter.getItem(i);
@@ -504,7 +504,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     return;
                 }
             }
-            if (adapter.getCount() > 0){
+            if (adapter.getCount() > 0) {
                 spinner.setSelection(0);
                 AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
                 listener.onItemSelected(spinner, spinner.getSelectedView(), 0, adapter.getItemId(0));

@@ -69,8 +69,8 @@ public class MainAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (event != null && isServiceEnabled()){
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED){
+        if (event != null && isServiceEnabled()) {
+            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED) {
                 if (findRunnable != null) findRunnable.stop();
                 findRunnable = new FindRunnable(this, currPkgName);
                 findService.execute(findRunnable);
@@ -79,7 +79,8 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     @Override
-    public void onInterrupt() {}
+    public void onInterrupt() {
+    }
 
     @Override
     protected void onServiceConnected() {
@@ -121,13 +122,13 @@ public class MainAccessibilityService extends AccessibilityService {
         return serviceConnected;
     }
 
-    public void setServiceEnabled(boolean enabled){
+    public void setServiceEnabled(boolean enabled) {
         serviceEnabled.setValue(enabled);
         MMKV.defaultMMKV().encode(SERVICE_ENABLED, enabled);
 
-        if (isServiceEnabled()){
+        if (isServiceEnabled()) {
             List<Task> tasks = TaskRepository.getInstance(this).getTasksByStatus(TaskStatus.TIME);
-            if (tasks != null){
+            if (tasks != null) {
                 for (Task task : tasks) {
                     addWork(task);
                 }
@@ -137,17 +138,17 @@ public class MainAccessibilityService extends AccessibilityService {
         }
     }
 
-    public boolean isServiceEnabled(){
+    public boolean isServiceEnabled() {
         return isServiceConnected() && Boolean.TRUE.equals(serviceEnabled.getValue());
     }
 
-    public void startCaptureService(boolean moveBack, ResultCallback callback){
-        if (binder == null){
+    public void startCaptureService(boolean moveBack, ResultCallback callback) {
+        if (binder == null) {
             MainActivity activity = MainApplication.getActivity();
-            if (activity != null){
+            if (activity != null) {
                 activity.launchCapture(((code, data) -> {
-                    if (code == Activity.RESULT_OK){
-                        connection = new ServiceConnection(){
+                    if (code == Activity.RESULT_OK) {
+                        connection = new ServiceConnection() {
                             @Override
                             public void onServiceConnected(ComponentName name, IBinder service) {
                                 binder = (MainCaptureService.CaptureServiceBinder) service;
@@ -177,8 +178,8 @@ public class MainAccessibilityService extends AccessibilityService {
         }
     }
 
-    public void stopCaptureService(){
-        if (connection != null){
+    public void stopCaptureService() {
+        if (connection != null) {
             unbindService(connection);
             stopService(new Intent(this, MainCaptureService.class));
             connection = null;
@@ -187,16 +188,16 @@ public class MainAccessibilityService extends AccessibilityService {
         captureEnabled.setValue(false);
     }
 
-    public boolean isCaptureEnabled(){
+    public boolean isCaptureEnabled() {
         return isServiceConnected() && Boolean.TRUE.equals(captureEnabled.getValue());
     }
 
-    public List<TaskCallable> getRunningTasks(RunStateCallback callback){
+    public List<TaskCallable> getRunningTasks(RunStateCallback callback) {
         if (!runStates.contains(callback)) runStates.add(callback);
         return tasks;
     }
 
-    public TaskCallable runTask(Task task, TaskCallback callback){
+    public TaskCallable runTask(Task task, TaskCallback callback) {
         if (task == null || !isServiceEnabled()) return null;
 
         TaskCallable callable = new TaskCallable(this, task, currPkgName);
@@ -242,29 +243,29 @@ public class MainAccessibilityService extends AccessibilityService {
         return callable;
     }
 
-    public void stopTask(TaskCallable callable){
+    public void stopTask(TaskCallable callable) {
         stopTask(callable, false);
     }
 
-    public void stopTask(TaskCallable callable, boolean force){
+    public void stopTask(TaskCallable callable, boolean force) {
         if (callable == null || !isServiceEnabled()) return;
         callable.stop(force);
     }
 
     public void stopAllTask(boolean force) {
-        synchronized (tasks){
+        synchronized (tasks) {
             for (int i = tasks.size() - 1; i >= 0; i--) {
                 stopTask(tasks.get(i), force);
             }
         }
     }
 
-    public void addWork(Task task){
+    public void addWork(Task task) {
         if (task == null || !isServiceEnabled()) return;
         long timeMillis = System.currentTimeMillis();
         if (task.getStatus() == TaskStatus.TIME) {
             WorkManager workManager = WorkManager.getInstance(this);
-            if (task.getPeriodic() > 0){
+            if (task.getPeriodic() > 0) {
                 // 尽量小延迟的执行间隔任务
                 PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(TaskWorker.class, task.getPeriodic(), TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
                         .setInitialDelay(task.getTime() - timeMillis, TimeUnit.MILLISECONDS)
@@ -275,7 +276,7 @@ public class MainAccessibilityService extends AccessibilityService {
                         .build();
                 workManager.enqueueUniquePeriodicWork(task.getId(), ExistingPeriodicWorkPolicy.REPLACE, workRequest);
                 RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_periodic_job, task.getTitle(), AppUtils.formatDateMinute(task.getTime()), task.getPeriodic() / 60, task.getPeriodic() % 60));
-            } else if(task.getTime() > timeMillis) {
+            } else if (task.getTime() > timeMillis) {
                 OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TaskWorker.class)
                         .setInitialDelay(task.getTime() - timeMillis, TimeUnit.MILLISECONDS)
                         .setInputData(new Data.Builder()
@@ -292,14 +293,14 @@ public class MainAccessibilityService extends AccessibilityService {
         }
     }
 
-    public void removeWork(Task task){
+    public void removeWork(Task task) {
         if (task == null || !isServiceEnabled()) return;
         WorkManager workManager = WorkManager.getInstance(this);
         workManager.cancelUniqueWork(task.getId());
         RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_remove_job, task.getTitle()));
     }
 
-    public void runGesture(Path path, int time, ResultCallback callback){
+    public void runGesture(Path path, int time, ResultCallback callback) {
         dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription(path, 0, time)).build(), new GestureResultCallback() {
             @Override
             public void onCompleted(GestureDescription gestureDescription) {

@@ -24,7 +24,7 @@ public class AppPickerFloatView extends BasePickerFloatView {
     private final MainViewModel viewModel;
     private final AppPickerRecyclerViewAdapter adapter;
     private String searchText = "";
-    private AppInfo selectApp =  null;
+    private AppInfo selectApp = null;
 
     public AppPickerFloatView(Context context, PickerCallback pickerCallback) {
         super(context, pickerCallback);
@@ -79,21 +79,21 @@ public class AppPickerFloatView extends BasePickerFloatView {
         refreshSpawnCount();
     }
 
-    private void refreshSpawnCount(){
+    private void refreshSpawnCount() {
         GridLayoutManager layoutManager = (GridLayoutManager) binding.appsView.getLayoutManager();
         if (layoutManager != null) {
-            if (!DisplayUtils.isPortrait(getContext()))layoutManager.setSpanCount(5);
+            if (!DisplayUtils.isPortrait(getContext())) layoutManager.setSpanCount(5);
             else layoutManager.setSpanCount(3);
         }
     }
 
-    public void setSelectApp(AppInfo info){
+    public void setSelectApp(AppInfo info) {
         selectApp = info;
         pickerCallback.onComplete(this);
         dismiss();
     }
 
-    public AppInfo getSelectApp(){
+    public AppInfo getSelectApp() {
         return selectApp;
     }
 }

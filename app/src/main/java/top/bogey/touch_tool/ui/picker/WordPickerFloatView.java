@@ -32,7 +32,7 @@ import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
 
 @SuppressLint("ViewConstructor")
-public class WordPickerFloatView extends BasePickerFloatView{
+public class WordPickerFloatView extends BasePickerFloatView {
     private final FloatPickerWordBinding binding;
     private final TextNode textNode;
 
@@ -54,7 +54,7 @@ public class WordPickerFloatView extends BasePickerFloatView{
         floatCallback = new WordPickerCallback();
 
         binding.saveButton.setOnClickListener(v -> {
-            if (pickerCallback != null){
+            if (pickerCallback != null) {
                 pickerCallback.onComplete(this);
             }
             dismiss();
@@ -93,8 +93,8 @@ public class WordPickerFloatView extends BasePickerFloatView{
 
         binding.titleText.setOnClickListener(v -> {
             CharSequence text = binding.titleText.getText();
-            if (text != null && text.length() > 0){
-                if (text.toString().equals(selectKey)){
+            if (text != null && text.length() > 0) {
+                if (text.toString().equals(selectKey)) {
                     binding.titleText.setText(selectLevel);
                 } else {
                     binding.titleText.setText(selectKey);
@@ -107,17 +107,17 @@ public class WordPickerFloatView extends BasePickerFloatView{
         binding.markBox.setOnClickListener(v -> showWordView(null, false));
     }
 
-    public String getWord(){
-        if (selectNode != null){
+    public String getWord() {
+        if (selectNode != null) {
             CharSequence text = binding.titleText.getText();
             if (text != null && text.length() > 0) return String.format("\"%s\"", text);
         }
         return "";
     }
 
-    private void markAll(){
+    private void markAll() {
         MainAccessibilityService service = MainApplication.getService();
-        if (service != null){
+        if (service != null) {
             rootNode = service.getRootInActiveWindow();
             manager = new TreeNodeManager();
             WordPickerTreeAdapter adapter = new WordPickerTreeAdapter(manager, this);
@@ -126,8 +126,8 @@ public class WordPickerFloatView extends BasePickerFloatView{
         }
     }
 
-    public void showWordView(AccessibilityNodeInfo nodeInfo, boolean selectTreeNode){
-        if (nodeInfo == null){
+    public void showWordView(AccessibilityNodeInfo nodeInfo, boolean selectTreeNode) {
+        if (nodeInfo == null) {
             selectNode = null;
             selectKey = "";
             selectLevel = "";
@@ -153,18 +153,18 @@ public class WordPickerFloatView extends BasePickerFloatView{
             binding.markBox.setVisibility(VISIBLE);
 
             WordPickerTreeAdapter adapter = (WordPickerTreeAdapter) binding.wordRecyclerView.getAdapter();
-            if (selectTreeNode && adapter != null){
+            if (selectTreeNode && adapter != null) {
                 adapter.collapseAll();
-                if (manager.size() > 0){
+                if (manager.size() > 0) {
                     TreeNode treeNode = manager.get(0);
                     TreeNode node = findTreeNode(treeNode, nodeInfo);
-                    if (node != null){
+                    if (node != null) {
                         node.setSelected(true);
                         adapter.setSelectedNode(node);
                         TreeNode parent = node.getParent();
-                        while (parent != null){
+                        while (parent != null) {
                             TreeNode p = parent.getParent();
-                            if (p != null){
+                            if (p != null) {
                                 parent.setExpanded(true);
                                 parent = p;
                             } else {
@@ -185,9 +185,9 @@ public class WordPickerFloatView extends BasePickerFloatView{
         float y = event.getRawY();
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (!showList){
+            if (!showList) {
                 AccessibilityNodeInfo node = getClickableNodeIn((int) x, (int) y);
-                if (node != null){
+                if (node != null) {
                     showWordView(node, true);
                 }
             }
@@ -195,7 +195,7 @@ public class WordPickerFloatView extends BasePickerFloatView{
         return true;
     }
 
-    private TreeNode findTreeNode(TreeNode treeNode, Object value){
+    private TreeNode findTreeNode(TreeNode treeNode, Object value) {
         if (value.equals(treeNode.getValue())) return treeNode;
         for (TreeNode child : treeNode.getChildren()) {
             TreeNode node = findTreeNode(child, value);
@@ -204,39 +204,39 @@ public class WordPickerFloatView extends BasePickerFloatView{
         return null;
     }
 
-    private String getNodeText(AccessibilityNodeInfo nodeInfo){
+    private String getNodeText(AccessibilityNodeInfo nodeInfo) {
         String name = "";
-        if (nodeInfo != null){
+        if (nodeInfo != null) {
             String resourceName = nodeInfo.getViewIdResourceName();
-            if (resourceName != null && !resourceName.isEmpty()){
+            if (resourceName != null && !resourceName.isEmpty()) {
                 name = resourceName;
             }
             CharSequence text = nodeInfo.getText();
-            if (name.isEmpty() && text != null && text.length() > 0){
+            if (name.isEmpty() && text != null && text.length() > 0) {
                 name = text.toString();
             }
         }
         return name;
     }
 
-    private String getNodeKey(AccessibilityNodeInfo nodeInfo){
+    private String getNodeKey(AccessibilityNodeInfo nodeInfo) {
         String key = getNodeText(nodeInfo);
         Pattern pattern = Pattern.compile(".+:(id/.+)");
         Matcher matcher = pattern.matcher(key);
-        if (matcher.find() && matcher.group(1) != null){
+        if (matcher.find() && matcher.group(1) != null) {
             key = matcher.group(1);
         }
         return key;
     }
 
-    private String getNodeLevel(AccessibilityNodeInfo nodeInfo){
+    private String getNodeLevel(AccessibilityNodeInfo nodeInfo) {
         AccessibilityNodeInfo parent = nodeInfo.getParent();
-        if (parent != null){
+        if (parent != null) {
             for (int i = 0; i < parent.getChildCount(); i++) {
                 AccessibilityNodeInfo child = parent.getChild(i);
-                if (child != null && child.equals(nodeInfo)){
+                if (child != null && child.equals(nodeInfo)) {
                     String level = getNodeLevel(parent);
-                    if (!level.isEmpty()){
+                    if (!level.isEmpty()) {
                         return level + "," + i;
                     } else {
                         return String.valueOf(i);
@@ -248,14 +248,14 @@ public class WordPickerFloatView extends BasePickerFloatView{
     }
 
     @Nullable
-    private AccessibilityNodeInfo getClickableNodeIn(int x, int y){
+    private AccessibilityNodeInfo getClickableNodeIn(int x, int y) {
         if (rootNode == null) return null;
         Map<Integer, AccessibilityNodeInfo> deepNodeInfo = new HashMap<>();
         findClickableNodeIn(deepNodeInfo, 1, rootNode, x, y);
         int max = 0;
         AccessibilityNodeInfo node = null;
         for (Map.Entry<Integer, AccessibilityNodeInfo> entry : deepNodeInfo.entrySet()) {
-            if (max == 0 || entry.getKey() > max){
+            if (max == 0 || entry.getKey() > max) {
                 max = entry.getKey();
                 node = entry.getValue();
             }
@@ -263,15 +263,15 @@ public class WordPickerFloatView extends BasePickerFloatView{
         return node;
     }
 
-    private void findClickableNodeIn(Map<Integer, AccessibilityNodeInfo> deepNodeInfo, int deep, @NonNull AccessibilityNodeInfo nodeInfo, int x, int y){
+    private void findClickableNodeIn(Map<Integer, AccessibilityNodeInfo> deepNodeInfo, int deep, @NonNull AccessibilityNodeInfo nodeInfo, int x, int y) {
         if (nodeInfo.getChildCount() == 0) return;
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             AccessibilityNodeInfo child = nodeInfo.getChild(i);
-            if (child != null){
+            if (child != null) {
                 Rect rect = new Rect();
                 child.getBoundsInScreen(rect);
-                if (rect.contains(x, y)){
-                    if (child.isClickable()){
+                if (rect.contains(x, y)) {
+                    if (child.isClickable()) {
                         deepNodeInfo.put(deep, child);
                     }
                     findClickableNodeIn(deepNodeInfo, deep + 1, child, x, y);
@@ -284,7 +284,7 @@ public class WordPickerFloatView extends BasePickerFloatView{
         @Override
         public void onCreate(boolean succeed) {
             super.onCreate(succeed);
-            if (succeed){
+            if (succeed) {
                 markAll();
                 showWordView(textNode.searchClickableNode(textNode.searchNodes(rootNode)), true);
             }

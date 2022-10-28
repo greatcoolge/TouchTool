@@ -74,8 +74,8 @@ public class ImagePickerFloatView extends BasePickerFloatView {
         offset = DisplayUtils.dp2px(context, 4);
     }
 
-    public Bitmap getBitmap(){
-        if (showBitmap != null){
+    public Bitmap getBitmap() {
+        if (showBitmap != null) {
             Bitmap bitmap = Bitmap.createBitmap(showBitmap, (int) markArea.left, (int) markArea.top, (int) markArea.width(), (int) markArea.height());
             showBitmap.recycle();
             return bitmap;
@@ -83,21 +83,21 @@ public class ImagePickerFloatView extends BasePickerFloatView {
         return null;
     }
 
-    public void realShow(int delay){
+    public void realShow(int delay) {
         postDelayed(() -> {
             EasyFloat.show(tag);
-            if (service != null && service.isCaptureEnabled() && service.binder != null){
+            if (service != null && service.isCaptureEnabled() && service.binder != null) {
                 Bitmap bitmap = service.binder.getCurrImage();
                 if (bitmap != null) {
                     int[] location = new int[2];
                     getLocationOnScreen(location);
                     Point size = DisplayUtils.getScreenSize(service);
-                    if (bitmap.getWidth() >= size.x && bitmap.getHeight() >= size.y){
+                    if (bitmap.getWidth() >= size.x && bitmap.getHeight() >= size.y) {
                         showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
                         int width = DisplayUtils.getScreen(service);
                         float scale = ((float) width) / imageNode.getValue().getScreen();
                         Rect rect = service.binder.matchImage(showBitmap, imageNode.getValue().getScaleBitmap(scale), imageNode.getValue().getValue());
-                        if (rect != null){
+                        if (rect != null) {
                             markArea = new RectF(rect);
                             isMarked = true;
                         }
@@ -109,13 +109,13 @@ public class ImagePickerFloatView extends BasePickerFloatView {
         }, delay);
     }
 
-    public void onShow(){
+    public void onShow() {
         service = MainApplication.getService();
-        if (service != null){
-            if (!service.isCaptureEnabled()){
+        if (service != null) {
+            if (!service.isCaptureEnabled()) {
                 Toast.makeText(getContext(), R.string.capture_service_on_tips_2, Toast.LENGTH_SHORT).show();
                 service.startCaptureService(true, result -> {
-                    if (result){
+                    if (result) {
                         realShow(500);
                     }
                 });
@@ -130,7 +130,7 @@ public class ImagePickerFloatView extends BasePickerFloatView {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        if (showBitmap != null && !showBitmap.isRecycled()){
+        if (showBitmap != null && !showBitmap.isRecycled()) {
             canvas.drawBitmap(showBitmap, 0, 0, bitmapPaint);
         }
         canvas.saveLayer(getLeft(), getTop(), getRight(), getBottom(), bitmapPaint);
@@ -185,10 +185,10 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (isMarked){
+                if (isMarked) {
                     float dx = x - lastX;
                     float dy = y - lastY;
-                    switch (adjustMode){
+                    switch (adjustMode) {
                         case DRAG:
                             markArea.left = Math.max(0, markArea.left + dx);
                             markArea.top = Math.max(0, markArea.top + dy);
@@ -214,10 +214,10 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                 break;
 
             case MotionEvent.ACTION_UP:
-                if (isMarked){
+                if (isMarked) {
                     adjustMode = AdjustMode.NONE;
                 } else {
-                    if (!(markArea.width() == 0 || markArea.height() == 0)){
+                    if (!(markArea.width() == 0 || markArea.height() == 0)) {
                         markArea.right = x;
                         markArea.bottom = y;
                         markArea.sort();
@@ -230,10 +230,10 @@ public class ImagePickerFloatView extends BasePickerFloatView {
         return true;
     }
 
-    private void refreshUI(){
+    private void refreshUI() {
         binding.markBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
         binding.buttonBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
-        if (isMarked){
+        if (isMarked) {
             ViewGroup.LayoutParams params = binding.markBox.getLayoutParams();
             params.width = (int) markArea.width() + 2 * offset;
             params.height = (int) markArea.height() + 2 * offset;
@@ -246,7 +246,7 @@ public class ImagePickerFloatView extends BasePickerFloatView {
             binding.moveRight.setY(params.height - binding.moveRight.getHeight());
 
             binding.buttonBox.setX(markArea.left + (markArea.width() - binding.buttonBox.getWidth()) / 2);
-            if (markArea.bottom + offset * 2 + binding.buttonBox.getHeight() > binding.getRoot().getHeight()){
+            if (markArea.bottom + offset * 2 + binding.buttonBox.getHeight() > binding.getRoot().getHeight()) {
                 binding.buttonBox.setY(markArea.top - offset * 2 - binding.buttonBox.getHeight());
             } else {
                 binding.buttonBox.setY(markArea.bottom + offset * 2);
@@ -255,11 +255,12 @@ public class ImagePickerFloatView extends BasePickerFloatView {
         postInvalidate();
     }
 
-    protected class ImagePickerCallback extends FloatBaseCallback{
+    protected class ImagePickerCallback extends FloatBaseCallback {
         private boolean first = true;
+
         @Override
         public void onShow(String tag) {
-            if (first){
+            if (first) {
                 super.onShow("");
                 ImagePickerFloatView.this.onShow();
                 first = false;

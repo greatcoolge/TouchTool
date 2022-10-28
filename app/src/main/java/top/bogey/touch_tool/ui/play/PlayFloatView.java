@@ -33,11 +33,11 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
         binding = FloatPlayBinding.inflate(LayoutInflater.from(context), this, true);
         binding.closeButton.setOnClickListener(v -> {
             if (clickFirst) dismiss();
-            else{
+            else {
                 clickFirst = true;
                 postDelayed(() -> clickFirst = false, 500);
                 ViewGroup.LayoutParams params = binding.closeButton.getLayoutParams();
-                if (binding.buttonBox.getVisibility() == VISIBLE){
+                if (binding.buttonBox.getVisibility() == VISIBLE) {
                     binding.buttonBox.setVisibility(GONE);
                     binding.closeButton.setIconResource(R.drawable.icon_down);
 
@@ -73,7 +73,7 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
         EasyFloat.dismiss(PlayFloatView.class.getCanonicalName());
     }
 
-    public void setPkgName(String pkgName){
+    public void setPkgName(String pkgName) {
         for (int i = 0; i < binding.buttonBox.getChildCount(); i++) {
             PlayFloatViewItem view = (PlayFloatViewItem) binding.buttonBox.getChildAt(i);
             if (view.isPlaying()) view.startPlay();
@@ -85,28 +85,28 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface {
         }
     }
 
-    private List<Task> getManualTasks(String pkgName){
+    private List<Task> getManualTasks(String pkgName) {
         TaskRepository repository = new TaskRepository(getContext());
         List<Task> tasks = new ArrayList<>();
         List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
-        if (pkgTasks != null){
+        if (pkgTasks != null) {
             for (Task task : pkgTasks) {
                 if (task.getStatus() == TaskStatus.MANUAL) tasks.add(task);
             }
         }
         String conPkgName = getContext().getString(R.string.common_package_name);
         List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
-        if (comTasks != null){
+        if (comTasks != null) {
             for (Task comTask : comTasks) {
-                if (comTask.getStatus() == TaskStatus.MANUAL){
+                if (comTask.getStatus() == TaskStatus.MANUAL) {
                     boolean flag = true;
                     for (Task task : tasks) {
-                        if (comTask.getTitle().equals(task.getTitle())){
+                        if (comTask.getTitle().equals(task.getTitle())) {
                             flag = false;
                             break;
                         }
                     }
-                    if (flag){
+                    if (flag) {
                         tasks.add(comTask);
                     }
                 }

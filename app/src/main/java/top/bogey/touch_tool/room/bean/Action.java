@@ -24,16 +24,16 @@ public class Action {
 
     private String title = "";
 
-    public String getDefaultTitle(Context context){
+    public String getDefaultTitle(Context context) {
         if (targets == null || targets.isEmpty()) return "";
         StringBuilder builder = new StringBuilder();
         switch (actionMode) {
             case CONDITION:
-                if (condition != null && condition.getType() != NodeType.NULL){
+                if (condition != null && condition.getType() != NodeType.NULL) {
                     builder.append(context.getString(R.string.condition_title_1, getConditionTitle(context, condition)));
                 }
                 builder.append(getTargetTitle(context, targets.get(0)));
-                if (targets.size() > 1){
+                if (targets.size() > 1) {
                     builder.append("\n");
                     builder.append(context.getString(R.string.condition_title_2));
                     builder.append(getTargetTitle(context, targets.get(1)));
@@ -43,8 +43,8 @@ public class Action {
                 builder.append(context.getString(R.string.loop_title_1, times));
                 for (int i = 0; i < targets.size(); i++) {
                     builder.append(getTargetTitle(context, targets.get(i)));
-                    if (i == targets.size() - 1){
-                        if (condition != null && condition.getType() != NodeType.NULL){
+                    if (i == targets.size() - 1) {
+                        if (condition != null && condition.getType() != NodeType.NULL) {
                             builder.append("\n");
                             builder.append(context.getString(R.string.loop_title_2, getConditionTitle(context, condition)));
                         }
@@ -59,7 +59,7 @@ public class Action {
                     builder.append(getTargetTitle(context, target));
                     builder.append("\n");
                 }
-                if (condition != null && condition.getType() == NodeType.NUMBER){
+                if (condition != null && condition.getType() == NodeType.NUMBER) {
                     builder.append(((NumberNode) condition).getValue() == targets.size() ? context.getString(R.string.parallel_title_2) : context.getString(R.string.loop_title_2, getConditionTitle(context, condition)));
                 }
                 break;
@@ -67,9 +67,9 @@ public class Action {
         return builder.toString();
     }
 
-    private String getConditionTitle(Context context, Node node){
+    private String getConditionTitle(Context context, Node node) {
         if (node == null) return "";
-        switch (node.getType()){
+        switch (node.getType()) {
             case NUMBER:
                 return context.getString(actionMode == ActionMode.LOOP ? R.string.number_con_loop : R.string.number_con_parallel, ((NumberNode) node).getValue());
             case TEXT:
@@ -80,10 +80,10 @@ public class Action {
         return "";
     }
 
-    public String getTargetTitle(Context context, Node node){
+    public String getTargetTitle(Context context, Node node) {
         if (node == null) return "";
         String touch = node.getTimeArea().getMax() > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
-        switch (node.getType()){
+        switch (node.getType()) {
             case DELAY:
                 return context.getString(R.string.delay_target, ((DelayNode) node).getTitle());
             case TEXT:

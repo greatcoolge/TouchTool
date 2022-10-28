@@ -28,6 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="11sp"
-        android:textColor="?attr/colorSurface"/>
+        android:textColor="?attr/colorSurface" />
 
 </com.google.android.material.card.MaterialCardView>

@@ -59,12 +59,12 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
         }
     }
 
-    public void initRoot(){
+    public void initRoot() {
         ArrayList<TreeNode> treeNodes = new ArrayList<>();
         Map<String, Map<String, List<RunningInfo>>> pkgMap = RunningUtils.getRunningInfo();
         for (Map.Entry<String, Map<String, List<RunningInfo>>> pkgEntry : pkgMap.entrySet()) {
             String pkgName = pkgEntry.getKey();
-            if (viewModel.getAppInfoByPkgName(pkgName) == null){
+            if (viewModel.getAppInfoByPkgName(pkgName) == null) {
                 continue;
             }
 
@@ -93,7 +93,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
         updateTreeNodes(treeNodes);
     }
 
-    protected static class ViewHolder extends TreeViewHolder{
+    protected static class ViewHolder extends TreeViewHolder {
         private ViewSettingRunningAppItemBinding appBinding;
         private ViewSettingRunningItemBinding binding;
         private ViewSettingRunningTaskItemBinding taskBinding;
@@ -121,14 +121,14 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
         }
 
         @SuppressLint("DefaultLocale")
-        public void refreshItem(TreeNode node, MainViewModel viewModel){
+        public void refreshItem(TreeNode node, MainViewModel viewModel) {
             int level = node.getLevel();
             PackageManager manager = context.getPackageManager();
             if (level == 0) {
                 TreeNodeInfo nodeInfo = (TreeNodeInfo) node.getValue();
                 AppInfo appInfo = viewModel.getAppInfoByPkgName(nodeInfo.getKey());
                 appBinding.appName.setText(appInfo.appName);
-                if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                if (appInfo.packageName.equals(context.getString(R.string.common_package_name))) {
                     appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
                 } else {
                     appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
@@ -137,11 +137,11 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
             } else if (level == 1) {
                 TreeNodeInfo nodeInfo = (TreeNodeInfo) node.getValue();
                 List<Task> taskList = TaskRepository.getInstance(context).getTasksById(nodeInfo.getKey());
-                if (taskList != null && taskList.size() > 0){
+                if (taskList != null && taskList.size() > 0) {
                     Task task = taskList.get(0);
                     taskBinding.appName.setText(task.getTitle());
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(task.getPkgName());
-                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))) {
                         taskBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
                     } else {
                         taskBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));

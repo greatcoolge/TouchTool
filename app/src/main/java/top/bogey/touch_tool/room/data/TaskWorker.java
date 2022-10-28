@@ -22,7 +22,7 @@ public class TaskWorker extends Worker {
     @Override
     public Result doWork() {
         MainAccessibilityService service = MainApplication.getService();
-        if (service != null){
+        if (service != null) {
             Data inputData = getInputData();
             service.runTask(TaskRepository.getInstance(service).getTaskById(inputData.getString("id")), null);
             RunningUtils.log(LogLevel.HIGH, service.getString(R.string.log_do_job, inputData.getString("title")));

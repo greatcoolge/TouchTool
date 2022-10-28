@@ -40,10 +40,10 @@ public class HomeView extends Fragment {
 
         binding.accessibilityServiceButton.setOnClickListener(view -> {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null && service.isServiceConnected()){
+            if (service != null && service.isServiceConnected()) {
                 service.setServiceEnabled(!service.isServiceEnabled());
             } else {
-                AppUtils.showDialog(requireContext(), R.string.accessibility_service_on_tips, new SelectCallback(){
+                AppUtils.showDialog(requireContext(), R.string.accessibility_service_on_tips, new SelectCallback() {
                     @Override
                     public void onEnter() {
                         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
@@ -55,9 +55,9 @@ public class HomeView extends Fragment {
         MainAccessibilityService.serviceEnabled.observe(getViewLifecycleOwner(), aBoolean -> {
             setServiceChecked(aBoolean);
             String string = MMKV.defaultMMKV().decodeString(OverSeeFloatView.OVERSEE_MODE);
-            if (string != null){
+            if (string != null) {
                 int i = Integer.parseInt(string);
-                if (i > 0){
+                if (i > 0) {
                     if (aBoolean) new OverSeeFloatView(requireContext(), OverseeMode.values()[i]).show();
                     else EasyFloat.dismiss(OverSeeFloatView.class.getCanonicalName());
                 }
@@ -69,9 +69,9 @@ public class HomeView extends Fragment {
             if (activity != null) activity.launchNotification((code, intent) -> {
                 if (code == Activity.RESULT_OK) {
                     MainAccessibilityService service = MainApplication.getService();
-                    if (service != null && service.isServiceConnected()){
+                    if (service != null && service.isServiceConnected()) {
                         boolean enabled = Boolean.TRUE.equals(MainAccessibilityService.captureEnabled.getValue());
-                        if (enabled){
+                        if (enabled) {
                             service.stopCaptureService();
                         } else {
                             Toast.makeText(requireActivity(), R.string.capture_service_on_tips_1, Toast.LENGTH_LONG).show();
@@ -90,7 +90,7 @@ public class HomeView extends Fragment {
 
         binding.lockTaskButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null && service.isServiceConnected()){
+            if (service != null && service.isServiceConnected()) {
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
             }
         });
@@ -100,14 +100,15 @@ public class HomeView extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.qq.com/doc/p/0f4de9e03534db3780876b90965e9373e4af93f0"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-            } catch (Exception ignored){ }
+            } catch (Exception ignored) {
+            }
         });
 
         return binding.getRoot();
     }
 
-    private void setServiceChecked(boolean checked){
-        if (checked){
+    private void setServiceChecked(boolean checked) {
+        if (checked) {
             binding.accessibilityServiceButton.setCardBackgroundColor(DisplayUtils.getAttrColor(requireContext(), com.google.android.material.R.attr.colorPrimary, 0));
             binding.accessibilityServiceIcon.setImageTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, 0)));
             binding.accessibilityServiceTitle.setTextColor(DisplayUtils.getAttrColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, 0));
@@ -129,8 +130,8 @@ public class HomeView extends Fragment {
         binding.lockTaskButton.setVisibility(checked ? View.VISIBLE : View.GONE);
     }
 
-    private void setCaptureChecked(boolean checked){
-        if (checked){
+    private void setCaptureChecked(boolean checked) {
+        if (checked) {
             binding.captureServiceButton.setCardBackgroundColor(DisplayUtils.getAttrColor(requireContext(), com.google.android.material.R.attr.colorPrimary, 0));
             binding.captureServiceIcon.setImageTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, 0)));
             binding.captureServiceTitle.setTextColor(DisplayUtils.getAttrColor(requireContext(), com.google.android.material.R.attr.colorOnPrimary, 0));

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import top.bogey.touch_tool.room.bean.Task;
 
-public class TaskNode extends Node{
+public class TaskNode extends Node {
     public TaskNode(TaskInfo value) {
         super(NodeType.TASK, value);
     }
@@ -41,9 +41,9 @@ public class TaskNode extends Node{
         return new TaskInfo(value.id, value.title);
     }
 
-    private static Map<String, Task> toTaskMap(Object obj){
+    private static Map<String, Task> toTaskMap(Object obj) {
         Map<String, Task> map = new HashMap<>();
-        if (obj instanceof HashMap<?, ?>){
+        if (obj instanceof HashMap<?, ?>) {
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
                 map.put((String) entry.getKey(), (Task) entry.getValue());
             }
@@ -51,7 +51,7 @@ public class TaskNode extends Node{
         return map;
     }
 
-    public static class TaskInfo{
+    public static class TaskInfo {
         private String id;
         private String title;
 
@@ -83,7 +83,7 @@ public class TaskNode extends Node{
         }
     }
 
-    public static class TaskGroup{
+    public static class TaskGroup {
         private String pkgName;
         private int count;
 

@@ -9,19 +9,19 @@ import java.util.List;
 public class DouglasPeucker {
     private static final int epsilon = 5;
 
-    public static List<Point> compress(List<Point> points){
+    public static List<Point> compress(List<Point> points) {
         if (points.size() <= 2) return points;
         float max = 0;
         int index = 0;
         for (int i = 1; i < points.size() - 1; i++) {
             float d = distance(points.get(0), points.get(points.size() - 1), points.get(i));
-            if (d > max){
+            if (d > max) {
                 index = i;
                 max = d;
             }
         }
 
-        if (max > epsilon){
+        if (max > epsilon) {
             List<Point> list = compress(new ArrayList<>(points.subList(0, index)));
             List<Point> list2 = compress(new ArrayList<>(points.subList(index, points.size() - 1)));
             list.remove(list.size() - 1);
@@ -32,7 +32,7 @@ public class DouglasPeucker {
         }
     }
 
-    private static float distance(Point start, Point end, Point curr){
+    private static float distance(Point start, Point end, Point curr) {
         float a = end.y - start.y;
         float b = start.x - end.x;
         if (a == 0 && b == 0) return 0;

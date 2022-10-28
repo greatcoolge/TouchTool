@@ -42,14 +42,14 @@ public class AppPickerRecyclerViewAdapter extends RecyclerView.Adapter<AppPicker
         return apps.size();
     }
 
-    public void refreshApps(List<AppInfo> apps){
+    public void refreshApps(List<AppInfo> apps) {
         this.apps.clear();
         if (apps != null) this.apps.addAll(apps);
         this.apps.remove(0);
         notifyDataSetChanged();
     }
 
-    protected class ViewHolder extends RecyclerView.ViewHolder{
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewAppsItemBinding binding;
         private final Context context;
         private AppInfo info;
@@ -63,11 +63,11 @@ public class AppPickerRecyclerViewAdapter extends RecyclerView.Adapter<AppPicker
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        public void refreshView(AppInfo appInfo){
+        public void refreshView(AppInfo appInfo) {
             info = appInfo;
             binding.appName.setText(appInfo.appName);
             PackageManager manager = context.getPackageManager();
-            if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+            if (appInfo.packageName.equals(context.getString(R.string.common_package_name))) {
                 binding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
             } else {
                 binding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));

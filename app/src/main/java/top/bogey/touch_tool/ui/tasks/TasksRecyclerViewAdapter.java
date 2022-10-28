@@ -42,7 +42,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     private final MainViewModel viewModel;
     private final List<Task> tasks = new ArrayList<>();
 
-    public TasksRecyclerViewAdapter(){
+    public TasksRecyclerViewAdapter() {
         viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
     }
 
@@ -62,8 +62,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         return tasks.size();
     }
 
-    public void setTasks(List<Task> newTasks){
-        if (newTasks == null){
+    public void setTasks(List<Task> newTasks) {
+        if (newTasks == null) {
             int size = tasks.size();
             tasks.clear();
             notifyItemRangeRemoved(0, size);
@@ -79,7 +79,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     break;
                 }
             }
-            if (flag){
+            if (flag) {
                 tasks.remove(i);
                 notifyItemRemoved(i);
             }
@@ -89,12 +89,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         for (Task newTask : newTasks) {
             boolean flag = true;
             for (Task task : tasks) {
-                if (task.getId().equals(newTask.getId())){
+                if (task.getId().equals(newTask.getId())) {
                     flag = false;
                     break;
                 }
             }
-            if (flag){
+            if (flag) {
                 tasks.add(newTask);
                 notifyItemInserted(tasks.size() - 1);
             }
@@ -117,11 +117,11 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             binding.actionBox.setAdapter(adapter);
 
             binding.titleEdit.setOnEditorActionListener((v, actionId, event) -> {
-                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     int index = getBindingAdapterPosition();
                     Task task = tasks.get(index);
                     Editable text = binding.titleEdit.getText();
-                    if (text != null && text.length() > 0){
+                    if (text != null && text.length() > 0) {
                         task.setTitle(text.toString());
                         notifyItemChanged(index);
                         TaskRepository.getInstance(context).saveTask(task, true);
@@ -133,11 +133,11 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
 
             binding.statusGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-                if (isChecked){
+                if (isChecked) {
                     int index = getBindingAdapterPosition();
                     Task task = tasks.get(index);
                     TaskStatus status = task.getStatus();
-                    switch (checkedId){
+                    switch (checkedId) {
                         case R.id.close_button:
                             task.setStatus(TaskStatus.CLOSED);
                             break;
@@ -152,7 +152,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                             break;
                     }
                     refreshItem(task);
-                    if (status != task.getStatus()){
+                    if (status != task.getStatus()) {
                         TaskRepository.getInstance(context).saveTask(task, true);
                     }
                 }
@@ -232,7 +232,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
 
             binding.deleteButton.setOnClickListener(v -> {
-                if (isDeleteMode){
+                if (isDeleteMode) {
                     int index = getBindingAdapterPosition();
                     Task task = tasks.get(index);
                     tasks.remove(index);
@@ -278,7 +278,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             });
         }
 
-        public void refreshItem(Task task){
+        public void refreshItem(Task task) {
             View child = binding.statusGroup.getChildAt(task.getStatus().ordinal());
             binding.statusGroup.check(child.getId());
             boolean isCommon = task.getPkgName().equals(context.getString(R.string.common_package_name));
@@ -288,7 +288,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
             binding.timeBox.setVisibility(View.GONE);
             String hint = "";
-            switch (task.getStatus()){
+            switch (task.getStatus()) {
                 case CLOSED:
                     hint = context.getString(R.string.run_close);
                     break;
@@ -308,7 +308,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             binding.getRoot().setCardBackgroundColor(DisplayUtils.getAttrColor(context, (!task.isAcrossApp() && task.getStatus() != TaskStatus.TIME) ? com.google.android.material.R.attr.colorSurfaceVariant : com.google.android.material.R.attr.colorSecondaryContainer, 0));
         }
 
-        public void refreshTime(Task task){
+        public void refreshTime(Task task) {
             String startTime = context.getString(R.string.task_start_time, AppUtils.formatDateMinute(task.getTime()));
             String periodicTime = "";
             if (task.getPeriodic() > 0) periodicTime = context.getString(R.string.task_periodic_time, task.getPeriodic() / 60, task.getPeriodic() % 60);

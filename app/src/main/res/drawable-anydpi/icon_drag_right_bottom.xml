@@ -6,6 +6,7 @@
     android:tint="#FFFFFF"
     android:alpha="0.8">
 
-    <path android:fillColor="?attr/colorOnPrimary"
-        android:pathData="M11,12h-7a1,1 180 0,1 0,-2h6v-6a1,1 180 0,1 2,0v7a1,1 90 0,1 -1,1z"/>
+    <path
+        android:fillColor="?attr/colorOnPrimary"
+        android:pathData="M11,12h-7a1,1 180 0,1 0,-2h6v-6a1,1 180 0,1 2,0v7a1,1 90 0,1 -1,1z" />
 </vector>

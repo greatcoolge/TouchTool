@@ -45,14 +45,14 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         return actions.size();
     }
 
-    public void setTask(Task task){
+    public void setTask(Task task) {
         this.task = task;
         if (task.getActions() == null) task.setActions(new ArrayList<>());
         actions = task.getActions();
         notifyDataSetChanged();
     }
 
-    public void notifyNew(){
+    public void notifyNew() {
         notifyItemInserted(actions.size() - 1);
     }
 
@@ -121,14 +121,14 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             });
 
             binding.deleteButton.setOnClickListener(v -> {
-                if (isDeleteMode){
+                if (isDeleteMode) {
                     int index = getBindingAdapterPosition();
                     actions.remove(index);
                     notifyItemRemoved(index);
-                    if (!actions.isEmpty()){
-                        if (index == 0){
+                    if (!actions.isEmpty()) {
+                        if (index == 0) {
                             notifyItemChanged(0);
-                        } else if (index == actions.size()){
+                        } else if (index == actions.size()) {
                             notifyItemChanged(index - 1);
                         } else {
                             notifyItemChanged(index - 1);
@@ -150,8 +150,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
 
         @SuppressLint("PrivateResource")
-        private void setChecked(MaterialButton button, boolean checked){
-            if (checked){
+        private void setChecked(MaterialButton button, boolean checked) {
+            if (checked) {
                 button.setTextColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorOnPrimary, 0));
                 button.setBackgroundColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorPrimary, 0));
                 button.setRippleColorResource(com.google.android.material.R.color.m3_button_ripple_color_selector);
@@ -162,7 +162,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
             }
         }
 
-        public void refreshItem(Action action, int position){
+        public void refreshItem(Action action, int position) {
             binding.titleText.setText(action.getTitle(context));
             setChecked(binding.enabledToggle, action.isEnable());
             binding.enabledToggle.setText(String.valueOf(position + 1));

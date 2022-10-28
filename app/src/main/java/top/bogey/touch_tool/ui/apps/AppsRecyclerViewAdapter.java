@@ -47,14 +47,14 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
         return apps.size();
     }
 
-    public void refreshApps(List<AppInfo> apps){
+    public void refreshApps(List<AppInfo> apps) {
         this.apps.clear();
         if (apps != null) this.apps.addAll(apps);
         notifyDataSetChanged();
     }
 
-    public void refreshItems(List<TaskNode.TaskGroup> group){
-        if (group == null || group.size() == 0){
+    public void refreshItems(List<TaskNode.TaskGroup> group) {
+        if (group == null || group.size() == 0) {
             for (Map.Entry<String, Integer> entry : flags.entrySet()) {
                 refreshItem(entry.getKey(), 0);
             }
@@ -66,24 +66,24 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
             }
 
             for (Map.Entry<String, Integer> entry : flags.entrySet()) {
-                if (!keys.contains(entry.getKey())){
+                if (!keys.contains(entry.getKey())) {
                     refreshItem(entry.getKey(), 0);
                 }
             }
         }
     }
 
-    public void refreshItem(String pkgName, int count){
+    public void refreshItem(String pkgName, int count) {
         flags.put(pkgName, count);
         for (int i = 0; i < apps.size(); i++) {
-            if (apps.get(i).packageName.equals(pkgName)){
+            if (apps.get(i).packageName.equals(pkgName)) {
                 notifyItemChanged(i);
                 break;
             }
         }
     }
 
-    protected static class ViewHolder extends RecyclerView.ViewHolder{
+    protected static class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewAppsItemBinding binding;
         private final Context context;
         private AppInfo info;
@@ -95,7 +95,7 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
 
             binding.getRoot().setOnClickListener(v -> {
                 MainActivity activity = MainApplication.getActivity();
-                if (activity != null){
+                if (activity != null) {
                     NavController controller = Navigation.findNavController(activity, R.id.con_view);
                     controller.navigate(AppsViewDirections.actionAppsToTasks(info.packageName));
                 }
@@ -103,11 +103,11 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        public void refreshView(AppInfo appInfo, int count){
+        public void refreshView(AppInfo appInfo, int count) {
             info = appInfo;
             binding.appName.setText(appInfo.appName);
             PackageManager manager = context.getPackageManager();
-            if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+            if (appInfo.packageName.equals(context.getString(R.string.common_package_name))) {
                 binding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
             } else {
                 binding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));

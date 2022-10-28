@@ -66,15 +66,15 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
             ViewParent parent = getParent();
-            if (parent != null){
-                switch (event.getAction()){
+            if (parent != null) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         lastX = event.getX();
                         parent.requestDisallowInterceptTouchEvent(true);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         checkPosition(binding.recyclerView, event.getX());
-                        if (isToRight || isToLeft){
+                        if (isToRight || isToLeft) {
                             parent.requestDisallowInterceptTouchEvent(false);
                             return false;
                         } else {
@@ -92,7 +92,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         });
 
         binding.saveButton.setOnClickListener(v -> {
-            if (!adapter.actions.isEmpty()){
+            if (!adapter.actions.isEmpty()) {
                 task.setActions(adapter.actions);
                 if (callback != null) callback.onResult(true);
             }
@@ -126,12 +126,12 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         EasyFloat.dismiss(RecordFloatView.class.getCanonicalName());
     }
 
-    private void addAction(Node node){
+    private void addAction(Node node) {
         Action action = new Action();
         action.setTargets(Collections.singletonList(node));
         new ActionFloatView(getContext(), task, action, result -> {
             adapter.addAction(action);
-            if (delay > 0){
+            if (delay > 0) {
                 Action delayAction = new Action();
                 delayAction.setTargets(Collections.singletonList(new DelayNode(new TimeArea(delay))));
                 adapter.addAction(delayAction);
@@ -140,22 +140,22 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         }).show();
     }
 
-    private void checkPosition(RecyclerView view, float nowX){
-        LinearLayoutManager layoutManager = (LinearLayoutManager)view.getLayoutManager();
-        if (layoutManager != null){
-            if (layoutManager.getItemCount() > 6){
+    private void checkPosition(RecyclerView view, float nowX) {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) view.getLayoutManager();
+        if (layoutManager != null) {
+            if (layoutManager.getItemCount() > 6) {
                 isToLeft = false;
                 isToRight = false;
                 int first = layoutManager.findFirstCompletelyVisibleItemPosition();
                 int last = layoutManager.findLastCompletelyVisibleItemPosition();
 
-                if (layoutManager.getChildCount() > 0){
-                    if (last == layoutManager.getItemCount() - 1){
-                        if (canScrollHorizontally(-1) && nowX < lastX){
+                if (layoutManager.getChildCount() > 0) {
+                    if (last == layoutManager.getItemCount() - 1) {
+                        if (canScrollHorizontally(-1) && nowX < lastX) {
                             isToRight = true;
                         }
-                    } else if (first == 0){
-                        if (canScrollHorizontally(1) && nowX > lastX){
+                    } else if (first == 0) {
+                        if (canScrollHorizontally(1) && nowX > lastX) {
                             isToLeft = true;
                         }
                     }

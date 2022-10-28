@@ -1,6 +1,6 @@
 package top.bogey.touch_tool.room.bean.node;
 
-public class NumberNode extends Node{
+public class NumberNode extends Node {
     public NumberNode(int number) {
         super(NodeType.NUMBER, number);
     }

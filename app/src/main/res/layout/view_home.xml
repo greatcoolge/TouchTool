@@ -155,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="32dp"
                         android:text="@string/auto_run_tips"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/auto_run_button"
@@ -164,7 +164,7 @@
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginVertical="16dp"
                         app:icon="@drawable/icon_auto_start"
-                        android:text="@string/open_auto_run"/>
+                        android:text="@string/open_auto_run" />
 
                 </LinearLayout>
 
@@ -210,7 +210,7 @@
                         android:layout_marginHorizontal="32dp"
                         android:layout_marginBottom="16dp"
                         android:text="@string/lock_task_tips"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/lock_task_button"
@@ -219,7 +219,7 @@
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginBottom="16dp"
                         app:icon="@drawable/icon_lock"
-                        android:text="@string/goto_lock_task"/>
+                        android:text="@string/goto_lock_task" />
 
                 </LinearLayout>
 
@@ -264,7 +264,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="32dp"
                         android:text="@string/book_tips"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/book_button"
@@ -273,7 +273,7 @@
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginVertical="16dp"
                         app:icon="@drawable/icon_book"
-                        android:text="@string/book"/>
+                        android:text="@string/book" />
 
                 </LinearLayout>
 
@@ -319,7 +319,7 @@
                         android:layout_marginHorizontal="32dp"
                         android:layout_marginBottom="16dp"
                         android:text="@string/background_pop_tips"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -328,7 +328,7 @@
                         android:layout_marginBottom="16dp"
                         android:text="@string/background_pop_tips_2"
                         android:textColor="?attr/colorTertiary"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/open_background_pop_button"
@@ -337,7 +337,7 @@
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginBottom="16dp"
                         app:icon="@drawable/icon_background_pop"
-                        android:text="@string/open_background_pop"/>
+                        android:text="@string/open_background_pop" />
 
                 </LinearLayout>
 

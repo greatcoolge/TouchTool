@@ -36,21 +36,23 @@ import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
 public class CustomTypeConverts {
     @TypeConverter
-    public static List<Action> actionsFromString(String json){
+    public static List<Action> actionsFromString(String json) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Node.class, new NodeAdapter()).create();
-        try{
-            return gson.fromJson(json, new TypeToken<List<Action>>(){}.getType());
-        }catch (JsonSyntaxException ignored){}
+        try {
+            return gson.fromJson(json, new TypeToken<List<Action>>() {
+            }.getType());
+        } catch (JsonSyntaxException ignored) {
+        }
         return new ArrayList<>();
     }
 
     @TypeConverter
-    public static String stringFromAction(List<Action> actions){
+    public static String stringFromAction(List<Action> actions) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Node.class, new NodeAdapter()).create();
         return gson.toJson(actions);
     }
 
-    public static class NodeAdapter implements JsonDeserializer<Node>{
+    public static class NodeAdapter implements JsonDeserializer<Node> {
         @Override
         public Node deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
@@ -66,7 +68,7 @@ public class CustomTypeConverts {
                 int min = 1000, max = 1000;
 
                 JsonObject delayArea = jsonObject.get("value").getAsJsonObject();
-                if (delayArea != null){
+                if (delayArea != null) {
                     JsonElement minElement = delayArea.get("min");
                     if (minElement != null) min = minElement.getAsInt();
                     JsonElement maxElement = delayArea.get("max");
@@ -84,7 +86,7 @@ public class CustomTypeConverts {
                 int value = 95, screen = 1080;
 
                 JsonObject imageInfo = jsonObject.get("value").getAsJsonObject();
-                if (imageInfo != null){
+                if (imageInfo != null) {
                     JsonElement imageElement = imageInfo.get("image");
                     if (imageElement != null) image = imageElement.getAsString();
                     JsonElement valueElement = imageInfo.get("value");
@@ -128,7 +130,7 @@ public class CustomTypeConverts {
                 int minPercent = 0, maxPercent = 100, size = 0, screen = 1080;
 
                 JsonObject colorInfo = jsonObject.get("value").getAsJsonObject();
-                if (colorInfo != null){
+                if (colorInfo != null) {
                     JsonArray colorArray = colorInfo.getAsJsonArray("color");
                     if (colorArray != null)
                         color = new int[]{colorArray.get(0).getAsInt(), colorArray.get(1).getAsInt(), colorArray.get(2).getAsInt()};
@@ -149,7 +151,7 @@ public class CustomTypeConverts {
                 String extras = "";
 
                 JsonObject keyTask = jsonObject.get("value").getAsJsonObject();
-                if (keyTask != null){
+                if (keyTask != null) {
                     JsonElement keyTypeElement = keyTask.get("keyType");
                     if (keyTypeElement != null) keyType = KeyNode.KeyType.valueOf(keyTypeElement.getAsString());
                     JsonElement extrasElement = keyTask.get("extras");
@@ -161,7 +163,7 @@ public class CustomTypeConverts {
             } else if (nodeType == NodeType.TASK) {
                 String id = null, title = null;
                 JsonObject taskInfo = jsonObject.get("value").getAsJsonObject();
-                if (taskInfo != null){
+                if (taskInfo != null) {
                     JsonElement idElement = taskInfo.get("id");
                     if (idElement != null) id = idElement.getAsString();
                     JsonElement titleElement = taskInfo.get("title");
@@ -172,7 +174,7 @@ public class CustomTypeConverts {
 
             int min = 1000, max = 1000;
             JsonObject timeArea = jsonObject.get("timeArea").getAsJsonObject();
-            if (timeArea != null){
+            if (timeArea != null) {
                 JsonElement minElement = timeArea.get("min");
                 if (minElement != null) min = minElement.getAsInt();
                 JsonElement maxElement = timeArea.get("max");

@@ -73,11 +73,11 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         return showData.get(position) instanceof Task ? TASK : APP;
     }
 
-    private void refreshShowData(){
+    private void refreshShowData() {
         List<Object> tmp = new ArrayList<>();
 
         for (Object data : showData) {
-            if (data instanceof TaskNode.TaskGroup){
+            if (data instanceof TaskNode.TaskGroup) {
                 TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) data;
                 tmp.add(taskGroup);
                 if (Boolean.TRUE.equals(showInfo.get(taskGroup.getPkgName())))
@@ -88,7 +88,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         showData = tmp;
     }
 
-    private List<Task> getTasksByPackageName(String pkgName){
+    private List<Task> getTasksByPackageName(String pkgName) {
         List<Task> tasks = new ArrayList<>();
         for (Task task : this.tasks) {
             if (task.getPkgName().equals(pkgName))
@@ -97,7 +97,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         return tasks;
     }
 
-    private int getSelectCountByPackageName(String pkgName){
+    private int getSelectCountByPackageName(String pkgName) {
         int count = 0;
         for (Task task : selectTasks) {
             if (task.getPkgName().equals(pkgName))
@@ -106,32 +106,32 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         return count;
     }
 
-    private int getLastTaskGroupIndex(int index){
+    private int getLastTaskGroupIndex(int index) {
         for (int i = index; i > 0; i--) {
-            if (APP == getItemViewType(i)){
+            if (APP == getItemViewType(i)) {
                 return i;
             }
         }
         return 0;
     }
 
-    private void refreshSelectAllBox(){
+    private void refreshSelectAllBox() {
         if (selectTasks.size() == 0) parent.refreshSelectAllBox(MaterialCheckBox.STATE_UNCHECKED);
         else if (selectTasks.size() == tasks.size()) parent.refreshSelectAllBox(MaterialCheckBox.STATE_CHECKED);
         else parent.refreshSelectAllBox(MaterialCheckBox.STATE_INDETERMINATE);
     }
 
-    public void selectAll(boolean select){
+    public void selectAll(boolean select) {
         selectTasks.clear();
-        if (select){
+        if (select) {
             selectTasks.addAll(tasks);
         }
         notifyDataSetChanged();
     }
 
-    public void selectSomeByPackageName(String pkgName){
+    public void selectSomeByPackageName(String pkgName) {
         List<Task> tasks = getTasksByPackageName(pkgName);
-        if (getSelectCountByPackageName(pkgName) == tasks.size()){
+        if (getSelectCountByPackageName(pkgName) == tasks.size()) {
             selectTasks.removeIf(task -> task.getPkgName().equals(pkgName));
         } else {
             for (Task task : tasks) {
@@ -141,7 +141,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
         notifyDataSetChanged();
     }
 
-    protected class ViewHolder extends RecyclerView.ViewHolder{
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private ViewTasksExportAppItemBinding appBinding;
         private ViewTasksExportTaskItemBinding taskBinding;
         private final Context context;
@@ -154,7 +154,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
                 int index = getBindingAdapterPosition();
                 TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) showData.get(index);
                 int size = getTasksByPackageName(taskGroup.getPkgName()).size();
-                if (Boolean.FALSE.equals(showInfo.get(taskGroup.getPkgName()))){
+                if (Boolean.FALSE.equals(showInfo.get(taskGroup.getPkgName()))) {
                     showInfo.put(taskGroup.getPkgName(), Boolean.TRUE);
                     refreshShowData();
                     notifyItemRangeInserted(index + 1, size);
@@ -173,7 +173,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
             });
         }
 
-        public ViewHolder(ViewTasksExportTaskItemBinding binding){
+        public ViewHolder(ViewTasksExportTaskItemBinding binding) {
             super(binding.getRoot());
             taskBinding = binding;
             context = binding.getRoot().getContext();
@@ -181,7 +181,7 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
                 int index = getBindingAdapterPosition();
                 Task task = (Task) showData.get(index);
                 if (state == MaterialCheckBox.STATE_CHECKED) {
-                    if (!selectTasks.contains(task)){
+                    if (!selectTasks.contains(task)) {
                         selectTasks.add(task);
                         refreshSelectAllBox();
                     }
@@ -198,14 +198,14 @@ public class TasksExportRecyclerViewAdapter extends RecyclerView.Adapter<TasksEx
             });
         }
 
-        public void refreshView(Object data, int viewType){
+        public void refreshView(Object data, int viewType) {
             switch (viewType) {
                 case APP:
                     TaskNode.TaskGroup taskGroup = (TaskNode.TaskGroup) data;
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(taskGroup.getPkgName());
                     appBinding.appName.setText(appInfo.appName);
                     PackageManager manager = context.getPackageManager();
-                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))){
+                    if (appInfo.packageName.equals(context.getString(R.string.common_package_name))) {
                         appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));
                     } else {
                         appBinding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));

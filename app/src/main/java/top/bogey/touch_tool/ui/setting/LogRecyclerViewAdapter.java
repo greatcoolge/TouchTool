@@ -22,7 +22,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     public LogRecyclerViewAdapter(int level) {
         logs = RunningUtils.getLogs(log -> recyclerView.post(() -> {
             logs.add(log);
-            if (((1 << log.getLevel().ordinal()) & this.level) > 0){
+            if (((1 << log.getLevel().ordinal()) & this.level) > 0) {
                 showLogs.add(log);
                 notifyItemInserted(showLogs.size());
                 if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
@@ -58,7 +58,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         this.level = level;
         showLogs.clear();
         for (LogInfo log : logs) {
-            if (((1 << log.getLevel().ordinal()) & level) > 0){
+            if (((1 << log.getLevel().ordinal()) & level) > 0) {
                 showLogs.add(log);
             }
         }
@@ -74,7 +74,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             this.binding = binding;
         }
 
-        public void refreshItem(LogInfo log){
+        public void refreshItem(LogInfo log) {
             binding.titleText.setText(String.format("%s\n%s", log.getDateString(), log.getLog()));
             binding.titleText.setTextColor(log.getLevel().getLevelColor(binding.getRoot().getContext()));
         }

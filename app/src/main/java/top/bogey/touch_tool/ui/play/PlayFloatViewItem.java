@@ -44,26 +44,26 @@ public class PlayFloatViewItem extends FrameLayout {
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
             // 录屏服务没开启，需要检查点击图片的动作
-            if (service.binder == null){
+            if (service.binder == null) {
                 List<Action> actions = task.getActions();
                 boolean flag = false;
                 for (Action action : actions) {
                     for (Node target : action.getTargets()) {
-                        if (target.getType() == NodeType.IMAGE || target.getType() == NodeType.COLOR){
+                        if (target.getType() == NodeType.IMAGE || target.getType() == NodeType.COLOR) {
                             flag = true;
                             break;
                         }
                     }
                     if (flag) break;
-                    if (action.getCondition() != null && action.getCondition().getType() == NodeType.IMAGE){
+                    if (action.getCondition() != null && action.getCondition().getType() == NodeType.IMAGE) {
                         flag = true;
                         break;
                     }
                 }
-                if (flag){
+                if (flag) {
                     Toast.makeText(context, R.string.capture_service_on_tips_2, Toast.LENGTH_LONG).show();
                     service.startCaptureService(true, result -> {
-                        if (result){
+                        if (result) {
                             startPlay();
                         }
                     });
@@ -78,11 +78,11 @@ public class PlayFloatViewItem extends FrameLayout {
         refreshProgress(0);
     }
 
-    public void startPlay(){
+    public void startPlay() {
         MainAccessibilityService service = MainApplication.getService();
-        if (service != null && service.isServiceConnected()){
-            if (playing){
-                if (taskCallable != null && taskCallable.isRunning()){
+        if (service != null && service.isServiceConnected()) {
+            if (playing) {
+                if (taskCallable != null && taskCallable.isRunning()) {
                     service.stopTask(taskCallable);
                 }
                 playing = false;
@@ -115,18 +115,18 @@ public class PlayFloatViewItem extends FrameLayout {
         return playing;
     }
 
-    private String getPivotalTitle(String title){
+    private String getPivotalTitle(String title) {
         if (title == null || title.isEmpty()) return "?";
         Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
         Matcher matcher = pattern.matcher(title);
-        if (matcher.find()){
+        if (matcher.find()) {
             String group = matcher.group(1);
             if (group != null) return group.substring(0, 1);
         }
         return title.substring(0, 1);
     }
 
-    private void refreshProgress(int percent){
+    private void refreshProgress(int percent) {
         post(() -> {
             binding.percent.setText(!playing && percent == 0 ? getPivotalTitle(task.getTitle()) : String.valueOf(percent));
             binding.playButton.setProgress(percent, percent != 0);

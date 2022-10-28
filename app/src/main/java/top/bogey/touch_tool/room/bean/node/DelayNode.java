@@ -5,15 +5,15 @@ public class DelayNode extends Node {
         super(NodeType.DELAY, delay);
     }
 
-    public String getTitle(){
-        if (getValue().getMin() == getValue().getMax()){
+    public String getTitle() {
+        if (getValue().getMin() == getValue().getMax()) {
             return String.valueOf(getValue().getMin());
         }
         return getValue().getRealMin() + "-" + getValue().getRealMax();
     }
 
     @Override
-    public TimeArea getValue(){
+    public TimeArea getValue() {
         return (TimeArea) value;
     }
 

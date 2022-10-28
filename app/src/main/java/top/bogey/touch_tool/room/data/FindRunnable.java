@@ -14,11 +14,12 @@ import top.bogey.touch_tool.room.bean.Task;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.RunningUtils;
 
-public class FindRunnable implements Runnable{
+public class FindRunnable implements Runnable {
     private boolean isRunning = true;
 
     private final MainAccessibilityService service;
     private final String pkgName;
+
     public FindRunnable(MainAccessibilityService service, String pkgName) {
         this.service = service;
         this.pkgName = pkgName;
@@ -28,11 +29,11 @@ public class FindRunnable implements Runnable{
         isRunning = false;
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return isRunning;
     }
 
-    private void sleep(){
+    private void sleep() {
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -44,15 +45,15 @@ public class FindRunnable implements Runnable{
     public void run() {
         AccessibilityNodeInfo root = service.getRootInActiveWindow();
         int times = 0;
-        while (root == null && isRunning()){
+        while (root == null && isRunning()) {
             times++;
             if (times > 20) break;
             sleep();
             root = service.getRootInActiveWindow();
         }
-        if (root != null && isRunning()){
+        if (root != null && isRunning()) {
             String packageName = String.valueOf(root.getPackageName());
-            if (!(packageName.equals("null") || packageName.equals(pkgName))){
+            if (!(packageName.equals("null") || packageName.equals(pkgName))) {
                 RunningUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_surface_changed, pkgName));
 
                 // 尝试停止任务并取消所有非运行中任务
@@ -60,7 +61,7 @@ public class FindRunnable implements Runnable{
                 service.currPkgName = packageName;
 
                 MainActivity activity = MainApplication.getActivity();
-                if (activity != null){
+                if (activity != null) {
                     activity.dismissPlayFloatView();
                 }
 
@@ -77,7 +78,7 @@ public class FindRunnable implements Runnable{
 
                 boolean isManual = false;
                 for (Task task : tasks) {
-                    if (task.getActions() != null && !task.getActions().isEmpty()){
+                    if (task.getActions() != null && !task.getActions().isEmpty()) {
                         switch (task.getStatus()) {
                             case AUTO:
                                 service.runTask(task, null);
@@ -89,8 +90,8 @@ public class FindRunnable implements Runnable{
                         }
                     }
                 }
-                if (isManual){
-                    if (activity != null){
+                if (isManual) {
+                    if (activity != null) {
                         activity.showPlayFloatView(packageName);
                     } else {
                         Intent intent = new Intent(service, MainActivity.class);
@@ -104,25 +105,25 @@ public class FindRunnable implements Runnable{
         }
     }
 
-    private List<Task> getAppTaskByPkgName(String pkgName){
+    private List<Task> getAppTaskByPkgName(String pkgName) {
         TaskRepository repository = new TaskRepository(service);
         List<Task> tasks = new ArrayList<>();
         List<Task> pkgTasks = repository.getTasksByPackageName(pkgName);
-        if (pkgTasks != null){
+        if (pkgTasks != null) {
             tasks.addAll(pkgTasks);
         }
         String conPkgName = service.getString(R.string.common_package_name);
         List<Task> comTasks = repository.getTasksByPackageName(conPkgName);
-        if (comTasks != null){
+        if (comTasks != null) {
             for (Task comTask : comTasks) {
                 boolean flag = true;
                 for (Task task : tasks) {
-                    if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())){
+                    if (task.getTitle() != null && comTask.getTitle().equals(task.getTitle())) {
                         flag = false;
                         break;
                     }
                 }
-                if (flag){
+                if (flag) {
                     tasks.add(comTask);
                 }
             }

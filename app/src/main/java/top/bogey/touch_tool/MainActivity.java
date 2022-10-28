@@ -35,11 +35,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import top.bogey.touch_tool.databinding.ActivityMainBinding;
 import top.bogey.touch_tool.room.bean.Task;
@@ -56,7 +54,9 @@ import top.bogey.touch_tool.utils.SelectCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class MainActivity extends AppCompatActivity {
-    static {System.loadLibrary("auto_touch");}
+    static {
+        System.loadLibrary("auto_touch");
+    }
 
     private static final String FIRST_RUN = "first_run";
 
@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> intentLauncher;
     private ActivityResultLauncher<String> permissionLauncher;
+    private ActivityResultLauncher<String> contentLauncher;
     private PermissionResultCallback resultCallback;
 
     private boolean removeFloatView = false;
@@ -87,13 +88,21 @@ public class MainActivity extends AppCompatActivity {
         MainApplication.setActivity(this);
 
         intentLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (resultCallback != null){
+            if (resultCallback != null) {
                 resultCallback.onResult(result.getResultCode(), result.getData());
             }
         });
 
         permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
-            if (result && resultCallback != null) resultCallback.onResult(Activity.RESULT_OK, null);
+            if (result && resultCallback != null) resultCallback.onResult(RESULT_OK, null);
+        });
+
+        contentLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            if (result != null && resultCallback != null) {
+                Intent intent = new Intent();
+                intent.setData(result);
+                resultCallback.onResult(RESULT_OK, intent);
+            }
         });
 
         binding.getRoot().post(() -> handleIntent(getIntent()));
@@ -116,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         controller.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             int id = navDestination.getId();
-            if (id == R.id.home || id == R.id.apps || id == R.id.setting){
+            if (id == R.id.home || id == R.id.apps || id == R.id.setting) {
                 binding.menuView.setVisibility(View.VISIBLE);
             } else {
                 binding.menuView.setVisibility(View.GONE);
@@ -136,15 +145,15 @@ public class MainActivity extends AppCompatActivity {
         handleIntent(intent);
     }
 
-    private void runFirstTimes(){
+    private void runFirstTimes() {
         boolean firstRun = MMKV.defaultMMKV().decodeBool(FIRST_RUN, false);
-        if (!firstRun){
+        if (!firstRun) {
             StringBuilder buffer = new StringBuilder();
             try {
                 InputStream inputStream = getAssets().open("DefaultTasks");
                 InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 int i = reader.read();
-                while (i != -1){
+                while (i != -1) {
                     char c = (char) i;
                     buffer.append(c);
                     i = reader.read();
@@ -158,54 +167,59 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void handleIntent(Intent intent){
+    public void handleIntent(Intent intent) {
         boolean isBackground = intent.getBooleanExtra("IsBackground", false);
-        if (isBackground){
+        if (isBackground) {
             moveTaskToBack(true);
         }
 
         String pkgName = getIntent().getStringExtra("FloatPackageName");
-        if (pkgName != null && !pkgName.isEmpty()){
+        if (pkgName != null && !pkgName.isEmpty()) {
             showPlayFloatView(pkgName);
         }
 
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null){
-            if ("text/plain".equals(intent.getType())){
+        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+            if ("text/plain".equals(intent.getType())) {
                 Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                if (uri != null){
-                    ParcelFileDescriptor fileDescriptor = null;
-                    try {
-                        fileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
-                    } catch (FileNotFoundException ignored){}
-                    if (fileDescriptor != null){
-                        FileDescriptor descriptor = fileDescriptor.getFileDescriptor();
-
-                        StringBuilder buffer = new StringBuilder();
-                        try(FileInputStream fileInputStream = new FileInputStream(descriptor)){
-                            InputStreamReader reader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
-                            int i = reader.read();
-                            while (i != -1){
-                                char c = (char) i;
-                                buffer.append(c);
-                                i = reader.read();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        saveTasks(buffer.toString());
-
-                        try {
-                            fileDescriptor.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                if (uri != null) {
+                    saveTasksByFile(uri);
                 }
             }
         }
     }
 
-    public void saveTasks(String tasksString){
+    public void saveTasksByFile(Uri uri) {
+        ParcelFileDescriptor fileDescriptor = null;
+        try {
+            fileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
+        } catch (FileNotFoundException ignored) {
+        }
+        if (fileDescriptor != null) {
+            FileDescriptor descriptor = fileDescriptor.getFileDescriptor();
+
+            StringBuilder buffer = new StringBuilder();
+            try (FileInputStream fileInputStream = new FileInputStream(descriptor)) {
+                InputStreamReader reader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+                int i = reader.read();
+                while (i != -1) {
+                    char c = (char) i;
+                    buffer.append(c);
+                    i = reader.read();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            saveTasks(buffer.toString());
+
+            try {
+                fileDescriptor.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveTasks(String tasksString) {
         if (tasksString == null || tasksString.isEmpty()) return;
 
         MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -214,13 +228,15 @@ public class MainActivity extends AppCompatActivity {
         List<Task> tasks = null;
         Gson gson = new GsonBuilder().registerTypeAdapter(Node.class, new CustomTypeConverts.NodeAdapter()).create();
         try {
-            tasks = gson.fromJson(tasksString, new TypeToken<List<Task>>(){}.getType());
-        } catch (JsonParseException ignored){}
-        if (tasks != null){
+            tasks = gson.fromJson(tasksString, new TypeToken<List<Task>>() {
+            }.getType());
+        } catch (JsonParseException ignored) {
+        }
+        if (tasks != null) {
             List<Task> newTasks = new ArrayList<>();
             for (Task task : tasks) {
-                if (pkgNames.contains(task.getPkgName())){
-                    if (task.getActions() != null && !task.getActions().isEmpty()){
+                if (pkgNames.contains(task.getPkgName())) {
+                    if (task.getActions() != null && !task.getActions().isEmpty()) {
                         newTasks.add(task);
                     }
                 }
@@ -229,32 +245,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void launchCapture(PermissionResultCallback callback){
+    public void launchCapture(PermissionResultCallback callback) {
         resultCallback = callback;
         MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         intentLauncher.launch(manager.createScreenCaptureIntent());
     }
 
-    public void launchFloat(PermissionResultCallback callback){
+    public void launchFloat(PermissionResultCallback callback) {
         resultCallback = callback;
-        try {
-            Field field = Settings.class.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
-            Intent intent = new Intent(Objects.requireNonNull(field.get(null)).toString());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setData(Uri.parse("package:" + getPackageName()));
-            intentLauncher.launch(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        intentLauncher.launch(intent);
     }
 
-    public void launchNotification(PermissionResultCallback callback){
+    public void launchNotification(PermissionResultCallback callback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             String permission = Manifest.permission.POST_NOTIFICATIONS;
-            if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
                 callback.onResult(Activity.RESULT_OK, null);
-            } else if (shouldShowRequestPermissionRationale(permission)){
-                AppUtils.showDialog(this, R.string.capture_service_on_tips_4, new SelectCallback(){
+            } else if (shouldShowRequestPermissionRationale(permission)) {
+                AppUtils.showDialog(this, R.string.capture_service_on_tips_4, new SelectCallback() {
                     @Override
                     public void onEnter() {
                         resultCallback = callback;
@@ -275,11 +286,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showPlayFloatView(String pkgName){
+    public void launcherContent(PermissionResultCallback callback) {
+        resultCallback = callback;
+        contentLauncher.launch("text/plain");
+    }
+
+    public void showPlayFloatView(String pkgName) {
         binding.getRoot().post(() -> {
             removeFloatView = false;
             PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
-            if (view == null){
+            if (view == null) {
                 new PlayFloatView(this, pkgName).show();
             } else {
                 view.setPkgName(pkgName);
@@ -288,10 +304,10 @@ public class MainActivity extends AppCompatActivity {
         RunningUtils.log(LogLevel.LOW, getString(R.string.log_show_manual_task));
     }
 
-    public void dismissPlayFloatView(){
+    public void dismissPlayFloatView() {
         removeFloatView = true;
         binding.getRoot().postDelayed(() -> {
-            if (removeFloatView){
+            if (removeFloatView) {
                 EasyFloat.dismiss(PlayFloatView.class.getCanonicalName());
             }
         }, 100);

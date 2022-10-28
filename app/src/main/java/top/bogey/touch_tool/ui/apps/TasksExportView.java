@@ -48,7 +48,7 @@ public class TasksExportView extends Fragment {
             List<Task> selectTasks = adapter.selectTasks;
             String json = new Gson().toJson(selectTasks);
 
-            try(FileOutputStream fileOutputStream = requireContext().openFileOutput(SAVE_FILE, Context.MODE_PRIVATE)){
+            try (FileOutputStream fileOutputStream = requireContext().openFileOutput(SAVE_FILE, Context.MODE_PRIVATE)) {
                 fileOutputStream.write(json.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -59,8 +59,9 @@ public class TasksExportView extends Fragment {
             Uri fileUri = null;
             try {
                 fileUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".file_provider", file);
-            } catch (IllegalArgumentException ignored){}
-            if (fileUri != null){
+            } catch (IllegalArgumentException ignored) {
+            }
+            if (fileUri != null) {
                 intent.putExtra(Intent.EXTRA_STREAM, fileUri);
                 String type = requireContext().getContentResolver().getType(fileUri);
                 intent.setType(type);
@@ -72,7 +73,7 @@ public class TasksExportView extends Fragment {
         return binding.getRoot();
     }
 
-    public void refreshSelectAllBox(int checkState){
+    public void refreshSelectAllBox(int checkState) {
         this.checkState = checkState;
         switch (checkState) {
             case MaterialCheckBox.STATE_UNCHECKED:

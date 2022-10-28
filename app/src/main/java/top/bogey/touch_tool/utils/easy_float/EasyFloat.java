@@ -28,13 +28,13 @@ public class EasyFloat {
     private static final HashMap<String, FloatViewHelper> views = new HashMap<>();
     private static final List<String> tags = new ArrayList<>();
 
-    public static Builder with(Context context){
+    public static Builder with(Context context) {
         return new Builder(context);
     }
 
-    public static void dismiss(String tag){
+    public static void dismiss(String tag) {
         tag = checkTag(tag);
-        if (tags.contains(tag)){
+        if (tags.contains(tag)) {
             FloatViewHelper helper = getHelper(tag);
             helper.exitAnim();
             views.remove(tag);
@@ -42,18 +42,18 @@ public class EasyFloat {
         }
     }
 
-    public static void hide(String tag){
+    public static void hide(String tag) {
         tag = checkTag(tag);
-        if (tags.contains(tag)){
+        if (tags.contains(tag)) {
             FloatViewHelper helper = getHelper(tag);
             helper.floatViewParent.setVisibility(View.INVISIBLE);
-            if (helper.config.callback != null){
+            if (helper.config.callback != null) {
                 helper.config.callback.onHide();
             }
         }
     }
 
-    public static void hideAll(String ignored){
+    public static void hideAll(String ignored) {
         for (String tag : tags) {
             if (tag.equals(ignored)) continue;
             FloatViewHelper helper = getHelper(tag);
@@ -62,7 +62,7 @@ public class EasyFloat {
         }
     }
 
-    public static boolean showLast(){
+    public static boolean showLast() {
         for (int i = tags.size() - 1; i >= 0; i--) {
             FloatViewHelper helper = getHelper(tags.get(i));
             if (helper.config.alwaysShow) continue;
@@ -72,20 +72,20 @@ public class EasyFloat {
         return false;
     }
 
-    public static void show(String tag){
+    public static void show(String tag) {
         tag = checkTag(tag);
-        if (tags.contains(tag)){
+        if (tags.contains(tag)) {
             FloatViewHelper helper = getHelper(tag);
             helper.floatViewParent.setVisibility(View.VISIBLE);
-            if (helper.config.callback != null){
+            if (helper.config.callback != null) {
                 helper.config.callback.onShow(helper.config.tag);
             }
         }
     }
 
-    public static View getView(String tag){
+    public static View getView(String tag) {
         tag = checkTag(tag);
-        if (tags.contains(tag)){
+        if (tags.contains(tag)) {
             FloatViewHelper helper = getHelper(tag);
             return helper.getView();
         }
@@ -93,35 +93,35 @@ public class EasyFloat {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public static void initInput(EditText editText, String tag){
+    public static void initInput(EditText editText, String tag) {
         editText.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 openInput(editText, tag);
             }
             return false;
         });
     }
 
-    public static void openInput(EditText editText, String tag){
+    public static void openInput(EditText editText, String tag) {
         FloatViewHelper helper = getHelper(tag);
-        if (helper != null){
+        if (helper != null) {
             helper.params.flags = FOCUSABLE;
             helper.manager.updateViewLayout(helper.floatViewParent, helper.params);
         }
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             InputMethodManager inputManager = (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (inputManager != null){
+            if (inputManager != null) {
                 inputManager.showSoftInput(editText, 0);
             }
         }, 100);
     }
 
-    public static FloatViewHelper getHelper(String tag){
+    public static FloatViewHelper getHelper(String tag) {
         return views.get(tag);
     }
 
-    private static String checkTag(String tag){
+    private static String checkTag(String tag) {
         if (tag == null || tag.isEmpty()) tag = TAG;
         return tag;
     }
@@ -136,49 +136,49 @@ public class EasyFloat {
             else this.context = context;
         }
 
-        public Builder setLayout(int layoutId){
+        public Builder setLayout(int layoutId) {
             config.layoutId = layoutId;
             return this;
         }
 
-        public Builder setLayout(View layoutView){
+        public Builder setLayout(View layoutView) {
             config.layoutView = layoutView;
             return this;
         }
 
-        public Builder setTag(String tag){
+        public Builder setTag(String tag) {
             config.tag = tag;
             return this;
         }
 
-        public Builder setDragEnable(boolean dragEnable){
+        public Builder setDragEnable(boolean dragEnable) {
             config.dragEnable = dragEnable;
             return this;
         }
 
-        public Builder hasEditText(boolean hasEditText){
+        public Builder hasEditText(boolean hasEditText) {
             config.hasEditText = hasEditText;
             return this;
         }
 
-        public Builder setSidePattern(SidePattern side){
+        public Builder setSidePattern(SidePattern side) {
             config.side = side;
             return this;
         }
 
-        public Builder setMatch(boolean matchWidth, boolean matchHeight){
+        public Builder setMatch(boolean matchWidth, boolean matchHeight) {
             config.matchWidth = matchWidth;
             config.matchHeight = matchHeight;
             return this;
         }
 
-        public Builder setGravity(FloatGravity gravity, int x, int y){
+        public Builder setGravity(FloatGravity gravity, int x, int y) {
             config.gravity = gravity;
             config.offset = new Point(x, y);
             return this;
         }
 
-        public Builder setBorder(int left, int right, int top, int bottom){
+        public Builder setBorder(int left, int right, int top, int bottom) {
             config.leftBorder = left;
             config.rightBorder = right;
             config.topBorder = top;
@@ -186,24 +186,24 @@ public class EasyFloat {
             return this;
         }
 
-        public Builder setCallback(FloatCallback callback){
+        public Builder setCallback(FloatCallback callback) {
             config.callback = callback;
             return this;
         }
 
-        public Builder setAnimator(FloatAnimator animator){
+        public Builder setAnimator(FloatAnimator animator) {
             config.animator = animator;
             return this;
         }
 
-        public Builder setAlwaysShow(boolean alwaysShow){
+        public Builder setAlwaysShow(boolean alwaysShow) {
             config.alwaysShow = alwaysShow;
             return this;
         }
 
-        public void show(){
-            if (config.layoutId == 0 && config.layoutView == null){
-                if (config.callback != null){
+        public void show() {
+            if (config.layoutId == 0 && config.layoutView == null) {
+                if (config.callback != null) {
                     config.callback.onCreate(false);
                 }
                 return;
@@ -211,7 +211,7 @@ public class EasyFloat {
             if (config.tag == null || config.tag.isEmpty())
                 config.tag = TAG;
 
-            if (AppUtils.checkFloatPermission(context)){
+            if (AppUtils.checkFloatPermission(context)) {
                 createFloatView();
             } else {
                 MainActivity activity = MainApplication.getActivity();
@@ -219,9 +219,9 @@ public class EasyFloat {
             }
         }
 
-        private void createFloatView(){
-            if (tags.contains(config.tag)){
-                if (config.callback != null){
+        private void createFloatView() {
+            if (tags.contains(config.tag)) {
+                if (config.callback != null) {
                     config.callback.onCreate(false);
                 }
                 return;

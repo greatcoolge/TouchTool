@@ -47,17 +47,17 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
     private long delayStartTime = 0;
     private long touchStartTime = 0;
 
-    public QuickRecordFloatView(Context context, Task task, ResultCallback callback){
+    public QuickRecordFloatView(Context context, Task task, ResultCallback callback) {
         super(context);
         actions = task.getActions();
 
         binding = FloatPickerPosBinding.inflate(LayoutInflater.from(getContext()), this, true);
 
         binding.saveButton.setOnClickListener(v -> {
-            if (actions.size() > 0){
+            if (actions.size() > 0) {
                 task.setActions(actions);
             }
-            if (callback != null){
+            if (callback != null) {
                 callback.onResult(true);
             }
             dismiss();
@@ -77,11 +77,11 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
         getLocationOnScreen(location);
     }
 
-    private void refreshUI(){
+    private void refreshUI() {
         binding.buttonBox.setVisibility(VISIBLE);
         binding.backButton.setVisibility(GONE);
 
-        if (binding.buttonBox.getWidth() == 0){
+        if (binding.buttonBox.getWidth() == 0) {
             post(this::refreshUI);
             return;
         }
@@ -95,7 +95,7 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
 
-        if (currPoints.size() >= 2){
+        if (currPoints.size() >= 2) {
             for (int i = 0; i < currPoints.size() - 1; i++) {
                 canvas.drawLine(currPoints.get(i).x, currPoints.get(i).y - location[1], currPoints.get(i + 1).x, currPoints.get(i + 1).y - location[1], paint);
             }
@@ -109,13 +109,13 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         float x = event.getRawX();
         float y = event.getRawY();
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 touchStartTime = System.currentTimeMillis();
-                if (delayStartTime != 0){
+                if (delayStartTime != 0) {
                     Node delayNode = new DelayNode(new TimeArea((int) (touchStartTime - delayStartTime)));
                     Action action = new Action();
                     action.setTargets(Collections.singletonList(delayNode));
@@ -149,7 +149,7 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
                 actions.add(action);
 
                 MainAccessibilityService service = MainApplication.getService();
-                if (service != null){
+                if (service != null) {
                     EasyFloat.hide(QuickRecordFloatView.class.getCanonicalName());
                     post(() -> service.runGesture(touchNode.getValue().getPath(getContext(), false), touchNode.getTimeArea().getRandomTime(), result -> {
                         EasyFloat.show(QuickRecordFloatView.class.getCanonicalName());
@@ -165,7 +165,7 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
     }
 
     @Override
-    public void show(){
+    public void show() {
         EasyFloat.with(getContext())
                 .setLayout(this)
                 .setTag(QuickRecordFloatView.class.getCanonicalName())

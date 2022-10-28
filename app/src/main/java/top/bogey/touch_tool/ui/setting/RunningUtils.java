@@ -31,25 +31,25 @@ public class RunningUtils {
         date = System.currentTimeMillis();
     }
 
-    public static String getRunningTime(){
+    public static String getRunningTime() {
         DateFormat timeInstance = SimpleDateFormat.getTimeInstance();
         return timeInstance.format(new Date(System.currentTimeMillis() - date));
     }
 
     @SuppressLint("DefaultLocale")
-    public static void run(Context context, Task task, String pkgName, boolean success){
+    public static void run(Context context, Task task, String pkgName, boolean success) {
         RunningInfo runningInfo = new RunningInfo(task.getId(), pkgName, success);
         taskMMKV.encode(runningInfo.getId(), runningInfo);
-        log(LogLevel.MIDDLE,  String.format("%s-%s\n%s", task.getTitle(), pkgName, context.getString(R.string.log_run_task_result, context.getString(success ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail))));
+        log(LogLevel.MIDDLE, String.format("%s-%s\n%s", task.getTitle(), pkgName, context.getString(R.string.log_run_task_result, context.getString(success ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail))));
     }
 
-    public static Map<String, Map<String, List<RunningInfo>>> getRunningInfo(){
+    public static Map<String, Map<String, List<RunningInfo>>> getRunningInfo() {
         Map<String, Map<String, List<RunningInfo>>> map = new HashMap<>();
         String[] keys = taskMMKV.allKeys();
-        if (keys != null){
+        if (keys != null) {
             for (String key : keys) {
                 RunningInfo runningInfo = taskMMKV.decodeParcelable(key, RunningInfo.class);
-                if (runningInfo != null){
+                if (runningInfo != null) {
                     Map<String, List<RunningInfo>> pkgMap = map.get(runningInfo.getPkgName());
                     if (pkgMap == null) pkgMap = new HashMap<>();
                     List<RunningInfo> taskList = pkgMap.get(runningInfo.getTaskId());
@@ -64,13 +64,13 @@ public class RunningUtils {
         return map;
     }
 
-    public static void log(LogLevel level, String log){
+    public static void log(LogLevel level, String log) {
         boolean enabledLog = MMKV.defaultMMKV().decodeBool(RUNNING_LOG, false);
         LogInfo logInfo = new LogInfo(log, level);
         Log.d(RUNNING_LOG, logInfo.getLog());
-        if (enabledLog){
+        if (enabledLog) {
             logMMKV.encode(logInfo.getId(), logInfo);
-            for (int i = listenerList.size() - 1; i >= 0 ; i--) {
+            for (int i = listenerList.size() - 1; i >= 0; i--) {
                 LogListener logListener = listenerList.get(i);
                 if (logListener != null) logListener.newInfo(logInfo);
                 else listenerList.remove(i);
@@ -79,16 +79,16 @@ public class RunningUtils {
     }
 
     @SuppressLint("DefaultLocale")
-    public static void log(Task task, int percent, String content, LogLevel level){
+    public static void log(Task task, int percent, String content, LogLevel level) {
         log(level, String.format("%s-%s\n[%d]%s", task.getTitle(), task.getPkgName(), percent, content));
     }
 
-    public static List<LogInfo> getLogs(LogListener listener){
+    public static List<LogInfo> getLogs(LogListener listener) {
         if (listener != null && !listenerList.contains(listener)) listenerList.add(listener);
         List<LogInfo> logs = new ArrayList<>();
 
         String[] keys = logMMKV.allKeys();
-        if (keys != null){
+        if (keys != null) {
             for (String key : keys) {
                 logs.add(logMMKV.decodeParcelable(key, LogInfo.class));
             }
@@ -97,11 +97,11 @@ public class RunningUtils {
         return logs;
     }
 
-    public static void closeLog(){
+    public static void closeLog() {
         logMMKV.clearAll();
     }
 
-    public static void cleanRunningInfo(){
+    public static void cleanRunningInfo() {
         taskMMKV.clearAll();
     }
 

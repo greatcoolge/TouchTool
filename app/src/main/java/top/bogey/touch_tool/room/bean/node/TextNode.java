@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 
-public class TextNode extends Node{
+public class TextNode extends Node {
     public TextNode(String value) {
         super(NodeType.TEXT, value);
     }
@@ -47,7 +47,7 @@ public class TextNode extends Node{
         return getValue();
     }
 
-    public AccessibilityNodeInfo searchClickableNode(List<AccessibilityNodeInfo> nodes){
+    public AccessibilityNodeInfo searchClickableNode(List<AccessibilityNodeInfo> nodes) {
         if (nodes == null || nodes.isEmpty()) return null;
         for (AccessibilityNodeInfo node : nodes) {
             AccessibilityNodeInfo clickableNode = searchClickableNode(node);
@@ -56,13 +56,13 @@ public class TextNode extends Node{
         return null;
     }
 
-    private AccessibilityNodeInfo searchClickableNode(AccessibilityNodeInfo nodeInfo){
+    private AccessibilityNodeInfo searchClickableNode(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo == null) return null;
         if (nodeInfo.isClickable()) return nodeInfo;
         return searchClickableNode(nodeInfo.getParent());
     }
 
-    public List<AccessibilityNodeInfo> searchNodes(AccessibilityNodeInfo nodeInfo){
+    public List<AccessibilityNodeInfo> searchNodes(AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo == null) return null;
         String key = getValue();
         if (key == null || key.isEmpty()) return null;
@@ -71,9 +71,9 @@ public class TextNode extends Node{
         if (matcher.find()) {
             String realKey = matcher.group(1);
             if (realKey != null) {
-                if (realKey.indexOf("id/") == 0){
+                if (realKey.indexOf("id/") == 0) {
                     return nodeInfo.findAccessibilityNodeInfosByViewId(nodeInfo.getPackageName() + ":" + realKey);
-                } else if (realKey.indexOf("lv/") == 0){
+                } else if (realKey.indexOf("lv/") == 0) {
                     String[] split = realKey.split("/");
                     String[] levels = split[1].split(",");
                     for (String level : levels) {
@@ -81,7 +81,7 @@ public class TextNode extends Node{
                         if (nodeInfo == null) return null;
                     }
                     return Collections.singletonList(nodeInfo);
-                } else if(realKey.indexOf("reg/") == 0){
+                } else if (realKey.indexOf("reg/") == 0) {
                     String[] split = realKey.split("/");
                     String regex = split[1];
                     nodeInfo = searchNode(nodeInfo, Pattern.compile(regex));
@@ -97,11 +97,11 @@ public class TextNode extends Node{
         return similarNodes;
     }
 
-    private void searchNodes(List<AccessibilityNodeInfo> similarNodes, AccessibilityNodeInfo nodeInfo, String key){
+    private void searchNodes(List<AccessibilityNodeInfo> similarNodes, AccessibilityNodeInfo nodeInfo, String key) {
         if (nodeInfo == null) return;
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             AccessibilityNodeInfo child = nodeInfo.getChild(i);
-            if (child != null){
+            if (child != null) {
                 String text = String.valueOf(child.getText());
                 String des = String.valueOf(child.getContentDescription());
                 String id = String.valueOf(child.getViewIdResourceName());
@@ -115,12 +115,12 @@ public class TextNode extends Node{
         }
     }
 
-    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, int level){
+    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, int level) {
         int index = 0;
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             AccessibilityNodeInfo child = nodeInfo.getChild(i);
-            if (child != null){
-                if (level == index){
+            if (child != null) {
+                if (level == index) {
                     return child;
                 } else {
                     index++;
@@ -130,12 +130,12 @@ public class TextNode extends Node{
         return null;
     }
 
-    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, Pattern pattern){
+    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, Pattern pattern) {
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             AccessibilityNodeInfo child = nodeInfo.getChild(i);
-            if (child != null){
+            if (child != null) {
                 CharSequence text = child.getText();
-                if (text != null && text.length() > 0){
+                if (text != null && text.length() > 0) {
                     Matcher matcher = pattern.matcher(text);
                     if (matcher.find()) return child;
                 }

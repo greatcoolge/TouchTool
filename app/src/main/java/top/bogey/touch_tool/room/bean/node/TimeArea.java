@@ -1,6 +1,6 @@
 package top.bogey.touch_tool.room.bean.node;
 
-public class TimeArea{
+public class TimeArea {
     private int min;
     private int max;
 
@@ -13,24 +13,24 @@ public class TimeArea{
         this.max = max;
     }
 
-    public void setTime(int min, int max){
+    public void setTime(int min, int max) {
         this.min = min;
         this.max = max;
     }
 
-    public void setTime(int time){
+    public void setTime(int time) {
         setTime(time, time);
     }
 
-    public int getRealMax(){
+    public int getRealMax() {
         return Math.max(min, max);
     }
 
-    public int getRealMin(){
+    public int getRealMin() {
         return Math.min(min, max);
     }
 
-    public int getRandomTime(){
+    public int getRandomTime() {
         return (int) Math.round(Math.random() * Math.abs(max - min) + getRealMin());
     }
 
@@ -50,7 +50,7 @@ public class TimeArea{
         this.max = max;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         if (min == max) return String.valueOf(min);
         return getRealMin() + "-" + getRealMax();
     }

@@ -19,7 +19,7 @@ public class FloatBaseCallback implements FloatCallback {
     public void onShow(String tag) {
         EasyFloat.hideAll(tag);
         MainActivity activity = MainApplication.getActivity();
-        if (activity != null){
+        if (activity != null) {
             activity.moveTaskToBack(true);
         }
     }
@@ -31,9 +31,9 @@ public class FloatBaseCallback implements FloatCallback {
 
     @Override
     public void onDismiss() {
-        if (!EasyFloat.showLast()){
+        if (!EasyFloat.showLast()) {
             MainActivity activity = MainApplication.getActivity();
-            if (activity != null){
+            if (activity != null) {
                 ActivityManager manager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
                 manager.moveTaskToFront(activity.getTaskId(), ActivityManager.MOVE_TASK_WITH_HOME);
             }

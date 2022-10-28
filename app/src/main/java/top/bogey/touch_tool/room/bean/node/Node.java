@@ -7,7 +7,7 @@ public abstract class Node implements Cloneable {
     protected final TimeArea timeArea = new TimeArea(100, 100);
     protected Object value;
 
-    protected Node(NodeType type){
+    protected Node(NodeType type) {
         this.type = type;
     }
 
@@ -24,7 +24,7 @@ public abstract class Node implements Cloneable {
         return timeArea;
     }
 
-    public void setValue(Object value){
+    public void setValue(Object value) {
         this.value = value;
     }
 

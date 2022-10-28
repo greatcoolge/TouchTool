@@ -63,7 +63,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
         binding.slider.addOnChangeListener((slider, value, fromUser) -> {
             List<Float> values = slider.getValues();
-            if (values.size() >= 2){
+            if (values.size() >= 2) {
                 minPercent = values.get(0).intValue();
                 maxPercent = values.get(values.size() - 1).intValue();
             }
@@ -81,21 +81,21 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         bitmapPaint.setDither(true);
     }
 
-    public ColorNode.ColorInfo getColor(){
+    public ColorNode.ColorInfo getColor() {
         return new ColorNode.ColorInfo(color, minPercent, maxPercent, size, DisplayUtils.getScreen(getContext()));
     }
 
-    public void realShow(int delay){
+    public void realShow(int delay) {
         postDelayed(() -> {
             EasyFloat.show(tag);
-            if (service != null && service.isCaptureEnabled() && service.binder != null){
+            if (service != null && service.isCaptureEnabled() && service.binder != null) {
                 Bitmap bitmap = service.binder.getCurrImage();
                 if (bitmap != null) {
                     int[] location = new int[2];
                     getLocationOnScreen(location);
                     Point size = DisplayUtils.getScreenSize(getContext());
                     showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
-                    if (colorNode.isValid()){
+                    if (colorNode.isValid()) {
                         ColorNode.ColorInfo colorInfo = colorNode.getValue();
                         markArea = service.binder.matchColor(showBitmap, colorInfo.getColor());
                         if (markArea != null && markArea.size() > 0) {
@@ -112,13 +112,13 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         }, delay);
     }
 
-    public void onShow(){
+    public void onShow() {
         service = MainApplication.getService();
-        if (service != null){
-            if (!service.isCaptureEnabled()){
+        if (service != null) {
+            if (!service.isCaptureEnabled()) {
                 Toast.makeText(getContext(), R.string.capture_service_on_tips_2, Toast.LENGTH_SHORT).show();
                 service.startCaptureService(true, result -> {
-                    if (result){
+                    if (result) {
                         realShow(500);
                     }
                 });
@@ -133,7 +133,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        if (showBitmap != null && !showBitmap.isRecycled()){
+        if (showBitmap != null && !showBitmap.isRecycled()) {
             canvas.drawBitmap(showBitmap, 0, 0, bitmapPaint);
         }
 
@@ -144,13 +144,13 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         for (int i = 0; i < markArea.size(); i++) {
             Rect rect = markArea.get(i);
             int size = rect.width() * rect.height();
-            if (size >= (minPercent * this.size / 100) && size <= (maxPercent * this.size / 100)){
+            if (size >= (minPercent * this.size / 100) && size <= (maxPercent * this.size / 100)) {
                 canvas.drawRect(rect, markPaint);
             }
         }
         canvas.restore();
 
-        if (isMarked){
+        if (isMarked) {
             drawChild(canvas, binding.buttonBox, drawingTime);
             drawChild(canvas, binding.slider, drawingTime);
         }
@@ -167,7 +167,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                 isMarked = false;
                 break;
             case MotionEvent.ACTION_UP:
-                if (service.isCaptureEnabled() && service.binder != null){
+                if (service.isCaptureEnabled() && service.binder != null) {
                     color = DisplayUtils.getHsvColor(showBitmap, (int) x, (int) y);
                     markArea = service.binder.matchColor(showBitmap, color);
                     if (markArea != null && markArea.size() > 0) {
@@ -185,17 +185,18 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         return true;
     }
 
-    private void refreshUI(){
+    private void refreshUI() {
         binding.buttonBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
         binding.slider.setVisibility(isMarked ? VISIBLE : INVISIBLE);
         postInvalidate();
     }
 
-    protected class ImagePickerCallback extends FloatBaseCallback{
+    protected class ImagePickerCallback extends FloatBaseCallback {
         private boolean first = true;
+
         @Override
         public void onShow(String tag) {
-            if (first){
+            if (first) {
                 super.onShow("");
                 ColorPickerFloatView.this.onShow();
                 first = false;

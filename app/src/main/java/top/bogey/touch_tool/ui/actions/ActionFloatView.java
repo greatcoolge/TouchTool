@@ -55,8 +55,8 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         conditionAdapter = new ArrayAdapter<>(context, R.layout.float_action_spinner_item);
 
         binding.modeGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (isChecked){
-                switch (checkedId){
+            if (isChecked) {
+                switch (checkedId) {
                     case R.id.condition_button:
                         binding.conditionTitle.setText(context.getText(R.string.title_condition));
                         binding.timesRow.setVisibility(GONE);
@@ -85,12 +85,12 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
 
         adapter = new ActionsRecyclerViewAdapter(task, action.getTargets());
         binding.delayButton.setOnClickListener(v -> adapter.addNode(context, NodeType.DELAY));
-        binding.textButton.setOnClickListener(v -> adapter.addNode(context,NodeType.TEXT));
-        binding.imageButton.setOnClickListener(v -> adapter.addNode(context,NodeType.IMAGE));
-        binding.touchButton.setOnClickListener(v -> adapter.addNode(context,NodeType.TOUCH));
-        binding.colorButton.setOnClickListener(v -> adapter.addNode(context,NodeType.COLOR));
-        binding.keyButton.setOnClickListener(v -> adapter.addNode(context,NodeType.KEY));
-        binding.taskButton.setOnClickListener(v -> adapter.addNode(context,NodeType.TASK));
+        binding.textButton.setOnClickListener(v -> adapter.addNode(context, NodeType.TEXT));
+        binding.imageButton.setOnClickListener(v -> adapter.addNode(context, NodeType.IMAGE));
+        binding.touchButton.setOnClickListener(v -> adapter.addNode(context, NodeType.TOUCH));
+        binding.colorButton.setOnClickListener(v -> adapter.addNode(context, NodeType.COLOR));
+        binding.keyButton.setOnClickListener(v -> adapter.addNode(context, NodeType.KEY));
+        binding.taskButton.setOnClickListener(v -> adapter.addNode(context, NodeType.TASK));
 
         binding.recyclerView.setAdapter(adapter);
 
@@ -104,8 +104,8 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 TaskNode.TaskInfo taskInfo = conditionAdapter.getItem(i);
                 NodeType nodeType = NodeType.valueOf(taskInfo.getId());
-                if (condition.getType() != nodeType){
-                    switch (nodeType){
+                if (condition.getType() != nodeType) {
+                    switch (nodeType) {
                         case NULL:
                             refreshCondition(new NullNode());
                             break;
@@ -130,7 +130,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
 
         refreshCondition(action.getCondition());
 
-        binding.textInclude.textBaseInclude.titleEdit.addTextChangedListener(new ActionsRecyclerViewAdapter.TextChangedWatcher(){
+        binding.textInclude.textBaseInclude.titleEdit.addTextChangedListener(new ActionsRecyclerViewAdapter.TextChangedWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 if (condition.getType() == NodeType.TEXT) condition.setValue(String.valueOf(s));
@@ -147,11 +147,11 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
             }, textNode).show();
         });
 
-        binding.imageInclude.similarText.addTextChangedListener(new ActionsRecyclerViewAdapter.TextChangedWatcher(){
+        binding.imageInclude.similarText.addTextChangedListener(new ActionsRecyclerViewAdapter.TextChangedWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 ImageNode imageNode = (ImageNode) condition;
-                if (s != null && s.length() > 0){
+                if (s != null && s.length() > 0) {
                     imageNode.getValue().setValue(Integer.parseInt(String.valueOf(s)));
                 } else {
                     imageNode.getValue().setValue(100);
@@ -208,7 +208,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         EasyFloat.dismiss(ActionFloatView.class.getCanonicalName());
     }
 
-    private void refreshCondition(Node newCondition){
+    private void refreshCondition(Node newCondition) {
         if (newCondition != null) condition = newCondition.clone();
         conditionAdapter.clear();
         NodeType[] nodeTypes;
@@ -219,7 +219,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 for (NodeType type : nodeTypes) {
                     conditionAdapter.add(new TaskNode.TaskInfo(type.name(), keys[type.ordinal()]));
                 }
-                if (adapter != null){
+                if (adapter != null) {
                     if (condition.getType() == NodeType.NULL) adapter.setMaxCount(1);
                     else adapter.setMaxCount(2);
                 }
@@ -240,7 +240,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 break;
         }
 
-        switch (condition.getType()){
+        switch (condition.getType()) {
             case NULL:
                 binding.imageInclude.getRoot().setVisibility(INVISIBLE);
                 binding.textInclude.getRoot().setVisibility(VISIBLE);
@@ -273,7 +273,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
             case IMAGE:
                 binding.textInclude.getRoot().setVisibility(INVISIBLE);
                 binding.imageInclude.getRoot().setVisibility(VISIBLE);
-                if (condition.getValue() != null){
+                if (condition.getValue() != null) {
                     binding.imageInclude.image.setImageBitmap(((ImageNode) condition).getValue().getBitmap());
                     binding.imageInclude.similarText.setText(String.valueOf(((ImageNode) condition).getValue().getValue()));
                 }
@@ -282,7 +282,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         }
     }
 
-    private void selectSpinner(String id){
+    private void selectSpinner(String id) {
         Spinner spinner = binding.conditionSpinner.spinner;
         for (int i = 0; i < conditionAdapter.getCount(); i++) {
             TaskNode.TaskInfo item = conditionAdapter.getItem(i);
@@ -291,7 +291,7 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                 return;
             }
         }
-        if (conditionAdapter.getCount() > 0){
+        if (conditionAdapter.getCount() > 0) {
             spinner.setSelection(0);
             AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
             listener.onItemSelected(spinner, spinner.getSelectedView(), 0, adapter.getItemId(0));

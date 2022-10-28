@@ -20,7 +20,7 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
     private final Task task;
     public final List<Action> actions = new ArrayList<>();
 
-    public RecordRecyclerViewAdapter(Task task){
+    public RecordRecyclerViewAdapter(Task task) {
         this.task = task;
         if (task.getActions() != null) actions.addAll(task.getActions());
     }
@@ -35,7 +35,7 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Action action = actions.get(position);
         Node target = action.getTargets().get(0);
-        switch (target.getType()){
+        switch (target.getType()) {
             case DELAY:
                 holder.binding.deleteButton.setIconResource(R.drawable.icon_delay);
                 break;
@@ -66,7 +66,7 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
         return actions.size();
     }
 
-    public void addAction(@NonNull Action action){
+    public void addAction(@NonNull Action action) {
         actions.add(action);
         notifyItemInserted(actions.size() - 1);
     }

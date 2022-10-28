@@ -25,7 +25,7 @@ public class FloatViewParent extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (!isCreated){
+        if (!isCreated) {
             isCreated = true;
             if (layoutCallback != null)
                 layoutCallback.onLayout();
@@ -47,10 +47,10 @@ public class FloatViewParent extends FrameLayout {
 
     @Override
     public boolean dispatchKeyEventPreIme(KeyEvent event) {
-        if (config.hasEditText){
-            if (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK){
+        if (config.hasEditText) {
+            if (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
                 FloatViewHelper helper = EasyFloat.getHelper(config.tag);
-                if (helper != null){
+                if (helper != null) {
                     helper.params.flags = EasyFloat.NOT_FOCUSABLE;
                     helper.manager.updateViewLayout(helper.floatViewParent, helper.params);
                 }
@@ -62,16 +62,16 @@ public class FloatViewParent extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (config.callback != null){
+        if (config.callback != null) {
             config.callback.onDismiss();
         }
     }
 
-    interface LayoutCallback{
+    interface LayoutCallback {
         void onLayout();
     }
 
-    interface TouchCallback{
+    interface TouchCallback {
         void onTouch(MotionEvent event);
     }
 }

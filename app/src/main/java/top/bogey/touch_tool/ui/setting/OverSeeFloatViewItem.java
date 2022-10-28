@@ -28,7 +28,7 @@ public class OverSeeFloatViewItem extends FrameLayout {
 
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null){
+            if (service != null) {
                 service.stopTask(taskCallable, true);
                 refreshProgress(0);
             }
@@ -37,18 +37,18 @@ public class OverSeeFloatViewItem extends FrameLayout {
         refreshProgress(taskCallable.getTaskProgress());
     }
 
-    private String getPivotalTitle(String title){
+    private String getPivotalTitle(String title) {
         if (title == null || title.isEmpty()) return "?";
         Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
         Matcher matcher = pattern.matcher(title);
-        if (matcher.find()){
+        if (matcher.find()) {
             String group = matcher.group(1);
             if (group != null) return group.substring(0, 1);
         }
         return title.substring(0, 1);
     }
 
-    public void refreshProgress(int percent){
+    public void refreshProgress(int percent) {
         post(() -> binding.playButton.setProgress(percent, percent != 0));
     }
 

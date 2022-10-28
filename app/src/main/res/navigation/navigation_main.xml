@@ -12,7 +12,7 @@
         android:id="@+id/apps"
         android:name="top.bogey.touch_tool.ui.apps.AppsView"
         android:label="@string/apps"
-        tools:layout="@layout/view_apps" >
+        tools:layout="@layout/view_apps">
         <action
             android:id="@+id/action_apps_to_tasks"
             app:destination="@id/tasks" />
@@ -24,7 +24,7 @@
         android:id="@+id/tasks"
         android:name="top.bogey.touch_tool.ui.tasks.TasksView"
         android:label="@string/tasks"
-        tools:layout="@layout/view_tasks" >
+        tools:layout="@layout/view_tasks">
         <argument
             android:name="pkgName"
             app:argType="string" />
@@ -33,7 +33,7 @@
         android:id="@+id/setting"
         android:name="top.bogey.touch_tool.ui.setting.SettingView"
         android:label="@string/setting"
-        tools:layout="@layout/view_setting" >
+        tools:layout="@layout/view_setting">
         <action
             android:id="@+id/action_setting_to_debugInfo"
             app:destination="@id/runningInfo" />
@@ -42,10 +42,10 @@
         android:id="@+id/tasksExport"
         android:name="top.bogey.touch_tool.ui.apps.TasksExportView"
         android:label="@string/export_tasks"
-        tools:layout="@layout/view_tasks_export"/>
+        tools:layout="@layout/view_tasks_export" />
     <fragment
         android:id="@+id/runningInfo"
         android:name="top.bogey.touch_tool.ui.setting.RunningInfoView"
         android:label="@string/running_task_info"
-        tools:layout="@layout/view_setting_running"/>
+        tools:layout="@layout/view_setting_running" />
 </navigation>

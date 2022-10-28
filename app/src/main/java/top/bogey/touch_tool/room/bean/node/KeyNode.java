@@ -13,7 +13,7 @@ import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.ui.apps.AppInfo;
 import top.bogey.touch_tool.utils.AppUtils;
 
-public class KeyNode extends Node{
+public class KeyNode extends Node {
     public KeyNode(KeyTask value) {
         super(NodeType.KEY, value);
     }
@@ -48,7 +48,7 @@ public class KeyNode extends Node{
         return getValue();
     }
 
-    public static class KeyTask{
+    public static class KeyTask {
         private final KeyType keyType;
         private String extras;
 
@@ -83,8 +83,8 @@ public class KeyNode extends Node{
         SNAP,
         GOTO;
 
-        public boolean doKeyTask(AccessibilityService service, String extras){
-            switch (this){
+        public boolean doKeyTask(AccessibilityService service, String extras) {
+            switch (this) {
                 case BACK:
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
                     return true;
@@ -110,7 +110,7 @@ public class KeyNode extends Node{
                         service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
                         return true;
                     } else {
-                        Toast.makeText(service,  R.string.action_device_not_support_snap, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(service, R.string.action_device_not_support_snap, Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 case GOTO:
@@ -121,7 +121,7 @@ public class KeyNode extends Node{
             return false;
         }
 
-        public String getTitle(Context context, String extras){
+        public String getTitle(Context context, String extras) {
             int key = 0;
             switch (this) {
                 case BACK:

@@ -58,6 +58,7 @@
     <string name="export_tasks">导出任务</string>
     <string name="export_tips">导出配置文件并发送</string>
     <string name="export_tasks_count" translatable="false">%1$d/%2$d</string>
+    <string name="import_task">导入任务</string>
     <string name="clean_tasks">清理冗余任务</string>
     <string name="clean_tips">冗余任务清理完成</string>
 

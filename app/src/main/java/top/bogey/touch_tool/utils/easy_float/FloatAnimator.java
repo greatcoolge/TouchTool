@@ -10,15 +10,15 @@ import android.view.WindowManager.LayoutParams;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 class FloatAnimator {
-    Animator enterAnim(View view, WindowManager manager, LayoutParams params, SidePattern side){
+    Animator enterAnim(View view, WindowManager manager, LayoutParams params, SidePattern side) {
         return getAnimator(view, manager, params, side, false);
     }
 
-    Animator exitAnim(View view, WindowManager manager, LayoutParams params, SidePattern side){
+    Animator exitAnim(View view, WindowManager manager, LayoutParams params, SidePattern side) {
         return getAnimator(view, manager, params, side, true);
     }
 
-    private Animator getAnimator(View view, WindowManager manager, LayoutParams params, SidePattern side, boolean isExit){
+    private Animator getAnimator(View view, WindowManager manager, LayoutParams params, SidePattern side, boolean isExit) {
         Rect showRect = DisplayUtils.getScreenArea(view.getContext());
         int leftDistance = params.x - showRect.left;
         int rightDistance = showRect.right - leftDistance - view.getWidth();
@@ -28,7 +28,7 @@ class FloatAnimator {
         boolean isX = true;
         int start = 0;
         int end = 0;
-        switch (side){
+        switch (side) {
             case LEFT:
                 start = showRect.left - view.getWidth();
                 end = params.x;
@@ -48,29 +48,29 @@ class FloatAnimator {
                 end = params.y;
                 break;
             case HORIZONTAL:
-                start = leftDistance < rightDistance ? showRect.left - view.getWidth(): showRect.right;
+                start = leftDistance < rightDistance ? showRect.left - view.getWidth() : showRect.right;
                 end = params.x;
                 break;
             case VERTICAL:
                 isX = false;
-                start = topDistance < bottomDistance ? showRect.top - view.getHeight(): showRect.bottom;
+                start = topDistance < bottomDistance ? showRect.top - view.getHeight() : showRect.bottom;
                 end = params.y;
                 break;
             case SIDE:
             case DEFAULT:
                 int minX = Math.min(leftDistance, rightDistance);
                 int minY = Math.min(topDistance, bottomDistance);
-                if (minX > minY){
+                if (minX > minY) {
                     isX = false;
-                    start = topDistance < bottomDistance ? showRect.top - view.getHeight(): showRect.bottom;
+                    start = topDistance < bottomDistance ? showRect.top - view.getHeight() : showRect.bottom;
                     end = params.y;
                 } else {
-                    start = leftDistance < rightDistance ? showRect.left - view.getWidth(): showRect.right;
+                    start = leftDistance < rightDistance ? showRect.left - view.getWidth() : showRect.right;
                     end = params.x;
                 }
                 break;
         }
-        if (isExit){
+        if (isExit) {
             int tmp = start;
             start = end;
             end = tmp;
@@ -78,13 +78,14 @@ class FloatAnimator {
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
         boolean finalIsX = isX;
         animator.addUpdateListener(animation -> {
-            try{
-                if (finalIsX) params.x = (int) animation.getAnimatedValue(); else params.y = (int) animation.getAnimatedValue();
+            try {
+                if (finalIsX) params.x = (int) animation.getAnimatedValue();
+                else params.y = (int) animation.getAnimatedValue();
                 manager.updateViewLayout(view, params);
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
                 animation.cancel();
             }
         });
-        return  animator;
+        return animator;
     }
 }

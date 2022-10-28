@@ -20,12 +20,12 @@ public abstract class TaskDatabase extends RoomDatabase {
     private static volatile TaskDatabase instance;
     public static final ThreadPoolExecutor service = new ThreadPoolExecutor(2, 5, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20));
 
-    static synchronized TaskDatabase getInstance(Context context){
+    static synchronized TaskDatabase getInstance(Context context) {
         if (instance == null) instance = create(context);
         return instance;
     }
 
-    private static TaskDatabase create(final Context context){
+    private static TaskDatabase create(final Context context) {
         return Room.databaseBuilder(context, TaskDatabase.class, DB_NAME)
                 //.addMigrations()
                 .build();

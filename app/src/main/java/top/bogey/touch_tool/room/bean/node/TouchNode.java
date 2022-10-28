@@ -47,7 +47,7 @@ public class TouchNode extends Node {
         return getValue();
     }
 
-    public static class TouchPath{
+    public static class TouchPath {
         private final List<Point> path;
         private final FloatGravity gravity;
 
@@ -82,7 +82,7 @@ public class TouchNode extends Node {
             return path.size();
         }
 
-        public Path getPath(Context context, boolean fixed){
+        public Path getPath(Context context, boolean fixed) {
             List<Point> points = getPoints(context);
             Path tmp = null;
             for (Point point : points) {
@@ -97,11 +97,11 @@ public class TouchNode extends Node {
             return tmp;
         }
 
-        public List<Point> getPoints(){
+        public List<Point> getPoints() {
             return path;
         }
 
-        private Point getPoint(Point point, boolean fixed){
+        private Point getPoint(Point point, boolean fixed) {
             if (fixed) return AppUtils.getFixedPosition(point.x, point.y);
             return point;
         }
@@ -117,7 +117,7 @@ public class TouchNode extends Node {
             return points;
         }
 
-        private Point getStartScreenPoint(Context context){
+        private Point getStartScreenPoint(Context context) {
             int width = DisplayUtils.getScreen(context);
             float scale = width * 1f / screen;
             Point start = new Point((int) (offset.x * scale), (int) (offset.y * scale));

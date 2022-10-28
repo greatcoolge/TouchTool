@@ -14,7 +14,7 @@ import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
-public class ImageNode extends Node{
+public class ImageNode extends Node {
     public ImageNode(ImageInfo value) {
         super(NodeType.IMAGE, value);
     }
@@ -31,9 +31,9 @@ public class ImageNode extends Node{
 
     @Override
     public boolean checkNode(Object obj) {
-        if (obj != null){
+        if (obj != null) {
             MainAccessibilityService service = (MainAccessibilityService) obj;
-            if (service.isCaptureEnabled() && service.binder != null){
+            if (service.isCaptureEnabled() && service.binder != null) {
                 return matchImage(service) != null;
             }
         }
@@ -42,11 +42,11 @@ public class ImageNode extends Node{
 
     @Override
     public Object getNodeTarget(Object obj) {
-        if (obj != null){
+        if (obj != null) {
             MainAccessibilityService service = (MainAccessibilityService) obj;
-            if (service.isCaptureEnabled() && service.binder != null){
+            if (service.isCaptureEnabled() && service.binder != null) {
                 Rect rect = matchImage(service);
-                if (rect != null){
+                if (rect != null) {
                     Path path = new Path();
                     Point fixedPosition = AppUtils.getFixedPosition(rect.centerX(), rect.centerY());
                     path.moveTo(fixedPosition.x, fixedPosition.y);
@@ -57,11 +57,11 @@ public class ImageNode extends Node{
         return null;
     }
 
-    private Rect matchImage(MainAccessibilityService service){
+    private Rect matchImage(MainAccessibilityService service) {
         ImageInfo imageInfo = getValue();
         int width = DisplayUtils.getScreen(service);
         float scale = ((float) width) / imageInfo.screen;
-        if (scale == 1){
+        if (scale == 1) {
             return service.binder.matchImage(imageInfo.getBitmap(), imageInfo.getValue());
         } else {
             Bitmap scaleBitmap = imageInfo.getScaleBitmap(scale);
@@ -75,7 +75,7 @@ public class ImageNode extends Node{
         return new ImageInfo(value.image, value.value, value.screen);
     }
 
-    public static class ImageInfo{
+    public static class ImageInfo {
         private transient Bitmap bitmap;
 
         private transient Bitmap scaleBitmap;
@@ -96,11 +96,12 @@ public class ImageNode extends Node{
         }
 
         public Bitmap getBitmap() {
-            if (bitmap == null && (image != null && !image.isEmpty())){
+            if (bitmap == null && (image != null && !image.isEmpty())) {
                 try {
                     byte[] bitmapArray = Base64.decode(image, Base64.DEFAULT);
                     bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
-                } catch (IllegalArgumentException ignored){}
+                } catch (IllegalArgumentException ignored) {
+                }
             }
             return bitmap;
         }
@@ -114,7 +115,7 @@ public class ImageNode extends Node{
                 image = Base64.encodeToString(bytes, Base64.DEFAULT);
             }
             this.bitmap = bitmap;
-            if (scaleBitmap != null){
+            if (scaleBitmap != null) {
                 scaleBitmap.recycle();
                 scaleBitmap = null;
             }
@@ -122,9 +123,9 @@ public class ImageNode extends Node{
         }
 
         public Bitmap getScaleBitmap(float scale) {
-            if (scaleBitmap == null || scale != this.scale){
+            if (scaleBitmap == null || scale != this.scale) {
                 Bitmap bitmap = getBitmap();
-                if (bitmap != null){
+                if (bitmap != null) {
                     Matrix matrix = new Matrix();
                     matrix.postScale(scale, scale);
                     scaleBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);

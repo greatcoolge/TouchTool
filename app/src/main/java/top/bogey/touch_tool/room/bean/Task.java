@@ -36,7 +36,7 @@ public class Task {
     }
 
     @Ignore
-    public Task(Task task){
+    public Task(Task task) {
         id = UUID.randomUUID().toString();
         pkgName = "";
 

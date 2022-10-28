@@ -36,9 +36,9 @@ public class OverSeeFloatView extends FrameLayout implements FloatViewInterface,
     public OverSeeFloatView(@NonNull Context context, OverseeMode mode) {
         super(context);
         binding = FloatOverseeBinding.inflate(LayoutInflater.from(context), this, true);
-        if (mode == null){
+        if (mode == null) {
             String string = MMKV.defaultMMKV().decodeString(OVERSEE_MODE);
-            if (string != null){
+            if (string != null) {
                 mode = OverseeMode.values()[Integer.parseInt(string)];
             } else mode = OverseeMode.ALL;
         }
@@ -68,7 +68,7 @@ public class OverSeeFloatView extends FrameLayout implements FloatViewInterface,
         itemMap.clear();
         binding.buttonBox.removeAllViews();
         MainAccessibilityService service = MainApplication.getService();
-        if (service != null){
+        if (service != null) {
             for (TaskCallable runningTask : service.getRunningTasks(this)) {
                 addNewTask(runningTask);
             }
@@ -82,10 +82,10 @@ public class OverSeeFloatView extends FrameLayout implements FloatViewInterface,
 
     public void addNewTask(TaskCallable callable) {
         Task task = callable.getTask();
-        if (overseeMode == OverseeMode.ACROSS_APP){
+        if (overseeMode == OverseeMode.ACROSS_APP) {
             if (!task.isAcrossApp() && task.getStatus() != TaskStatus.TIME) return;
         }
-        if (overseeMode == OverseeMode.NOT_MANUAL){
+        if (overseeMode == OverseeMode.NOT_MANUAL) {
             if (task.getStatus() == TaskStatus.MANUAL) return;
         }
         OverSeeFloatViewItem overSeeFloatViewItem = new OverSeeFloatViewItem(getContext(), callable);

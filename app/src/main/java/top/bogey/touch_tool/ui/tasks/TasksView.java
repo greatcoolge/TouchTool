@@ -51,7 +51,7 @@ public class TasksView extends Fragment {
         binding = ViewTasksBinding.inflate(inflater, container, false);
 
         Bundle arguments = getArguments();
-        if (arguments != null){
+        if (arguments != null) {
             String pkgName = arguments.getString("pkgName");
             appInfo = viewModel.getAppInfoByPkgName(pkgName);
         }
@@ -103,8 +103,7 @@ public class TasksView extends Fragment {
             if (task == null) {
                 binding.pasteButton.hide();
                 binding.pasteSpecialButton.hide();
-            }
-            else {
+            } else {
                 binding.pasteButton.show();
                 binding.pasteSpecialButton.show();
             }
@@ -114,17 +113,16 @@ public class TasksView extends Fragment {
         if (task == null) {
             binding.pasteButton.hide();
             binding.pasteSpecialButton.hide();
-        }
-        else {
+        } else {
             binding.pasteButton.show();
             binding.pasteSpecialButton.show();
         }
 
         binding.pasteButton.setOnClickListener(v -> {
             Task copyTask = viewModel.getCopyTask();
-            if (copyTask != null){
+            if (copyTask != null) {
                 copyTask.setPkgName(appInfo.packageName);
-                if (copyTask.getStatus() == TaskStatus.TIME){
+                if (copyTask.getStatus() == TaskStatus.TIME) {
                     if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
                 }
                 TaskRepository.getInstance(getContext()).saveTask(copyTask, true);
@@ -134,9 +132,9 @@ public class TasksView extends Fragment {
 
         binding.pasteSpecialButton.setOnClickListener(v -> {
             Task copyTask = viewModel.getCopyTask();
-            if (copyTask != null){
+            if (copyTask != null) {
                 copyTask.setPkgName(appInfo.packageName);
-                if (copyTask.getStatus() == TaskStatus.TIME){
+                if (copyTask.getStatus() == TaskStatus.TIME) {
                     if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
                 }
                 copyTask.setAcrossApp(!copyTask.isAcrossApp());
@@ -162,10 +160,10 @@ public class TasksView extends Fragment {
         }
     }
 
-    private void refreshSpawnCount(){
+    private void refreshSpawnCount() {
         StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) binding.tasksBox.getLayoutManager();
         if (layoutManager != null) {
-            if (!DisplayUtils.isPortrait(requireContext()))layoutManager.setSpanCount(3);
+            if (!DisplayUtils.isPortrait(requireContext())) layoutManager.setSpanCount(3);
             else layoutManager.setSpanCount(2);
         }
     }

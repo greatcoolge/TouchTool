@@ -52,7 +52,7 @@ public class TaskCallable implements Callable<Void> {
         allPercent = getAllPercent(task);
     }
 
-    public void setCallback(TaskCallback callback){
+    public void setCallback(TaskCallback callback) {
         this.callback = callback;
     }
 
@@ -64,13 +64,13 @@ public class TaskCallable implements Callable<Void> {
         return stop(false);
     }
 
-    public boolean stop(boolean force){
+    public boolean stop(boolean force) {
         if (force) isRunning = false;
         else if (task.getStatus() != TaskStatus.TIME && !task.isAcrossApp()) isRunning = false;
         return !isRunning;
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return isRunning;
     }
 
@@ -84,7 +84,7 @@ public class TaskCallable implements Callable<Void> {
         return null;
     }
 
-    private boolean runTask(@NonNull Task task){
+    private boolean runTask(@NonNull Task task) {
         // 获取任务中有效的动作
         List<Action> actions = new ArrayList<>();
         for (Action action : task.getActions()) {
@@ -93,7 +93,7 @@ public class TaskCallable implements Callable<Void> {
 
         boolean result = true;
         Action runAction = actions.remove(0);
-        while (runAction != null && isRunning()){
+        while (runAction != null && isRunning()) {
             switch (runAction.getActionMode()) {
                 case CONDITION:
                     if (runAction.getCondition() == null || checkNode(runAction.getCondition())) {
@@ -110,14 +110,14 @@ public class TaskCallable implements Callable<Void> {
                     int succeedTimes = 0;
                     int finishTimes = 0;
                     Node stop = runAction.getCondition();
-                    while (finishTimes < runAction.getTimes() && isRunning()){
+                    while (finishTimes < runAction.getTimes() && isRunning()) {
                         boolean flag = true;
                         for (int i = 0; i < runAction.getTargets().size(); i++) {
                             flag &= doAction(runAction, i);
                         }
                         if (flag) succeedTimes++;
-                        if (stop.getType() != NodeType.NULL){
-                            if (stop.getType() == NodeType.NUMBER && succeedTimes >= ((NumberNode) stop).getValue()){
+                        if (stop.getType() != NodeType.NULL) {
+                            if (stop.getType() == NodeType.NUMBER && succeedTimes >= ((NumberNode) stop).getValue()) {
                                 break;
                             }
                             if ((stop.getType() == NodeType.TEXT || stop.getType() == NodeType.IMAGE) && checkNode(stop)) break;
@@ -125,7 +125,7 @@ public class TaskCallable implements Callable<Void> {
                         finishTimes++;
                     }
                     // 有结束条件循环却一次都没成功，代表循环执行失败
-                    if (stop.getType() != NodeType.NULL && succeedTimes == 0){
+                    if (stop.getType() != NodeType.NULL && succeedTimes == 0) {
                         result = false;
                     }
                     break;
@@ -153,7 +153,7 @@ public class TaskCallable implements Callable<Void> {
         return result;
     }
 
-    private void sleep(int time){
+    private void sleep(int time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
@@ -161,13 +161,13 @@ public class TaskCallable implements Callable<Void> {
         }
     }
 
-    private boolean doAction(@NonNull Action action, int index){
+    private boolean doAction(@NonNull Action action, int index) {
         List<Node> targets = action.getTargets();
-        if (targets.size() > index){
+        if (targets.size() > index) {
             boolean result = false;
             Node target = targets.get(index);
             Object nodeTarget = getNodeTarget(target);
-            if (nodeTarget != null){
+            if (nodeTarget != null) {
                 result = true;
                 int randomTime = target.getTimeArea().getRandomTime();
                 switch (target.getType()) {
@@ -194,7 +194,7 @@ public class TaskCallable implements Callable<Void> {
                         break;
                     case TEXT:
                         AccessibilityNodeInfo nodeInfo = (AccessibilityNodeInfo) nodeTarget;
-                        if (target.getTimeArea().getRealMax() <= 100){
+                        if (target.getTimeArea().getRealMax() <= 100) {
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         } else {
                             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
@@ -231,7 +231,7 @@ public class TaskCallable implements Callable<Void> {
         return false;
     }
 
-    private boolean checkNode(@NonNull Node node){
+    private boolean checkNode(@NonNull Node node) {
         switch (node.getType()) {
             case TEXT:
             case IMAGE:
@@ -243,8 +243,8 @@ public class TaskCallable implements Callable<Void> {
         }
     }
 
-    private Object getNodeTarget(@NonNull Node node){
-        switch (node.getType()){
+    private Object getNodeTarget(@NonNull Node node) {
+        switch (node.getType()) {
             case TEXT:
             case TOUCH:
             case IMAGE:
@@ -257,15 +257,15 @@ public class TaskCallable implements Callable<Void> {
         }
     }
 
-    private void addTaskProgress(@NonNull Node node, boolean skip){
+    private void addTaskProgress(@NonNull Node node, boolean skip) {
         if (!isRunning()) return;
-        if (node.getType() != NodeType.TASK){
+        if (node.getType() != NodeType.TASK) {
             percent++;
             if (callback != null) callback.onProgress((percent) * 100 / allPercent);
         } else {
-            if (skip){
+            if (skip) {
                 Integer integer = taskNodeMap.get(node);
-                if (integer != null){
+                if (integer != null) {
                     percent += integer;
                     if (callback != null) callback.onProgress(percent * 100 / allPercent);
                 }
@@ -273,20 +273,20 @@ public class TaskCallable implements Callable<Void> {
         }
     }
 
-    public int getTaskProgress(){
+    public int getTaskProgress() {
         return percent * 100 / allPercent;
     }
 
-    private void getAllTasks(@NonNull Map<String, Task> taskMap, Task task){
+    private void getAllTasks(@NonNull Map<String, Task> taskMap, Task task) {
         taskMap.put(task.getId(), task);
         for (Action action : task.getActions()) {
-            if (action.isEnable()){
+            if (action.isEnable()) {
                 for (Node target : action.getTargets()) {
                     if (target.getType() == NodeType.TASK) {
                         TaskNode.TaskInfo taskInfo = ((TaskNode) target).getValue();
-                        if (!taskMap.containsKey(taskInfo.getId())){
+                        if (!taskMap.containsKey(taskInfo.getId())) {
                             List<Task> tasks = repository.getTasksById(taskInfo.getId());
-                            if (tasks != null){
+                            if (tasks != null) {
                                 for (Task newTask : tasks) {
                                     getAllTasks(taskMap, newTask);
                                 }
@@ -298,15 +298,15 @@ public class TaskCallable implements Callable<Void> {
         }
     }
 
-    private int getAllPercent(@NonNull Task task){
+    private int getAllPercent(@NonNull Task task) {
         int percent = 0;
         for (Action action : task.getActions()) {
             if (action.isEnable()) {
                 int cent = 0;
                 for (Node target : action.getTargets()) {
-                    if (target.getType() == NodeType.TASK){
+                    if (target.getType() == NodeType.TASK) {
                         Task newTask = taskMap.get(((TaskNode) target).getValue().getId());
-                        if (newTask != null){
+                        if (newTask != null) {
                             int taskCent = getAllPercent(newTask);
                             taskNodeMap.put(target, taskCent);
                             cent += taskCent;
@@ -315,7 +315,7 @@ public class TaskCallable implements Callable<Void> {
                         cent++;
                     }
                 }
-                if (action.getActionMode() == ActionMode.LOOP){
+                if (action.getActionMode() == ActionMode.LOOP) {
                     cent *= action.getTimes();
                 }
                 percent += cent;

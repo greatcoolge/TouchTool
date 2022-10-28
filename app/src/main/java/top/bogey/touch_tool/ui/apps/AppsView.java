@@ -1,7 +1,9 @@
 package top.bogey.touch_tool.ui.apps;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -75,6 +77,7 @@ public class AppsView extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 List<Task> tasks = TaskRepository.getInstance(getContext()).getAllTasks();
+                MainActivity activity = MainApplication.getActivity();
                 switch (menuItem.getItemId()) {
                     case R.id.show_system:
                         viewModel.showSystem.setValue(!Boolean.TRUE.equals(viewModel.showSystem.getValue()));
@@ -83,16 +86,27 @@ public class AppsView extends Fragment {
                         adapter.refreshApps(viewModel.searchAppList(searchText));
                         return true;
                     case R.id.export_actions:
-                        MainActivity activity = MainApplication.getActivity();
-                        if (activity != null){
+                        if (activity != null) {
                             NavController controller = Navigation.findNavController(activity, R.id.con_view);
                             controller.navigate(AppsViewDirections.actionAppsToTasksExport());
+                        }
+                        return true;
+                    case R.id.import_actions:
+                        if (activity != null) {
+                            activity.launcherContent((code, intent) -> {
+                                if (code == Activity.RESULT_OK) {
+                                    Uri uri = intent.getData();
+                                    if (uri != null) {
+                                        activity.saveTasksByFile(uri);
+                                    }
+                                }
+                            });
                         }
                         return true;
                     case R.id.clean_actions:
                         List<String> pkgNames = viewModel.getAllPkgNames();
                         for (Task task : tasks) {
-                            if (!pkgNames.contains(task.getPkgName())){
+                            if (!pkgNames.contains(task.getPkgName())) {
                                 TaskRepository.getInstance(getContext()).deleteTask(task);
                             }
                         }
@@ -120,10 +134,10 @@ public class AppsView extends Fragment {
         return binding.getRoot();
     }
 
-    private void refreshSpawnCount(){
+    private void refreshSpawnCount() {
         GridLayoutManager layoutManager = (GridLayoutManager) binding.appsView.getLayoutManager();
         if (layoutManager != null) {
-            if (!DisplayUtils.isPortrait(requireContext()))layoutManager.setSpanCount(5);
+            if (!DisplayUtils.isPortrait(requireContext())) layoutManager.setSpanCount(5);
             else layoutManager.setSpanCount(3);
         }
     }

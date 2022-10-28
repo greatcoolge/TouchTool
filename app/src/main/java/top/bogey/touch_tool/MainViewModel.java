@@ -29,27 +29,27 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     @SuppressLint("QueryPermissionsNeeded")
-    public void refreshAppList(){
+    public void refreshAppList() {
         PackageManager manager = getApplication().getPackageManager();
         allApp.clear();
         allApp.addAll(manager.getInstalledPackages(PackageManager.GET_ACTIVITIES));
     }
 
-    public List<AppInfo> searchAppList(String findString){
+    public List<AppInfo> searchAppList(String findString) {
         List<AppInfo> apps = new ArrayList<>();
-        if (findString.isEmpty()){
+        if (findString.isEmpty()) {
             apps.add(new AppInfo(getApplication().getString(R.string.common_name), getApplication().getString(R.string.common_package_name), null));
         }
         PackageManager manager = getApplication().getPackageManager();
         findString = findString.toLowerCase();
         boolean system = Boolean.TRUE.equals(showSystem.getValue());
         for (PackageInfo info : allApp) {
-            if (!info.packageName.equals(getApplication().getPackageName())){
+            if (!info.packageName.equals(getApplication().getPackageName())) {
                 ApplicationInfo applicationInfo = info.applicationInfo;
-                if (system || (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1){
+                if (system || (applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 1) {
                     String appName = String.valueOf(applicationInfo.loadLabel(manager));
                     String pkgName = info.packageName;
-                    if (!appName.equalsIgnoreCase(pkgName) && (findString.isEmpty() || pkgName.toLowerCase().contains(findString) || appName.toLowerCase().contains(findString))){
+                    if (!appName.equalsIgnoreCase(pkgName) && (findString.isEmpty() || pkgName.toLowerCase().contains(findString) || appName.toLowerCase().contains(findString))) {
                         apps.add(new AppInfo(appName, pkgName, info));
                     }
                 }
@@ -58,20 +58,20 @@ public class MainViewModel extends AndroidViewModel {
         return apps;
     }
 
-    public AppInfo getAppInfoByPkgName(String pkgName){
-        if (pkgName.equals(getApplication().getString(R.string.common_package_name))){
+    public AppInfo getAppInfoByPkgName(String pkgName) {
+        if (pkgName.equals(getApplication().getString(R.string.common_package_name))) {
             return new AppInfo(getApplication().getString(R.string.common_name), getApplication().getString(R.string.common_package_name), null);
         }
         PackageManager manager = getApplication().getPackageManager();
         for (PackageInfo info : allApp) {
-            if (pkgName.equals(info.packageName) && !pkgName.equals(getApplication().getPackageName())){
+            if (pkgName.equals(info.packageName) && !pkgName.equals(getApplication().getPackageName())) {
                 return new AppInfo(String.valueOf(info.applicationInfo.loadLabel(manager)), pkgName, info);
             }
         }
         return null;
     }
 
-    public List<String> getAllPkgNames(){
+    public List<String> getAllPkgNames() {
         List<String> names = new ArrayList<>();
         names.add(getApplication().getString(R.string.common_package_name));
         for (PackageInfo info : allApp) {
