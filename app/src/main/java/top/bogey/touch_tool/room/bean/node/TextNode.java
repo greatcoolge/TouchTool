@@ -78,11 +78,15 @@ public class TextNode extends Node{
                     String[] levels = split[1].split(",");
                     for (String level : levels) {
                         nodeInfo = searchNode(nodeInfo, Integer.parseInt(level));
-                        if (nodeInfo == null){
-                            return null;
-                        }
+                        if (nodeInfo == null) return null;
                     }
-                    return new ArrayList<>(Collections.singletonList(nodeInfo));
+                    return Collections.singletonList(nodeInfo);
+                } else if(realKey.indexOf("reg/") == 0){
+                    String[] split = realKey.split("/");
+                    String regex = split[1];
+                    nodeInfo = searchNode(nodeInfo, Pattern.compile(regex));
+                    if (nodeInfo == null) return null;
+                    return Collections.singletonList(nodeInfo);
                 } else {
                     return nodeInfo.findAccessibilityNodeInfosByText(realKey);
                 }
@@ -121,6 +125,22 @@ public class TextNode extends Node{
                 } else {
                     index++;
                 }
+            }
+        }
+        return null;
+    }
+
+    private AccessibilityNodeInfo searchNode(AccessibilityNodeInfo nodeInfo, Pattern pattern){
+        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
+            AccessibilityNodeInfo child = nodeInfo.getChild(i);
+            if (child != null){
+                CharSequence text = child.getText();
+                if (text != null && text.length() > 0){
+                    Matcher matcher = pattern.matcher(text);
+                    if (matcher.find()) return child;
+                }
+                AccessibilityNodeInfo node = searchNode(child, pattern);
+                if (node != null) return node;
             }
         }
         return null;
