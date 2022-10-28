@@ -21,11 +21,11 @@
         style="?attr/floatingActionButtonSmallSurfaceStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="96dp"
         android:src="@drawable/icon_check_box_checked"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasks_recycle_view"
