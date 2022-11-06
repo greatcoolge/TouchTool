@@ -34,7 +34,7 @@ public class AppPickerFloatView extends BasePickerFloatView implements SelectApp
         super(context, pickerCallback);
         binding = FloatPickerAppBinding.inflate(LayoutInflater.from(context), this, true);
         viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
-        adapter = new AppsRecyclerViewAdapter(this);
+        adapter = new AppsRecyclerViewAdapter(this, null);
         binding.appsView.setAdapter(adapter);
         refreshSpawnCount();
         adapter.refreshApps(viewModel.searchAppList(searchText, false));

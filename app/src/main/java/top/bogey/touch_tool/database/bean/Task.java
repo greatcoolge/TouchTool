@@ -237,9 +237,11 @@ public class Task implements Parcelable {
         dest.writeParcelable(type, flags);
         dest.writeString(title);
         dest.writeByte((byte) (acrossApp ? 1 : 0));
-        dest.writeStringList(pkgNames);
+        if (type == TaskType.IT_IS_TIME) dest.writeStringList(null);
+        else dest.writeStringList(pkgNames);
         dest.writeTypedList(behaviors);
-        dest.writeParcelable(condition, flags);
+        if (type == TaskType.NEW_NOTIFICATION || type == TaskType.IT_IS_TIME) dest.writeParcelable(condition, flags);
+        else dest.writeParcelable(null, flags);
         dest.writeTypedList(subTasks);
     }
 }

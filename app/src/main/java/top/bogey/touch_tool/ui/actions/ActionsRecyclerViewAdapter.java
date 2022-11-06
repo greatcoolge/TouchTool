@@ -50,13 +50,13 @@ import top.bogey.touch_tool.utils.TextChangedListener;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecyclerViewAdapter.ViewHolder> {
-    private final Task task;
+    private final Task baseTask;
     private final List<Action> actions = new ArrayList<>();
 
     private int maxCount = 1;
 
-    public ActionsRecyclerViewAdapter(Task task, List<Action> actions) {
-        this.task = task;
+    public ActionsRecyclerViewAdapter(Task baseTask, List<Action> actions) {
+        this.baseTask = baseTask;
         if (actions != null) {
             this.actions.addAll(actions);
         }
@@ -408,8 +408,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         selectSpinner(((SystemAction) action).getSystemActionType().name());
                     } else {
                         adapter.clear();
-                        if (task.getSubTasks() != null){
-                            for (Task taskItem : task.getSubTasks()) {
+                        if (baseTask.getSubTasks() != null){
+                            for (Task taskItem : baseTask.getSubTasks()) {
                                 adapter.add(new TaskAction(taskItem.getId(), taskItem.getTitle()));
                             }
                         }

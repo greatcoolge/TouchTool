@@ -95,17 +95,17 @@ public class MainViewModel extends AndroidViewModel {
         return names;
     }
 
-    public void loadAppsIcon(Map<String, Drawable> drawables, List<String> pkgNames, ResultCallback callback){
+    public void loadAppsIcon(Map<String, Drawable> drawables, List<String> pkgNames, ResultCallback callback) {
         if (pkgNames == null || pkgNames.size() == 0) {
-            callback.onResult(false);
+            callback.onResult(true);
             return;
         }
         loadService.submit(() -> {
             PackageManager manager = getApplication().getPackageManager();
             for (String pkgName : pkgNames) {
                 AppInfo appInfo = getAppInfoByPkgName(pkgName);
-                if (appInfo != null){
-                    if (appInfo.packageName.equals(getApplication().getString(R.string.common_package_name))){
+                if (appInfo != null) {
+                    if (appInfo.packageName.equals(getApplication().getString(R.string.common_package_name))) {
                         drawables.put(pkgName, getApplication().getApplicationInfo().loadIcon(manager));
                     } else {
                         drawables.put(pkgName, appInfo.info.applicationInfo.loadIcon(manager));

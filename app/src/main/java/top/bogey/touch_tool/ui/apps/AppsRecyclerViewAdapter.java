@@ -2,12 +2,10 @@ package top.bogey.touch_tool.ui.apps;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -15,22 +13,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import top.bogey.touch_tool.MainApplication;
-import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewAppsItemBinding;
 
 public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerViewAdapter.ViewHolder> {
-    private final MainViewModel viewModel;
     private final SelectAppCallback callback;
 
     private final List<AppInfo> apps = new ArrayList<>();
-    private final Map<String, Drawable> drawables = new HashMap<>();
     private final Map<String, AppInfo> selectedApps = new HashMap<>();
 
-    public AppsRecyclerViewAdapter(SelectAppCallback callback) {
+    public AppsRecyclerViewAdapter(SelectAppCallback callback, List<AppInfo> selectedApps) {
         this.callback = callback;
-        viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+        if (selectedApps != null) {
+            for (AppInfo appInfo : selectedApps) {
+                if (appInfo != null) this.selectedApps.put(appInfo.packageName, appInfo);
+            }
+        }
     }
 
     @NonNull
@@ -100,7 +98,9 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
             context = binding.getRoot().getContext();
 
             binding.getRoot().setOnClickListener(v -> {
-                if (selectedApps.remove(info.packageName) == null) selectedApps.put(info.packageName, info);
+                if (selectedApps.remove(info.packageName) == null)
+                    selectedApps.put(info.packageName, info);
+                notifyItemChanged(getBindingAdapterPosition());
                 callback.onSelectApps(new ArrayList<>(selectedApps.values()));
             });
         }
@@ -114,6 +114,7 @@ public class AppsRecyclerViewAdapter extends RecyclerView.Adapter<AppsRecyclerVi
             } else {
                 binding.icon.setImageDrawable(appInfo.info.applicationInfo.loadIcon(manager));
             }
+            binding.getRoot().setChecked(selectedApps.containsKey(appInfo.packageName));
         }
     }
 }

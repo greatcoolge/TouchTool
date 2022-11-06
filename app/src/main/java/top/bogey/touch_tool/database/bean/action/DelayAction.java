@@ -10,6 +10,7 @@ import top.bogey.touch_tool.database.data.TaskRunningInfo;
 public class DelayAction extends Action {
     public DelayAction() {
         super(ActionType.DELAY);
+        timeArea.setTime(1000);
     }
 
     public DelayAction(int time){
@@ -36,6 +37,6 @@ public class DelayAction extends Action {
 
     @Override
     public String getDescription(Context context, boolean normal) {
-        return context.getString(R.string.action_delay);
+        return context.getString(R.string.action_delay, timeArea.getTitle());
     }
 }

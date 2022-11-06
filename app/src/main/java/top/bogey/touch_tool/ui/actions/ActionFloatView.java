@@ -13,8 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import java.util.List;
 
 import top.bogey.touch_tool.R;
@@ -52,12 +50,11 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
     private BehaviorMode behaviorMode;
     private Action condition = new NullAction();
 
-    public ActionFloatView(@NonNull Context context, @NonNull Task task, @NonNull Behavior behavior, ResultCallback callback) {
+    public ActionFloatView(Context context, Task baseTask, Behavior behavior, ResultCallback callback) {
         super(context);
-
         binding = FloatActionBinding.inflate(LayoutInflater.from(context), this, true);
 
-        adapter = new ActionsRecyclerViewAdapter(task, behavior.getActions());
+        adapter = new ActionsRecyclerViewAdapter(baseTask, behavior.getActions());
         binding.delayButton.setOnClickListener(v -> adapter.addNode(new DelayAction()));
         binding.textButton.setOnClickListener(v -> adapter.addNode(new TextAction()));
         binding.imageButton.setOnClickListener(v -> adapter.addNode(new ImageAction()));
@@ -88,7 +85,8 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
                     case PARALLEL:
                         binding.conditionTitle.setText(context.getText(R.string.condition_tips_for_loop));
                         binding.timesRow.setVisibility(GONE);
-                        if (condition.getType() != ActionType.NUMBER) condition = new NumberAction();
+                        if (condition.getType() != ActionType.NUMBER)
+                            condition = new NumberAction();
                         refreshCondition(condition);
                         break;
                 }
@@ -135,7 +133,8 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         binding.textInclude.textBaseInclude.titleEdit.addTextChangedListener(new TextChangedListener() {
             @Override
             public void afterTextChanged(Editable s) {
-                if (condition.getType() == ActionType.TEXT) ((TextAction) condition).setText(String.valueOf(s));
+                if (condition.getType() == ActionType.TEXT)
+                    ((TextAction) condition).setText(String.valueOf(s));
             }
         });
 
@@ -181,7 +180,8 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
 
             int times = 1;
             Editable timesEdit = binding.timesInclude.titleEdit.getText();
-            if (timesEdit != null && timesEdit.length() > 0) times = Integer.parseInt(String.valueOf(timesEdit));
+            if (timesEdit != null && timesEdit.length() > 0)
+                times = Integer.parseInt(String.valueOf(timesEdit));
 
             behavior.setActionMode(behaviorMode);
             behavior.setActions(actions);
@@ -297,7 +297,8 @@ public class ActionFloatView extends FrameLayout implements FloatViewInterface {
         if (conditionAdapter.getCount() > 0) {
             spinner.setSelection(0);
             AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
-            if (listener != null) listener.onItemSelected(spinner, spinner.getSelectedView(), 0, conditionAdapter.getItemId(0));
+            if (listener != null)
+                listener.onItemSelected(spinner, spinner.getSelectedView(), 0, conditionAdapter.getItemId(0));
         }
     }
 }

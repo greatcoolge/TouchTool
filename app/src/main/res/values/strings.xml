@@ -68,7 +68,7 @@
     <string name="task_type_manual">手动执行</string>
     <string name="task_type_it_is_time">定时执行</string>
     <string name="task_type_new_notification">收到通知时执行</string>
-    <string name="task_type_app_changed">应用变更时执行</string>
+    <string name="task_type_app_changed">应用切换时执行</string>
     <string name="task_type_view_changed">窗口变更时执行</string>
     <string name="task_type_content_changed">内容变更时执行</string>
 

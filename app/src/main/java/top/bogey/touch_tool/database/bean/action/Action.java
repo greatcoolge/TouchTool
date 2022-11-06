@@ -98,7 +98,7 @@ public abstract class Action implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(type.name());
+        dest.writeParcelable(type, flags);
         dest.writeParcelable(timeArea, flags);
     }
 }

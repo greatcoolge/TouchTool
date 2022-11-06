@@ -27,8 +27,12 @@ import top.bogey.touch_tool.ui.actions.ActionFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRecyclerViewAdapter.ViewHolder> {
+    private final Task baseTask;
     private List<Behavior> behaviors = new ArrayList<>();
-    private Task task;
+
+    public BehaviorRecyclerViewAdapter(Task baseTask) {
+        this.baseTask = baseTask;
+    }
 
     @NonNull
     @Override
@@ -48,8 +52,8 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
 
     public void setTask(Task task) {
         int count = getItemCount();
-        this.task = task;
         behaviors = task.getBehaviors() == null ? new ArrayList<>() : task.getBehaviors();
+        task.setBehaviors(behaviors);
         int size = behaviors.size();
         if (size == 0 && count > 0) notifyItemRangeRemoved(0, count);
         else {
@@ -77,9 +81,9 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
             binding.getRoot().setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Behavior behavior = behaviors.get(index);
-                new ActionFloatView(context, task, behavior, result -> {
+                new ActionFloatView(context, baseTask, behavior, result -> {
                     notifyItemChanged(index);
-                    TaskRepository.getInstance().saveTask(task);
+                    TaskRepository.getInstance().saveTask(baseTask);
                 }).show();
             });
 
@@ -95,7 +99,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                         .setPositiveButton(R.string.enter, (dialog, which) -> {
                             Editable text = editText.getText();
                             if (text != null) behavior.setTitle(String.valueOf(text));
-                            TaskRepository.getInstance().saveTask(task);
+                            TaskRepository.getInstance().saveTask(baseTask);
                             binding.titleText.setText(text);
                             dialog.dismiss();
                         })
@@ -112,7 +116,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                 Behavior behavior = behaviors.get(index);
                 behavior.setEnable(!behavior.isEnable());
                 setChecked(binding.enabledToggle, behavior.isEnable());
-                TaskRepository.getInstance().saveTask(task);
+                TaskRepository.getInstance().saveTask(baseTask);
             });
 
             binding.upButton.setOnClickListener(v -> {
@@ -120,7 +124,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                 int newIndex = Math.max(0, index - 1);
                 behaviors.add(newIndex, behaviors.remove(index));
                 notifyItemRangeChanged(newIndex, 2);
-                TaskRepository.getInstance().saveTask(task);
+                TaskRepository.getInstance().saveTask(baseTask);
             });
 
             binding.downButton.setOnClickListener(v -> {
@@ -128,7 +132,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                 int newIndex = Math.min(behaviors.size() - 1, index + 1);
                 behaviors.add(newIndex, behaviors.remove(index));
                 notifyItemRangeChanged(index, 2);
-                TaskRepository.getInstance().saveTask(task);
+                TaskRepository.getInstance().saveTask(baseTask);
             });
 
             binding.deleteButton.setOnClickListener(v -> {
@@ -146,7 +150,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                             notifyItemChanged(index);
                         }
                     }
-                    TaskRepository.getInstance().saveTask(task);
+                    TaskRepository.getInstance().saveTask(baseTask);
                 } else {
                     isDeleteMode = true;
                     binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorError, 0)));

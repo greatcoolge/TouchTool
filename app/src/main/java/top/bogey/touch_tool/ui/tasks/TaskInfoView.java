@@ -43,6 +43,7 @@ import top.bogey.touch_tool.database.bean.condition.NotificationCondition;
 import top.bogey.touch_tool.database.bean.condition.TimeCondition;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskInfoBinding;
+import top.bogey.touch_tool.ui.apps.AppsView;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.TaskChangedCallback;
 
@@ -51,9 +52,6 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
     private MainViewModel viewModel;
     private TaskInfoRecyclerViewAdapter adapter;
     private Task task;
-
-    private TimeCondition timeCondition;
-    private NotificationCondition notificationCondition;
 
     @Nullable
     @Override
@@ -81,9 +79,9 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
                     materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                         task.setAcrossApp(isChecked);
                         TaskRepository.getInstance().saveTask(task);
-                        actionBar.setTitle(task.isAcrossApp() ? R.string.across_app_task : R.string.normal_task);
+                        actionBar.setSubtitle(task.isAcrossApp() ? R.string.across_app_task : R.string.normal_task);
                     });
-                    actionBar.setTitle(task.isAcrossApp() ? R.string.across_app_task : R.string.normal_task);
+                    actionBar.setSubtitle(task.isAcrossApp() ? R.string.across_app_task : R.string.normal_task);
                 }
 
                 @Override
@@ -95,21 +93,13 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
 
         binding.statusGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
-                TaskType taskType = task.getType();
-                if (taskType == TaskType.IT_IS_TIME) timeCondition = (TimeCondition) task.getCondition();
-                else if (taskType == TaskType.NEW_NOTIFICATION) notificationCondition = (NotificationCondition) task.getCondition();
-
                 int index = group.indexOfChild(group.findViewById(checkedId));
-                taskType = TaskType.values()[index];
+                TaskType taskType = TaskType.values()[index];
                 task.setType(taskType);
-                if (taskType == TaskType.IT_IS_TIME) {
-                    task.setCondition(timeCondition);
-                    binding.dateText.setText(null);
-                } else if (taskType == TaskType.NEW_NOTIFICATION) {
-                    task.setCondition(notificationCondition);
-                    binding.dateText.setText(null);
-                } else task.setCondition(null);
                 TaskRepository.getInstance().saveTask(task);
+                if (actionBar != null) {
+                    actionBar.setTitle(task.getType().getTypeDescription(requireContext()));
+                }
                 refreshUI();
             }
         });
@@ -204,7 +194,8 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
 
             picker.addOnPositiveButtonClickListener(view -> {
                 condition.setPeriodic(picker.getHour() * 60 + picker.getMinute());
-                if (picker.getHour() == 0 && picker.getMinute() == 0) condition.setPeriodic(24 * 60);
+                if (picker.getHour() == 0 && picker.getMinute() == 0)
+                    condition.setPeriodic(24 * 60);
                 if (condition.getPeriodic() < 15) condition.setPeriodic(0);
                 task.setCondition(condition);
                 TaskRepository.getInstance().saveTask(task);
@@ -239,6 +230,11 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
                     .show();
         });
 
+        binding.appButton.setOnClickListener(v -> {
+            AppsView bottomSheet = new AppsView(task);
+            bottomSheet.show(requireActivity().getSupportFragmentManager(), null);
+        });
+
         return binding.getRoot();
     }
 
@@ -255,14 +251,15 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
     }
 
     public void refreshApps() {
-        binding.appIconBox.removeAllViews();
         Map<String, Drawable> drawables = new LinkedHashMap<>();
         viewModel.loadAppsIcon(drawables, task.getPkgNames(), result -> {
             if (result) {
                 binding.appIconBox.post(() -> {
+                    binding.appIconBox.removeAllViews();
                     for (Map.Entry<String, Drawable> entry : drawables.entrySet()) {
-                        ShapeableImageView imageView = (ShapeableImageView) LayoutInflater.from(requireContext()).inflate(R.layout.view_task_info_app, binding.appBox, true);
+                        ShapeableImageView imageView = (ShapeableImageView) LayoutInflater.from(requireContext()).inflate(R.layout.view_task_info_app, binding.appIconBox, false);
                         imageView.setImageDrawable(entry.getValue());
+                        binding.appIconBox.addView(imageView);
                     }
                 });
             }
@@ -294,6 +291,7 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
     public void onChanged(Task task) {
         if (adapter != null && task.getId().equals(this.task.getId())) {
             adapter.taskChanged(task);
+            refreshApps();
         }
     }
 
@@ -314,5 +312,9 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
     public void onDestroy() {
         super.onDestroy();
         TaskRepository.getInstance().removeCallback(this);
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setSubtitle(null);
+        }
     }
 }

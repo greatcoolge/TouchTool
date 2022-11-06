@@ -146,7 +146,8 @@ public class TouchAction extends Action {
 
     @Override
     public String getDescription(Context context, boolean normal) {
-        return context.getString(R.string.action_touch);
+        String touch = context.getString(getPathLen() > 1 ? R.string.slide : R.string.touch);
+        return context.getString(R.string.action_touch, touch);
     }
 
     @Override

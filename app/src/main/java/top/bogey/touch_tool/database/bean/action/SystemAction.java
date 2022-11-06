@@ -91,7 +91,7 @@ public class SystemAction extends Action {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeString(systemActionType.name());
+        dest.writeParcelable(systemActionType, flags);
         dest.writeString(extras);
     }
 

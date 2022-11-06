@@ -74,7 +74,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
             this.binding = binding;
             context = binding.getRoot().getContext();
 
-            adapter = new BehaviorRecyclerViewAdapter();
+            adapter = new BehaviorRecyclerViewAdapter(baseTask);
             binding.behaviorBox.setAdapter(adapter);
 
             binding.titleEdit.setOnEditorActionListener((v, actionId, event) -> {
@@ -127,7 +127,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
                 Behavior behavior = new Behavior();
                 new ActionFloatView(context, task, behavior, result -> {
                     task.addBehavior(behavior);
-                    TaskRepository.getInstance().saveTask(task);
+                    TaskRepository.getInstance().saveTask(baseTask);
                     adapter.notifyNew();
                 }).show();
             });
@@ -146,9 +146,10 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
         }
 
         public void refreshItem(Task task) {
+            int index = getBindingAdapterPosition();
             adapter.setTask(task);
             binding.titleEdit.setText(task.getTitle());
-            binding.getRoot().setCardBackgroundColor(DisplayUtils.getAttrColor(context, (!task.isAcrossAppTask()) ? com.google.android.material.R.attr.colorSurfaceVariant : com.google.android.material.R.attr.colorSecondaryContainer, 0));
+            binding.getRoot().setCardBackgroundColor(DisplayUtils.getAttrColor(context, (index == 0) ? com.google.android.material.R.attr.colorSecondaryContainer : com.google.android.material.R.attr.colorSurfaceVariant, 0));
         }
     }
 }
