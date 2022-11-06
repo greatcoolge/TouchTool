@@ -4,58 +4,52 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import java.util.List;
+
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.databinding.FloatPickerAppBinding;
 import top.bogey.touch_tool.ui.apps.AppInfo;
+import top.bogey.touch_tool.ui.apps.AppsRecyclerViewAdapter;
+import top.bogey.touch_tool.ui.apps.SelectAppCallback;
 import top.bogey.touch_tool.utils.DisplayUtils;
+import top.bogey.touch_tool.utils.TextChangedListener;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 @SuppressLint("ViewConstructor")
-public class AppPickerFloatView extends BasePickerFloatView {
+public class AppPickerFloatView extends BasePickerFloatView implements SelectAppCallback {
     private final FloatPickerAppBinding binding;
     private final MainViewModel viewModel;
-    private final AppPickerRecyclerViewAdapter adapter;
+    private final AppsRecyclerViewAdapter adapter;
     private String searchText = "";
-    private AppInfo selectApp =  null;
+    private AppInfo selectApp = null;
 
     public AppPickerFloatView(Context context, PickerCallback pickerCallback) {
         super(context, pickerCallback);
         binding = FloatPickerAppBinding.inflate(LayoutInflater.from(context), this, true);
         viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
-        adapter = new AppPickerRecyclerViewAdapter(this);
+        adapter = new AppsRecyclerViewAdapter(this);
         binding.appsView.setAdapter(adapter);
         refreshSpawnCount();
-        adapter.refreshApps(viewModel.searchAppList(searchText));
+        adapter.refreshApps(viewModel.searchAppList(searchText, false));
 
         binding.refreshButton.setOnClickListener(v -> {
             viewModel.showSystem.setValue(Boolean.FALSE.equals(viewModel.showSystem.getValue()));
             viewModel.refreshAppList();
-            adapter.refreshApps(viewModel.searchAppList(searchText));
+            adapter.refreshApps(viewModel.searchAppList(searchText, false));
         });
 
-        binding.titleEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
+        binding.titleEdit.addTextChangedListener(new TextChangedListener() {
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
-                adapter.refreshApps(viewModel.searchAppList(searchText));
+                adapter.refreshApps(viewModel.searchAppList(searchText, false));
             }
         });
     }
@@ -79,21 +73,24 @@ public class AppPickerFloatView extends BasePickerFloatView {
         refreshSpawnCount();
     }
 
-    private void refreshSpawnCount(){
+    private void refreshSpawnCount() {
         GridLayoutManager layoutManager = (GridLayoutManager) binding.appsView.getLayoutManager();
         if (layoutManager != null) {
-            if (!DisplayUtils.isPortrait(getContext()))layoutManager.setSpanCount(5);
+            if (!DisplayUtils.isPortrait(getContext())) layoutManager.setSpanCount(5);
             else layoutManager.setSpanCount(3);
         }
     }
 
-    public void setSelectApp(AppInfo info){
-        selectApp = info;
-        pickerCallback.onComplete(this);
-        dismiss();
+    public AppInfo getSelectApp() {
+        return selectApp;
     }
 
-    public AppInfo getSelectApp(){
-        return selectApp;
+    @Override
+    public void onSelectApps(List<AppInfo> apps) {
+        if (apps != null && apps.size() > 0){
+            selectApp = apps.get(0);
+            pickerCallback.onComplete(this);
+            dismiss();
+        }
     }
 }

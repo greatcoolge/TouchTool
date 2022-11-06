@@ -1,4 +1,5 @@
 <resources>
+
     <style name="Theme.TouchTool.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -6,7 +7,8 @@
         <item name="alphaBackgroundHint">#88000000</item>
         <item name="largeCornerRadius">24dp</item>
         <item name="mediumCornerRadius">16dp</item>
-        <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch</item>
+        <item name="materialSwitchStyle">@style/Widget.Material3.CompoundButton.MaterialSwitch
+        </item>
     </style>
 
     <style name="Theme.TouchTool" parent="Theme.TouchTool.Base">

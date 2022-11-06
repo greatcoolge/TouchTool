@@ -1,7 +1,9 @@
 package top.bogey.touch_tool.ui.tasks;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,29 +14,23 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
-import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTasksBinding;
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.TaskStatus;
-import top.bogey.touch_tool.room.data.TaskRepository;
-import top.bogey.touch_tool.ui.apps.AppInfo;
-import top.bogey.touch_tool.ui.record.QuickRecordFloatView;
-import top.bogey.touch_tool.ui.record.RecordFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
+import top.bogey.touch_tool.utils.TaskChangedCallback;
 
-public class TasksView extends Fragment {
-    private AppInfo appInfo = null;
+public class TasksView extends Fragment implements TaskChangedCallback {
 
     private ViewTasksBinding binding;
-    private MainViewModel viewModel;
+    private TasksRecyclerViewAdapter adapter;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -46,15 +42,15 @@ public class TasksView extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         binding = ViewTasksBinding.inflate(inflater, container, false);
 
-        Bundle arguments = getArguments();
-        if (arguments != null){
-            String pkgName = arguments.getString("pkgName");
-            appInfo = viewModel.getAppInfoByPkgName(pkgName);
-        }
+        binding.addButton.setOnClickListener(v -> {
+            Task task = new Task(requireContext());
+            TaskRepository.getInstance().saveTask(task);
+        });
+
+        adapter = new TasksRecyclerViewAdapter();
+        binding.tasksBox.setAdapter(adapter);
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -65,20 +61,30 @@ public class TasksView extends Fragment {
             @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                Task task = new Task();
-                task.setPkgName(appInfo.packageName);
-                task.setTitle(getString(R.string.task_title_default));
+                MainActivity activity = MainApplication.getActivity();
                 switch (menuItem.getItemId()) {
-                    case R.id.add_special:
-                        task.setAcrossApp(true);
-                    case R.id.add:
-                        TaskRepository.getInstance(getContext()).saveTask(task);
+                    case R.id.import_tasks:
+                        if (activity != null) {
+                            activity.launcherContent((code, intent) -> {
+                                if (code == Activity.RESULT_OK) {
+                                    Uri uri = intent.getData();
+                                    if (uri != null) {
+                                        activity.saveTasksByFile(uri);
+                                    }
+                                }
+                            });
+                        }
+                        return true;
+                    case R.id.export_tasks:
+                        if (activity != null) {
+
+                        }
+                        return true;
+                    case R.id.create_time:
+                        adapter.setSortType(ShotType.CREATE_TIME_ASC);
                         break;
-                    case R.id.record:
-                        new RecordFloatView(requireContext(), task, result -> TaskRepository.getInstance(getContext()).saveTask(task)).show();
-                        break;
-                    case R.id.record_smart:
-                        new QuickRecordFloatView(requireContext(), task, result -> TaskRepository.getInstance(getContext()).saveTask(task)).show();
+                    case R.id.modify_time:
+                        adapter.setSortType(ShotType.MODIFY_TIME_ASC);
                         break;
                     default:
                         return false;
@@ -87,86 +93,36 @@ public class TasksView extends Fragment {
             }
         }, getViewLifecycleOwner());
 
-        ActionBar actionBar = MainApplication.getActivity().getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(appInfo.appName);
-            actionBar.setSubtitle(appInfo.packageName);
-        }
-
-        TasksRecyclerViewAdapter adapter = new TasksRecyclerViewAdapter();
-        binding.tasksBox.setAdapter(adapter);
-        refreshSpawnCount();
-
-        TaskRepository.getInstance(getContext()).getTasksLiveByPackageName(appInfo.packageName).observe(getViewLifecycleOwner(), adapter::setTasks);
-
-        viewModel.copyTask.observe(getViewLifecycleOwner(), task -> {
-            if (task == null) {
-                binding.pasteButton.hide();
-                binding.pasteSpecialButton.hide();
-            }
-            else {
-                binding.pasteButton.show();
-                binding.pasteSpecialButton.show();
-            }
-        });
-
-        Task task = viewModel.getCopyTask();
-        if (task == null) {
-            binding.pasteButton.hide();
-            binding.pasteSpecialButton.hide();
-        }
-        else {
-            binding.pasteButton.show();
-            binding.pasteSpecialButton.show();
-        }
-
-        binding.pasteButton.setOnClickListener(v -> {
-            Task copyTask = viewModel.getCopyTask();
-            if (copyTask != null){
-                copyTask.setPkgName(appInfo.packageName);
-                if (copyTask.getStatus() == TaskStatus.TIME){
-                    if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
-                }
-                TaskRepository.getInstance(getContext()).saveTask(copyTask, true);
-            }
-            viewModel.setCopyTask(null);
-        });
-
-        binding.pasteSpecialButton.setOnClickListener(v -> {
-            Task copyTask = viewModel.getCopyTask();
-            if (copyTask != null){
-                copyTask.setPkgName(appInfo.packageName);
-                if (copyTask.getStatus() == TaskStatus.TIME){
-                    if (!appInfo.packageName.equals(getString(R.string.common_package_name))) copyTask.setStatus(TaskStatus.CLOSED);
-                }
-                copyTask.setAcrossApp(!copyTask.isAcrossApp());
-                TaskRepository.getInstance(getContext()).saveTask(copyTask, true);
-            }
-            viewModel.setCopyTask(null);
-        });
-
-        binding.pasteButton.setOnLongClickListener(v -> {
-            viewModel.setCopyTask(null);
-            return true;
-        });
-
         return binding.getRoot();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ActionBar actionBar = MainApplication.getActivity().getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setSubtitle(null);
+        TaskRepository.getInstance().removeCallback(this);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TaskRepository.getInstance().addCallback(this);
+    }
+
+    private void refreshSpawnCount() {
+        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) binding.tasksBox.getLayoutManager();
+        if (layoutManager != null) {
+            if (!DisplayUtils.isPortrait(requireContext())) layoutManager.setSpanCount(4);
+            else layoutManager.setSpanCount(2);
         }
     }
 
-    private void refreshSpawnCount(){
-        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) binding.tasksBox.getLayoutManager();
-        if (layoutManager != null) {
-            if (!DisplayUtils.isPortrait(requireContext()))layoutManager.setSpanCount(3);
-            else layoutManager.setSpanCount(2);
-        }
+    @Override
+    public void onChanged(Task task) {
+        if (adapter != null) adapter.onChanged(task);
+    }
+
+    @Override
+    public void onRemoved(Task task) {
+        if (adapter != null) adapter.onRemoved(task);
     }
 }

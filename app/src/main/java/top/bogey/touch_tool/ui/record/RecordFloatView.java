@@ -16,19 +16,17 @@ import com.tencent.mmkv.MMKV;
 import java.util.Collections;
 import java.util.List;
 
+import top.bogey.touch_tool.database.bean.Behavior;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.action.Action;
+import top.bogey.touch_tool.database.bean.action.ColorAction;
+import top.bogey.touch_tool.database.bean.action.DelayAction;
+import top.bogey.touch_tool.database.bean.action.ImageAction;
+import top.bogey.touch_tool.database.bean.action.SystemAction;
+import top.bogey.touch_tool.database.bean.action.TaskAction;
+import top.bogey.touch_tool.database.bean.action.TextAction;
+import top.bogey.touch_tool.database.bean.action.TouchAction;
 import top.bogey.touch_tool.databinding.FloatRecordBinding;
-import top.bogey.touch_tool.room.bean.Action;
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.node.ColorNode;
-import top.bogey.touch_tool.room.bean.node.DelayNode;
-import top.bogey.touch_tool.room.bean.node.ImageNode;
-import top.bogey.touch_tool.room.bean.node.KeyNode;
-import top.bogey.touch_tool.room.bean.node.Node;
-import top.bogey.touch_tool.room.bean.node.TaskNode;
-import top.bogey.touch_tool.room.bean.node.TextNode;
-import top.bogey.touch_tool.room.bean.node.TimeArea;
-import top.bogey.touch_tool.room.bean.node.TouchNode;
-import top.bogey.touch_tool.ui.actions.ActionFloatView;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
 import top.bogey.touch_tool.utils.ResultCallback;
@@ -66,15 +64,15 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
             ViewParent parent = getParent();
-            if (parent != null){
-                switch (event.getAction()){
+            if (parent != null) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         lastX = event.getX();
                         parent.requestDisallowInterceptTouchEvent(true);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         checkPosition(binding.recyclerView, event.getX());
-                        if (isToRight || isToLeft){
+                        if (isToRight || isToLeft) {
                             parent.requestDisallowInterceptTouchEvent(false);
                             return false;
                         } else {
@@ -92,31 +90,31 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         });
 
         binding.saveButton.setOnClickListener(v -> {
-            if (!adapter.actions.isEmpty()){
-                task.setActions(adapter.actions);
+            if (!adapter.behaviors.isEmpty()) {
+                task.setBehaviors(adapter.behaviors);
                 if (callback != null) callback.onResult(true);
             }
             dismiss();
         });
 
-        binding.delayButton.setOnClickListener(v -> addAction(new DelayNode(new TimeArea(1000, 1000))));
-        binding.wordButton.setOnClickListener(v -> addAction(new TextNode("")));
-        binding.imageButton.setOnClickListener(v -> addAction(new ImageNode(new ImageNode.ImageInfo(95))));
-        binding.posButton.setOnClickListener(v -> addAction(new TouchNode(new TouchNode.TouchPath(context))));
-        binding.colorButton.setOnClickListener(v -> addAction(new ColorNode(new ColorNode.ColorInfo(context))));
-        binding.keyButton.setOnClickListener(v -> addAction(new KeyNode(KeyNode.KeyType.BACK)));
-        binding.taskButton.setOnClickListener(v -> addAction(new TaskNode(null)));
+        binding.delayButton.setOnClickListener(v -> addAction(new DelayAction(1000)));
+        binding.wordButton.setOnClickListener(v -> addAction(new TextAction()));
+        binding.imageButton.setOnClickListener(v -> addAction(new ImageAction()));
+        binding.posButton.setOnClickListener(v -> addAction(new TouchAction()));
+        binding.colorButton.setOnClickListener(v -> addAction(new ColorAction()));
+        binding.keyButton.setOnClickListener(v -> addAction(new SystemAction()));
+        binding.taskButton.setOnClickListener(v -> addAction(new TaskAction()));
 
     }
 
     @Override
     public void show() {
-        List<Action> actions = task.getActions();
+        List<Behavior> behaviors = task.getBehaviors();
         EasyFloat.with(getContext())
                 .setLayout(this)
                 .setTag(RecordFloatView.class.getCanonicalName())
                 .setDragEnable(true)
-                .setGravity(FloatGravity.BOTTOM_CENTER, 0, (actions != null && !actions.isEmpty()) ? 0 : -DisplayUtils.dp2px(getContext(), 40))
+                .setGravity(FloatGravity.BOTTOM_CENTER, 0, (behaviors != null && !behaviors.isEmpty()) ? 0 : -DisplayUtils.dp2px(getContext(), 40))
                 .setCallback(new FloatBaseCallback())
                 .show();
     }
@@ -126,36 +124,27 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         EasyFloat.dismiss(RecordFloatView.class.getCanonicalName());
     }
 
-    private void addAction(Node node){
-        Action action = new Action();
-        action.setTargets(Collections.singletonList(node));
-        new ActionFloatView(getContext(), task, action, result -> {
-            adapter.addAction(action);
-            if (delay > 0){
-                Action delayAction = new Action();
-                delayAction.setTargets(Collections.singletonList(new DelayNode(new TimeArea(delay))));
-                adapter.addAction(delayAction);
-            }
-            binding.recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-        }).show();
+    private void addAction(Action action) {
+        Behavior behavior = new Behavior();
+        behavior.setActions(Collections.singletonList(action));
     }
 
-    private void checkPosition(RecyclerView view, float nowX){
-        LinearLayoutManager layoutManager = (LinearLayoutManager)view.getLayoutManager();
-        if (layoutManager != null){
-            if (layoutManager.getItemCount() > 6){
+    private void checkPosition(RecyclerView view, float nowX) {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) view.getLayoutManager();
+        if (layoutManager != null) {
+            if (layoutManager.getItemCount() > 6) {
                 isToLeft = false;
                 isToRight = false;
                 int first = layoutManager.findFirstCompletelyVisibleItemPosition();
                 int last = layoutManager.findLastCompletelyVisibleItemPosition();
 
-                if (layoutManager.getChildCount() > 0){
-                    if (last == layoutManager.getItemCount() - 1){
-                        if (canScrollHorizontally(-1) && nowX < lastX){
+                if (layoutManager.getChildCount() > 0) {
+                    if (last == layoutManager.getItemCount() - 1) {
+                        if (canScrollHorizontally(-1) && nowX < lastX) {
                             isToRight = true;
                         }
-                    } else if (first == 0){
-                        if (canScrollHorizontally(1) && nowX > lastX){
+                    } else if (first == 0) {
+                        if (canScrollHorizontally(1) && nowX > lastX) {
                             isToLeft = true;
                         }
                     }

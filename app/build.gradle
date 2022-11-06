@@ -10,8 +10,8 @@ android {
         applicationId "top.bogey.touch_tool"
         minSdk 24
         targetSdk 33
-        versionCode 12
-        versionName "1.4.0"
+        versionCode 13
+        versionName "1.4.1"
 
         externalNativeBuild {
             cmake {
@@ -34,9 +34,18 @@ android {
         }
         debug {
             applicationIdSuffix '.debug'
-            resValue "string", "app_name", "@string/app_name_debug"
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (variant.buildType.name == "release"){
+                def time = new Date().format("yyyy-MM-dd-01", TimeZone.getDefault())
+                outputFileName = "点击助手_" + time + ".apk"
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -58,15 +67,12 @@ dependencies {
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment:2.5.2'
-    implementation 'androidx.navigation:navigation-ui:2.5.2'
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'
+    implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.work:work-runtime:2.7.1'
 
-    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation 'com.google.code.gson:gson:2.10'
     implementation 'io.github.amrdeveloper:treeview:1.1.0'
     implementation 'com.tencent:mmkv:1.2.14'
-
-    implementation 'androidx.room:room-runtime:2.4.3'
-    annotationProcessor 'androidx.room:room-compiler:2.4.3'
 }

@@ -36,7 +36,7 @@ public class DelayActionItemView extends FrameLayout {
         init();
     }
 
-    private void init(){
+    private void init() {
         binding = FloatActionDelayBinding.inflate(LayoutInflater.from(getContext()), this, true);
         binding.lockButton.setOnClickListener(view -> {
             isLock = !isLock;
@@ -58,7 +58,7 @@ public class DelayActionItemView extends FrameLayout {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (isLock){
+                if (isLock) {
                     binding.timeMax.setText(editable);
                 }
                 if (watcher != null) watcher.afterTextChanged(true, editable);
@@ -83,11 +83,11 @@ public class DelayActionItemView extends FrameLayout {
         });
     }
 
-    public void setTextWatcher(DelayTextWatcher watcher){
+    public void setTextWatcher(DelayTextWatcher watcher) {
         this.watcher = watcher;
     }
 
-    public void setValue(int min, int max){
+    public void setValue(int min, int max) {
         isLock = min == max;
         binding.lockButton.setIconResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
         binding.timeMax.setEnabled(!isLock);
@@ -100,7 +100,7 @@ public class DelayActionItemView extends FrameLayout {
         return super.drawChild(canvas, child, drawingTime);
     }
 
-    public interface DelayTextWatcher{
+    public interface DelayTextWatcher {
         void afterTextChanged(boolean isMin, Editable editable);
     }
 }

@@ -16,72 +16,29 @@
     public static int d(...);
 }
 
--keepclassmembers class top.bogey.touch_tool.room.bean.Task{
-    private java.lang.String id;
-    private java.lang.String pkgName;
-    private java.lang.String title;
-    private java.util.List actions;
-    private top.bogey.touch_tool.room.bean.TaskStatus status;
-    private long time;
-    private int periodic;
-    private boolean acrossApp;
+-keepclassmembers class top.bogey.touch_tool.database.bean.Task{
 }
 
--keepclassmembers class top.bogey.touch_tool.room.bean.Action{
-    private top.bogey.touch_tool.room.bean.ActionMode actionMode;
+-keepclassmembers class top.bogey.touch_tool.database.bean.Behavior{
+    private top.bogey.touch_tool.database.bean.BehaviorMode behaviorMode;
     private boolean enable;
-    private java.util.List targets;
-    private top.bogey.touch_tool.room.bean.node.Node condition;
+    private java.util.List actions;
+    private top.bogey.touch_tool.database.bean.action.Action condition;
     private int times;
     private java.lang.String title;
 }
 
--keepclassmembers class top.bogey.touch_tool.room.bean.node.Node{
-    protected top.bogey.touch_tool.room.bean.node.NodeType type;
-    protected top.bogey.touch_tool.room.bean.node.TimeArea timeArea;
-    protected java.lang.Object value;
+-keepclassmembers class top.bogey.touch_tool.database.bean.action.Action{
+    protected top.bogey.touch_tool.database.bean.action.ActionType type;
+    protected top.bogey.touch_tool.database.bean.action.TimeArea timeArea;
 }
-
--keepclassmembers class top.bogey.touch_tool.room.bean.node.TaskNode$TaskInfo{
-    private java.lang.String id;
-    private java.lang.String title;
-}
-
--keepclassmembers class top.bogey.touch_tool.room.bean.node.ImageNode$ImageInfo{
-    private java.lang.String image;
-    private int value;
-    private int screen;
-}
-
--keepclassmembers class top.bogey.touch_tool.room.bean.node.TouchNode$TouchPath{
-    private java.util.List path;
-    private top.bogey.touch_tool.utils.easy_float.FloatGravity gravity;
-    private android.graphics.Point offset;
-    private int screen;
-    private boolean touchOffset;
-}
-
--keepclassmembers class top.bogey.touch_tool.room.bean.node.ColorNode$ColorInfo{
-    private int[] color;
-    private int minPercent;
-    private int maxPercent;
-    private int size;
-    private int screen;
-}
-
--keepclassmembers class top.bogey.touch_tool.room.bean.node.KeyNode$KeyTask{
-    private top.bogey.touch_tool.room.bean.node.KeyNode$KeyType keyType;
-    private java.lang.String extras;
-}
-
--keep enum top.bogey.touch_tool.room.bean.node.KeyNode$KeyType{*;}
 
 -keepclassmembers class android.graphics.Point{
     public int x;
     public int y;
 }
 
--keepclassmembers class top.bogey.touch_tool.room.bean.node.TimeArea{
+-keepclassmembers class top.bogey.touch_tool.database.bean.action.TimeArea{
     private int min;
     private int max;
 }

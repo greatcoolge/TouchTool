@@ -49,31 +49,32 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
         return new ViewHolder(FloatPickerWordItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
-    public void setRoot(AccessibilityNodeInfo root){
+    public void setRoot(AccessibilityNodeInfo root) {
         TreeNode tree = createTree(root, 0);
         ArrayList<TreeNode> treeNodes = new ArrayList<>(Collections.singleton(tree));
         updateTreeNodes(treeNodes);
     }
 
-    public void setSelectedNode(TreeNode node){
+    public void setSelectedNode(TreeNode node) {
         selectedNode = node;
     }
 
-    private TreeNode createTree(AccessibilityNodeInfo root, int level){
+    private TreeNode createTree(AccessibilityNodeInfo root, int level) {
         TreeNode node = new TreeNode(root, R.layout.float_picker_word_item);
         node.setLevel(level);
         for (int i = 0; i < root.getChildCount(); i++) {
             AccessibilityNodeInfo child = root.getChild(i);
-            if (child != null){
+            if (child != null) {
                 node.addChild(createTree(child, level + 1));
             }
         }
         return node;
     }
 
-    protected static class ViewHolder extends TreeViewHolder{
+    protected static class ViewHolder extends TreeViewHolder {
         private final FloatPickerWordItemBinding binding;
         private final Context context;
+
         public ViewHolder(@NonNull FloatPickerWordItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
@@ -82,16 +83,16 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
 
         @Override
         public void bindTreeNode(TreeNode node) {
-            int padding = node.getLevel() * DisplayUtils.dp2px(context, 4);
+            int padding = node.getLevel() * DisplayUtils.dp2px(context, 8);
             binding.contentBox.setPaddingRelative(padding, 0, 0, 0);
         }
 
-        public void refreshItem(TreeNode node, TreeNode selectedNode){
+        public void refreshItem(TreeNode node, TreeNode selectedNode) {
             AccessibilityNodeInfo value = (AccessibilityNodeInfo) node.getValue();
             binding.titleText.setText(getNodeTitle(value));
 
             int color;
-            if (value.isClickable()){
+            if (value.isClickable()) {
                 color = DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorPrimary, 0);
             } else {
                 color = DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorOnSurface, 0);
@@ -102,22 +103,22 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
             binding.imageView.setVisibility(node.getChildren().size() > 0 ? View.VISIBLE : View.INVISIBLE);
             binding.imageView.setImageResource(node.isExpanded() ? R.drawable.icon_up : R.drawable.icon_down);
 
-            if (node.equals(selectedNode)){
+            if (node.equals(selectedNode)) {
                 binding.titleText.setTextColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorError, 0));
             }
         }
 
-        private String getNodeTitle(AccessibilityNodeInfo node){
+        private String getNodeTitle(AccessibilityNodeInfo node) {
             StringBuilder builder = new StringBuilder();
             builder.append(node.getClassName());
             CharSequence text = node.getText();
-            if (text != null && text.length() > 0){
+            if (text != null && text.length() > 0) {
                 builder.append(" | ");
                 builder.append(text);
             }
 
             String resourceName = node.getViewIdResourceName();
-            if (resourceName != null && !resourceName.isEmpty()){
+            if (resourceName != null && !resourceName.isEmpty()) {
                 String[] split = resourceName.split(":");
                 builder.append(" [ ");
                 builder.append(split[1]);

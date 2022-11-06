@@ -12,43 +12,43 @@ import java.util.regex.Pattern;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.database.data.TaskRunnable;
 import top.bogey.touch_tool.databinding.FloatOverseeItemBinding;
-import top.bogey.touch_tool.room.data.TaskCallable;
 
 @SuppressLint("ViewConstructor")
 public class OverSeeFloatViewItem extends FrameLayout {
     private final FloatOverseeItemBinding binding;
 
-    public OverSeeFloatViewItem(@NonNull Context context, TaskCallable taskCallable) {
+    public OverSeeFloatViewItem(@NonNull Context context, TaskRunnable taskRunnable) {
         super(context);
 
         binding = FloatOverseeItemBinding.inflate(LayoutInflater.from(context), this, true);
 
-        binding.percent.setText(getPivotalTitle(taskCallable.getTask().getTitle()));
+        binding.percent.setText(getPivotalTitle(taskRunnable.getTask().getTitle()));
 
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null){
-                service.stopTask(taskCallable, true);
+            if (service != null) {
+                service.stopTask(taskRunnable, true);
                 refreshProgress(0);
             }
         });
 
-        refreshProgress(taskCallable.getTaskProgress());
+        refreshProgress(taskRunnable.getTaskPercent());
     }
 
-    private String getPivotalTitle(String title){
+    private String getPivotalTitle(String title) {
         if (title == null || title.isEmpty()) return "?";
         Pattern pattern = Pattern.compile("[\"|“](.*)[\"|”]");
         Matcher matcher = pattern.matcher(title);
-        if (matcher.find()){
+        if (matcher.find()) {
             String group = matcher.group(1);
             if (group != null) return group.substring(0, 1);
         }
         return title.substring(0, 1);
     }
 
-    public void refreshProgress(int percent){
+    public void refreshProgress(int percent) {
         post(() -> binding.playButton.setProgress(percent, percent != 0));
     }
 

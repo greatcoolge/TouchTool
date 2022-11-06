@@ -10,19 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.action.Action;
 import top.bogey.touch_tool.databinding.FloatRecordItemBinding;
-import top.bogey.touch_tool.room.bean.Action;
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.node.Node;
-import top.bogey.touch_tool.ui.actions.ActionFloatView;
 
 public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecyclerViewAdapter.ViewHolder> {
     private final Task task;
-    public final List<Action> actions = new ArrayList<>();
+    public final List<Behavior> behaviors = new ArrayList<>();
 
-    public RecordRecyclerViewAdapter(Task task){
+    public RecordRecyclerViewAdapter(Task task) {
         this.task = task;
-        if (task.getActions() != null) actions.addAll(task.getActions());
+        if (task.getBehaviors() != null) behaviors.addAll(task.getBehaviors());
     }
 
     @NonNull
@@ -33,26 +32,26 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        Action action = actions.get(position);
-        Node target = action.getTargets().get(0);
-        switch (target.getType()){
+        Behavior behavior = behaviors.get(position);
+        Action target = behavior.getActions().get(0);
+        switch (target.getType()) {
             case DELAY:
-                holder.binding.deleteButton.setIconResource(R.drawable.icon_delay);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_action_delay);
                 break;
             case TEXT:
-                holder.binding.deleteButton.setIconResource(R.drawable.icon_text);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_action_text);
                 break;
             case IMAGE:
-                holder.binding.deleteButton.setIconResource(R.drawable.icon_image);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_action_image);
                 break;
             case TOUCH:
-                holder.binding.deleteButton.setIconResource(R.drawable.icon_touch);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_action_touch);
                 break;
             case COLOR:
-                holder.binding.deleteButton.setIconResource(R.drawable.icon_color);
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_action_color);
                 break;
-            case KEY:
-                holder.binding.deleteButton.setIconResource(R.drawable.icon_key);
+            case SYSTEM:
+                holder.binding.deleteButton.setIconResource(R.drawable.icon_action_system);
                 break;
             case TASK:
                 holder.binding.deleteButton.setIconResource(R.drawable.icon_task);
@@ -63,12 +62,12 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
 
     @Override
     public int getItemCount() {
-        return actions.size();
+        return behaviors.size();
     }
 
-    public void addAction(@NonNull Action action){
-        actions.add(action);
-        notifyItemInserted(actions.size() - 1);
+    public void addAction(@NonNull Behavior behavior) {
+        behaviors.add(behavior);
+        notifyItemInserted(behaviors.size() - 1);
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
@@ -80,13 +79,12 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
 
             binding.deleteButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
-                Action action = actions.get(index);
-                new ActionFloatView(itemView.getContext(), task, action, result -> notifyItemChanged(index)).show();
+                Behavior behavior = behaviors.get(index);
             });
 
             binding.deleteButton.setOnLongClickListener(v -> {
                 int index = getBindingAdapterPosition();
-                actions.remove(index);
+                behaviors.remove(index);
                 notifyDataSetChanged();
                 return true;
             });

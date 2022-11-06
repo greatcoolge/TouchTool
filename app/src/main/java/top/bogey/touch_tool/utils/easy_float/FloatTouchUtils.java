@@ -28,11 +28,11 @@ class FloatTouchUtils {
         this.config = config;
     }
 
-    void updateFloatPosition(View view, MotionEvent event, WindowManager manager, LayoutParams params){
-        if (config.callback != null){
+    void updateFloatPosition(View view, MotionEvent event, WindowManager manager, LayoutParams params) {
+        if (config.callback != null) {
             config.callback.onTouch(event);
         }
-        if (!config.dragEnable || config.isAnim){
+        if (!config.dragEnable || config.isAnim) {
             config.isDrag = false;
             return;
         }
@@ -40,7 +40,7 @@ class FloatTouchUtils {
         float touchX = event.getRawX();
         float touchY = event.getRawY();
 
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 config.isDrag = false;
                 initValue(view, params);
@@ -50,7 +50,7 @@ class FloatTouchUtils {
             case MotionEvent.ACTION_MOVE:
                 // 边界范围外的触摸被忽略
                 if (touchX < config.leftBorder + showRect.left || touchX > showRect.right - config.rightBorder
-                || touchY - statusBarHeight < config.topBorder + showRect.top || touchY - statusBarHeight > showRect.bottom - config.bottomBorder) return;
+                        || touchY - statusBarHeight < config.topBorder + showRect.top || touchY - statusBarHeight > showRect.bottom - config.bottomBorder) return;
 
                 float dx = touchX - lastX;
                 float dy = touchY - lastY;
@@ -70,7 +70,7 @@ class FloatTouchUtils {
                 params.y = y;
                 manager.updateViewLayout(view, params);
 
-                if (config.callback != null){
+                if (config.callback != null) {
                     config.callback.onDrag(event);
                 }
                 lastX = touchX;
@@ -80,10 +80,10 @@ class FloatTouchUtils {
             case MotionEvent.ACTION_CANCEL:
                 if (!config.isDrag) return;
                 config.isDrag = false;
-                if (config.callback != null){
+                if (config.callback != null) {
                     config.callback.onDrag(event);
                 }
-                if (config.side == SidePattern.DEFAULT){
+                if (config.side == SidePattern.DEFAULT) {
                     dragEnd();
                 } else {
                     sideAnim(view, manager, params);
@@ -91,13 +91,13 @@ class FloatTouchUtils {
         }
     }
 
-    private void initValue(View view, LayoutParams params){
+    private void initValue(View view, LayoutParams params) {
         showRect = DisplayUtils.getScreenArea(context);
         statusBarHeight = DisplayUtils.getStatusBarHeight(view, params);
         showRect.bottom -= statusBarHeight;
     }
 
-    private void sideAnim(View view, WindowManager manager, LayoutParams params){
+    private void sideAnim(View view, WindowManager manager, LayoutParams params) {
         int leftDistance = params.x - config.leftBorder - showRect.left;
         int rightDistance = showRect.right - config.rightBorder - params.x - view.getWidth();
         int topDistance = params.y - config.topBorder - showRect.top;
@@ -105,7 +105,7 @@ class FloatTouchUtils {
 
         boolean isX = true;
         int end = 0;
-        switch (config.side){
+        switch (config.side) {
             case LEFT:
                 end = config.leftBorder + showRect.left;
                 break;
@@ -130,7 +130,7 @@ class FloatTouchUtils {
             case SIDE:
                 int minX = Math.min(leftDistance, rightDistance);
                 int minY = Math.min(topDistance, bottomDistance);
-                if (minX > minY){
+                if (minX > minY) {
                     isX = false;
                     end = topDistance < bottomDistance ? config.topBorder + showRect.top : showRect.bottom - config.bottomBorder - view.getHeight();
                 } else {
@@ -141,10 +141,11 @@ class FloatTouchUtils {
         ValueAnimator animator = ValueAnimator.ofInt(isX ? params.x : params.y, end);
         boolean finalIsX = isX;
         animator.addUpdateListener(animation -> {
-            try{
-                if (finalIsX) params.x = (int) animation.getAnimatedValue(); else params.y = (int) animation.getAnimatedValue();
+            try {
+                if (finalIsX) params.x = (int) animation.getAnimatedValue();
+                else params.y = (int) animation.getAnimatedValue();
                 manager.updateViewLayout(view, params);
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
                 animation.cancel();
             }
         });
@@ -169,8 +170,8 @@ class FloatTouchUtils {
         animator.start();
     }
 
-    private void dragEnd(){
-        if (config.callback != null){
+    private void dragEnd() {
+        if (config.callback != null) {
             config.callback.onDragEnd();
         }
     }

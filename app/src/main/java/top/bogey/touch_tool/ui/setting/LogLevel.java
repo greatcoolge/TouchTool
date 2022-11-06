@@ -9,7 +9,7 @@ public enum LogLevel {
     MIDDLE,
     HIGH;
 
-    public int getLevelColor(Context context){
+    public int getLevelColor(Context context) {
         int color = 0;
         switch (this) {
             case LOW:

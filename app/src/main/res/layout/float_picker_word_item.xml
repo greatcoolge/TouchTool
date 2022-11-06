@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="?attr/materialCardViewFilledStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="1dp"
-    android:layout_marginTop="0dp"
-    android:layout_marginBottom="2dp"
-    style="?attr/materialCardViewElevatedStyle">
+    android:layout_marginBottom="2dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/content_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTintMode="multiply">
+        android:padding="4dp">
 
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/icon_down"
             app:tint="?attr/colorPrimary" />
 
@@ -30,16 +23,12 @@
             android:id="@+id/title_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:ellipsize="end"
-            android:lines="1"
-            android:textSize="9sp"
-            android:textColor="?attr/colorError"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/image_view"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:maxLines="2"
+            android:textSize="9sp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

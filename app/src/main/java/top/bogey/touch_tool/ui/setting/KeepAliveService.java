@@ -38,12 +38,12 @@ public class KeepAliveService extends Service {
         MainApplication.setAliveService(null);
     }
 
-    private void createNotification(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private void createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             NotificationChannel runningChannel = notificationManager.getNotificationChannel(RUNNING_CHANNEL_ID);
-            if (runningChannel == null){
+            if (runningChannel == null) {
                 runningChannel = new NotificationChannel(RUNNING_CHANNEL_ID, getString(R.string.capture_service_running_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
                 runningChannel.setDescription(getString(R.string.capture_service_running_channel_tips));
                 notificationManager.createNotificationChannel(runningChannel);

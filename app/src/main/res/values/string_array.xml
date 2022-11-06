@@ -1,24 +1,24 @@
 <resources>
 
-    <string-array name="node_type">
+    <string-array name="action_type">
         <item>无</item>
         <item>次数</item>
         <item>延迟</item>
         <item>文本</item>
-        <item>图片</item>
         <item>手势</item>
+        <item>图片</item>
+        <item>颜色</item>
         <item>功能</item>
         <item>任务</item>
-        <item>颜色</item>
     </string-array>
 
-    <string-array name="node_condition">
+    <string-array name="condition_type">
         <item>无</item>
-        <item>完成数</item>
+        <item>达成数</item>
         <item />
         <item>出现文本</item>
-        <item>出现图片</item>
         <item />
+        <item>出现图片</item>
         <item />
         <item />
         <item />

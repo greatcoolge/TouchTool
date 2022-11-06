@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.action.TouchAction;
 import top.bogey.touch_tool.databinding.FloatPickerPosBinding;
-import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.DouglasPeucker;
 import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
 @SuppressLint("ViewConstructor")
-public class TouchPickerFloatView extends BasePickerFloatView{
+public class TouchPickerFloatView extends BasePickerFloatView {
     private final List<Point> points = new ArrayList<>();
     private FloatGravity gravity = FloatGravity.TOP_LEFT;
 
@@ -43,13 +43,13 @@ public class TouchPickerFloatView extends BasePickerFloatView{
     private final int padding;
     private boolean isInit = true;
 
-    public TouchPickerFloatView(@NonNull Context context, PickerCallback pickerCallback, TouchNode.TouchPath path) {
+    public TouchPickerFloatView(@NonNull Context context, PickerCallback pickerCallback, TouchAction touchAction) {
         super(context, pickerCallback);
 
         binding = FloatPickerPosBinding.inflate(LayoutInflater.from(context), this, true);
 
-        if (path != null) {
-            points.addAll(path.getPoints(context));
+        if (touchAction != null) {
+            points.addAll(touchAction.getPoints(context));
             currPoints.addAll(points);
         }
         isMarked = points.size() > 0;
@@ -75,7 +75,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
 
         padding = DisplayUtils.dp2px(context, 20);
 
-        refreshGravityButton(path == null ? FloatGravity.TOP_LEFT : path.getGravity());
+        refreshGravityButton(touchAction == null ? FloatGravity.TOP_LEFT : touchAction.getGravity());
     }
 
     @SuppressLint("DrawAllocation")
@@ -91,7 +91,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
 
-        if (currPoints.size() >= 2){
+        if (currPoints.size() >= 2) {
             Path path = new Path();
             for (Point point : currPoints) {
                 if (path.isEmpty()) path.moveTo(point.x - location[0], point.y - location[1]);
@@ -106,11 +106,11 @@ public class TouchPickerFloatView extends BasePickerFloatView{
         }
     }
 
-    public TouchNode.TouchPath getPath() {
-        return new TouchNode.TouchPath(getGravityPoints(), gravity, getGravityPoint(), DisplayUtils.getScreen(getContext()), true);
+    public TouchAction getTouchAction() {
+        return new TouchAction(getContext(), gravity, getGravityPoint(), getGravityPoints());
     }
 
-    private Point getGravityPoint(){
+    private Point getGravityPoint() {
         Point size = DisplayUtils.getScreenSize(getContext());
         switch (gravity) {
             case TOP_LEFT:
@@ -125,7 +125,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
         return new Point(0, 0);
     }
 
-    private Point getScreenGravityPoint(){
+    private Point getScreenGravityPoint() {
         switch (gravity) {
             case TOP_LEFT:
                 return new Point(realArea.left, realArea.top);
@@ -139,7 +139,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
         return new Point();
     }
 
-    private List<Point> getGravityPoints(){
+    private List<Point> getGravityPoints() {
         Point gravityPoint = getScreenGravityPoint();
 
         List<Point> pointList = new ArrayList<>();
@@ -154,20 +154,20 @@ public class TouchPickerFloatView extends BasePickerFloatView{
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getRawX();
         float y = event.getRawY();
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = x;
                 lastY = y;
                 boolean flag = true;
-                if (isMarked){
+                if (isMarked) {
                     int[] location = new int[2];
                     binding.markBox.getLocationOnScreen(location);
                     Rect rect = new Rect(location[0], location[1], location[0] + binding.markBox.getWidth(), location[1] + binding.markBox.getHeight());
-                    if (rect.contains((int) x, (int) y)){
+                    if (rect.contains((int) x, (int) y)) {
                         flag = false;
                     }
                 }
-                if (flag){
+                if (flag) {
                     isMarked = false;
                     currPoints.clear();
                     currPoints.add(new Point((int) x, (int) y));
@@ -176,7 +176,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
             case MotionEvent.ACTION_MOVE:
                 float dx = x - lastX;
                 float dy = y - lastY;
-                if (isMarked){
+                if (isMarked) {
                     for (Point currPoint : currPoints) {
                         currPoint.set((int) (currPoint.x + dx), (int) (currPoint.y + dy));
                     }
@@ -187,8 +187,8 @@ public class TouchPickerFloatView extends BasePickerFloatView{
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (isMarked){
-                    if (points.size() != currPoints.size()){
+                if (isMarked) {
+                    if (points.size() != currPoints.size()) {
                         points.clear();
                         points.addAll(DouglasPeucker.compress(currPoints));
                     } else {
@@ -205,7 +205,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
         return true;
     }
 
-    private void refreshUI(){
+    private void refreshUI() {
         realArea = DisplayUtils.calculatePointArea(currPoints);
 
         Rect markArea = new Rect(realArea);
@@ -218,7 +218,7 @@ public class TouchPickerFloatView extends BasePickerFloatView{
 
         binding.markBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
         binding.buttonBox.setVisibility(isMarked ? VISIBLE : INVISIBLE);
-        if (isMarked){
+        if (isMarked) {
             ViewGroup.LayoutParams params = binding.markBox.getLayoutParams();
             params.width = markArea.width() + 2 * padding;
             params.height = markArea.height() + 2 * padding;
@@ -232,20 +232,20 @@ public class TouchPickerFloatView extends BasePickerFloatView{
             binding.bottomRightButton.setX(params.width - binding.bottomRightButton.getWidth());
             binding.bottomRightButton.setY(params.height - binding.bottomRightButton.getHeight());
 
-            binding.buttonBox.setX(markArea.left + ((float) markArea.width() - binding.buttonBox.getWidth()) / 2  - location[0]);
-            if (markArea.bottom + padding * 2 + binding.buttonBox.getHeight() > binding.getRoot().getHeight()){
+            binding.buttonBox.setX(markArea.left + ((float) markArea.width() - binding.buttonBox.getWidth()) / 2 - location[0]);
+            if (markArea.bottom + padding * 2 + binding.buttonBox.getHeight() > binding.getRoot().getHeight()) {
                 binding.buttonBox.setY(markArea.top - padding * 2 - binding.buttonBox.getHeight() - location[1]);
             } else {
                 binding.buttonBox.setY(markArea.bottom + padding * 2 - location[1]);
             }
         }
         postInvalidate();
-        if (binding.topRightButton.getWidth() == 0){
+        if (binding.topRightButton.getWidth() == 0) {
             post(this::refreshUI);
         }
     }
 
-    private void refreshGravityButton(FloatGravity gravity){
+    private void refreshGravityButton(FloatGravity gravity) {
         this.gravity = gravity;
         binding.topLeftButton.setIconResource(R.drawable.icon_radio_checked);
         binding.topRightButton.setIconResource(R.drawable.icon_radio_checked);

@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class TouchPathView extends View {
@@ -40,7 +39,7 @@ public class TouchPathView extends View {
         init();
     }
 
-    private void init(){
+    private void init() {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(DisplayUtils.getAttrColor(getContext(), com.google.android.material.R.attr.colorPrimary, 0));
         paint.setStrokeWidth(lineWidth);
@@ -63,7 +62,7 @@ public class TouchPathView extends View {
 
         formatPoints(points);
 
-        if (showPoints.size() >= 2){
+        if (showPoints.size() >= 2) {
             Path path = new Path();
             for (Point point : showPoints) {
                 if (path.isEmpty()) path.moveTo(point.x, point.y);
@@ -78,24 +77,24 @@ public class TouchPathView extends View {
         }
     }
 
-    public void setPath(TouchNode.TouchPath path){
+    public void setPath(List<Point> path) {
         points.clear();
-        points.addAll(path.getPoints());
+        if (path != null) points.addAll(path);
         postInvalidate();
     }
 
-    public void formatPoints(List<Point> points){
+    public void formatPoints(List<Point> points) {
         Rect area = DisplayUtils.calculatePointArea(points);
 
         float xScale, yScale, xOffset, yOffset;
 
-        if (area.width() == 0){
+        if (area.width() == 0) {
             xScale = 1;
         } else {
             xScale = size.x * 1f / area.width();
         }
 
-        if (area.height() == 0){
+        if (area.height() == 0) {
             yScale = 1;
         } else {
             yScale = size.y * 1f / area.height();

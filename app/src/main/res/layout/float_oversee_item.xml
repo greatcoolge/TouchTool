@@ -15,19 +15,15 @@
         app:indicatorColor="?attr/colorSurface"
         app:indicatorInset="0dp"
         app:indicatorSize="32dp"
-        app:trackThickness="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:trackCornerRadius="2dp" />
+        app:trackCornerRadius="2dp"
+        app:trackThickness="4dp" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="11sp"
-        android:textColor="?attr/colorSurface"/>
+        android:textColor="?attr/colorSurface"
+        android:textSize="11sp" />
 
 </com.google.android.material.card.MaterialCardView>

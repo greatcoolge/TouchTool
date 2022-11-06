@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add"
-        android:icon="@drawable/icon_add_menu"
-        android:title="@string/add"
-        app:showAsAction="always" />
+        android:icon="@drawable/icon_menu_sort"
+        android:title="@string/sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/create_time"
+                android:title="@string/sort_by_create_time" />
+            <item
+                android:id="@+id/modify_time"
+                android:title="@string/sort_by_modify_time" />
+        </menu>
+    </item>
+
     <item
-        android:id="@+id/record"
-        android:icon="@drawable/icon_record"
-        android:title="@string/record"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/import_tasks"
+        android:title="@string/import_task" />
+
     <item
-        android:id="@+id/add_special"
-        android:icon="@drawable/icon_add_special_menu"
-        android:title="@string/add_special"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/record_smart"
-        android:icon="@drawable/icon_record_smart"
-        android:title="@string/record_smart"
-        app:showAsAction="ifRoom"  />
+        android:id="@+id/export_tasks"
+        android:title="@string/export_task" />
+
 </menu>

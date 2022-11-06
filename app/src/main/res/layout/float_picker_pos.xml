@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
-            android:src="@drawable/shape_border"/>
+            android:src="@drawable/shape_border" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/top_left_button"
@@ -45,7 +45,7 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             app:icon="@drawable/icon_radio_checked"
-            app:iconSize="16dp"/>
+            app:iconSize="16dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bottom_right_button"
@@ -55,7 +55,7 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             app:icon="@drawable/icon_radio_checked"
-            app:iconSize="16dp"/>
+            app:iconSize="16dp" />
 
     </FrameLayout>
 

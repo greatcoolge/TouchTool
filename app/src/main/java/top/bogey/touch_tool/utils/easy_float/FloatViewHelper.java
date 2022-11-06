@@ -33,7 +33,7 @@ public class FloatViewHelper {
         this.config = config;
     }
 
-    void createView(){
+    void createView() {
         touchUtils = new FloatTouchUtils(context, config);
         manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         params = new LayoutParams();
@@ -54,7 +54,7 @@ public class FloatViewHelper {
 
         floatViewParent = new FloatViewParent(context, config);
         View floatInnerView = config.layoutView;
-        if (floatInnerView == null){
+        if (floatInnerView == null) {
             floatInnerView = LayoutInflater.from(context).inflate(config.layoutId, floatViewParent, true);
             config.layoutView = floatInnerView;
         } else {
@@ -69,12 +69,12 @@ public class FloatViewHelper {
 
             isPortrait = DisplayUtils.isPortrait(context);
 
-            if (config.callback != null){
+            if (config.callback != null) {
                 config.callback.onCreate(true);
             }
-            if (config.animator != null){
+            if (config.animator != null) {
                 Animator animator = config.animator.enterAnim(floatViewParent, manager, params, config.side);
-                if (animator != null){
+                if (animator != null) {
                     animator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -86,7 +86,7 @@ public class FloatViewHelper {
                         public void onAnimationStart(Animator animation) {
                             config.isAnim = true;
                             floatViewParent.setVisibility(View.VISIBLE);
-                            if (config.callback != null){
+                            if (config.callback != null) {
                                 config.callback.onShow(config.tag);
                             }
                         }
@@ -102,7 +102,7 @@ public class FloatViewHelper {
             } else {
                 floatViewParent.setVisibility(View.VISIBLE);
                 initEditText(floatViewParent);
-                if (config.callback != null){
+                if (config.callback != null) {
                     config.callback.onShow(config.tag);
                 }
             }
@@ -111,9 +111,9 @@ public class FloatViewHelper {
         setViewChangedListener();
     }
 
-    private void setViewChangedListener(){
+    private void setViewChangedListener() {
         floatViewParent.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if (isPortrait == null || isPortrait.equals(DisplayUtils.isPortrait(context))){
+            if (isPortrait == null || isPortrait.equals(DisplayUtils.isPortrait(context))) {
                 return;
             }
             isPortrait = DisplayUtils.isPortrait(context);
@@ -122,7 +122,7 @@ public class FloatViewHelper {
         });
     }
 
-    public void initGravity(){
+    public void initGravity() {
         Rect showSize = DisplayUtils.getScreenArea(context);
         int statusBarHeight = DisplayUtils.getStatusBarHeight(floatViewParent, params);
         showSize.top += config.topBorder;
@@ -130,7 +130,7 @@ public class FloatViewHelper {
         showSize.bottom -= (statusBarHeight + config.bottomBorder);
         showSize.right -= config.rightBorder;
 
-        switch (config.gravity){
+        switch (config.gravity) {
             case TOP_LEFT:
                 params.x = showSize.left;
                 params.y = showSize.top;
@@ -174,29 +174,29 @@ public class FloatViewHelper {
         manager.updateViewLayout(floatViewParent, params);
     }
 
-    private void initEditText(View view){
-        if (config.hasEditText){
-            if (view instanceof ViewGroup){
-                    ViewGroup viewGroup = (ViewGroup) view;
-                    for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                        initEditText(viewGroup.getChildAt(i));
-                    }
+    private void initEditText(View view) {
+        if (config.hasEditText) {
+            if (view instanceof ViewGroup) {
+                ViewGroup viewGroup = (ViewGroup) view;
+                for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                    initEditText(viewGroup.getChildAt(i));
+                }
             } else {
-                if (view instanceof EditText){
+                if (view instanceof EditText) {
                     EasyFloat.initInput((EditText) view, config.tag);
                 }
             }
         }
     }
 
-    View getView(){
+    View getView() {
         return config.layoutView;
     }
 
-    void exitAnim(){
-        if (config.animator != null){
+    void exitAnim() {
+        if (config.animator != null) {
             Animator animator = config.animator.exitAnim(floatViewParent, manager, params, config.side);
-            if (animator != null){
+            if (animator != null) {
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -222,9 +222,10 @@ public class FloatViewHelper {
         remove();
     }
 
-    private void remove(){
-        try{
+    private void remove() {
+        try {
             manager.removeView(floatViewParent);
-        } catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
     }
 }

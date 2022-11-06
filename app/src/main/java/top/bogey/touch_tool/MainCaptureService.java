@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.ui.setting.LogLevel;
-import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.MatchResult;
 
 public class MainCaptureService extends Service {
@@ -53,7 +53,7 @@ public class MainCaptureService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        if (projection == null){
+        if (projection == null) {
             MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
             Intent data = intent.getParcelableExtra("Data");
             projection = manager.getMediaProjection(Activity.RESULT_OK, data);
@@ -85,9 +85,9 @@ public class MainCaptureService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra("StopCapture", false)){
+        if (intent.getBooleanExtra("StopCapture", false)) {
             MainAccessibilityService service = MainApplication.getService();
-            if (service != null){
+            if (service != null) {
                 service.stopCaptureService();
             }
         }
@@ -108,12 +108,12 @@ public class MainCaptureService extends Service {
         setVirtualDisplay();
     }
 
-    private void createNotification(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private void createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             NotificationChannel runningChannel = notificationManager.getNotificationChannel(RUNNING_CHANNEL_ID);
-            if (runningChannel == null){
+            if (runningChannel == null) {
                 runningChannel = new NotificationChannel(RUNNING_CHANNEL_ID, getString(R.string.capture_service_running_channel_name), NotificationManager.IMPORTANCE_DEFAULT);
                 runningChannel.setDescription(getString(R.string.capture_service_running_channel_tips));
                 notificationManager.createNotificationChannel(runningChannel);
@@ -145,13 +145,13 @@ public class MainCaptureService extends Service {
     }
 
     @SuppressLint("WrongConstant")
-    private void setVirtualDisplay(){
+    private void setVirtualDisplay() {
         WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
         manager.getDefaultDisplay().getRealMetrics(metrics);
         imageReader = ImageReader.newInstance(metrics.widthPixels, metrics.heightPixels, PixelFormat.RGBA_8888, 2);
         imageReader.setOnImageAvailableListener(reader -> {
-            synchronized (lock){
+            synchronized (lock) {
                 if (image != null) image.close();
                 image = reader.acquireLatestImage();
             }
@@ -159,11 +159,11 @@ public class MainCaptureService extends Service {
         virtualDisplay = projection.createVirtualDisplay("CaptureService", metrics.widthPixels, metrics.heightPixels, metrics.densityDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
     }
 
-    public class CaptureServiceBinder extends Binder{
+    public class CaptureServiceBinder extends Binder {
 
-        public List<Rect> matchColor(Bitmap bitmap, int[] color){
+        public List<Rect> matchColor(Bitmap bitmap, int[] color) {
             List<MatchResult> matchResults = AppUtils.nativeMatchColor(bitmap, color);
-            if (matchResults != null){
+            if (matchResults != null) {
                 matchResults.sort((o1, o2) -> o2.value - o1.value);
                 List<Rect> rectList = new ArrayList<>();
                 for (MatchResult matchResult : matchResults) {
@@ -174,14 +174,14 @@ public class MainCaptureService extends Service {
             return null;
         }
 
-        public List<Rect> matchColor(int[] color){
+        public List<Rect> matchColor(int[] color) {
             Bitmap bitmap = getCurrImage();
             List<Rect> rectList = matchColor(bitmap, color);
             bitmap.recycle();
             return rectList;
         }
 
-        public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue){
+        public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue) {
             if (sourceBitmap == null || matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
             RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_match_image, matchValue, matchResult.value));
@@ -189,18 +189,18 @@ public class MainCaptureService extends Service {
             return matchResult.rect;
         }
 
-        public Rect matchImage(Bitmap matchBitmap, int matchValue){
+        public Rect matchImage(Bitmap matchBitmap, int matchValue) {
             Bitmap bitmap = getCurrImage();
             Rect rect = matchImage(bitmap, matchBitmap, matchValue);
             bitmap.recycle();
             return rect;
         }
 
-        public Bitmap getCurrImage(){
+        public Bitmap getCurrImage() {
             Image currImage = image;
             if (currImage == null) return null;
 
-            synchronized (lock){
+            synchronized (lock) {
                 Image.Plane[] planes = currImage.getPlanes();
                 ByteBuffer buffer = planes[0].getBuffer();
                 int pixelStride = planes[0].getPixelStride();

@@ -52,15 +52,15 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
             ViewParent parent = getParent();
-            if (parent != null){
-                switch (event.getAction()){
+            if (parent != null) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         lastY = event.getY();
                         parent.requestDisallowInterceptTouchEvent(true);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         checkPosition(event.getY());
-                        if (isToBottom || isToTop){
+                        if (isToBottom || isToTop) {
                             parent.requestDisallowInterceptTouchEvent(false);
                             return false;
                         } else {
@@ -138,22 +138,22 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
         EasyFloat.dismiss(LogFloatView.class.getCanonicalName());
     }
 
-    private void checkPosition(float nowY){
-        LinearLayoutManager layoutManager = (LinearLayoutManager)binding.recyclerView.getLayoutManager();
-        if (layoutManager != null){
-            if (layoutManager.getItemCount() > 3){
+    private void checkPosition(float nowY) {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) binding.recyclerView.getLayoutManager();
+        if (layoutManager != null) {
+            if (layoutManager.getItemCount() > 3) {
                 isToTop = false;
-                isToBottom =false;
+                isToBottom = false;
                 int first = layoutManager.findFirstCompletelyVisibleItemPosition();
                 int last = layoutManager.findLastCompletelyVisibleItemPosition();
 
-                if (layoutManager.getChildCount() > 0){
-                    if (last == layoutManager.getItemCount() - 1){
-                        if (canScrollVertically(-1) && nowY < lastY){
+                if (layoutManager.getChildCount() > 0) {
+                    if (last == layoutManager.getItemCount() - 1) {
+                        if (canScrollVertically(-1) && nowY < lastY) {
                             isToBottom = true;
                         }
-                    } else if (first == 0){
-                        if (canScrollVertically(1) && nowY > lastY){
+                    } else if (first == 0) {
+                        if (canScrollVertically(1) && nowY > lastY) {
                             isToTop = true;
                         }
                     }
@@ -165,7 +165,7 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
         }
     }
 
-    private void refreshUI(){
+    private void refreshUI() {
         FloatViewHelper helper = EasyFloat.getHelper(LogFloatView.class.getCanonicalName());
 
         Point size = DisplayUtils.getScreenSize(getContext());
@@ -178,7 +178,7 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
         MaterialCardView root = binding.getRoot();
         ViewGroup.LayoutParams rootLayoutParams = root.getLayoutParams();
 
-        if (isExpand){
+        if (isExpand) {
             binding.markBox.setVisibility(VISIBLE);
             binding.drag.setVisibility(VISIBLE);
             binding.zoomButton.setVisibility(VISIBLE);

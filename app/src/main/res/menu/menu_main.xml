@@ -7,9 +7,9 @@
         android:title="@string/home" />
 
     <item
-        android:id="@+id/apps"
-        android:icon="@drawable/icon_apps"
-        android:title="@string/apps" />
+        android:id="@+id/tasks"
+        android:icon="@drawable/icon_action_task"
+        android:title="@string/tasks" />
 
     <item
         android:id="@+id/setting"

@@ -25,7 +25,7 @@ public class MainApplication extends Application {
         initNightMode();
     }
 
-    public static void initNightMode(){
+    public void initNightMode() {
         String nightMode = MMKV.defaultMMKV().decodeString(NIGHT_MODE, "-1");
         if (nightMode != null) AppCompatDelegate.setDefaultNightMode(Integer.parseInt(nightMode));
     }

@@ -29,25 +29,6 @@ public class RunningInfoView extends Fragment {
         RunningInfoTreeAdapter adapter = new RunningInfoTreeAdapter(manager);
         binding.getRoot().setAdapter(adapter);
 
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.menu_running, menu);
-            }
-
-            @SuppressLint("NonConstantResourceId")
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.delete) {
-                    RunningUtils.cleanRunningInfo();
-                    adapter.initRoot();
-                } else {
-                    return false;
-                }
-                return true;
-            }
-        }, getViewLifecycleOwner());
-
         return binding.getRoot();
     }
 }
