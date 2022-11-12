@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:inputType="number"
+            android:enabled="false"
             android:paddingHorizontal="0dp"
             android:paddingVertical="8dp"
             android:scrollbars="none"

@@ -1,13 +1,18 @@
 package top.bogey.touch_tool.database.data;
 
+import android.content.Context;
+import android.os.Parcel;
+
 import com.tencent.mmkv.MMKV;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.TaskConfig;
 import top.bogey.touch_tool.database.bean.TaskType;
@@ -20,6 +25,7 @@ public class TaskRepository {
 
     private final static String TASK_CONFIG_DB = "task_config_db";
     private final static MMKV configMMKV = MMKV.mmkvWithID(TASK_CONFIG_DB, MMKV.SINGLE_PROCESS_MODE, TASK_CONFIG_DB);
+    private final static String TASK_CONFIG_TAG = "task_config_tag";
 
     private List<Task> tasks;
     private boolean isChanged = true;
@@ -59,6 +65,26 @@ public class TaskRepository {
         return getAllTasks();
     }
 
+    public List<Task> getTasksByTag(String tag) {
+        List<Task> tasks = new ArrayList<>();
+        String[] keys = configMMKV.allKeys();
+        if (keys == null) return tasks;
+        for (String key : keys) {
+            if (!key.equals(TASK_CONFIG_TAG)) {
+                TaskConfig taskConfig = configMMKV.decodeParcelable(key, TaskConfig.class);
+                if (taskConfig != null){
+                    if ((tag == null && taskConfig.getTag() == null) || (tag != null && tag.equals(taskConfig.getTag()))){
+                        Task task = getTaskById(taskConfig.getId());
+                        if (task != null) {
+                            tasks.add(task);
+                        }
+                    }
+                }
+            }
+        }
+        return tasks;
+    }
+
     public void addCallback(TaskChangedCallback callback) {
         if (callback != null && !callbacks.contains(callback)) callbacks.add(callback);
     }
@@ -94,7 +120,7 @@ public class TaskRepository {
     public void saveTask(Task task) {
         Task originTask = getTaskById(task.getId());
         // 如果与时间相关的值不相等，尝试更新定时任务
-        if (originTask == null || !(task.getType() == originTask.getType() && task.getTitle().equals(originTask.getTitle()) && Objects.equals(task.getCondition(), originTask.getCondition()))) {
+        if (originTask == null || !(task.getType() == originTask.getType() && Objects.equals(task.getCondition(), originTask.getCondition()))) {
             MainAccessibilityService service = MainApplication.getService();
             if (service != null) {
                 if (originTask != null) service.removeWork(originTask);
@@ -133,5 +159,60 @@ public class TaskRepository {
 
     public TaskConfig getTaskConfig(String id) {
         return configMMKV.decodeParcelable(id, TaskConfig.class);
+    }
+
+    public void setTaskConfig(String id, String tag) {
+        TaskConfig taskConfig = getTaskConfig(id);
+        if (taskConfig != null) {
+            taskConfig.setTag(tag);
+            configMMKV.encode(id, taskConfig);
+        }
+    }
+
+    public List<String> getTags(Context context) {
+        List<String> tags = new ArrayList<>();
+        byte[] bytes = configMMKV.decodeBytes(TASK_CONFIG_TAG);
+        Parcel parcel = Parcel.obtain();
+        if (bytes == null || bytes.length == 0) {
+            tags = Arrays.asList(context.getString(R.string.tag_all), context.getString(R.string.tag_no));
+            parcel.writeStringList(tags);
+            configMMKV.encode(TASK_CONFIG_TAG, parcel.marshall());
+        } else {
+            parcel.unmarshall(bytes, 0, bytes.length);
+            parcel.setDataPosition(0);
+            parcel.readStringList(tags);
+        }
+        parcel.recycle();
+        return tags;
+    }
+
+    public void addTag(Context context, String tag) {
+        if (tag == null || tag.isEmpty()) return;
+        List<String> tags = getTags(context);
+        tags.add(tags.size() - 1, tag);
+        Parcel parcel = Parcel.obtain();
+        parcel.writeStringList(tags);
+        configMMKV.encode(TASK_CONFIG_TAG, parcel.marshall());
+        parcel.recycle();
+    }
+
+    public void removeTag(Context context, String tag) {
+        if (tag == null || tag.isEmpty()) return;
+        String[] keys = configMMKV.allKeys();
+        if (keys == null) return;
+        for (String key : keys) {
+            if (!key.equals(TASK_CONFIG_TAG)) {
+                TaskConfig taskConfig = configMMKV.decodeParcelable(key, TaskConfig.class);
+                if (taskConfig != null && tag.equals(taskConfig.getTag())) {
+                    setTaskConfig(taskConfig.getId(), null);
+                }
+            }
+        }
+        List<String> tags = getTags(context);
+        tags.remove(tag);
+        Parcel parcel = Parcel.obtain();
+        parcel.writeStringList(tags);
+        configMMKV.encode(TASK_CONFIG_TAG, parcel.marshall());
+        parcel.recycle();
     }
 }

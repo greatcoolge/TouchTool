@@ -10,8 +10,11 @@ import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.TaskType;
+import top.bogey.touch_tool.ui.play.OverseeMode;
 import top.bogey.touch_tool.ui.setting.LogLevel;
-import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.ui.setting.LogUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 
 public class FindRunnable implements Runnable {
     private boolean isRunning = true;
@@ -53,68 +56,58 @@ public class FindRunnable implements Runnable {
         if (root != null && isRunning()) {
             String packageName = String.valueOf(root.getPackageName());
             if (!"null".equals(packageName)) {
-                // 尝试停止任务并取消所有非运行中任务
-                service.stopAllTask(false);
-
-                // 关闭手动任务悬浮窗
-                MainActivity activity = MainApplication.getActivity();
-                if (activity != null) {
-                    activity.dismissPlayFloatView();
+                if (!pkgName.equals(packageName)) {
+                    LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_app_changed, pkgName, packageName));
+                    service.stopTaskByType(TaskType.APP_CHANGED, false);
+                    // 应用切换，开启内容检测看看有没有检测的任务
+                    service.setContentEvent(true);
                 }
+                service.stopTaskByType(TaskType.VIEW_CHANGED, false);
+
+                service.currPkgName = packageName;
 
                 // APP自己不执行任何任务
                 if (packageName.equals(service.getPackageName())) return;
 
-                // 获取所有能在这个应用下运行的任务
-                List<Task> tasks = getAppTaskByPkgName(packageName);
-
                 if (!isRunning()) return;
 
-                RunningUtils.log(LogLevel.LOW, service.getString(R.string.log_get_all_task, tasks.size()));
-
-                boolean isManual = false;
-
-                for (Task task : tasks) {
-                    if (task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
-                        switch (task.getType()) {
-                            case MANUAL:
-                                isManual = true;
-                                break;
-                            case APP_CHANGED:
-                                // 应用第一次开启时执行，相当于没切换过应用
-                                if (!packageName.equals(pkgName)){
-                                    service.runTask(task, null);
-                                }
-                                break;
-                            case VIEW_CHANGED:
-                                // 界面变动时执行
-                                service.runTask(task, null);
-                                break;
+                // 切换应用时执行
+                if (!packageName.equals(pkgName)) {
+                    List<Task> tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.APP_CHANGED);
+                    for (Task task : tasks) {
+                        if (task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
+                            service.runTask(task, null);
+                            LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_app_changed_task, task.getTitle()));
                         }
+                    }
+
+                    tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.MANUAL);
+                    MainActivity activity = MainApplication.getActivity();
+                    if (tasks.size() > 0 || SettingSave.getInstance().getRunningOverseeMode() != OverseeMode.CLOSED) {
+                        if (activity != null) {
+                            activity.showPlayFloatView(packageName);
+                        } else {
+                            Intent intent = new Intent(service, MainActivity.class);
+                            intent.putExtra("IsBackground", true);
+                            intent.putExtra("FloatPackageName", packageName);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            service.startActivity(intent);
+                        }
+                    } else {
+                        if (activity != null) activity.dismissPlayFloatView();
                     }
                 }
 
-                service.currPkgName = packageName;
-
-                if (isManual) {
-                    if (activity != null) {
-                        activity.showPlayFloatView(packageName);
-                    } else {
-                        Intent intent = new Intent(service, MainActivity.class);
-                        intent.putExtra("IsBackground", true);
-                        intent.putExtra("FloatPackageName", packageName);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        service.startActivity(intent);
+                List<Task> tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.VIEW_CHANGED);
+                if (tasks.size() > 0) LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_view_changed, pkgName));
+                for (Task task : tasks) {
+                    if (task.getType() == TaskType.CONTENT_CHANGED && task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
+                        // 窗口变动时执行
+                        service.runTask(task, null);
+                        LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_view_changed_task, task.getTitle()));
                     }
                 }
             }
         }
-    }
-
-    private List<Task> getAppTaskByPkgName(String pkgName) {
-        List<Task> comTasks = TaskRepository.getInstance().getTasksByPkgName(service.getString(R.string.common_package_name));
-        List<Task> pkgTasks = TaskRepository.getInstance().getTasksByPkgName(pkgName);
-        comTasks.addAll(pkgTasks);
-        return comTasks;
     }
 }

@@ -23,8 +23,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.tencent.mmkv.MMKV;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,7 +33,8 @@ import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ActivityMainBinding;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
 import top.bogey.touch_tool.ui.setting.LogLevel;
-import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.ui.setting.LogUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.PermissionResultCallback;
@@ -47,16 +46,12 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("auto_touch");
     }
 
-    private static final String FIRST_RUN = "first_run";
-
     private ActivityMainBinding binding;
 
     private ActivityResultLauncher<Intent> intentLauncher;
     private ActivityResultLauncher<String> permissionLauncher;
     private ActivityResultLauncher<String> contentLauncher;
     private PermissionResultCallback resultCallback;
-
-    private boolean removeFloatView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setAttributes(params);
         }
 
-        DisplayUtils.initParams(this);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolBar);
 
         MainApplication.setActivity(this);
+
+        DisplayUtils.initParams(this);
 
         intentLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (resultCallback != null) {
@@ -110,20 +105,25 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         NavController controller = Navigation.findNavController(this, R.id.con_view);
         NavigationUI.setupWithNavController(binding.menuView, controller);
-        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.tasks, R.id.setting).build();
+        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.task, R.id.setting).build();
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         controller.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             int id = navDestination.getId();
-            if (id == R.id.home || id == R.id.tasks || id == R.id.setting) {
-                binding.menuView.setVisibility(View.VISIBLE);
+            if (id == R.id.home || id == R.id.task || id == R.id.setting) {
+                showBottomNavigation();
             } else {
-                binding.menuView.setVisibility(View.GONE);
+                hideBottomNavigation();
             }
         });
+        SettingSave.getInstance().init(this);
     }
 
-    public void resetToolBar(){
-        setSupportActionBar(binding.toolBar);
+    public void showBottomNavigation() {
+        binding.menuView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideBottomNavigation() {
+        binding.menuView.setVisibility(View.GONE);
     }
 
     @Override
@@ -139,27 +139,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runFirstTimes() {
-        boolean firstRun = MMKV.defaultMMKV().decodeBool(FIRST_RUN, false);
-        if (!firstRun) {
+        if (!SettingSave.getInstance().isFirstRun()) {
             try (InputStream inputStream = getAssets().open("DefaultTasks")) {
                 byte[] bytes = new byte[inputStream.available()];
                 if (inputStream.read(bytes) == -1) saveTasks(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            MMKV.defaultMMKV().encode(FIRST_RUN, true);
+            SettingSave.getInstance().setFirstRun();
         }
     }
 
     public void handleIntent(Intent intent) {
+        String pkgName = getIntent().getStringExtra("Goto");
+        if (pkgName != null && !pkgName.isEmpty()) {
+            AppUtils.gotoApp(this, pkgName);
+        }
+
         boolean isBackground = intent.getBooleanExtra("IsBackground", false);
         if (isBackground) {
             moveTaskToBack(true);
         }
 
-        String pkgName = getIntent().getStringExtra("FloatPackageName");
+        pkgName = getIntent().getStringExtra("FloatPackageName");
         if (pkgName != null && !pkgName.isEmpty()) {
             showPlayFloatView(pkgName);
+        }
+
+        boolean dismissFloat = intent.getBooleanExtra("DismissFloat", false);
+        if (dismissFloat) {
+            dismissPlayFloatView();
         }
 
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
@@ -175,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
     public void saveTasksByFile(Uri uri) {
         try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
             byte[] bytes = new byte[inputStream.available()];
-            if (inputStream.read(bytes) == -1) saveTasks(bytes);
+            int read = inputStream.read(bytes);
+            if (read > 0)
+                saveTasks(bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -258,23 +269,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPlayFloatView(String pkgName) {
         binding.getRoot().post(() -> {
-            removeFloatView = false;
             PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
             if (view == null) {
                 new PlayFloatView(this, pkgName).show();
             } else {
                 view.setPkgName(pkgName);
+                view.setNeedRemove(false);
             }
         });
-        RunningUtils.log(LogLevel.LOW, getString(R.string.log_show_manual_task));
+        LogUtils.log(LogLevel.LOW, getString(R.string.log_run_manual));
     }
 
     public void dismissPlayFloatView() {
-        removeFloatView = true;
-        binding.getRoot().postDelayed(() -> {
-            if (removeFloatView) {
-                EasyFloat.dismiss(PlayFloatView.class.getCanonicalName());
-            }
-        }, 100);
+        PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
+        if (view != null) view.setNeedRemove(true);
     }
 }

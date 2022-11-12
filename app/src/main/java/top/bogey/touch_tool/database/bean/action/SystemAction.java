@@ -14,9 +14,10 @@ import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
-import top.bogey.touch_tool.ui.apps.AppInfo;
+import top.bogey.touch_tool.ui.app.AppInfo;
 import top.bogey.touch_tool.utils.AppUtils;
 
 public class SystemAction extends Action {
@@ -46,6 +47,8 @@ public class SystemAction extends Action {
 
     @Override
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        if (!super.doAction(task, service, runningInfo)) return false;
+
         switch (systemActionType) {
             case BACK:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
@@ -84,7 +87,8 @@ public class SystemAction extends Action {
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
+    public String getDescription(Context context, Task task, Behavior behavior) {
+        if (context == null) return systemActionType.name();
         return systemActionType.getDescription(context, extras);
     }
 

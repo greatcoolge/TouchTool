@@ -12,6 +12,7 @@ import java.util.List;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.action.Action;
 import top.bogey.touch_tool.database.bean.action.ActionType;
+import top.bogey.touch_tool.database.bean.action.NullAction;
 
 public class Behavior implements Parcelable {
     // 行为模式
@@ -26,7 +27,7 @@ public class Behavior implements Parcelable {
     private Action condition;
 
     // 循环行为执行次数
-    private int times;
+    private int times = 1;
     // 行为自定义标题
     private String title;
 
@@ -38,6 +39,10 @@ public class Behavior implements Parcelable {
     public Behavior(Action action) {
         this();
         actions = Collections.singletonList(action);
+    }
+
+    public Behavior(BehaviorMode behaviorMode){
+        this.behaviorMode = behaviorMode;
     }
 
     protected Behavior(Parcel in) {
@@ -61,29 +66,29 @@ public class Behavior implements Parcelable {
         }
     };
 
-    public String getDefaultTitle(Context context) {
+    public String getDefaultTitle(Context context, Task task) {
         if (actions == null || actions.isEmpty()) return "";
         StringBuilder builder = new StringBuilder();
         switch (behaviorMode) {
             case CONDITION:
                 if (condition != null && condition.getType() != ActionType.NULL) {
-                    builder.append(context.getString(R.string.condition_title_1, getConditionTitle(context, condition)));
+                    builder.append(context.getString(R.string.condition_title_1, getConditionTitle(context, task, condition)));
                 }
-                builder.append(getTargetTitle(context, actions.get(0)));
+                builder.append(getActionTitle(context, task, actions.get(0)));
                 if (actions.size() > 1) {
                     builder.append("\n");
                     builder.append(context.getString(R.string.condition_title_2));
-                    builder.append(getTargetTitle(context, actions.get(1)));
+                    builder.append(getActionTitle(context, task, actions.get(1)));
                 }
                 break;
             case LOOP:
-                builder.append(context.getString(R.string.loop_title_1, times));
+                builder.append(context.getString(R.string.loop_title_1, getTimes()));
                 for (int i = 0; i < actions.size(); i++) {
-                    builder.append(getTargetTitle(context, actions.get(i)));
+                    builder.append(getActionTitle(context, task, actions.get(i)));
                     if (i == actions.size() - 1) {
                         if (condition != null && condition.getType() != ActionType.NULL) {
                             builder.append("\n");
-                            builder.append(context.getString(R.string.loop_title_2, getConditionTitle(context, condition)));
+                            builder.append(context.getString(R.string.loop_title_2, getConditionTitle(context, task, condition)));
                         }
                     } else {
                         builder.append("\n");
@@ -92,42 +97,34 @@ public class Behavior implements Parcelable {
                 break;
             case PARALLEL:
                 builder.append(context.getString(R.string.parallel_title_1));
-                for (Action target : actions) {
-                    builder.append(getTargetTitle(context, target));
+                for (Action action : actions) {
+                    builder.append(getActionTitle(context, task, action));
                     builder.append("\n");
                 }
                 if (condition != null) {
-                    builder.append(condition.getDescription(context, true));
+                    builder.append(condition.getDescription(context, task, this));
                 }
                 break;
         }
         return builder.toString();
     }
 
-    private String getConditionTitle(Context context, Action action) {
-        if (action == null) return "";
-        switch (action.getType()) {
-            case NUMBER:
-                return context.getString(behaviorMode == BehaviorMode.LOOP ? R.string.condition_number_for_loop : R.string.condition_number_for_parallel, action.getDescription(context, true));
-            case TEXT:
-                return context.getString(R.string.condition_text, action.getDescription(context, true));
-            case IMAGE:
-                return context.getString(R.string.condition_image);
-        }
-        return "";
+    private String getConditionTitle(Context context, Task task, Action action) {
+        if (action == null) return new NullAction().getDescription(context, task, this);
+        return action.getConditionContent(context, task, this);
     }
 
-    public String getTargetTitle(Context context, Action action) {
+    public String getActionTitle(Context context, Task task, Action action) {
         if (action == null) return "";
-        String touch = action.getTimeArea().getMax() > 100 ? context.getString(R.string.long_touch) : context.getString(R.string.touch);
-        return action.getDescription(context, true);
+        return action.getDescription(context, task, this);
     }
 
-    public BehaviorMode getActionMode() {
+    public BehaviorMode getBehaviorMode() {
+        if (behaviorMode == null) return BehaviorMode.CONDITION;
         return behaviorMode;
     }
 
-    public void setActionMode(BehaviorMode behaviorMode) {
+    public void setBehaviorMode(BehaviorMode behaviorMode) {
         this.behaviorMode = behaviorMode;
     }
 
@@ -163,8 +160,8 @@ public class Behavior implements Parcelable {
         this.condition = condition;
     }
 
-    public String getTitle(Context context) {
-        if (title == null || title.isEmpty()) return getDefaultTitle(context);
+    public String getTitle(Context context, Task task) {
+        if (title == null || title.isEmpty()) return getDefaultTitle(context, task);
         return title;
     }
 
@@ -186,8 +183,13 @@ public class Behavior implements Parcelable {
         dest.writeParcelable(behaviorMode, flags);
         dest.writeByte((byte) (enable ? 1 : 0));
         dest.writeTypedList(actions);
-        dest.writeParcelable(condition, flags);
-        dest.writeInt(times);
+
+        if (condition == null || condition.getType() == ActionType.NULL) dest.writeParcelable(null, flags);
+        else dest.writeParcelable(condition, flags);
+
+        if (behaviorMode == BehaviorMode.LOOP) dest.writeInt(times);
+        else dest.writeInt(1);
+
         dest.writeString(title);
     }
 }

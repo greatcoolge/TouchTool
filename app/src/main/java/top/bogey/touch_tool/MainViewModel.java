@@ -5,7 +5,6 @@ import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,15 +12,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 
 import top.bogey.touch_tool.database.bean.Task;
-import top.bogey.touch_tool.ui.apps.AppInfo;
-import top.bogey.touch_tool.utils.ResultCallback;
+import top.bogey.touch_tool.ui.app.AppInfo;
+import top.bogey.touch_tool.utils.AppUtils;
 
 public class MainViewModel extends AndroidViewModel {
     public final MutableLiveData<Boolean> showSystem = new MutableLiveData<>(false);
@@ -30,11 +25,8 @@ public class MainViewModel extends AndroidViewModel {
 
     public final MutableLiveData<Task> copyTask = new MutableLiveData<>(null);
 
-    private final ExecutorService loadService;
-
     public MainViewModel(@NonNull Application application) {
         super(application);
-        loadService = new ThreadPoolExecutor(2, 40, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
         refreshAppList();
     }
 
@@ -95,33 +87,15 @@ public class MainViewModel extends AndroidViewModel {
         return names;
     }
 
-    public void loadAppsIcon(Map<String, Drawable> drawables, List<String> pkgNames, ResultCallback callback) {
-        if (pkgNames == null || pkgNames.size() == 0) {
-            callback.onResult(true);
-            return;
-        }
-        loadService.submit(() -> {
-            PackageManager manager = getApplication().getPackageManager();
-            for (String pkgName : pkgNames) {
-                AppInfo appInfo = getAppInfoByPkgName(pkgName);
-                if (appInfo != null) {
-                    if (appInfo.packageName.equals(getApplication().getString(R.string.common_package_name))) {
-                        drawables.put(pkgName, getApplication().getApplicationInfo().loadIcon(manager));
-                    } else {
-                        drawables.put(pkgName, appInfo.info.applicationInfo.loadIcon(manager));
-                    }
-                }
-            }
-            callback.onResult(true);
-        });
-    }
-
     public Task getCopyTask() {
         return copyTask.getValue();
     }
 
     public void setCopyTask(Task task) {
-        if (task != null) copyTask.setValue(new Task(task));
-        else copyTask.setValue(null);
+        if (task != null) {
+            Task copy = AppUtils.copy(task);
+            copy.setId(UUID.randomUUID().toString());
+            copyTask.setValue(copy);
+        } else copyTask.setValue(null);
     }
 }

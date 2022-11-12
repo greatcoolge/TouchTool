@@ -20,7 +20,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     private int level;
 
     public LogRecyclerViewAdapter(int level) {
-        logs = RunningUtils.getLogs(log -> recyclerView.post(() -> {
+        logs = LogUtils.getLogs(log -> recyclerView.post(() -> {
             logs.add(log);
             if (((1 << log.getLevel().ordinal()) & this.level) > 0) {
                 showLogs.add(log);

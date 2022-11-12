@@ -66,10 +66,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/record_button"
-                style="@style/Theme.TouchTool.Button"
+                style="@style/Theme.TouchTool.Button.IconOnly"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/icon_record"
@@ -93,10 +93,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/record_smart_button"
-                style="@style/Theme.TouchTool.Button"
+                style="@style/Theme.TouchTool.Button.IconOnly"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/icon_record_smart"

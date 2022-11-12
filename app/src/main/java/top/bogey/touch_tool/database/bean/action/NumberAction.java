@@ -7,11 +7,12 @@ import androidx.annotation.NonNull;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
+import top.bogey.touch_tool.database.bean.BehaviorMode;
 import top.bogey.touch_tool.database.bean.Task;
-import top.bogey.touch_tool.database.data.TaskRunningInfo;
 
 public class NumberAction extends Action {
-    private boolean status;
+    private boolean status = true;
     private int targetNum;
     private transient int currNum;
 
@@ -37,14 +38,15 @@ public class NumberAction extends Action {
     }
 
     @Override
-    public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
-        runningInfo.addProgress(task, this, false);
-        return false;
+    public String getConditionContent(Context context, Task task, Behavior behavior) {
+        if (behavior.getBehaviorMode() == BehaviorMode.LOOP) return context.getString(status ? R.string.condition_number_success_for_loop : R.string.condition_number_fail_for_loop, targetNum);
+        else return context.getString(status ? R.string.condition_number_success_for_parallel : R.string.condition_number_fail_for_parallel, targetNum);
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
-        return context.getString(R.string.action_image);
+    public String getConditionHint(Context context, Task task, Behavior behavior) {
+        if (behavior.getBehaviorMode() == BehaviorMode.LOOP) return context.getString(status ? R.string.condition_number_for_success_loop_tips : R.string.condition_number_for_fail_loop_tips);
+        else return context.getString(status ? R.string.condition_number_for_success_parallel_tips : R.string.condition_number_for_fail_parallel_tips);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class NumberAction extends Action {
     }
 
     public void addCurrNum(boolean status) {
-        if (status == this.status){
+        if (status == this.status) {
             currNum++;
         }
     }

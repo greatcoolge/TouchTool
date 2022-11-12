@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
 import top.bogey.touch_tool.utils.AppUtils;
@@ -72,6 +73,8 @@ public class ImageAction extends Action {
 
     @Override
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        if (!super.doAction(task, service, runningInfo)) return false;
+
         if (!service.isCaptureEnabled()) return false;
 
         Rect rect = matchImage(service);
@@ -83,14 +86,24 @@ public class ImageAction extends Action {
         int time = getTimeArea().getRandomTime();
         service.runGesture(path, time, null);
         sleep(time);
-        runningInfo.addProgress(task, this, false);
         return true;
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
+    public String getDescription(Context context, Task task, Behavior behavior) {
+        if (context == null) return String.valueOf(value);
         String touch = context.getString(timeArea.getMax() > 100 ? R.string.long_touch : R.string.touch);
         return context.getString(R.string.action_image, touch);
+    }
+
+    @Override
+    public String getConditionContent(Context context, Task task, Behavior behavior) {
+        return context.getString(R.string.condition_image);
+    }
+
+    @Override
+    public String getConditionHint(Context context, Task task, Behavior behavior) {
+        return context.getString(R.string.condition_image_tips);
     }
 
     @Override
@@ -99,6 +112,7 @@ public class ImageAction extends Action {
         dest.writeString(image);
         dest.writeInt(value);
     }
+
     public Bitmap getBitmap() {
         if (bitmap == null && (image != null && !image.isEmpty())) {
             try {

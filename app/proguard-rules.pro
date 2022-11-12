@@ -16,31 +16,8 @@
     public static int d(...);
 }
 
--keepclassmembers class top.bogey.touch_tool.database.bean.Task{
-}
-
--keepclassmembers class top.bogey.touch_tool.database.bean.Behavior{
-    private top.bogey.touch_tool.database.bean.BehaviorMode behaviorMode;
-    private boolean enable;
-    private java.util.List actions;
-    private top.bogey.touch_tool.database.bean.action.Action condition;
-    private int times;
-    private java.lang.String title;
-}
-
--keepclassmembers class top.bogey.touch_tool.database.bean.action.Action{
-    protected top.bogey.touch_tool.database.bean.action.ActionType type;
-    protected top.bogey.touch_tool.database.bean.action.TimeArea timeArea;
-}
-
--keepclassmembers class android.graphics.Point{
-    public int x;
-    public int y;
-}
-
--keepclassmembers class top.bogey.touch_tool.database.bean.action.TimeArea{
-    private int min;
-    private int max;
+-keep class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
 }
 
 -keep class top.bogey.touch_tool.utils.MatchResult{*;}

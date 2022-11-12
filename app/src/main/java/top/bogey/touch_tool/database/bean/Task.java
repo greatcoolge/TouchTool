@@ -19,7 +19,7 @@ import top.bogey.touch_tool.database.bean.condition.TaskCondition;
 
 public class Task implements Parcelable {
     // 任务ID
-    private final String id;
+    private String id;
     // 任务类型
     private TaskType type;
     // 任务标题
@@ -55,19 +55,6 @@ public class Task implements Parcelable {
         behaviors = Collections.singletonList(behavior);
     }
 
-    public Task(Task task) {
-        Parcel in = Parcel.obtain();
-        task.writeToParcel(in, 0);
-        id = UUID.randomUUID().toString();
-        type = in.readParcelable(TaskType.class.getClassLoader());
-        title = in.readString();
-        acrossApp = in.readByte() != 0;
-        pkgNames = in.createStringArrayList();
-        behaviors = in.createTypedArrayList(Behavior.CREATOR);
-        condition = in.readParcelable(TaskCondition.class.getClassLoader());
-        subTasks = in.createTypedArrayList(CREATOR);
-    }
-
     protected Task(Parcel in) {
         id = in.readString();
         type = in.readParcelable(TaskType.class.getClassLoader());
@@ -91,11 +78,10 @@ public class Task implements Parcelable {
                             if (task != null) {
                                 behaviorLength += task.getLength();
                             }
-                        } else {
-                            behaviorLength++;
                         }
+                        behaviorLength++;
                     }
-                    if (behavior.getActionMode() == BehaviorMode.LOOP) {
+                    if (behavior.getBehaviorMode() == BehaviorMode.LOOP) {
                         behaviorLength *= behavior.getTimes();
                     }
                     length += behaviorLength;
@@ -109,10 +95,11 @@ public class Task implements Parcelable {
         StringBuilder builder = new StringBuilder();
         if (behaviors != null) {
             for (Behavior behavior : behaviors) {
-                builder.append(behavior.getTitle(context));
+                builder.append(behavior.getTitle(context, this));
+                builder.append("\n");
             }
         }
-        return builder.toString();
+        return builder.toString().trim();
     }
 
     public Task getSubTaskById(String id){
@@ -168,6 +155,10 @@ public class Task implements Parcelable {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public TaskType getType() {
@@ -237,11 +228,17 @@ public class Task implements Parcelable {
         dest.writeParcelable(type, flags);
         dest.writeString(title);
         dest.writeByte((byte) (acrossApp ? 1 : 0));
+
         if (type == TaskType.IT_IS_TIME) dest.writeStringList(null);
+        else if (pkgNames != null && pkgNames.isEmpty()) dest.writeStringList(null);
         else dest.writeStringList(pkgNames);
-        dest.writeTypedList(behaviors);
+
+        if (behaviors != null && behaviors.isEmpty()) dest.writeTypedList(null);
+        else dest.writeTypedList(behaviors);
+
         if (type == TaskType.NEW_NOTIFICATION || type == TaskType.IT_IS_TIME) dest.writeParcelable(condition, flags);
         else dest.writeParcelable(null, flags);
+
         dest.writeTypedList(subTasks);
     }
 }

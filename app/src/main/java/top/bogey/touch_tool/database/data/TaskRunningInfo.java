@@ -2,6 +2,7 @@ package top.bogey.touch_tool.database.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.action.Action;
@@ -44,6 +45,8 @@ public class TaskRunningInfo implements TaskRunningCallback {
             if (skip){
                 Task subTask = task.getSubTaskById(((TaskAction) action).getId());
                 if (subTask != null) progress += subTask.getLength();
+            } else {
+                progress++;
             }
         }
         onProgress(runnable, getTaskPercent());
@@ -54,7 +57,7 @@ public class TaskRunningInfo implements TaskRunningCallback {
     }
 
     public String getProgress() {
-        return progress + "-" + maxProgress;
+        return progress + "/" + maxProgress;
     }
 
     public void addCallback(TaskRunningCallback callback) {
@@ -67,22 +70,16 @@ public class TaskRunningInfo implements TaskRunningCallback {
 
     @Override
     public void onStart(TaskRunnable runnable) {
-        for (TaskRunningCallback callback : callbacks) {
-            if (callback != null) callback.onStart(runnable);
-        }
+        callbacks.stream().filter(Objects::nonNull).forEach(callback -> callback.onStart(runnable));
     }
 
     @Override
     public void onEnd(TaskRunnable runnable, boolean succeed) {
-        for (TaskRunningCallback callback : callbacks) {
-            if (callback != null) callback.onEnd(runnable, succeed);
-        }
+        callbacks.stream().filter(Objects::nonNull).forEach(callback -> callback.onEnd(runnable, succeed));
     }
 
     @Override
     public void onProgress(TaskRunnable runnable, int percent) {
-        for (TaskRunningCallback callback : callbacks) {
-            if (callback != null) callback.onProgress(runnable, percent);
-        }
+        callbacks.stream().filter(Objects::nonNull).forEach(callback -> callback.onProgress(runnable, percent));
     }
 }

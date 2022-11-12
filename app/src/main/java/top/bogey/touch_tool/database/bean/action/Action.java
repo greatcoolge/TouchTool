@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
 
@@ -86,10 +87,29 @@ public abstract class Action implements Parcelable {
     public abstract boolean checkCondition(MainAccessibilityService service);
 
     // 执行动作
-    public abstract boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo);
+    public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        // 任务只在它执行的区域执行
+        boolean result = service.currPkgName.equals(runningInfo.getPkgName()) || task.isAcrossAppTask();
+        if (!result) {
+            sleep(timeArea.getRandomTime());
+        }
+        return result;
+    }
 
     // 获取描述
-    public abstract String getDescription(Context context, boolean normal);
+    public String getDescription(Context context, Task task, Behavior behavior) {
+        return "";
+    }
+
+    // 获取条件内容
+    public String getConditionContent(Context context, Task task, Behavior behavior) {
+        return "";
+    }
+
+    // 获取条件提示
+    public String getConditionHint(Context context, Task task, Behavior behavior) {
+        return "";
+    }
 
     @Override
     public int describeContents() {

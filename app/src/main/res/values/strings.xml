@@ -76,7 +76,17 @@
     <string name="sort_by_create_time">创建时间排序</string>
     <string name="sort_by_modify_time">修改时间排序</string>
     <string name="import_task">导入任务</string>
-    <string name="export_task">导出任务</string>
+
+    <string name="export_task">导出</string>
+    <string name="export_task_tips">导出任务配置并发送</string>
+    <string name="delete_task">删除</string>
+    <string name="delete_task_tips">任务删除之后无法恢复，确定要删除选中的任务吗？</string>
+    <string name="select_all">全选</string>
+    <string name="move_task">移动</string>
+
+    <string name="tag_all">全部</string>
+    <string name="tag_no">未分类</string>
+    <string name="tag_add">添加新的分类</string>
 
     <string name="task_title_default">默认标题</string>
     <string name="common_name">通用</string>
@@ -105,10 +115,37 @@
     <string name="loop_title_2">直到%1$s</string>
     <string name="parallel_title_1">同时执行动作\n</string>
 
+    <!-- 动作 -->
+    <string name="action_type_none">无</string>
+    <string name="action_type_number">次数</string>
+    <string name="action_type_delay">延迟</string>
+    <string name="action_type_text">文本</string>
+    <string name="action_type_touch">手势</string>
+    <string name="action_type_image">图片</string>
+    <string name="action_type_color">颜色</string>
+    <string name="action_type_system">功能</string>
+    <string name="action_type_task">任务</string>
+
+    <string name="action_type_condition_none">无</string>
+    <string name="action_type_condition_number">达成数</string>
+    <string name="action_type_condition_text">出现文本</string>
+    <string name="action_type_condition_image">出现图片</string>
+
+    <string name="condition_null_for_condition_tips">无条件</string>
+    <string name="condition_null_for_loop_tips">不中断</string>
+    <string name="condition_number_for_success_loop_tips">完成循环次数</string>
+    <string name="condition_number_for_fail_loop_tips">循环失败次数</string>
+    <string name="condition_number_for_success_parallel_tips">成功任务个数</string>
+    <string name="condition_number_for_fail_parallel_tips">失败任务个数</string>
+    <string name="condition_text_tips">出现文本</string>
+    <string name="condition_image_tips">出现图片</string>
+
     <string name="condition_null_for_condition">无条件</string>
     <string name="condition_null_for_loop">不中断</string>
-    <string name="condition_number_for_loop">完成%1$d次循环</string>
-    <string name="condition_number_for_parallel">完成%1$d个动作</string>
+    <string name="condition_number_success_for_loop">完成%1$d次循环</string>
+    <string name="condition_number_fail_for_loop">循环失败%1$d次</string>
+    <string name="condition_number_success_for_parallel">成功%1$d个任务</string>
+    <string name="condition_number_fail_for_parallel">失败%1$d个任务</string>
     <string name="condition_text">出现 %1$s</string>
     <string name="condition_image">出现图片</string>
 
@@ -130,7 +167,7 @@
     <string name="action_system_lock">锁定屏幕</string>
     <string name="action_system_snap">手机截屏</string>
     <string name="action_system_goto">打开应用 %1$s</string>
-    <string name="action_task">执行 %1$s 任务</string>
+    <string name="action_task">执行内嵌任务 %1$s</string>
 
     <string name="action_device_not_support_lock">当前设备不支持调用锁屏功能</string>
     <string name="action_device_not_support_snap">当前设备不支持调用系统截图</string>
@@ -142,47 +179,65 @@
     <string name="range">范围</string>
     <string name="similar">相似度</string>
 
-    <string name="check_save_targets">未配置任何有效目标</string>
-
+    <string name="check_save_actions">未配置任何有效动作</string>
+    <string name="check_save_times">无效的次数</string>
 
     <string name="search_apps">搜索应用</string>
 
-
-
     <!-- 设置 -->
-    <string name="theme">界面外观</string>
-    <string name="night_mode">深色模式</string>
+    <string name="setting_app_config">应用设置</string>
+    <string name="setting_keep_alive">前台服务</string>
+    <string name="setting_keep_alive_tips">如果开启自启动和锁定后台之后，应用还是被频繁关闭，可开启前台服务保持应用运行</string>
+    <string name="setting_action_touch_offset">点击偏移</string>
+    <string name="setting_action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移</string>
+    <string name="setting_action_touch_offset_format">%1$d 像素</string>
+    <string name="setting_action_record_delay">录制延迟</string>
+    <string name="setting_action_record_delay_tips">录制动作的时候在每个新动作之后添加一个延迟动作，0为不添加</string>
+    <string name="setting_action_record_delay_format">%1$d 毫秒</string>
+    <string name="setting_event_timeout">检测间隔</string>
+    <string name="setting_event_timeout_tips">任务触发条件的检测间隔时间，间隔越短越耗电，间隔越长相同事件触发频率越低</string>
+    <string name="setting_event_timeout_format">%1$d 毫秒</string>
 
-    <string name="app_info">应用信息</string>
-    <string name="version">版本</string>
-    <string name="source_code">在GitHub查看源码</string>
+    <string name="setting_app_running">运行状况</string>
+    <string name="setting_running_state_oversee">状态监视</string>
+    <string name="setting_oversee_close">关闭</string>
+    <string name="setting_oversee_across_app">仅跨应用任务</string>
+    <string name="setting_oversee_not_manual">非手动任务</string>
+    <string name="setting_running_state_oversee_tips">显示运行中任务的悬浮窗。一些任务可能因为多种原因而无法结束运行，可以在这强制结束</string>
+    <string name="setting_running_log">任务日志</string>
+    <string name="setting_running_log_tips">记录应用执行的信息，日常使用时建议关闭\n点击显示任务执行的实时日志</string>
+    <string name="setting_running_task_info">任务统计</string>
+    <string name="setting_running_task_info_tips">记录任务执行成功失败与否\n查看任务执行情况统计</string>
 
-    <string name="app_config">应用设置</string>
-    <string name="keep_alive">前台服务</string>
-    <string name="keep_alive_tips">如果开启自启动和锁定后台之后，应用还是被频繁关闭，可开启前台服务保持应用运行</string>
-    <string name="action_touch_offset">点击偏移</string>
-    <string name="action_touch_offset_tips">手势、点击图片和点击颜色会进行小范围点击位置偏移(单位：像素(px))</string>
-    <string name="action_record_delay">录制延迟</string>
-    <string name="action_record_delay_tips">录制动作的时候在每个新动作之后添加一个延迟动作，0为不添加\n当前为：%1$sms</string>
+    <string name="setting_theme">界面外观</string>
+    <string name="setting_night_mode">深色模式</string>
+    <string name="setting_night_auto">跟随系统</string>
+    <string name="setting_night_open">总是开启</string>
+    <string name="setting_night_close">总是关闭</string>
+    <string name="setting_dynamic_color">动态颜色</string>
+    <string name="setting_dynamic_color_tips">在支持的Android版本上，开启后应用将使用壁纸颜色作为主色调</string>
 
-    <string name="app_running">运行状况</string>
-    <string name="running_state_oversee">状态监视</string>
-    <string name="running_state_oversee_tips">显示运行中任务的悬浮窗。一些任务可能因为多种原因而无法结束运行，可以在这强制结束\n当前为：%1$s</string>
-    <string name="running_log">记录日志</string>
-    <string name="running_log_tips">记录应用执行的信息，日常使用时建议关闭</string>
-    <string name="running_log_dialog">查看日志</string>
-    <string name="running_log_dialog_tips">显示任务执行的实时日志</string>
-    <string name="running_task_info">任务统计</string>
-    <string name="running_task_info_tips">查看任务执行情况统计</string>
+    <string name="setting_app_info">应用信息</string>
+    <string name="setting_version">版本</string>
+    <string name="setting_version_format">%1$s(%2$d)</string>
+    <string name="setting_source_code">在GitHub查看源码</string>
 
-    <string name="log_get_all_task">获取所有任务，任务数：%1$d</string>
-    <string name="log_run_task_result">任务执行 %1$s</string>
-    <string name="log_run_task_result_success">成功</string>
-    <string name="log_run_task_result_fail">失败</string>
-    <string name="log_show_manual_task">显示手动任务浮窗</string>
+    <string name="log_run_manual">显示手动任务浮窗</string>
+    <string name="log_run_manual_task">执行手动任务 %1$s</string>
+    <string name="log_add_time_work">添加定时任务 %1$s，设定 %2$s</string>
+    <string name="log_add_periodic_time_work">添加重复定时任务 %1$s，设定 %2$s</string>
+    <string name="log_remove_time_work">移除定时任务 %1$s</string>
+    <string name="log_run_time_task">定时任务 %1$s 正在被执行</string>
+    <string name="log_run_new_notification">收到%1$s的通知，内容为：%2$s</string>
+    <string name="log_run_new_notification_task">触发新通知任务 %1$s</string>
+    <string name="log_run_app_changed">应用切换，上一个应用是：%1$s，当前应用是：%2$s</string>
+    <string name="log_run_app_changed_task">触发应用切换任务 %1$s</string>
+    <string name="log_run_view_changed">应用%1$s窗口变动</string>
+    <string name="log_run_view_changed_task">触发窗口变更任务 %1$s</string>
+    <string name="log_run_content_changed">应用%1$s内容变动</string>
+    <string name="log_run_content_changed_task">触发内容变更任务 %1$s</string>
+
+    <string name="log_run_task_result_success">执行 %1$s 成功</string>
+    <string name="log_run_task_result_fail">执行 %1$s 失败</string>
     <string name="log_match_image">图片匹配，需求相似度为：%1$d，匹配相似度为：%2$d</string>
-    <string name="log_add_job">添加定时任务 %1$s，设定在 %2$s 执行</string>
-    <string name="log_add_periodic_job">添加重复定时任务 %1$s，设定在 %2$s 执行，间隔%3$d时%4$d分</string>
-    <string name="log_remove_job">移除定时任务 %1$s</string>
-    <string name="log_do_job">定时任务 %1$s 正在被执行</string>
 </resources>

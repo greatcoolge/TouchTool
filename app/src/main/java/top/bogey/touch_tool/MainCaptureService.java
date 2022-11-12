@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.ui.setting.LogLevel;
-import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.ui.setting.LogUtils;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.MatchResult;
 
@@ -184,7 +184,7 @@ public class MainCaptureService extends Service {
         public Rect matchImage(Bitmap sourceBitmap, Bitmap matchBitmap, int matchValue) {
             if (sourceBitmap == null || matchBitmap == null) return null;
             MatchResult matchResult = AppUtils.nativeMatchTemplate(sourceBitmap, matchBitmap, 5);
-            RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_match_image, matchValue, matchResult.value));
+            LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_match_image, matchValue, matchResult.value));
             if (Math.min(100, matchValue) > matchResult.value) return null;
             return matchResult.rect;
         }

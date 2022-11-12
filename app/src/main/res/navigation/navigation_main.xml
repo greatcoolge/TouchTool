@@ -9,12 +9,12 @@
         android:label="@string/home"
         tools:layout="@layout/view_home" />
     <fragment
-        android:id="@+id/tasks"
-        android:name="top.bogey.touch_tool.ui.tasks.TasksView"
+        android:id="@+id/task"
+        android:name="top.bogey.touch_tool.ui.task.TaskView"
         android:label="@string/tasks"
-        tools:layout="@layout/view_tasks" >
+        tools:layout="@layout/view_task" >
         <action
-            android:id="@+id/action_tasks_to_taskInfo"
+            android:id="@+id/action_task_to_taskInfo"
             app:destination="@id/taskInfo" />
     </fragment>
     <fragment
@@ -24,7 +24,7 @@
         tools:layout="@layout/view_setting" />
     <fragment
         android:id="@+id/taskInfo"
-        android:name="top.bogey.touch_tool.ui.tasks.TaskInfoView"
+        android:name="top.bogey.touch_tool.ui.task_info.TaskInfoView"
         tools:layout="@layout/view_task_info" >
         <argument
             android:name="task"

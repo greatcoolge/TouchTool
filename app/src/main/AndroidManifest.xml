@@ -64,7 +64,7 @@
 
         <service
             android:name=".ui.setting.KeepAliveService"
-            android:description="@string/keep_alive_tips"
+            android:description="@string/setting_keep_alive_tips"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />

@@ -12,6 +12,7 @@ import java.util.List;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
 import top.bogey.touch_tool.utils.AppUtils;
@@ -61,6 +62,8 @@ public class ColorAction extends Action {
 
     @Override
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        if (!super.doAction(task, service, runningInfo)) return false;
+
         if (!service.isCaptureEnabled()) return false;
 
         List<Rect> rectList = service.binder.matchColor(color);
@@ -82,12 +85,12 @@ public class ColorAction extends Action {
             service.runGesture(path, 100, null);
             sleep(getTimeArea().getRandomTime());
         }
-        runningInfo.addProgress(task, this, false);
         return true;
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
+    public String getDescription(Context context, Task task, Behavior behavior) {
+        if (context == null) return minPercent + "-" + maxPercent;
         return context.getString(R.string.action_color);
     }
 

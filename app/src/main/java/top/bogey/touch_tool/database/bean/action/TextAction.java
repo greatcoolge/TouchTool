@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
 
@@ -24,7 +25,7 @@ public class TextAction extends Action {
         super(ActionType.TEXT);
     }
 
-    protected TextAction(Parcel in){
+    protected TextAction(Parcel in) {
         super(ActionType.TEXT);
         text = in.readString();
     }
@@ -140,6 +141,8 @@ public class TextAction extends Action {
 
     @Override
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        if (!super.doAction(task, service, runningInfo)) return false;
+
         AccessibilityNodeInfo root = service.getRootInActiveWindow();
         List<AccessibilityNodeInfo> nodes = searchNodes(root);
         AccessibilityNodeInfo nodeInfo = searchClickableNode(nodes);
@@ -154,9 +157,20 @@ public class TextAction extends Action {
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
+    public String getDescription(Context context, Task task, Behavior behavior) {
+        if (context == null) return text;
         String touch = context.getString(timeArea.getMax() > 100 ? R.string.long_touch : R.string.touch);
         return context.getString(R.string.action_text, touch, text);
+    }
+
+    @Override
+    public String getConditionContent(Context context, Task task, Behavior behavior) {
+        return context.getString(R.string.condition_text, text);
+    }
+
+    @Override
+    public String getConditionHint(Context context, Task task, Behavior behavior) {
+        return context.getString(R.string.condition_text_tips);
     }
 
     @Override

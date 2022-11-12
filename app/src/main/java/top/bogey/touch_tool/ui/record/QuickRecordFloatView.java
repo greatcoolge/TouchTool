@@ -29,8 +29,9 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 @SuppressLint("ViewConstructor")
 public class QuickRecordFloatView extends FrameLayout implements FloatViewInterface {
-    private final List<Behavior> behaviors;
     private final FloatPickerPosBinding binding;
+
+    private List<Behavior> behaviors;
 
     private List<Point> currPoints = new ArrayList<>();
     private float lastX = 0;
@@ -47,6 +48,7 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
     public QuickRecordFloatView(Context context, Task task, ResultCallback callback) {
         super(context);
         behaviors = task.getBehaviors();
+        if (behaviors == null) behaviors = new ArrayList<>();
 
         binding = FloatPickerPosBinding.inflate(LayoutInflater.from(getContext()), this, true);
 
@@ -135,14 +137,16 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
             case MotionEvent.ACTION_UP:
                 isDrag = false;
                 touchStartTime = System.currentTimeMillis() - touchStartTime;
-                TouchAction touchNode = new TouchAction(getContext(), DouglasPeucker.compress(currPoints));
+                TouchAction.TouchPath path = new TouchAction.TouchPath();
+                path.setPoints(DouglasPeucker.compress(currPoints));
+                TouchAction touchNode = new TouchAction(getContext(), path);
                 touchNode.getTimeArea().setTime((int) touchStartTime);
                 behaviors.add(new Behavior(touchNode));
 
                 MainAccessibilityService service = MainApplication.getService();
                 if (service != null) {
                     EasyFloat.hide(QuickRecordFloatView.class.getCanonicalName());
-                    post(() -> service.runGesture(touchNode.getPath(getContext(), false), touchNode.getTimeArea().getRandomTime(), result -> {
+                    post(() -> service.runGesture(touchNode.getPaths(getContext(), false), touchNode.getTimeArea().getRandomTime(), result -> {
                         EasyFloat.show(QuickRecordFloatView.class.getCanonicalName());
                         delayStartTime = System.currentTimeMillis();
                         currPoints = new ArrayList<>();

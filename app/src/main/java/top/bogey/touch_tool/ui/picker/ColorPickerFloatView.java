@@ -41,7 +41,6 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     private boolean isMarked = false;
 
     private int[] color = new int[3];
-
     private int minPercent = 0;
     private int maxPercent = 100;
     private int size = 0;

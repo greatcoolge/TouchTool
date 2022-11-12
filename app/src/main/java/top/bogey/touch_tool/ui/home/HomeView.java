@@ -16,19 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.tencent.mmkv.MMKV;
-
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewHomeBinding;
-import top.bogey.touch_tool.ui.setting.OverSeeFloatView;
-import top.bogey.touch_tool.ui.setting.OverseeMode;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.SelectCallback;
-import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class HomeView extends Fragment {
     private ViewHomeBinding binding;
@@ -52,17 +47,7 @@ public class HomeView extends Fragment {
                 });
             }
         });
-        MainAccessibilityService.serviceEnabled.observe(getViewLifecycleOwner(), aBoolean -> {
-            setServiceChecked(aBoolean);
-            String string = MMKV.defaultMMKV().decodeString(OverSeeFloatView.OVERSEE_MODE);
-            if (string != null) {
-                int i = Integer.parseInt(string);
-                if (i > 0) {
-                    if (aBoolean) new OverSeeFloatView(requireContext(), OverseeMode.values()[i]).show();
-                    else EasyFloat.dismiss(OverSeeFloatView.class.getCanonicalName());
-                }
-            }
-        });
+        MainAccessibilityService.serviceEnabled.observe(getViewLifecycleOwner(), this::setServiceChecked);
 
         binding.captureServiceButton.setOnClickListener(view -> {
             MainActivity activity = MainApplication.getActivity();

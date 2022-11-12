@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:padding="8dp"
-    tools:context=".ui.tasks.TaskInfoView">
+    tools:context=".ui.task_info.TaskInfoView">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/status_group"
@@ -26,7 +25,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:icon="@drawable/icon_task_close" />
+                app:backgroundTint="@color/background_error_tint_check"
+                app:icon="@drawable/icon_task_close"
+                app:iconTint="@color/container_tint_check" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/manual_button"
@@ -90,11 +91,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="4dp"
+                android:layout_marginHorizontal="4dp"
                 android:layout_weight="1"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:paddingHorizontal="8dp" />
+                android:orientation="horizontal" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/app_button"
@@ -103,9 +102,12 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="4dp"
+                android:checkable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                app:icon="@drawable/icon_action_task" />
+                app:backgroundTint="@color/background_error_tint_check"
+                app:icon="@drawable/icon_action_task"
+                app:iconTint="@color/container_tint_check" />
 
         </LinearLayout>
 
@@ -145,7 +147,7 @@
                 android:layout_marginHorizontal="4dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                app:icon="@drawable/icon_task_it_is_time" />
+                app:icon="@drawable/icon_time" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/periodic_button"
@@ -190,5 +192,15 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="32dp"
         app:srcCompat="@drawable/icon_add" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/paste_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginBottom="112dp"
+        android:src="@drawable/icon_paste"
+        android:visibility="invisible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

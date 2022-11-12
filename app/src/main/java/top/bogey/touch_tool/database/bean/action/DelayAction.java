@@ -4,6 +4,7 @@ import android.content.Context;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
 
@@ -13,7 +14,7 @@ public class DelayAction extends Action {
         timeArea.setTime(1000);
     }
 
-    public DelayAction(int time){
+    public DelayAction(int time) {
         super(ActionType.DELAY);
         timeArea.setTime(time);
     }
@@ -30,13 +31,15 @@ public class DelayAction extends Action {
 
     @Override
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        if (!super.doAction(task, service, runningInfo)) return false;
+
         sleep(getTimeArea().getRandomTime());
-        runningInfo.addProgress(task, this, false);
         return true;
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
+    public String getDescription(Context context, Task task, Behavior behavior) {
+        if (context == null) return timeArea.getTitle();
         return context.getString(R.string.action_delay, timeArea.getTitle());
     }
 }

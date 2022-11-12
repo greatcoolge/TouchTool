@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.PowerManager;
 import android.provider.Settings;
 
@@ -21,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.R;
 
 public class AppUtils {
@@ -57,12 +60,12 @@ public class AppUtils {
     }
 
     public static void gotoApp(Context context, String pkgName) {
-        try {
-            PackageManager manager = context.getPackageManager();
-            Intent intent = manager.getLaunchIntentForPackage(pkgName);
-            if (intent != null) context.startActivity(intent);
-        } catch (Exception ignored) {
-        }
+            try {
+                PackageManager manager = context.getPackageManager();
+                Intent intent = manager.getLaunchIntentForPackage(pkgName);
+                if (intent != null) context.startActivity(intent);
+            } catch (Exception ignored) {
+            }
     }
 
     public static boolean checkFloatPermission(Context context) {
@@ -89,14 +92,19 @@ public class AppUtils {
         wakeLock.acquire(100);
         wakeLock.release();
     }
-
-    @SuppressLint("SimpleDateFormat")
-    public static String formatDateMinute(long dateTime) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = new Date(dateTime);
-        return dateFormat.format(date);
+    
+    public static <T extends Parcelable> T copy(T input){
+        Parcel parcel = null;
+        try{
+            parcel = Parcel.obtain();
+            parcel.writeParcelable(input, 0);
+            parcel.setDataPosition(0);
+            return parcel.readParcelable(input.getClass().getClassLoader());
+        } finally {
+            if (parcel != null) parcel.recycle();
+        }
     }
-
+    
     @SuppressLint("SimpleDateFormat")
     public static String formatDateSecond(long dateTime) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

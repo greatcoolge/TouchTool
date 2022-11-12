@@ -15,9 +15,9 @@ import java.util.List;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.databinding.FloatPickerAppBinding;
-import top.bogey.touch_tool.ui.apps.AppInfo;
-import top.bogey.touch_tool.ui.apps.AppsRecyclerViewAdapter;
-import top.bogey.touch_tool.ui.apps.SelectAppCallback;
+import top.bogey.touch_tool.ui.app.AppInfo;
+import top.bogey.touch_tool.ui.app.AppRecyclerViewAdapter;
+import top.bogey.touch_tool.ui.app.SelectAppCallback;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.TextChangedListener;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
@@ -26,7 +26,7 @@ import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 public class AppPickerFloatView extends BasePickerFloatView implements SelectAppCallback {
     private final FloatPickerAppBinding binding;
     private final MainViewModel viewModel;
-    private final AppsRecyclerViewAdapter adapter;
+    private final AppRecyclerViewAdapter adapter;
     private String searchText = "";
     private AppInfo selectApp = null;
 
@@ -34,7 +34,7 @@ public class AppPickerFloatView extends BasePickerFloatView implements SelectApp
         super(context, pickerCallback);
         binding = FloatPickerAppBinding.inflate(LayoutInflater.from(context), this, true);
         viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
-        adapter = new AppsRecyclerViewAdapter(this, null);
+        adapter = new AppRecyclerViewAdapter(this, null);
         binding.appsView.setAdapter(adapter);
         refreshSpawnCount();
         adapter.refreshApps(viewModel.searchAppList(searchText, false));

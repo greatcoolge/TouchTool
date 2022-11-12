@@ -2,16 +2,12 @@ package top.bogey.touch_tool;
 
 import android.app.Application;
 
-import androidx.appcompat.app.AppCompatDelegate;
-
-import com.google.android.material.color.DynamicColors;
 import com.tencent.mmkv.MMKV;
 
 import top.bogey.touch_tool.ui.setting.KeepAliveService;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 
 public class MainApplication extends Application {
-    public static final String NIGHT_MODE = "night_mode";
-
     private static MainActivity activity;
     private static MainAccessibilityService service;
 
@@ -21,13 +17,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         MMKV.initialize(this);
-        DynamicColors.applyToActivitiesIfAvailable(this);
-        initNightMode();
-    }
-
-    public void initNightMode() {
-        String nightMode = MMKV.defaultMMKV().decodeString(NIGHT_MODE, "-1");
-        if (nightMode != null) AppCompatDelegate.setDefaultNightMode(Integer.parseInt(nightMode));
+        SettingSave.getInstance().setDynamicColor(this, SettingSave.getInstance().isDynamicColor());
     }
 
     public static MainActivity getActivity() {

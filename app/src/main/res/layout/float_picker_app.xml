@@ -44,7 +44,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
             app:spanCount="3"
-            tools:listitem="@layout/view_apps_item" />
+            tools:listitem="@layout/view_app_item" />
 
     </LinearLayout>
 

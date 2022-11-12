@@ -3,8 +3,10 @@ package top.bogey.touch_tool.database.bean.action;
 import android.content.Context;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Behavior;
+import top.bogey.touch_tool.database.bean.BehaviorMode;
 import top.bogey.touch_tool.database.bean.Task;
-import top.bogey.touch_tool.database.data.TaskRunningInfo;
 
 public class NullAction extends Action {
     public NullAction() {
@@ -22,13 +24,14 @@ public class NullAction extends Action {
     }
 
     @Override
-    public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
-        runningInfo.addProgress(task, this, false);
-        return false;
+    public String getConditionContent(Context context, Task task, Behavior behavior) {
+        if (behavior.getBehaviorMode() == BehaviorMode.CONDITION) return context.getString(R.string.condition_null_for_condition);
+        else return context.getString(R.string.condition_null_for_loop);
     }
 
     @Override
-    public String getDescription(Context context, boolean normal) {
-        return null;
+    public String getConditionHint(Context context, Task task, Behavior behavior) {
+        if (behavior.getBehaviorMode() == BehaviorMode.CONDITION) return context.getString(R.string.condition_null_for_condition_tips);
+        else return context.getString(R.string.condition_null_for_loop_tips);
     }
 }
