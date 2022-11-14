@@ -37,11 +37,6 @@ public class ImageAction extends Action {
         value = 95;
     }
 
-    public ImageAction(Context context) {
-        super(ActionType.IMAGE);
-        screen = DisplayUtils.getScreen(context);
-    }
-
     protected ImageAction(Parcel in) {
         super(ActionType.IMAGE);
         screen = in.readInt();
@@ -159,16 +154,8 @@ public class ImageAction extends Action {
         return screen;
     }
 
-    public void setScreen(int screen) {
-        this.screen = screen;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public int getValue() {

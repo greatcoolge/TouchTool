@@ -17,7 +17,8 @@ public enum ActionType implements Parcelable {
     IMAGE,
     COLOR,
     SYSTEM,
-    TASK;
+    TASK,
+    INPUT;
 
     public int getTypeResource(){
         switch (this){
@@ -35,6 +36,8 @@ public enum ActionType implements Parcelable {
                 return R.drawable.icon_action_system;
             case TASK:
                 return R.drawable.icon_action_task;
+            case INPUT:
+                return R.drawable.icon_action_input;
         }
         return R.drawable.icon_close;
     }
@@ -59,6 +62,8 @@ public enum ActionType implements Parcelable {
                 return context.getString(R.string.action_type_system);
             case TASK:
                 return context.getString(R.string.action_type_task);
+            case INPUT:
+                return context.getString(R.string.action_type_input);
         }
         return null;
     }

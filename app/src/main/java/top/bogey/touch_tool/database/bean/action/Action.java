@@ -50,6 +50,9 @@ public abstract class Action implements Parcelable {
                 case COLOR:
                     action = new ColorAction(in);
                     break;
+                case INPUT:
+                    action = new InputAction(in);
+                    break;
                 default:
                     action = new NullAction();
                     break;

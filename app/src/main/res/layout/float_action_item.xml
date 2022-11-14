@@ -90,6 +90,11 @@
                 layout="@layout/float_action_color"
                 android:visibility="invisible" />
 
+            <include
+                android:id="@+id/input_include"
+                layout="@layout/float_action_input"
+                android:visibility="invisible" />
+
         </FrameLayout>
 
         <top.bogey.touch_tool.ui.custom.DelayActionItemView

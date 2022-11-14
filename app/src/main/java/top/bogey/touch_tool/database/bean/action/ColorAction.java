@@ -104,14 +104,6 @@ public class ColorAction extends Action {
         dest.writeInt(size);
     }
 
-    public int getScreen() {
-        return screen;
-    }
-
-    public void setScreen(int screen) {
-        this.screen = screen;
-    }
-
     public int[] getColor() {
         return color;
     }
@@ -124,16 +116,8 @@ public class ColorAction extends Action {
         return minPercent;
     }
 
-    public void setMinPercent(int minPercent) {
-        this.minPercent = minPercent;
-    }
-
     public int getMaxPercent() {
         return maxPercent;
-    }
-
-    public void setMaxPercent(int maxPercent) {
-        this.maxPercent = maxPercent;
     }
 
     public int getSize() {

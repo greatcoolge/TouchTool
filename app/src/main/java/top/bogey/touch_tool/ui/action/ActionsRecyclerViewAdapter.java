@@ -32,6 +32,7 @@ import top.bogey.touch_tool.database.bean.action.ActionType;
 import top.bogey.touch_tool.database.bean.action.ColorAction;
 import top.bogey.touch_tool.database.bean.action.DelayAction;
 import top.bogey.touch_tool.database.bean.action.ImageAction;
+import top.bogey.touch_tool.database.bean.action.InputAction;
 import top.bogey.touch_tool.database.bean.action.SystemAction;
 import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.database.bean.action.TextAction;
@@ -42,6 +43,7 @@ import top.bogey.touch_tool.ui.behavior.BehaviorFloatView;
 import top.bogey.touch_tool.ui.picker.AppPickerFloatView;
 import top.bogey.touch_tool.ui.picker.ColorPickerFloatView;
 import top.bogey.touch_tool.ui.picker.ImagePickerFloatView;
+import top.bogey.touch_tool.ui.picker.InputPickerFloatView;
 import top.bogey.touch_tool.ui.picker.TouchPickerFloatView;
 import top.bogey.touch_tool.ui.picker.WordPickerFloatView;
 import top.bogey.touch_tool.utils.AppUtils;
@@ -239,6 +241,31 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 }, colorAction).show();
             });
 
+            binding.inputInclude.pickerButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                InputAction inputAction = (InputAction) actions.get(index);
+                new InputPickerFloatView(context, picker -> {
+                    InputPickerFloatView inputPicker = (InputPickerFloatView) picker;
+                    String word = inputPicker.getInput().getId();
+                    if (word != null){
+                        inputAction.setId(word);
+                        binding.inputInclude.textBaseInclude.titleEdit.setText(word);
+                    }
+                }, inputAction).show();
+            });
+            binding.inputInclude.textBaseInclude.titleEdit.setEnabled(false);
+            binding.inputInclude.textBaseInclude.textInputLayout.setHint(context.getString(R.string.input_box));
+            binding.inputInclude.textInputInclude.textInputLayout.setHint(context.getString(R.string.input_string));
+
+            binding.inputInclude.textInputInclude.titleEdit.addTextChangedListener(new TextChangedListener() {
+                @Override
+                public void afterTextChanged(Editable s) {
+                    int index = getBindingAdapterPosition();
+                    Action action = actions.get(index);
+                    if (action.getType() == ActionType.INPUT) ((InputAction) action).setText(String.valueOf(s));
+                }
+            });
+
             adapter = new ArrayAdapter<>(context, R.layout.float_action_spinner_item);
             binding.spinnerInclude.spinner.setAdapter(adapter);
             binding.spinnerInclude.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -339,6 +366,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.GONE);
                     binding.delayInclude.setValue(action.getTimeArea().getMin(), action.getTimeArea().getMax());
                     break;
@@ -349,6 +377,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.VISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.VISIBLE);
                     binding.colorInclude.colorCard.setCardBackgroundColor(DisplayUtils.getColorFromHsv(((ColorAction) action).getColor()));
                     binding.colorInclude.similarText.setText(action.getDescription(null, null, null));
@@ -360,6 +389,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.VISIBLE);
                     binding.textInclude.textBaseInclude.titleEdit.setText(((TextAction) action).getText());
                     break;
@@ -370,6 +400,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.VISIBLE);
                     binding.touchInclude.touchPath.setPaths(((TouchAction) action).getPaths(context));
                     break;
@@ -380,12 +411,25 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.imageInclude.getRoot().setVisibility(View.VISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.VISIBLE);
                     ImageAction imageAction = (ImageAction) action;
                     binding.imageInclude.similarText.setText(imageAction.getDescription(null, null, null));
                     if (imageAction.getBitmap() != null) {
                         binding.imageInclude.image.setImageBitmap(imageAction.getBitmap());
                     }
+                    break;
+                case INPUT:
+                    binding.delayInclude.setVisibility(View.INVISIBLE);
+                    binding.textInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.touchInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.spinnerInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.VISIBLE);
+                    binding.timeInclude.setVisibility(View.GONE);
+                    binding.inputInclude.textBaseInclude.titleEdit.setText(((InputAction) action).getId());
+                    binding.inputInclude.textInputInclude.titleEdit.setText(((InputAction) action).getText());
                     break;
                 case SYSTEM:
                 case TASK:
@@ -395,6 +439,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.imageInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.spinnerInclude.getRoot().setVisibility(View.VISIBLE);
                     binding.colorInclude.getRoot().setVisibility(View.INVISIBLE);
+                    binding.inputInclude.getRoot().setVisibility(View.INVISIBLE);
                     binding.timeInclude.setVisibility(View.GONE);
                     if (action.getType() == ActionType.SYSTEM) {
                         adapter.clear();

@@ -24,6 +24,7 @@ import top.bogey.touch_tool.database.bean.action.ActionType;
 import top.bogey.touch_tool.database.bean.action.ColorAction;
 import top.bogey.touch_tool.database.bean.action.DelayAction;
 import top.bogey.touch_tool.database.bean.action.ImageAction;
+import top.bogey.touch_tool.database.bean.action.InputAction;
 import top.bogey.touch_tool.database.bean.action.NullAction;
 import top.bogey.touch_tool.database.bean.action.NumberAction;
 import top.bogey.touch_tool.database.bean.action.SystemAction;
@@ -67,6 +68,7 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
         binding.colorButton.setOnClickListener(v -> adapter.addNode(new ColorAction()));
         binding.keyButton.setOnClickListener(v -> adapter.addNode(new SystemAction()));
         binding.taskButton.setOnClickListener(v -> adapter.addNode(new TaskAction()));
+        binding.inputButton.setOnClickListener(v -> adapter.addNode(new InputAction()));
         binding.recyclerView.setAdapter(adapter);
 
         conditionAdapter = new ArrayAdapter<>(context, R.layout.float_action_spinner_item);

@@ -11,17 +11,9 @@
     <LinearLayout
         android:id="@+id/content_box"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:scaleType="fitXY"
-            app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Medium" />
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/app_name"
@@ -40,7 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="16dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:minWidth="48dp"

@@ -19,7 +19,6 @@ import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
-import top.bogey.touch_tool.utils.DouglasPeucker;
 import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
 public class TouchAction extends Action {

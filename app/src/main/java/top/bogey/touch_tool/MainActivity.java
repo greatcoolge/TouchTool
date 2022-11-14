@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         if (!SettingSave.getInstance().isFirstRun()) {
             try (InputStream inputStream = getAssets().open("DefaultTasks")) {
                 byte[] bytes = new byte[inputStream.available()];
-                if (inputStream.read(bytes) == -1) saveTasks(bytes);
+                if (inputStream.read(bytes) > 0) saveTasks(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
             }

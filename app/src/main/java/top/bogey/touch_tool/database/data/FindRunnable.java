@@ -66,8 +66,12 @@ public class FindRunnable implements Runnable {
 
                 service.currPkgName = packageName;
 
+                MainActivity activity = MainApplication.getActivity();
                 // APP自己不执行任何任务
-                if (packageName.equals(service.getPackageName())) return;
+                if (packageName.equals(service.getPackageName())) {
+                    if (activity != null) activity.dismissPlayFloatView();
+                    return;
+                }
 
                 if (!isRunning()) return;
 
@@ -82,7 +86,6 @@ public class FindRunnable implements Runnable {
                     }
 
                     tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.MANUAL);
-                    MainActivity activity = MainApplication.getActivity();
                     if (tasks.size() > 0 || SettingSave.getInstance().getRunningOverseeMode() != OverseeMode.CLOSED) {
                         if (activity != null) {
                             activity.showPlayFloatView(packageName);

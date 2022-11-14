@@ -48,13 +48,12 @@ public class AppUtils {
                 .show();
     }
 
-    public static void gotoAppDetailSetting(Activity activity) {
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-        intent.setData(Uri.fromParts("package", activity.getPackageName(), null));
+    public static void gotoAppDetailSetting(Context context) {
         try {
-            activity.startActivity(intent);
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            context.startActivity(intent);
         } catch (Exception ignored) {
         }
     }
@@ -92,6 +91,21 @@ public class AppUtils {
         wakeLock.acquire(100);
         wakeLock.release();
     }
+
+    public static boolean isIgnoredBattery(Context context){
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        return powerManager.isIgnoringBatteryOptimizations(context.getPackageName());
+    }
+
+    public static void gotoBatterySetting(Context context){
+        try {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            context.startActivity(intent);
+        } catch (Exception ignored) {
+        }
+    }
     
     public static <T extends Parcelable> T copy(T input){
         Parcel parcel = null;
@@ -103,13 +117,6 @@ public class AppUtils {
         } finally {
             if (parcel != null) parcel.recycle();
         }
-    }
-    
-    @SuppressLint("SimpleDateFormat")
-    public static String formatDateSecond(long dateTime) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(dateTime);
-        return dateFormat.format(date);
     }
 
     public static String formatDateLocalDate(Context context, long dateTime){
@@ -132,6 +139,17 @@ public class AppUtils {
         StringBuilder builder = new StringBuilder();
         builder.append(context.getString(R.string.hour, timeCalendar.get(Calendar.HOUR_OF_DAY)));
         if (timeCalendar.get(Calendar.MINUTE) != 0) builder.append(context.getString(R.string.minute, timeCalendar.get(Calendar.MINUTE)));
+        return  builder.toString();
+    }
+
+    public static String formatDateLocalSecond(Context context, long dateTime){
+        Calendar timeCalendar = Calendar.getInstance();
+        timeCalendar.setTimeInMillis(dateTime);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(context.getString(R.string.hour, timeCalendar.get(Calendar.HOUR_OF_DAY)));
+        if (timeCalendar.get(Calendar.MINUTE) != 0) builder.append(context.getString(R.string.minute, timeCalendar.get(Calendar.MINUTE)));
+        if (timeCalendar.get(Calendar.SECOND) != 0) builder.append(context.getString(R.string.second, timeCalendar.get(Calendar.SECOND)));
         return  builder.toString();
     }
 

@@ -28,6 +28,12 @@ import top.bogey.touch_tool.utils.SelectCallback;
 public class HomeView extends Fragment {
     private ViewHomeBinding binding;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        binding.ignoreBatteryBox.setVisibility(AppUtils.isIgnoredBattery(requireContext()) ? View.GONE : View.VISIBLE);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,6 +75,9 @@ public class HomeView extends Fragment {
             });
         });
         MainAccessibilityService.captureEnabled.observe(getViewLifecycleOwner(), this::setCaptureChecked);
+
+        binding.ignoreBatteryBox.setVisibility(AppUtils.isIgnoredBattery(requireContext()) ? View.GONE : View.VISIBLE);
+        binding.ignoreBatteryButton.setOnClickListener(v -> AppUtils.gotoBatterySetting(requireContext()));
 
         binding.openBackgroundPopButton.setOnClickListener(v -> AppUtils.gotoAppDetailSetting(requireActivity()));
         binding.autoRunButton.setOnClickListener(v -> AppUtils.gotoAppDetailSetting(requireActivity()));

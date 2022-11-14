@@ -46,7 +46,7 @@ import top.bogey.touch_tool.utils.SelectCallback;
 import top.bogey.touch_tool.utils.TaskChangedCallback;
 
 public class TaskView extends Fragment implements TaskChangedCallback {
-    private static final String SAVE_FILE = "Share.txt";
+    private static final String SAVE_FILE = "Share_T.txt";
 
     private ViewTaskBinding binding;
     private MainViewModel viewModel;

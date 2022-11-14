@@ -1,5 +1,6 @@
 package top.bogey.touch_tool.ui.running;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.util.UUID;
 
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.utils.AppUtils;
 
 public class RunningInfo implements Parcelable {
@@ -52,8 +54,8 @@ public class RunningInfo implements Parcelable {
         return date;
     }
 
-    public String getDateString() {
-        return AppUtils.formatDateSecond(date);
+    public String getDateString(Context context) {
+        return context.getString(R.string.date, AppUtils.formatDateLocalDate(context, date), AppUtils.formatDateLocalSecond(context, date));
     }
 
     public static final Creator<RunningInfo> CREATOR = new Creator<RunningInfo>() {

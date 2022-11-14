@@ -144,8 +144,8 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                 taskBinding.numberText.setText(String.format("%d/%d", nodeInfo.getSuccess(), nodeInfo.getValue()));
             } else if (level == 2) {
                 RunningInfo runningInfo = (RunningInfo) node.getValue();
-                binding.time.setText(runningInfo.getDateString());
-                binding.result.setText(context.getString(runningInfo.isSuccess() ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail));
+                binding.time.setText(runningInfo.getDateString(context));
+                binding.result.setText(context.getString(runningInfo.isSuccess() ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail, ""));
                 binding.result.setTextColor((runningInfo.isSuccess() ? LogLevel.HIGH : LogLevel.LOW).getLevelColor(context));
             }
         }

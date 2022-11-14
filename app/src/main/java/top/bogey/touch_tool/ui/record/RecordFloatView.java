@@ -19,6 +19,7 @@ import top.bogey.touch_tool.database.bean.action.Action;
 import top.bogey.touch_tool.database.bean.action.ColorAction;
 import top.bogey.touch_tool.database.bean.action.DelayAction;
 import top.bogey.touch_tool.database.bean.action.ImageAction;
+import top.bogey.touch_tool.database.bean.action.InputAction;
 import top.bogey.touch_tool.database.bean.action.SystemAction;
 import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.database.bean.action.TextAction;
@@ -97,6 +98,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         binding.colorButton.setOnClickListener(v -> addAction(new ColorAction()));
         binding.keyButton.setOnClickListener(v -> addAction(new SystemAction()));
         binding.taskButton.setOnClickListener(v -> addAction(new TaskAction()));
+        binding.inputButton.setOnClickListener(v -> addAction(new InputAction()));
     }
 
     @Override

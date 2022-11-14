@@ -1,5 +1,6 @@
 package top.bogey.touch_tool.ui.setting;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -68,14 +69,16 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         public final FloatLogItemBinding binding;
+        private final Context context;
 
         public ViewHolder(@NonNull FloatLogItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            context = binding.getRoot().getContext();
         }
 
         public void refreshItem(LogInfo log) {
-            binding.titleText.setText(String.format("%s\n%s", log.getDateString(), log.getLog()));
+            binding.titleText.setText(String.format("%s\n%s", log.getDateString(context), log.getLog()));
             binding.titleText.setTextColor(log.getLevel().getLevelColor(binding.getRoot().getContext()));
         }
     }
