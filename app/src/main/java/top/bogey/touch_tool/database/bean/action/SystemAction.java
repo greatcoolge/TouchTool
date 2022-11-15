@@ -81,7 +81,9 @@ public class SystemAction extends Action {
             case GOTO:
                 AppUtils.gotoApp(service, extras);
                 return true;
-
+            case NOTI:
+                service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS);
+                return true;
         }
         return false;
     }
@@ -122,7 +124,8 @@ public class SystemAction extends Action {
         WEAK,
         LOCK,
         SNAP,
-        GOTO;
+        GOTO,
+        NOTI;
 
         public String getDescription(Context context, String extras) {
             int key = 0;
@@ -147,6 +150,9 @@ public class SystemAction extends Action {
                     break;
                 case GOTO:
                     key = R.string.action_system_goto;
+                    break;
+                case NOTI:
+                    key = R.string.action_system_notification;
                     break;
             }
             if (key != 0) {

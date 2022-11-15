@@ -168,11 +168,12 @@
     <string name="action_input">输入 %1$s</string>
     <string name="action_system_back">使用 返回 按键</string>
     <string name="action_system_home">使用 主页 按键</string>
-    <string name="action_system_task">使用 最近应用 按键</string>
+    <string name="action_system_task">打开 最近应用 界面</string>
     <string name="action_system_weak">点亮屏幕</string>
     <string name="action_system_lock">锁定屏幕</string>
     <string name="action_system_snap">手机截屏</string>
     <string name="action_system_goto">打开应用 %1$s</string>
+    <string name="action_system_notification">打开 通知 界面</string>
     <string name="action_task">执行内嵌任务 %1$s</string>
 
     <string name="action_device_not_support_lock">当前设备不支持调用锁屏功能</string>

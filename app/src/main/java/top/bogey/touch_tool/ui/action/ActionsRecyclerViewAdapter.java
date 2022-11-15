@@ -445,7 +445,17 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     binding.timeInclude.setVisibility(View.GONE);
                     if (action.getType() == ActionType.SYSTEM) {
                         adapter.clear();
-                        for (SystemAction.SystemActionType systemActionType : SystemAction.SystemActionType.values()) {
+                        SystemAction.SystemActionType[] types = {
+                                SystemAction.SystemActionType.BACK,
+                                SystemAction.SystemActionType.HOME,
+                                SystemAction.SystemActionType.TASK,
+                                SystemAction.SystemActionType.NOTI,
+                                SystemAction.SystemActionType.WEAK,
+                                SystemAction.SystemActionType.LOCK,
+                                SystemAction.SystemActionType.SNAP,
+                                SystemAction.SystemActionType.GOTO,
+                        };
+                        for (SystemAction.SystemActionType systemActionType : types) {
                             adapter.add(new TaskAction(systemActionType.name(), systemActionType.getDescription(context, "")));
                         }
                         selectSpinner(((SystemAction) action).getSystemActionType().name());
