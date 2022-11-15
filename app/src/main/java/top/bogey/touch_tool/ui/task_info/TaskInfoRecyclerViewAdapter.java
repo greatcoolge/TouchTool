@@ -18,6 +18,7 @@ import java.util.List;
 
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRepository;
@@ -26,6 +27,7 @@ import top.bogey.touch_tool.ui.behavior.BehaviorFloatView;
 import top.bogey.touch_tool.ui.behavior.BehaviorRecyclerViewAdapter;
 import top.bogey.touch_tool.ui.record.QuickRecordFloatView;
 import top.bogey.touch_tool.ui.record.RecordFloatView;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRecyclerViewAdapter.ViewHolder> {
@@ -127,7 +129,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
                 int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 Behavior behavior = new Behavior();
-                new BehaviorFloatView(context, baseTask, behavior, result -> {
+                new BehaviorFloatView(context, baseTask, task, behavior, result -> {
                     task.addBehavior(behavior);
                     TaskRepository.getInstance().saveTask(baseTask);
                     adapter.notifyNew();
@@ -136,18 +138,36 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
 
             binding.recordButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
-                new RecordFloatView(context, tasks.get(index), result -> {
-                    TaskRepository.getInstance().saveTask(baseTask);
+                new RecordFloatView(context, baseTask, tasks.get(index), result -> {
                     notifyItemChanged(index);
+                    TaskRepository.getInstance().saveTask(baseTask);
                 }).show();
             });
 
             binding.recordSmartButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 new QuickRecordFloatView(context, tasks.get(index), result -> {
-                    TaskRepository.getInstance().saveTask(baseTask);
                     notifyItemChanged(index);
+                    TaskRepository.getInstance().saveTask(baseTask);
                 }).show();
+            });
+
+            binding.mainButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                if (index == 0) return;
+                Task mainTask = tasks.get(0);
+                Task task = tasks.get(index);
+
+                Task tmp = AppUtils.copy(task);
+                task.setBehaviors(mainTask.getBehaviors());
+                task.setTitle(mainTask.getTitle());
+
+                mainTask.setBehaviors(tmp.getBehaviors());
+                mainTask.setTitle(tmp.getTitle());
+
+                notifyItemChanged(0);
+                notifyItemChanged(index);
+                TaskRepository.getInstance().saveTask(baseTask);
             });
         }
 
@@ -156,6 +176,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
             adapter.setTask(task);
             binding.titleEdit.setText(task.getTitle());
             binding.getRoot().setCardBackgroundColor(DisplayUtils.getAttrColor(context, (index == 0) ? com.google.android.material.R.attr.colorSurfaceVariant : com.google.android.material.R.attr.colorOnSurfaceInverse, 0));
+            binding.mainButton.setIconResource(index == 0 ? R.drawable.icon_radio_checked : R.drawable.icon_radio_unchecked);
         }
     }
 }

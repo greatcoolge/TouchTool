@@ -211,11 +211,8 @@ public class MainActivity extends AppCompatActivity {
                         taskPkgNames.add(pkgName);
                     }
                 }
-                // 判断任务需要的包是否存在
-                if (taskPkgNames.size() > 0) {
-                    task.setPkgNames(taskPkgNames);
-                    TaskRepository.getInstance().saveTask(task);
-                }
+                task.setPkgNames(taskPkgNames);
+                TaskRepository.getInstance().saveTask(task);
             }
         }
         parcel.recycle();
@@ -277,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 view.setNeedRemove(false);
             }
         });
-        LogUtils.log(LogLevel.LOW, getString(R.string.log_run_manual));
+        LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_manual));
     }
 
     public void dismissPlayFloatView() {

@@ -58,8 +58,7 @@ public class TimeArea implements Parcelable {
     }
 
     public void setMin(int min) {
-        if (min > max) max = min;
-        else this.min = min;
+        this.min = min;
     }
 
     public int getMax() {
@@ -67,8 +66,7 @@ public class TimeArea implements Parcelable {
     }
 
     public void setMax(int max) {
-        if (max < min) min = max;
-        else this.max = max;
+        this.max = max;
     }
 
     @Override

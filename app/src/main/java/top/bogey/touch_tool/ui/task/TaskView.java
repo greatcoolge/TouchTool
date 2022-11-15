@@ -38,6 +38,7 @@ import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.TaskType;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskBinding;
 import top.bogey.touch_tool.utils.AppUtils;
@@ -193,7 +194,25 @@ public class TaskView extends Fragment implements TaskChangedCallback {
 
         binding.folderButton.setOnClickListener(v -> showTabView());
 
+        binding.closeButton.setOnClickListener(v -> setSelectTaskType(TaskType.CLOSED));
+        binding.manualButton.setOnClickListener(v -> setSelectTaskType(TaskType.MANUAL));
+        binding.itIsTimeButton.setOnClickListener(v -> setSelectTaskType(TaskType.IT_IS_TIME));
+        binding.newNotificationButton.setOnClickListener(v -> setSelectTaskType(TaskType.NEW_NOTIFICATION));
+        binding.appChangedButton.setOnClickListener(v -> setSelectTaskType(TaskType.APP_CHANGED));
+        binding.viewChangedButton.setOnClickListener(v -> setSelectTaskType(TaskType.VIEW_CHANGED));
+        binding.contentChangedButton.setOnClickListener(v -> setSelectTaskType(TaskType.CONTENT_CHANGED));
+
         return binding.getRoot();
+    }
+
+    public void setSelectTaskType(TaskType type){
+        TaskRepository repository = TaskRepository.getInstance();
+        for (Task task : adapter.getSelectTasks()) {
+            task.setType(type);
+            repository.saveTask(task);
+        }
+        adapter.unSelectAll();
+        hideBottomBar();
     }
 
     public void addTab(String tag) {

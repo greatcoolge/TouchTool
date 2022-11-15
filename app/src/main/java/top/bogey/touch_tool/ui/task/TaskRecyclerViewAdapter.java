@@ -220,7 +220,6 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                 if (isCheck) {
                     if (selectTasks.containsKey(task.getId())) {
                         selectTasks.remove(task.getId());
-                        if (selectTasks.size() == 0) parent.hideBottomBar();
                     } else {
                         selectTasks.put(task.getId(), task);
                     }

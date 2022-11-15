@@ -24,7 +24,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/folder_button"
-                style="@style/Theme.TouchTool.Button"
+                style="@style/Theme.TouchTool.Button.OutlinedButton"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center"
@@ -49,68 +49,153 @@
             app:spanCount="2"
             tools:listitem="@layout/view_task_item" />
 
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:id="@+id/bottom_bar"
-            style="?attr/materialCardViewElevatedStyle"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_gravity="bottom"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:visibility="gone">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingHorizontal="32dp">
+                android:layout_marginBottom="8dp"
+                android:gravity="center_horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/select_all_button"
-                    style="@style/Theme.TouchTool.Button.Bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/select_all"
-                    app:icon="@drawable/icon_check" />
+                    android:id="@+id/close_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_close" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/delete_button"
-                    style="@style/Theme.TouchTool.Button.Bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/delete_task"
-                    app:icon="@drawable/icon_delete" />
+                    android:id="@+id/manual_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_manual" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/export_button"
-                    style="@style/Theme.TouchTool.Button.Bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/export_task"
-                    app:icon="@drawable/icon_export" />
+                    android:id="@+id/it_is_time_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_it_is_time" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/move_button"
-                    style="@style/Theme.TouchTool.Button.Bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/move_task"
-                    app:icon="@drawable/icon_move" />
+                    android:id="@+id/new_notification_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_new_notification" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/cancel_button"
-                    style="@style/Theme.TouchTool.Button.Bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/cancel"
-                    app:icon="@drawable/icon_close" />
+                    android:id="@+id/app_changed_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_app_changed" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/view_changed_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_view_changed" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/content_changed_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_task_content_changed" />
 
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewElevatedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="bottom">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingHorizontal="32dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/select_all_button"
+                        style="@style/Theme.TouchTool.Button.Bar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/select_all"
+                        app:icon="@drawable/icon_check" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/delete_button"
+                        style="@style/Theme.TouchTool.Button.Bar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/delete_task"
+                        app:icon="@drawable/icon_delete" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/export_button"
+                        style="@style/Theme.TouchTool.Button.Bar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/export_task"
+                        app:icon="@drawable/icon_export" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/move_button"
+                        style="@style/Theme.TouchTool.Button.Bar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/move_task"
+                        app:icon="@drawable/icon_move" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/cancel_button"
+                        style="@style/Theme.TouchTool.Button.Bar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/cancel"
+                        app:icon="@drawable/icon_close" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 

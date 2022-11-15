@@ -15,25 +15,45 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:boxStrokeWidth="0.75dp"
-            app:hintTextAppearance="@style/TextAppearance.Material3.LabelSmall"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/title_edit"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_layout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:imeOptions="actionDone"
-                android:paddingVertical="6dp"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                android:layout_weight="1"
+                app:boxStrokeWidth="0.75dp"
+                app:hintTextAppearance="@style/TextAppearance.Material3.LabelSmall"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/title_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"
+                    android:paddingVertical="6dp"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/main_button"
+                style="@style/Theme.TouchTool.Button.IconOnly"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="2dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/icon_radio_unchecked"
+                app:iconSize="24dp"/>
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/behavior_box"

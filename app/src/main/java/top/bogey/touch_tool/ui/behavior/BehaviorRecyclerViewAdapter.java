@@ -27,6 +27,7 @@ import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRecyclerViewAdapter.ViewHolder> {
     private final Task baseTask;
+    private Task currTask;
     private List<Behavior> behaviors = new ArrayList<>();
 
     public BehaviorRecyclerViewAdapter(Task baseTask) {
@@ -50,6 +51,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
     }
 
     public void setTask(Task task) {
+        currTask = task;
         int count = getItemCount();
         behaviors = task.getBehaviors() == null ? new ArrayList<>() : task.getBehaviors();
         task.setBehaviors(behaviors);
@@ -80,7 +82,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
             binding.getRoot().setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Behavior behavior = behaviors.get(index);
-                new BehaviorFloatView(context, baseTask, behavior, result -> {
+                new BehaviorFloatView(context, baseTask, currTask, behavior, result -> {
                     notifyItemChanged(index);
                     TaskRepository.getInstance().saveTask(baseTask);
                 }).show();

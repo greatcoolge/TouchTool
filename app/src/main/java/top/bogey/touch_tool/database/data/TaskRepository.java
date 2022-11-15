@@ -49,6 +49,10 @@ public class TaskRepository {
                     Task task = getTaskById(key);
                     if (task != null) {
                         tasks.add(task);
+                    } else {
+                        // 解析不出来的任务直接删掉
+                        taskMMKV.remove(key);
+                        configMMKV.remove(key);
                     }
                 }
             }

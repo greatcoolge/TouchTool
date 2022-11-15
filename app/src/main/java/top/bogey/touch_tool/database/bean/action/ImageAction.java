@@ -103,6 +103,7 @@ public class ImageAction extends Action {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeInt(screen);
         dest.writeString(image);
         dest.writeInt(value);

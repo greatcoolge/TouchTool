@@ -76,6 +76,9 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
             int totalTaskCount = 0;
             int totalSuccessCount = 0;
             for (Map.Entry<String, List<RunningInfo>> taskEntry : taskMap.entrySet()) {
+                Task task = TaskRepository.getInstance().getTaskById(taskEntry.getKey());
+                if (task == null) continue;
+
                 List<RunningInfo> taskList = taskEntry.getValue();
                 int taskCount = taskList.size();
                 int successCount = 0;

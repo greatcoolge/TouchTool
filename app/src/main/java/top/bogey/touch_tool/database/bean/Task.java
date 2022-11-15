@@ -59,8 +59,7 @@ public class Task implements Parcelable {
         id = in.readString();
         type = in.readParcelable(TaskType.class.getClassLoader());
         title = in.readString();
-        byte b = in.readByte();
-        acrossApp = b != 0;
+        acrossApp = in.readByte() != 0;
         pkgNames = in.createStringArrayList();
         behaviors = in.createTypedArrayList(Behavior.CREATOR);
         condition = in.readParcelable(TaskCondition.class.getClassLoader());
@@ -135,6 +134,40 @@ public class Task implements Parcelable {
         if (behaviors == null || behaviors.size() < index) return;
         behaviors.remove(index);
         if (behaviors.size() == 0) behaviors = null;
+    }
+
+    public List<Task> getSafeSubTasks(String id){
+        if (subTasks == null || subTasks.isEmpty()) return null;
+        List<Task> tasks = new ArrayList<>();
+        for (Task subTask : subTasks) {
+            // 不看自己
+            if (subTask.getId().equals(id)) continue;
+            if (!includeTaskAction(subTask, id)) {
+                tasks.add(subTask);
+            }
+        }
+        return tasks;
+    }
+
+    private boolean includeTaskAction(Task task, String id){
+        if (task == null) return false;
+        List<Behavior> subTaskBehaviors = task.getBehaviors();
+        if (subTaskBehaviors == null || subTaskBehaviors.isEmpty()) return false;
+        for (Behavior behavior : subTaskBehaviors) {
+            List<Action> actions = behavior.getActions();
+            if (actions == null || actions.isEmpty()) continue;
+            for (Action action : actions) {
+                if (action.getType() == ActionType.TASK) {
+                    TaskAction taskAction = (TaskAction) action;
+                    if (taskAction.getId().equals(id)) return true;
+                    else {
+                        boolean result = includeTaskAction(getSubTaskById(taskAction.getId()), id);
+                        if (result) return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isAcrossAppTask() {

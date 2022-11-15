@@ -36,7 +36,8 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 @SuppressLint("ViewConstructor")
 public class RecordFloatView extends FrameLayout implements FloatViewInterface {
-    public final Task task;
+    public final Task baseTask;
+    public final Task currTask;
 
     private final FloatRecordBinding binding;
     private final RecordRecyclerViewAdapter adapter;
@@ -48,14 +49,15 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
     private final int delay;
 
     @SuppressLint("ClickableViewAccessibility")
-    public RecordFloatView(@NonNull Context context, Task task, ResultCallback callback) {
+    public RecordFloatView(@NonNull Context context, Task baseTask, Task currTask, ResultCallback callback) {
         super(context);
-        this.task = task;
+        this.baseTask = baseTask;
+        this.currTask = currTask;
         delay = SettingSave.getInstance().getActionRecordDelay();
 
         binding = FloatRecordBinding.inflate(LayoutInflater.from(context), this, true);
 
-        adapter = new RecordRecyclerViewAdapter(task);
+        adapter = new RecordRecyclerViewAdapter(baseTask, currTask);
         binding.recyclerView.setAdapter(adapter);
 
         binding.recyclerView.setOnTouchListener((v, event) -> {
@@ -86,7 +88,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         });
 
         binding.saveButton.setOnClickListener(v -> {
-            task.setBehaviors(adapter.behaviors);
+            currTask.setBehaviors(adapter.behaviors);
             if (callback != null) callback.onResult(true);
             dismiss();
         });
@@ -103,7 +105,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
 
     @Override
     public void show() {
-        List<Behavior> behaviors = task.getBehaviors();
+        List<Behavior> behaviors = currTask.getBehaviors();
         EasyFloat.with(getContext())
                 .setLayout(this)
                 .setTag(RecordFloatView.class.getCanonicalName())
@@ -120,7 +122,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
 
     private void addAction(Action action) {
         Behavior behavior = new Behavior(action);
-        new BehaviorFloatView(getContext(), task, behavior, result -> {
+        new BehaviorFloatView(getContext(), baseTask, currTask, behavior, result -> {
             adapter.addBehavior(behavior);
             if (delay > 0) {
                 adapter.addBehavior(new Behavior(new DelayAction(delay)));

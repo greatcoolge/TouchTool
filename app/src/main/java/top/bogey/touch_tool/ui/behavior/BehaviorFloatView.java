@@ -54,13 +54,13 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
 
     private Action condition = new NullAction();
 
-    public BehaviorFloatView(Context context, Task baseTask, Behavior behavior, ResultCallback callback) {
+    public BehaviorFloatView(Context context, Task baseTask, Task task, Behavior behavior, ResultCallback callback) {
         super(context);
         this.baseTask = baseTask;
 
         binding = FloatActionBinding.inflate(LayoutInflater.from(context), this, true);
 
-        adapter = new ActionsRecyclerViewAdapter(baseTask, behavior.getActions());
+        adapter = new ActionsRecyclerViewAdapter(baseTask, task, behavior.getActions());
         binding.delayButton.setOnClickListener(v -> adapter.addNode(new DelayAction()));
         binding.textButton.setOnClickListener(v -> adapter.addNode(new TextAction()));
         binding.imageButton.setOnClickListener(v -> adapter.addNode(new ImageAction()));
@@ -305,8 +305,8 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
                 ImageAction imageAction = (ImageAction) condition;
                 if (imageAction.getBitmap() != null) {
                     binding.imageInclude.image.setImageBitmap(imageAction.getBitmap());
-                    binding.imageInclude.similarText.setText(String.valueOf(imageAction.getValue()));
                 }
+                binding.imageInclude.similarText.setText(String.valueOf(imageAction.getValue()));
                 selectSpinner(ActionType.IMAGE.name());
                 break;
         }

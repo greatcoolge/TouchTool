@@ -52,12 +52,12 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface, Ta
                     binding.buttonBox.setVisibility(GONE);
                     binding.closeButton.setIconResource(R.drawable.icon_down);
 
-                    params.height = DisplayUtils.dp2px(context, 32);
+                    params.height = DisplayUtils.dp2px(context, 40);
                 } else {
                     binding.buttonBox.setVisibility(VISIBLE);
                     binding.closeButton.setIconResource(R.drawable.icon_up);
 
-                    params.height = DisplayUtils.dp2px(context, 24);
+                    params.height = DisplayUtils.dp2px(context, 30);
                 }
                 binding.closeButton.setLayoutParams(params);
             }

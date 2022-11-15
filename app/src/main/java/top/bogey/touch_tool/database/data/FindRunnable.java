@@ -57,7 +57,7 @@ public class FindRunnable implements Runnable {
             String packageName = String.valueOf(root.getPackageName());
             if (!"null".equals(packageName)) {
                 if (!pkgName.equals(packageName)) {
-                    LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_app_changed, pkgName, packageName));
+                    LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_app_changed, pkgName, packageName));
                     service.stopTaskByType(TaskType.APP_CHANGED, false);
                     // 应用切换，开启内容检测看看有没有检测的任务
                     service.setContentEvent(true);
@@ -81,7 +81,7 @@ public class FindRunnable implements Runnable {
                     for (Task task : tasks) {
                         if (task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
                             service.runTask(task, null);
-                            LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_app_changed_task, task.getTitle()));
+                            LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_app_changed_task, task.getTitle()));
                         }
                     }
 
@@ -102,12 +102,12 @@ public class FindRunnable implements Runnable {
                 }
 
                 List<Task> tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.VIEW_CHANGED);
-                if (tasks.size() > 0) LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_view_changed, pkgName));
+                if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_view_changed, pkgName));
                 for (Task task : tasks) {
                     if (task.getType() == TaskType.CONTENT_CHANGED && task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
                         // 窗口变动时执行
                         service.runTask(task, null);
-                        LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_view_changed_task, task.getTitle()));
+                        LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_view_changed_task, task.getTitle()));
                     }
                 }
             }

@@ -17,12 +17,14 @@ import top.bogey.touch_tool.databinding.FloatRecordItemBinding;
 import top.bogey.touch_tool.ui.behavior.BehaviorFloatView;
 
 public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecyclerViewAdapter.ViewHolder> {
-    private final Task task;
+    private final Task baseTask;
+    private final Task currTask;
     public final List<Behavior> behaviors = new ArrayList<>();
 
-    public RecordRecyclerViewAdapter(Task task) {
-        this.task = task;
-        if (task.getBehaviors() != null) behaviors.addAll(task.getBehaviors());
+    public RecordRecyclerViewAdapter(Task baseTask, Task currTask) {
+        this.baseTask = baseTask;
+        this.currTask = currTask;
+        if (currTask.getBehaviors() != null) behaviors.addAll(currTask.getBehaviors());
     }
 
     @NonNull
@@ -58,7 +60,7 @@ public class RecordRecyclerViewAdapter extends RecyclerView.Adapter<RecordRecycl
             binding.deleteButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Behavior behavior = behaviors.get(index);
-                new BehaviorFloatView(context, task, behavior, null).show();
+                new BehaviorFloatView(context, baseTask, currTask, behavior, null).show();
             });
 
             binding.deleteButton.setOnLongClickListener(v -> {
