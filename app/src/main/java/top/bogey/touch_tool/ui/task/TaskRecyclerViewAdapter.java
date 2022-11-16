@@ -56,13 +56,12 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     public TaskRecyclerViewAdapter(TaskView parent) {
         this.parent = parent;
         tasks.addAll(TaskRepository.getInstance().getAllTasks());
+        tasks.sort(comparator);
         ALL = parent.getString(R.string.tag_all);
         NO = parent.getString(R.string.tag_no);
     }
 
     public void setSortType(SortType type) {
-        if (type == sortType) type = type == SortType.CREATE_TIME_ASC ? SortType.CREATE_TIME_DESC : SortType.MODIFY_TIME_DESC;
-        else type = type == SortType.CREATE_TIME_ASC ? SortType.CREATE_TIME_ASC : SortType.MODIFY_TIME_ASC;
         sortType = type;
         SettingSave.getInstance().setSortType(sortType);
         tasks.sort(comparator);
@@ -176,6 +175,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         for (Task task : tasks) {
             selectTasks.put(task.getId(), task);
         }
+        notifyItemRangeChanged(0, tasks.size());
     }
 
     public void unSelectAll() {

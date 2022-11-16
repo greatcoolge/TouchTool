@@ -58,6 +58,10 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
         super(context);
         this.baseTask = baseTask;
 
+        mode = behavior.getBehaviorMode();
+        if (mode == null) mode = BehaviorMode.CONDITION;
+        if (behavior.getCondition() != null) condition = behavior.getCondition();
+
         binding = FloatActionBinding.inflate(LayoutInflater.from(context), this, true);
 
         adapter = new ActionsRecyclerViewAdapter(baseTask, task, behavior.getActions());
@@ -100,7 +104,7 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
             }
         });
         int[] ids = {R.id.condition_button, R.id.loop_button, R.id.parallel_button};
-        binding.modeGroup.check(ids[behavior.getBehaviorMode().ordinal()]);
+        binding.modeGroup.check(ids[mode.ordinal()]);
 
         binding.conditionSpinner.spinner.setAdapter(conditionAdapter);
         binding.conditionSpinner.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

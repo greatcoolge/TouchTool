@@ -111,11 +111,17 @@ public class TaskView extends Fragment implements TaskChangedCallback {
                             });
                         }
                         return true;
-                    case R.id.create_time:
+                    case R.id.create_time_asc:
                         adapter.setSortType(SortType.CREATE_TIME_ASC);
                         break;
-                    case R.id.modify_time:
+                    case R.id.modify_time_asc:
                         adapter.setSortType(SortType.MODIFY_TIME_ASC);
+                        break;
+                    case R.id.create_time_desc:
+                        adapter.setSortType(SortType.CREATE_TIME_DESC);
+                        break;
+                    case R.id.modify_time_desc:
+                        adapter.setSortType(SortType.MODIFY_TIME_DESC);
                         break;
                     default:
                         return false;

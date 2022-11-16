@@ -197,16 +197,14 @@ public class MainCaptureService extends Service {
         }
 
         public Bitmap getCurrImage() {
-            Image currImage = image;
-            if (currImage == null) return null;
-
             synchronized (lock) {
-                Image.Plane[] planes = currImage.getPlanes();
+                if (image == null) return null;
+                Image.Plane[] planes = image.getPlanes();
                 ByteBuffer buffer = planes[0].getBuffer();
                 int pixelStride = planes[0].getPixelStride();
                 int rowStride = planes[0].getRowStride();
-                int width = currImage.getWidth();
-                int height = currImage.getHeight();
+                int width = image.getWidth();
+                int height = image.getHeight();
                 Bitmap bitmap = Bitmap.createBitmap(width + (rowStride - pixelStride * width) / pixelStride, height, Bitmap.Config.ARGB_8888);
                 bitmap.copyPixelsFromBuffer(buffer);
                 return bitmap;

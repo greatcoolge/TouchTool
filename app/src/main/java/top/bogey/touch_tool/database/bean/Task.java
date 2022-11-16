@@ -170,6 +170,26 @@ public class Task implements Parcelable {
         return false;
     }
 
+    public boolean includeCaptureAction(){
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(this);
+        if (subTasks != null) tasks.addAll(subTasks);
+        for (Task task : tasks) {
+            List<Behavior> taskBehaviors = task.getBehaviors();
+            if (behaviors == null || behaviors.isEmpty()) continue;
+            for (Behavior behavior : taskBehaviors) {
+                List<Action> actions = behavior.getActions();
+                if (actions == null || actions.isEmpty()) continue;
+                for (Action action : actions) {
+                    if (action.getType() == ActionType.IMAGE || action.getType() == ActionType.COLOR) return true;
+                }
+                Action action = behavior.getCondition();
+                if (action != null && (action.getType() == ActionType.IMAGE || action.getType() == ActionType.COLOR)) return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isAcrossAppTask() {
         return acrossApp || type == TaskType.IT_IS_TIME;
     }

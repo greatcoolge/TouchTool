@@ -56,27 +56,24 @@ public class FindRunnable implements Runnable {
         if (root != null && isRunning()) {
             String packageName = String.valueOf(root.getPackageName());
             if (!"null".equals(packageName)) {
-                if (!pkgName.equals(packageName)) {
-                    LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_app_changed, pkgName, packageName));
-                    service.stopTaskByType(TaskType.APP_CHANGED, false);
-                    // 应用切换，开启内容检测看看有没有检测的任务
-                    service.setContentEvent(true);
-                }
-                service.stopTaskByType(TaskType.VIEW_CHANGED, false);
-
                 service.currPkgName = packageName;
 
                 MainActivity activity = MainApplication.getActivity();
                 // APP自己不执行任何任务
                 if (packageName.equals(service.getPackageName())) {
                     if (activity != null) activity.dismissPlayFloatView();
+                    service.stopAllTask(false);
                     return;
                 }
 
-                if (!isRunning()) return;
-
                 // 切换应用时执行
                 if (!packageName.equals(pkgName)) {
+                    LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_app_changed, pkgName, packageName));
+                    service.stopTaskByType(TaskType.APP_CHANGED, false);
+                    service.stopTaskByType(TaskType.CONTENT_CHANGED, false);
+                    // 应用切换，开启内容检测看看有没有检测的任务
+                    service.setContentEvent(true);
+
                     List<Task> tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.APP_CHANGED);
                     for (Task task : tasks) {
                         if (task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
@@ -101,6 +98,7 @@ public class FindRunnable implements Runnable {
                     }
                 }
 
+                service.stopTaskByType(TaskType.VIEW_CHANGED, false);
                 List<Task> tasks = service.getAllTasksByPkgNameAndType(packageName, TaskType.VIEW_CHANGED);
                 if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, service.getString(R.string.log_run_view_changed, pkgName));
                 for (Task task : tasks) {

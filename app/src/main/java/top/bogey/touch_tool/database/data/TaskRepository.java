@@ -16,6 +16,7 @@ import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.TaskConfig;
 import top.bogey.touch_tool.database.bean.TaskType;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.TaskChangedCallback;
 
 public class TaskRepository {
@@ -123,6 +124,10 @@ public class TaskRepository {
 
     public void saveTask(Task task) {
         Task originTask = getTaskById(task.getId());
+
+        // 内容完全一致就不保存了
+        if (AppUtils.equals(task, originTask)) return;
+
         // 如果与时间相关的值不相等，尝试更新定时任务
         if (originTask == null || !(task.getType() == originTask.getType() && Objects.equals(task.getCondition(), originTask.getCondition()))) {
             MainAccessibilityService service = MainApplication.getService();

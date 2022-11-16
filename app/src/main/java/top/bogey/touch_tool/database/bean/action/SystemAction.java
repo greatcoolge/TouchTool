@@ -49,43 +49,45 @@ public class SystemAction extends Action {
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
         if (!super.doAction(task, service, runningInfo)) return false;
 
+        boolean result = true;
         switch (systemActionType) {
             case BACK:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
-                return true;
+                break;
             case HOME:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
-                return true;
+                break;
             case TASK:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
-                return true;
+                break;
             case LOCK:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
-                    return true;
                 } else {
                     Toast.makeText(service, R.string.action_device_not_support_lock, Toast.LENGTH_SHORT).show();
-                    return false;
+                    result = false;
                 }
+                break;
             case WEAK:
                 AppUtils.wakeScreen(service);
-                return true;
+                break;
             case SNAP:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
-                    return true;
                 } else {
                     Toast.makeText(service, R.string.action_device_not_support_snap, Toast.LENGTH_SHORT).show();
-                    return false;
+                    result = false;
                 }
+                break;
             case GOTO:
                 AppUtils.gotoApp(service, extras);
-                return true;
+                break;
             case NOTI:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS);
-                return true;
+                break;
         }
-        return false;
+        sleep(timeArea.getRandomTime());
+        return result;
     }
 
     @Override
@@ -148,11 +150,11 @@ public class SystemAction extends Action {
                 case SNAP:
                     key = R.string.action_system_snap;
                     break;
-                case GOTO:
-                    key = R.string.action_system_goto;
-                    break;
                 case NOTI:
                     key = R.string.action_system_notification;
+                    break;
+                case GOTO:
+                    key = R.string.action_system_goto;
                     break;
             }
             if (key != 0) {

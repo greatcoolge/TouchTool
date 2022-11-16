@@ -10,17 +10,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
-import top.bogey.touch_tool.database.bean.action.Action;
-import top.bogey.touch_tool.database.bean.action.ActionType;
 import top.bogey.touch_tool.database.data.TaskRunnable;
 import top.bogey.touch_tool.databinding.FloatPlayItemBinding;
 import top.bogey.touch_tool.ui.setting.LogLevel;
@@ -65,27 +61,12 @@ public class PlayFloatViewItem extends FrameLayout implements TaskRunningCallbac
         binding.playButton.setOnClickListener(v -> {
             MainAccessibilityService service = MainApplication.getService();
             // 录屏服务没开启，需要检查点击图片的动作
-            if (service.binder == null) {
-                List<Behavior> behaviors = task.getBehaviors();
-                boolean flag = false;
-                for (Behavior behavior : behaviors) {
-                    for (Action target : behavior.getActions()) {
-                        if (target.getType() == ActionType.IMAGE || target.getType() == ActionType.COLOR) {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (flag) break;
-                    if (behavior.getCondition() != null && behavior.getCondition().getType() == ActionType.IMAGE) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag) {
+            if (service != null && !service.isCaptureEnabled()) {
+                if (task.includeCaptureAction()) {
                     Toast.makeText(context, R.string.capture_service_on_tips_2, Toast.LENGTH_LONG).show();
                     service.startCaptureService(true, result -> {
                         if (result) {
-                            startPlay();
+                            postDelayed(this::startPlay, 500);
                         }
                     });
                 } else {

@@ -77,8 +77,10 @@
     <string name="task_type_content_changed">内容变更时执行</string>
 
     <string name="sort">排序</string>
-    <string name="sort_by_create_time">创建时间排序</string>
-    <string name="sort_by_modify_time">修改时间排序</string>
+    <string name="sort_by_create_time_asc">创建时间正序</string>
+    <string name="sort_by_create_time_desc">创建时间倒序</string>
+    <string name="sort_by_modify_time_asc">修改时间正序</string>
+    <string name="sort_by_modify_time_desc">修改时间倒序</string>
     <string name="import_task">导入任务</string>
 
     <string name="export_task">导出</string>

@@ -107,13 +107,16 @@ public class MainAccessibilityService extends AccessibilityService {
                 }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
                 String packageName = String.valueOf(event.getPackageName());
+                // 非当前应用的内容变更都无效
+                if (!packageName.equals(currPkgName)) return;
                 stopTaskByType(TaskType.CONTENT_CHANGED, false);
                 List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.CONTENT_CHANGED);
                 if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_content_changed, packageName));
                     // 当前应用没有内容变更任务，所以不开启内容变更事件
                 else setContentEvent(false);
                 for (Task task : tasks) {
-                    if (task.getType() == TaskType.CONTENT_CHANGED) {
+                    // 任务没在运行
+                    if (task.getType() == TaskType.CONTENT_CHANGED && !isTaskRunning(task)) {
                         runTask(task, packageName, null);
                         LogUtils.log(LogLevel.HIGH, getString(R.string.log_run_content_changed_task, task.getTitle()));
                     }
@@ -287,6 +290,13 @@ public class MainAccessibilityService extends AccessibilityService {
         return runnable;
     }
 
+    private boolean isTaskRunning(Task task) {
+        for (TaskRunnable runnable : taskRunnableList) {
+            if (runnable.getTask().getId().equals(task.getId())) return true;
+        }
+        return false;
+    }
+
     public TaskRunnable runTask(Task task, TaskRunningCallback callback) {
         return runTask(task, currPkgName, callback);
     }
@@ -298,6 +308,12 @@ public class MainAccessibilityService extends AccessibilityService {
     public void stopTaskByType(TaskType type, boolean force) {
         for (TaskRunnable runnable : taskRunnableList) {
             if (runnable.getTask().getType() == type) stopTask(runnable, force);
+        }
+    }
+
+    public void stopAllTask(boolean force){
+        for (TaskRunnable runnable : taskRunnableList) {
+            stopTask(runnable, force);
         }
     }
 

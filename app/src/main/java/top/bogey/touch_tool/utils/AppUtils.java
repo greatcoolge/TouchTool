@@ -19,9 +19,11 @@ import com.tencent.mmkv.MMKV;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.R;
@@ -116,6 +118,22 @@ public class AppUtils {
             return parcel.readParcelable(input.getClass().getClassLoader());
         } finally {
             if (parcel != null) parcel.recycle();
+        }
+    }
+
+    public static <T extends Parcelable> boolean equals(T a, T b){
+        Parcel aParcel = null, bParcel = null;
+        try{
+            aParcel = Parcel.obtain();
+            aParcel.writeParcelable(a, 0);
+            byte[] aMarshall = aParcel.marshall();
+            bParcel = Parcel.obtain();
+            bParcel.writeParcelable(b, 0);
+            byte[] bMarshall = bParcel.marshall();
+            return Arrays.equals(aMarshall, bMarshall);
+        } finally {
+            if (aParcel != null) aParcel.recycle();
+            if (bParcel != null) bParcel.recycle();
         }
     }
 
