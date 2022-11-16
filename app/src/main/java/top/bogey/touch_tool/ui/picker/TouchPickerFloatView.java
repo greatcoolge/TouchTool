@@ -17,42 +17,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.action.TouchAction;
 import top.bogey.touch_tool.databinding.FloatPickerPosBinding;
-import top.bogey.touch_tool.room.bean.node.TouchNode;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.DouglasPeucker;
 import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
 @SuppressLint("ViewConstructor")
 public class TouchPickerFloatView extends BasePickerFloatView {
-    private final List<Point> points = new ArrayList<>();
     private FloatGravity gravity = FloatGravity.TOP_LEFT;
 
     private final FloatPickerPosBinding binding;
 
-    private final List<Point> currPoints = new ArrayList<>();
+    private final List<TouchAction.TouchPath> paths = new ArrayList<>();
     private float lastX = 0;
     private float lastY = 0;
 
     int[] location = new int[2];
 
     private final Paint paint;
-    private Rect realArea = new Rect();
+    private final Rect realArea = new Rect();
     private boolean isMarked;
 
     private final int padding;
     private boolean isInit = true;
+    private boolean isChanged = false;
 
-    public TouchPickerFloatView(@NonNull Context context, PickerCallback pickerCallback, TouchNode.TouchPath path) {
+    private boolean isClick = false;
+
+    public TouchPickerFloatView(@NonNull Context context, PickerCallback pickerCallback, TouchAction touchAction) {
         super(context, pickerCallback);
 
         binding = FloatPickerPosBinding.inflate(LayoutInflater.from(context), this, true);
 
-        if (path != null) {
-            points.addAll(path.getPoints(context));
-            currPoints.addAll(points);
+        if (touchAction != null) {
+            paths.addAll(touchAction.getPaths(context));
         }
-        isMarked = points.size() > 0;
+        isMarked = paths.size() > 0;
 
         binding.saveButton.setOnClickListener(v -> {
             pickerCallback.onComplete(this);
@@ -75,7 +77,7 @@ public class TouchPickerFloatView extends BasePickerFloatView {
 
         padding = DisplayUtils.dp2px(context, 20);
 
-        refreshGravityButton(path == null ? FloatGravity.TOP_LEFT : path.getGravity());
+        refreshGravityButton(touchAction == null ? FloatGravity.TOP_LEFT : touchAction.getGravity());
     }
 
     @SuppressLint("DrawAllocation")
@@ -91,23 +93,25 @@ public class TouchPickerFloatView extends BasePickerFloatView {
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
 
-        if (currPoints.size() >= 2) {
-            Path path = new Path();
-            for (Point point : currPoints) {
-                if (path.isEmpty()) path.moveTo(point.x - location[0], point.y - location[1]);
-                else path.lineTo(point.x - location[0], point.y - location[1]);
+        for (TouchAction.TouchPath touchPath : paths) {
+            List<Point> points = touchPath.getPoints();
+            if (points.size() >= 2) {
+                Path path = new Path();
+                for (Point point : points) {
+                    if (path.isEmpty()) path.moveTo(point.x - location[0], point.y - location[1]);
+                    else path.lineTo(point.x - location[0], point.y - location[1]);
+                }
+                canvas.drawPath(path, paint);
             }
-            canvas.drawPath(path, paint);
-        }
-
-        if (currPoints.size() >= 1) {
-            Point point = currPoints.get(currPoints.size() - 1);
-            canvas.drawCircle(point.x - location[0], point.y - location[1], 5, paint);
+            if (points.size() >= 1) {
+                Point point = points.get(points.size() - 1);
+                canvas.drawCircle(point.x - location[0], point.y - location[1], 5, paint);
+            }
         }
     }
 
-    public TouchNode.TouchPath getPath() {
-        return new TouchNode.TouchPath(getGravityPoints(), gravity, getGravityPoint(), DisplayUtils.getScreen(getContext()), true);
+    public TouchAction getTouchAction() {
+        return new TouchAction(getContext(), gravity, getGravityPoint(), getGravityPaths());
     }
 
     private Point getGravityPoint() {
@@ -139,14 +143,16 @@ public class TouchPickerFloatView extends BasePickerFloatView {
         return new Point();
     }
 
-    private List<Point> getGravityPoints() {
+    private List<TouchAction.TouchPath> getGravityPaths() {
         Point gravityPoint = getScreenGravityPoint();
-
-        List<Point> pointList = new ArrayList<>();
-        for (Point point : points) {
-            pointList.add(new Point(point.x - gravityPoint.x, point.y - gravityPoint.y));
+        List<TouchAction.TouchPath> paths = new ArrayList<>();
+        for (TouchAction.TouchPath path : this.paths) {
+            TouchAction.TouchPath touchPath = AppUtils.copy(path);
+            touchPath.offset(-gravityPoint.x, -gravityPoint.y);
+            if (isChanged) touchPath.setPoints(DouglasPeucker.compress(touchPath.getPoints()));
+            paths.add(touchPath);
         }
-        return pointList;
+        return paths;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -154,10 +160,8 @@ public class TouchPickerFloatView extends BasePickerFloatView {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getRawX();
         float y = event.getRawY();
-        switch (event.getAction()) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                lastX = x;
-                lastY = y;
                 boolean flag = true;
                 if (isMarked) {
                     int[] location = new int[2];
@@ -165,48 +169,99 @@ public class TouchPickerFloatView extends BasePickerFloatView {
                     Rect rect = new Rect(location[0], location[1], location[0] + binding.markBox.getWidth(), location[1] + binding.markBox.getHeight());
                     if (rect.contains((int) x, (int) y)) {
                         flag = false;
+                        lastX = x;
+                        lastY = y;
                     }
                 }
                 if (flag) {
                     isMarked = false;
-                    currPoints.clear();
-                    currPoints.add(new Point((int) x, (int) y));
+                    paths.clear();
+                    isChanged = true;
+                    addNewPath(event);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                float dx = x - lastX;
-                float dy = y - lastY;
                 if (isMarked) {
-                    for (Point currPoint : currPoints) {
-                        currPoint.set((int) (currPoint.x + dx), (int) (currPoint.y + dy));
+                    float dx = x - lastX;
+                    float dy = y - lastY;
+                    for (TouchAction.TouchPath path : paths) {
+                        path.offset((int) dx, (int) dy);
                     }
                     lastX = x;
                     lastY = y;
                 } else {
-                    currPoints.add(new Point((int) x, (int) y));
+                    for (int i = 0; i < event.getPointerCount(); i++) {
+                        int pointerId = event.getPointerId(i);
+                        for (TouchAction.TouchPath path : paths) {
+                            if (path.getPointerId() == pointerId) {
+                                float currX = 0, currY = 0;
+                                for (int j = 0; j < event.getHistorySize(); j++) {
+                                    currX = event.getHistoricalX(i, j) + location[0];
+                                    currY = event.getHistoricalY(i, j) + location[1];
+                                }
+                                if (!(currX == 0 && currY == 0)) path.addPoint((int) currX, (int) currY);
+                            }
+                        }
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if (isMarked) {
-                    if (points.size() != currPoints.size()) {
-                        points.clear();
-                        points.addAll(DouglasPeucker.compress(currPoints));
+                    if (isClick) {
+                        paths.forEach(TouchAction.TouchPath::toLine);
                     } else {
-                        points.clear();
-                        points.addAll(currPoints);
+                        isClick = true;
+                        postDelayed(() -> isClick = false, 300);
                     }
                 } else {
                     isMarked = true;
-                    points.clear();
-                    points.addAll(DouglasPeucker.compress(currPoints));
+                    for (TouchAction.TouchPath path : paths) {
+                        path.setPointerId(-1);
+                    }
                 }
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                if (!isMarked) {
+                    int pointerId = event.getPointerId(event.getActionIndex());
+                    for (TouchAction.TouchPath path : paths) {
+                        if (path.getPointerId() == pointerId) {
+                            path.setPointerId(-1);
+                        }
+                        break;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if (!isMarked) addNewPath(event);
+                break;
         }
         refreshUI();
         return true;
     }
 
+    private void addNewPath(MotionEvent event) {
+        TouchAction.TouchPath path = new TouchAction.TouchPath();
+        int pointerId = event.getPointerId(event.getActionIndex());
+        path.setPointerId(pointerId);
+        int x = (int) event.getX(event.findPointerIndex(pointerId));
+        int y = (int) event.getY(event.findPointerIndex(pointerId));
+        x = x + location[0];
+        y = y + location[1];
+        path.addPoint(x, y);
+        paths.add(path);
+    }
+
     private void refreshUI() {
-        realArea = DisplayUtils.calculatePointArea(currPoints);
+        for (TouchAction.TouchPath path : paths) {
+            Rect rect = DisplayUtils.calculatePointArea(path.getPoints());
+            if (paths.indexOf(path) == 0) realArea.set(rect);
+            else {
+                realArea.left = Math.min(rect.left, realArea.left);
+                realArea.right = Math.max(rect.right, realArea.right);
+                realArea.top = Math.min(rect.top, realArea.top);
+                realArea.bottom = Math.max(rect.bottom, realArea.bottom);
+            }
+        }
 
         Rect markArea = new Rect(realArea);
         Point size = DisplayUtils.getScreenSize(getContext());

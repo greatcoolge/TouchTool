@@ -14,12 +14,12 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.touch_tool.room.bean.node.TouchNode;
+import top.bogey.touch_tool.database.bean.action.TouchAction;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class TouchPathView extends View {
-    private final List<Point> points = new ArrayList<>();
-    private final List<Point> showPoints = new ArrayList<>();
+    private final List<TouchAction.TouchPath> paths = new ArrayList<>();
+
     private Paint paint;
     private final Point size = new Point();
     private final int lineWidth = 5;
@@ -61,31 +61,44 @@ public class TouchPathView extends View {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-        formatPoints(points);
+        for (TouchAction.TouchPath touchPath : paths) {
+            List<Point> points = touchPath.getPoints();
+            List<Point> pointList = formatPoints(points);
 
-        if (showPoints.size() >= 2) {
-            Path path = new Path();
-            for (Point point : showPoints) {
-                if (path.isEmpty()) path.moveTo(point.x, point.y);
-                else path.lineTo(point.x, point.y);
+            if (pointList.size() >= 2) {
+                Path path = new Path();
+                for (Point point : pointList) {
+                    if (path.isEmpty()) path.moveTo(point.x, point.y);
+                    else path.lineTo(point.x, point.y);
+                }
+                canvas.drawPath(path, paint);
             }
-            canvas.drawPath(path, paint);
-        }
 
-        if (showPoints.size() >= 1) {
-            Point point = showPoints.get(showPoints.size() - 1);
-            canvas.drawCircle(point.x, point.y, 3, paint);
+            if (pointList.size() >= 1) {
+                Point point = pointList.get(pointList.size() - 1);
+                canvas.drawCircle(point.x, point.y, 3, paint);
+            }
         }
     }
 
-    public void setPath(TouchNode.TouchPath path) {
-        points.clear();
-        points.addAll(path.getPoints());
+    public void setPaths(List<TouchAction.TouchPath> paths) {
+        this.paths.clear();
+        if (paths != null) this.paths.addAll(paths);
         postInvalidate();
     }
 
-    public void formatPoints(List<Point> points) {
-        Rect area = DisplayUtils.calculatePointArea(points);
+    public List<Point> formatPoints(List<Point> points) {
+        Rect area = new Rect();
+        for (TouchAction.TouchPath path : paths) {
+            Rect rect = DisplayUtils.calculatePointArea(path.getPoints());
+            if (paths.indexOf(path) == 0) area.set(rect);
+            else {
+                area.left = Math.min(rect.left, area.left);
+                area.right = Math.max(rect.right, area.right);
+                area.top = Math.min(rect.top, area.top);
+                area.bottom = Math.max(rect.bottom, area.bottom);
+            }
+        }
 
         float xScale, yScale, xOffset, yOffset;
 
@@ -105,7 +118,7 @@ public class TouchPathView extends View {
         xOffset = (size.x - area.width() * scale) / 2f;
         yOffset = (size.y - area.height() * scale) / 2f;
 
-        showPoints.clear();
+        List<Point> showPoints = new ArrayList<>();
         for (Point point : points) {
             int x = point.x - area.left;
             int y = point.y - area.top;
@@ -113,5 +126,6 @@ public class TouchPathView extends View {
             y = (int) (y * scale + yOffset);
             showPoints.add(new Point(x + lineWidth, y + lineWidth));
         }
+        return showPoints;
     }
 }

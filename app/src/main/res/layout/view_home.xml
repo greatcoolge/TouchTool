@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="none"
     tools:context=".ui.home.HomeView">
 
     <LinearLayout
@@ -101,8 +100,8 @@
                         android:layout_weight="1.5"
                         android:gravity="center_vertical"
                         android:text="@string/capture_service_off"
-                        android:textColor="?attr/colorPrimary"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="?attr/colorPrimary" />
 
                 </LinearLayout>
 
@@ -113,11 +112,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
             android:orientation="vertical">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/ignore_battery_box"
                 style="?attr/materialCardViewFilledStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,17 +135,17 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="0dp"
                             android:layout_height="40dp"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/icon_auto_start"
+                            android:layout_weight="1"
+                            android:src="@drawable/icon_battery"
                             android:tint="?attr/colorPrimary" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="4.1"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/auto_run"
+                            android:layout_weight="4.1"
+                            android:text="@string/auto_start_app"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     </LinearLayout>
@@ -154,17 +154,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="32dp"
-                        android:text="@string/auto_run_tips"
+                        android:text="@string/ignore_battery_tips"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/auto_run_button"
+                        android:id="@+id/ignore_battery_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginVertical="16dp"
-                        app:icon="@drawable/icon_auto_start"
-                        android:text="@string/open_auto_run" />
+                        android:text="@string/open_ignore_battery"
+                        app:icon="@drawable/icon_battery" />
 
                 </LinearLayout>
 
@@ -189,37 +189,61 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="0dp"
                             android:layout_height="36dp"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
                             android:src="@drawable/icon_lock"
                             android:tint="?attr/colorPrimary" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="4.1"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/lock_task"
+                            android:layout_weight="4.1"
+                            android:text="@string/lock_on_background"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="32dp"
-                        android:layout_marginBottom="16dp"
-                        android:text="@string/lock_task_tips"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lock_task_button"
-                        android:layout_width="wrap_content"
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginBottom="16dp"
-                        app:icon="@drawable/icon_lock"
-                        android:text="@string/goto_lock_task" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:text="@string/auto_start_app_tips"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/auto_run_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/open_auto_start_app"
+                            app:icon="@drawable/icon_auto_start" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="8dp"
+                            android:layout_marginVertical="16dp"
+                            android:text="@string/lock_on_background_tips"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/lock_task_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/goto_lock_on_background"
+                            app:icon="@drawable/icon_lock" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -244,17 +268,17 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="0dp"
                             android:layout_height="36dp"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/icon_book"
+                            android:layout_weight="1"
+                            android:src="@drawable/icon_tutorial"
                             android:tint="?attr/colorPrimary" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="4.1"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/book"
+                            android:layout_weight="4.1"
+                            android:text="@string/tutorial"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     </LinearLayout>
@@ -263,17 +287,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="32dp"
-                        android:text="@string/book_tips"
+                        android:text="@string/tutorial_tips"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/book_button"
+                        android:id="@+id/tutorial_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginVertical="16dp"
-                        app:icon="@drawable/icon_book"
-                        android:text="@string/book" />
+                        android:text="@string/goto_tutorial"
+                        app:icon="@drawable/icon_tutorial" />
 
                 </LinearLayout>
 
@@ -298,17 +322,17 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="0dp"
                             android:layout_height="36dp"
-                            android:layout_weight="1"
                             android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
                             android:src="@drawable/icon_background_pop"
                             android:tint="?attr/colorPrimary" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="4.1"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/background_pop"
+                            android:layout_weight="4.1"
+                            android:text="@string/pop_on_background"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
 
                     </LinearLayout>
@@ -318,7 +342,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="32dp"
                         android:layout_marginBottom="16dp"
-                        android:text="@string/background_pop_tips"
+                        android:text="@string/pop_on_background_tips"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <TextView
@@ -326,9 +350,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="32dp"
                         android:layout_marginBottom="16dp"
-                        android:text="@string/background_pop_tips_2"
-                        android:textColor="?attr/colorTertiary"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                        android:text="@string/pop_on_background_tips_2"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textColor="?attr/colorTertiary" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/open_background_pop_button"
@@ -336,8 +360,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginBottom="16dp"
-                        app:icon="@drawable/icon_background_pop"
-                        android:text="@string/open_background_pop" />
+                        android:text="@string/open_pop_on_background"
+                        app:icon="@drawable/icon_background_pop" />
 
                 </LinearLayout>
 

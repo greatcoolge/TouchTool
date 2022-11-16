@@ -9,7 +9,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
+import android.os.Parcel;
 import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
@@ -23,30 +23,18 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
-import com.tencent.mmkv.MMKV;
-
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ActivityMainBinding;
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.node.Node;
-import top.bogey.touch_tool.room.data.CustomTypeConverts;
-import top.bogey.touch_tool.room.data.TaskRepository;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
 import top.bogey.touch_tool.ui.setting.LogLevel;
-import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.ui.setting.LogUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.PermissionResultCallback;
@@ -58,16 +46,12 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("auto_touch");
     }
 
-    private static final String FIRST_RUN = "first_run";
-
     private ActivityMainBinding binding;
 
     private ActivityResultLauncher<Intent> intentLauncher;
     private ActivityResultLauncher<String> permissionLauncher;
     private ActivityResultLauncher<String> contentLauncher;
     private PermissionResultCallback resultCallback;
-
-    private boolean removeFloatView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setAttributes(params);
         }
 
-        DisplayUtils.initParams(this);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolBar);
 
         MainApplication.setActivity(this);
+
+        DisplayUtils.initParams(this);
 
         intentLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (resultCallback != null) {
@@ -121,16 +105,25 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         NavController controller = Navigation.findNavController(this, R.id.con_view);
         NavigationUI.setupWithNavController(binding.menuView, controller);
-        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.apps, R.id.setting).build();
+        AppBarConfiguration configuration = new AppBarConfiguration.Builder(R.id.home, R.id.task, R.id.setting).build();
         NavigationUI.setupActionBarWithNavController(this, controller, configuration);
         controller.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
             int id = navDestination.getId();
-            if (id == R.id.home || id == R.id.apps || id == R.id.setting) {
-                binding.menuView.setVisibility(View.VISIBLE);
+            if (id == R.id.home || id == R.id.task || id == R.id.setting) {
+                showBottomNavigation();
             } else {
-                binding.menuView.setVisibility(View.GONE);
+                hideBottomNavigation();
             }
         });
+        SettingSave.getInstance().init(this);
+    }
+
+    public void showBottomNavigation() {
+        binding.menuView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideBottomNavigation() {
+        binding.menuView.setVisibility(View.GONE);
     }
 
     @Override
@@ -146,36 +139,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runFirstTimes() {
-        boolean firstRun = MMKV.defaultMMKV().decodeBool(FIRST_RUN, false);
-        if (!firstRun) {
-            StringBuilder buffer = new StringBuilder();
-            try {
-                InputStream inputStream = getAssets().open("DefaultTasks");
-                InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-                int i = reader.read();
-                while (i != -1) {
-                    char c = (char) i;
-                    buffer.append(c);
-                    i = reader.read();
-                }
+        if (!SettingSave.getInstance().isFirstRun()) {
+            try (InputStream inputStream = getAssets().open("DefaultTasks")) {
+                byte[] bytes = new byte[inputStream.available()];
+                if (inputStream.read(bytes) > 0) saveTasks(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            saveTasks(buffer.toString());
-
-            MMKV.defaultMMKV().encode(FIRST_RUN, true);
+            SettingSave.getInstance().setFirstRun();
         }
     }
 
     public void handleIntent(Intent intent) {
+        String pkgName = getIntent().getStringExtra("Goto");
+        if (pkgName != null && !pkgName.isEmpty()) {
+            AppUtils.gotoApp(this, pkgName);
+        }
+
         boolean isBackground = intent.getBooleanExtra("IsBackground", false);
         if (isBackground) {
             moveTaskToBack(true);
         }
 
-        String pkgName = getIntent().getStringExtra("FloatPackageName");
+        pkgName = getIntent().getStringExtra("FloatPackageName");
         if (pkgName != null && !pkgName.isEmpty()) {
             showPlayFloatView(pkgName);
+        }
+
+        boolean dismissFloat = intent.getBooleanExtra("DismissFloat", false);
+        if (dismissFloat) {
+            dismissPlayFloatView();
         }
 
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
@@ -189,60 +182,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveTasksByFile(Uri uri) {
-        ParcelFileDescriptor fileDescriptor = null;
-        try {
-            fileDescriptor = getContentResolver().openFileDescriptor(uri, "r");
-        } catch (FileNotFoundException ignored) {
-        }
-        if (fileDescriptor != null) {
-            FileDescriptor descriptor = fileDescriptor.getFileDescriptor();
-
-            StringBuilder buffer = new StringBuilder();
-            try (FileInputStream fileInputStream = new FileInputStream(descriptor)) {
-                InputStreamReader reader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
-                int i = reader.read();
-                while (i != -1) {
-                    char c = (char) i;
-                    buffer.append(c);
-                    i = reader.read();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            saveTasks(buffer.toString());
-
-            try {
-                fileDescriptor.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            byte[] bytes = new byte[inputStream.available()];
+            int read = inputStream.read(bytes);
+            if (read > 0)
+                saveTasks(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public void saveTasks(String tasksString) {
-        if (tasksString == null || tasksString.isEmpty()) return;
+    public void saveTasks(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) return;
+
+        Parcel parcel = Parcel.obtain();
+        parcel.unmarshall(bytes, 0, bytes.length);
+        parcel.setDataPosition(0);
+        List<Task> tasks = parcel.createTypedArrayList(Task.CREATOR);
 
         MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         List<String> pkgNames = viewModel.getAllPkgNames();
 
-        List<Task> tasks = null;
-        Gson gson = new GsonBuilder().registerTypeAdapter(Node.class, new CustomTypeConverts.NodeAdapter()).create();
-        try {
-            tasks = gson.fromJson(tasksString, new TypeToken<List<Task>>() {
-            }.getType());
-        } catch (JsonParseException ignored) {
-        }
         if (tasks != null) {
-            List<Task> newTasks = new ArrayList<>();
             for (Task task : tasks) {
-                if (pkgNames.contains(task.getPkgName())) {
-                    if (task.getActions() != null && !task.getActions().isEmpty()) {
-                        newTasks.add(task);
+                List<String> taskPkgNames = new ArrayList<>();
+                for (String pkgName : task.getPkgNames()) {
+                    if (pkgNames.contains(pkgName)) {
+                        taskPkgNames.add(pkgName);
                     }
                 }
+                task.setPkgNames(taskPkgNames);
+                TaskRepository.getInstance().saveTask(task);
             }
-            TaskRepository.getInstance(this).saveTask(newTasks);
         }
+        parcel.recycle();
     }
 
     public void launchCapture(PermissionResultCallback callback) {
@@ -293,23 +266,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPlayFloatView(String pkgName) {
         binding.getRoot().post(() -> {
-            removeFloatView = false;
             PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
             if (view == null) {
                 new PlayFloatView(this, pkgName).show();
             } else {
                 view.setPkgName(pkgName);
+                view.setNeedRemove(false);
             }
         });
-        RunningUtils.log(LogLevel.LOW, getString(R.string.log_show_manual_task));
+        LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_manual));
     }
 
     public void dismissPlayFloatView() {
-        removeFloatView = true;
-        binding.getRoot().postDelayed(() -> {
-            if (removeFloatView) {
-                EasyFloat.dismiss(PlayFloatView.class.getCanonicalName());
-            }
-        }, 100);
+        PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
+        if (view != null) view.setNeedRemove(true);
     }
 }

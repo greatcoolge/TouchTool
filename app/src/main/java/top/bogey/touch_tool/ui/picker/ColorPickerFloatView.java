@@ -19,15 +19,15 @@ import java.util.List;
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.action.ColorAction;
 import top.bogey.touch_tool.databinding.FloatPickerColorBinding;
-import top.bogey.touch_tool.room.bean.node.ColorNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 @SuppressLint("ViewConstructor")
 public class ColorPickerFloatView extends BasePickerFloatView {
-    private final ColorNode colorNode;
+    private final ColorAction colorAction;
 
     private final FloatPickerColorBinding binding;
 
@@ -41,14 +41,13 @@ public class ColorPickerFloatView extends BasePickerFloatView {
     private boolean isMarked = false;
 
     private int[] color = new int[3];
-
     private int minPercent = 0;
     private int maxPercent = 100;
     private int size = 0;
 
-    public ColorPickerFloatView(Context context, PickerCallback pickerCallback, ColorNode colorNode) {
+    public ColorPickerFloatView(Context context, PickerCallback pickerCallback, ColorAction colorAction) {
         super(context, pickerCallback);
-        this.colorNode = colorNode;
+        this.colorAction = colorAction;
 
         floatCallback = new ImagePickerCallback();
 
@@ -81,28 +80,27 @@ public class ColorPickerFloatView extends BasePickerFloatView {
         bitmapPaint.setDither(true);
     }
 
-    public ColorNode.ColorInfo getColor() {
-        return new ColorNode.ColorInfo(color, minPercent, maxPercent, size, DisplayUtils.getScreen(getContext()));
+    public ColorAction getColor() {
+        return new ColorAction(getContext(), color, minPercent, maxPercent, size);
     }
 
     public void realShow(int delay) {
         postDelayed(() -> {
             EasyFloat.show(tag);
-            if (service != null && service.isCaptureEnabled() && service.binder != null) {
+            if (service != null && service.isCaptureEnabled()) {
                 Bitmap bitmap = service.binder.getCurrImage();
                 if (bitmap != null) {
                     int[] location = new int[2];
                     getLocationOnScreen(location);
                     Point size = DisplayUtils.getScreenSize(getContext());
                     showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
-                    if (colorNode.isValid()) {
-                        ColorNode.ColorInfo colorInfo = colorNode.getValue();
-                        markArea = service.binder.matchColor(showBitmap, colorInfo.getColor());
+                    if (colorAction.isValid()) {
+                        markArea = service.binder.matchColor(showBitmap, colorAction.getColor());
                         if (markArea != null && markArea.size() > 0) {
                             isMarked = true;
-                            color = colorInfo.getColor();
-                            this.size = colorInfo.getSize(service);
-                            binding.slider.setValues((float) colorInfo.getMinPercent(), (float) colorInfo.getMaxPercent());
+                            color = colorAction.getColor();
+                            this.size = colorAction.getSize(service);
+                            binding.slider.setValues((float) colorAction.getMinPercent(), (float) colorAction.getMaxPercent());
                         }
                     }
                     refreshUI();
@@ -119,7 +117,7 @@ public class ColorPickerFloatView extends BasePickerFloatView {
                 Toast.makeText(getContext(), R.string.capture_service_on_tips_2, Toast.LENGTH_SHORT).show();
                 service.startCaptureService(true, result -> {
                     if (result) {
-                        realShow(500);
+                        realShow(100);
                     }
                 });
             } else {

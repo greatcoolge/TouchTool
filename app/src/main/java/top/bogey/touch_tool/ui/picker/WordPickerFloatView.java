@@ -1,14 +1,10 @@
 package top.bogey.touch_tool.ui.picker;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -25,19 +21,17 @@ import java.util.regex.Pattern;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
-import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.action.TextAction;
 import top.bogey.touch_tool.databinding.FloatPickerWordBinding;
-import top.bogey.touch_tool.room.bean.node.TextNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
 
 @SuppressLint("ViewConstructor")
 public class WordPickerFloatView extends BasePickerFloatView {
     private final FloatPickerWordBinding binding;
-    private final TextNode textNode;
+    private final TextAction textNode;
 
     private TreeNodeManager manager;
-    private boolean showList = false;
 
     private AccessibilityNodeInfo rootNode;
     private AccessibilityNodeInfo selectNode = null;
@@ -45,7 +39,7 @@ public class WordPickerFloatView extends BasePickerFloatView {
     private String selectKey = "";
     private String selectLevel = "";
 
-    public WordPickerFloatView(@NonNull Context context, PickerCallback pickerCallback, TextNode textNode) {
+    public WordPickerFloatView(@NonNull Context context, PickerCallback pickerCallback, TextAction textNode) {
         super(context, pickerCallback);
         this.textNode = textNode;
 
@@ -61,35 +55,6 @@ public class WordPickerFloatView extends BasePickerFloatView {
         });
 
         binding.backButton.setOnClickListener(v -> dismiss());
-
-        binding.switchButton.setOnClickListener(v -> {
-            ViewGroup.LayoutParams params = binding.constraintLayout.getLayoutParams();
-            int px = DisplayUtils.dp2px(context, 300);
-            int start = showList ? px : 0;
-            showList = !showList;
-            binding.switchButton.setText(showList ? R.string.word_picker_tips : R.string.word_picker_open);
-            ValueAnimator animator = ValueAnimator.ofInt(start, px - start);
-            animator.addUpdateListener(animation -> {
-                params.height = (int) animation.getAnimatedValue();
-                binding.constraintLayout.setLayoutParams(params);
-            });
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    if (!showList) binding.wordRecyclerView.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    binding.wordRecyclerView.postDelayed(() -> {
-                        if (showList) binding.wordRecyclerView.setVisibility(View.VISIBLE);
-                    }, 50);
-                }
-            });
-            animator.start();
-        });
 
         binding.titleText.setOnClickListener(v -> {
             CharSequence text = binding.titleText.getText();
@@ -185,11 +150,9 @@ public class WordPickerFloatView extends BasePickerFloatView {
         float y = event.getRawY();
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (!showList) {
-                AccessibilityNodeInfo node = getClickableNodeIn((int) x, (int) y);
-                if (node != null) {
-                    showWordView(node, true);
-                }
+            AccessibilityNodeInfo node = getClickableNodeIn((int) x, (int) y);
+            if (node != null) {
+                showWordView(node, true);
             }
         }
         return true;

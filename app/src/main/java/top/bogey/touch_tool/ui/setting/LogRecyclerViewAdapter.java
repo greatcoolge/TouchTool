@@ -1,5 +1,6 @@
 package top.bogey.touch_tool.ui.setting;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import top.bogey.touch_tool.databinding.FloatLogItemBinding;
 
@@ -16,17 +19,14 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     private final List<LogInfo> showLogs = new ArrayList<>();
 
     private RecyclerView recyclerView = null;
+    private String searchText = "";
 
     private int level;
 
     public LogRecyclerViewAdapter(int level) {
-        logs = RunningUtils.getLogs(log -> recyclerView.post(() -> {
+        logs = LogUtils.getLogs(log -> recyclerView.post(() -> {
             logs.add(log);
-            if (((1 << log.getLevel().ordinal()) & this.level) > 0) {
-                showLogs.add(log);
-                notifyItemInserted(showLogs.size());
-                if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
-            }
+            addLog(log);
         }));
         setLevel(level);
     }
@@ -56,26 +56,48 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     public void setLevel(int level) {
         this.level = level;
+        int size = showLogs.size();
         showLogs.clear();
+        notifyItemRangeRemoved(0, size);
         for (LogInfo log : logs) {
-            if (((1 << log.getLevel().ordinal()) & level) > 0) {
+            addLog(log);
+        }
+    }
+
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+        int size = showLogs.size();
+        showLogs.clear();
+        notifyItemRangeRemoved(0, size);
+        for (LogInfo log : logs) {
+            addLog(log);
+        }
+    }
+
+    private void addLog(LogInfo log){
+        if (((1 << log.getLevel().ordinal()) & this.level) > 0) {
+            Pattern pattern = Pattern.compile(searchText);
+            Matcher matcher = pattern.matcher(log.getLog());
+            if (searchText.isEmpty() || matcher.find()) {
                 showLogs.add(log);
+                notifyItemInserted(showLogs.size());
+                if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
             }
         }
-        notifyDataSetChanged();
-        if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         public final FloatLogItemBinding binding;
+        private final Context context;
 
         public ViewHolder(@NonNull FloatLogItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            context = binding.getRoot().getContext();
         }
 
         public void refreshItem(LogInfo log) {
-            binding.titleText.setText(String.format("%s\n%s", log.getDateString(), log.getLog()));
+            binding.titleText.setText(String.format("%s\n%s", log.getDateString(context), log.getLog()));
             binding.titleText.setTextColor(log.getLevel().getLevelColor(binding.getRoot().getContext()));
         }
     }

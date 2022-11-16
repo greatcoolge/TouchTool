@@ -18,8 +18,8 @@ import android.widget.Toast;
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.action.ImageAction;
 import top.bogey.touch_tool.databinding.FloatPickerImageBinding;
-import top.bogey.touch_tool.room.bean.node.ImageNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
@@ -28,7 +28,7 @@ import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 public class ImagePickerFloatView extends BasePickerFloatView {
     private enum AdjustMode {NONE, DRAG, TOP_LEFT, BOTTOM_RIGHT}
 
-    private final ImageNode imageNode;
+    private final ImageAction imageAction;
 
     private final FloatPickerImageBinding binding;
 
@@ -48,9 +48,9 @@ public class ImagePickerFloatView extends BasePickerFloatView {
 
     private final int offset;
 
-    public ImagePickerFloatView(Context context, PickerCallback pickerCallback, ImageNode imageNode) {
+    public ImagePickerFloatView(Context context, PickerCallback pickerCallback, ImageAction imageAction) {
         super(context, pickerCallback);
-        this.imageNode = imageNode;
+        this.imageAction = imageAction;
 
         floatCallback = new ImagePickerCallback();
 
@@ -95,8 +95,8 @@ public class ImagePickerFloatView extends BasePickerFloatView {
                     if (bitmap.getWidth() >= size.x && bitmap.getHeight() >= size.y) {
                         showBitmap = Bitmap.createBitmap(bitmap, location[0], location[1], size.x - location[0], size.y - location[1]);
                         int width = DisplayUtils.getScreen(service);
-                        float scale = ((float) width) / imageNode.getValue().getScreen();
-                        Rect rect = service.binder.matchImage(showBitmap, imageNode.getValue().getScaleBitmap(scale), imageNode.getValue().getValue());
+                        float scale = ((float) width) / imageAction.getScreen();
+                        Rect rect = service.binder.matchImage(showBitmap, imageAction.getScaleBitmap(scale), imageAction.getValue());
                         if (rect != null) {
                             markArea = new RectF(rect);
                             isMarked = true;

@@ -83,7 +83,7 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
 
         @Override
         public void bindTreeNode(TreeNode node) {
-            int padding = node.getLevel() * DisplayUtils.dp2px(context, 4);
+            int padding = node.getLevel() * DisplayUtils.dp2px(context, 8);
             binding.contentBox.setPaddingRelative(padding, 0, 0, 0);
         }
 

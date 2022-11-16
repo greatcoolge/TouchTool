@@ -10,19 +10,16 @@ import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.database.bean.Behavior;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.action.Action;
+import top.bogey.touch_tool.database.bean.action.DelayAction;
+import top.bogey.touch_tool.database.bean.action.TouchAction;
 import top.bogey.touch_tool.databinding.FloatPickerPosBinding;
-import top.bogey.touch_tool.room.bean.Action;
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.node.DelayNode;
-import top.bogey.touch_tool.room.bean.node.Node;
-import top.bogey.touch_tool.room.bean.node.NullNode;
-import top.bogey.touch_tool.room.bean.node.TimeArea;
-import top.bogey.touch_tool.room.bean.node.TouchNode;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.DouglasPeucker;
 import top.bogey.touch_tool.utils.FloatBaseCallback;
@@ -32,8 +29,9 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 @SuppressLint("ViewConstructor")
 public class QuickRecordFloatView extends FrameLayout implements FloatViewInterface {
-    private final List<Action> actions;
     private final FloatPickerPosBinding binding;
+
+    private List<Behavior> behaviors;
 
     private List<Point> currPoints = new ArrayList<>();
     private float lastX = 0;
@@ -49,13 +47,14 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
 
     public QuickRecordFloatView(Context context, Task task, ResultCallback callback) {
         super(context);
-        actions = task.getActions();
+        behaviors = task.getBehaviors();
+        if (behaviors == null) behaviors = new ArrayList<>();
 
         binding = FloatPickerPosBinding.inflate(LayoutInflater.from(getContext()), this, true);
 
         binding.saveButton.setOnClickListener(v -> {
-            if (actions.size() > 0) {
-                task.setActions(actions);
+            if (behaviors.size() > 0) {
+                task.setBehaviors(behaviors);
             }
             if (callback != null) {
                 callback.onResult(true);
@@ -116,11 +115,8 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
             case MotionEvent.ACTION_DOWN:
                 touchStartTime = System.currentTimeMillis();
                 if (delayStartTime != 0) {
-                    Node delayNode = new DelayNode(new TimeArea((int) (touchStartTime - delayStartTime)));
-                    Action action = new Action();
-                    action.setTargets(Collections.singletonList(delayNode));
-                    action.setCondition(new NullNode());
-                    actions.add(action);
+                    Action delayNode = new DelayAction((int) (touchStartTime - delayStartTime));
+                    behaviors.add(new Behavior(delayNode));
                     delayStartTime = touchStartTime;
                 }
                 lastX = x;
@@ -141,17 +137,16 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
             case MotionEvent.ACTION_UP:
                 isDrag = false;
                 touchStartTime = System.currentTimeMillis() - touchStartTime;
-                TouchNode touchNode = new TouchNode(new TouchNode.TouchPath(getContext(), DouglasPeucker.compress(currPoints)));
+                TouchAction.TouchPath path = new TouchAction.TouchPath();
+                path.setPoints(DouglasPeucker.compress(currPoints));
+                TouchAction touchNode = new TouchAction(getContext(), path);
                 touchNode.getTimeArea().setTime((int) touchStartTime);
-                Action action = new Action();
-                action.setTargets(Collections.singletonList(touchNode));
-                action.setCondition(new NullNode());
-                actions.add(action);
+                behaviors.add(new Behavior(touchNode));
 
                 MainAccessibilityService service = MainApplication.getService();
                 if (service != null) {
                     EasyFloat.hide(QuickRecordFloatView.class.getCanonicalName());
-                    post(() -> service.runGesture(touchNode.getValue().getPath(getContext(), false), touchNode.getTimeArea().getRandomTime(), result -> {
+                    post(() -> service.runGesture(touchNode.getPaths(getContext(), false), touchNode.getTimeArea().getRandomTime(), result -> {
                         EasyFloat.show(QuickRecordFloatView.class.getCanonicalName());
                         delayStartTime = System.currentTimeMillis();
                         currPoints = new ArrayList<>();

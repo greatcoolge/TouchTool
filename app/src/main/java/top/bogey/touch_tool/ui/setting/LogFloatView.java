@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Point;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.tencent.mmkv.MMKV;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatLogBinding;
 import top.bogey.touch_tool.utils.DisplayUtils;
+import top.bogey.touch_tool.utils.TextChangedListener;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 import top.bogey.touch_tool.utils.easy_float.FloatViewHelper;
@@ -118,6 +120,13 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
             MMKV.defaultMMKV().encode(LOG_LEVEL, level);
             adapter.setLevel(level);
         });
+
+        binding.include.titleEdit.addTextChangedListener(new TextChangedListener() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                adapter.setSearchText(String.valueOf(s));
+            }
+        });
     }
 
     @Override
@@ -186,6 +195,7 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
             binding.highButton.setVisibility(VISIBLE);
             binding.middleButton.setVisibility(VISIBLE);
             binding.lowButton.setVisibility(VISIBLE);
+            binding.include.getRoot().setVisibility(VISIBLE);
             binding.expandButton.setIconResource(R.drawable.icon_remove);
         } else {
             binding.markBox.setVisibility(GONE);
@@ -195,6 +205,7 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
             binding.highButton.setVisibility(GONE);
             binding.middleButton.setVisibility(GONE);
             binding.lowButton.setVisibility(GONE);
+            binding.include.getRoot().setVisibility(GONE);
             binding.expandButton.setIconResource(R.drawable.icon_add);
         }
 

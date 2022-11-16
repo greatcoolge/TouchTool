@@ -9,43 +9,25 @@
         android:label="@string/home"
         tools:layout="@layout/view_home" />
     <fragment
-        android:id="@+id/apps"
-        android:name="top.bogey.touch_tool.ui.apps.AppsView"
-        android:label="@string/apps"
-        tools:layout="@layout/view_apps">
-        <action
-            android:id="@+id/action_apps_to_tasks"
-            app:destination="@id/tasks" />
-        <action
-            android:id="@+id/action_apps_to_tasksExport"
-            app:destination="@id/tasksExport" />
-    </fragment>
-    <fragment
-        android:id="@+id/tasks"
-        android:name="top.bogey.touch_tool.ui.tasks.TasksView"
+        android:id="@+id/task"
+        android:name="top.bogey.touch_tool.ui.task.TaskView"
         android:label="@string/tasks"
-        tools:layout="@layout/view_tasks">
-        <argument
-            android:name="pkgName"
-            app:argType="string" />
+        tools:layout="@layout/view_task" >
+        <action
+            android:id="@+id/action_task_to_taskInfo"
+            app:destination="@id/taskInfo" />
     </fragment>
     <fragment
         android:id="@+id/setting"
         android:name="top.bogey.touch_tool.ui.setting.SettingView"
         android:label="@string/setting"
-        tools:layout="@layout/view_setting">
-        <action
-            android:id="@+id/action_setting_to_debugInfo"
-            app:destination="@id/runningInfo" />
+        tools:layout="@layout/view_setting" />
+    <fragment
+        android:id="@+id/taskInfo"
+        android:name="top.bogey.touch_tool.ui.task_info.TaskInfoView"
+        tools:layout="@layout/view_task_info" >
+        <argument
+            android:name="task"
+            app:argType="top.bogey.touch_tool.database.bean.Task" />
     </fragment>
-    <fragment
-        android:id="@+id/tasksExport"
-        android:name="top.bogey.touch_tool.ui.apps.TasksExportView"
-        android:label="@string/export_tasks"
-        tools:layout="@layout/view_tasks_export" />
-    <fragment
-        android:id="@+id/runningInfo"
-        android:name="top.bogey.touch_tool.ui.setting.RunningInfoView"
-        android:label="@string/running_task_info"
-        tools:layout="@layout/view_setting_running" />
 </navigation>

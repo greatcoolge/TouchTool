@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:minHeight="40dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="horizontal"
+        android:scrollbars="none">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_layout_min"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginTop="-1dp"
             android:layout_weight="1"
-            android:gravity="bottom"
             android:hint="@string/time_min"
-            android:translationX="1dp"
             app:boxStrokeWidth="0.75dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.CornerLeft.Full">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -33,10 +26,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:scrollbars="none"
                 android:inputType="number"
                 android:paddingHorizontal="0dp"
                 android:paddingVertical="8dp"
+                android:scrollbars="none"
                 android:singleLine="true"
                 android:textSize="11sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -45,14 +38,11 @@
             android:id="@+id/text_input_layout_max"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginTop="-1dp"
             android:layout_weight="1"
-            android:gravity="bottom"
             android:hint="@string/time_max"
+            android:translationX="-1dp"
             app:boxStrokeWidth="0.75dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.CornerRight.Full">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -60,10 +50,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:scrollbars="none"
                 android:inputType="number"
                 android:paddingHorizontal="0dp"
                 android:paddingVertical="8dp"
+                android:scrollbars="none"
                 android:singleLine="true"
                 android:textSize="11sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -72,30 +62,24 @@
 
     <com.google.android.material.button.MaterialButton
         style="@style/Theme.TouchTool.Button"
-        android:clickable="false"
-        android:focusable="false"
-        android:backgroundTint="?attr/colorSurfaceVariant"
-        android:layout_width="3dp"
+        android:layout_width="4dp"
         android:layout_height="28dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:backgroundTint="?attr/colorSurfaceVariant"
+        android:clickable="false"
+        android:focusable="false" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/lock_button"
         style="@style/Theme.TouchTool.Button"
-        android:backgroundTint="#00ffffff"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#00ffffff"
         android:insetTop="0dp"
         android:insetBottom="0dp"
         app:icon="@drawable/icon_lock"
         app:iconSize="16dp"
-        app:iconTint="?attr/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:iconTint="?attr/colorPrimary" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

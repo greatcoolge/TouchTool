@@ -12,9 +12,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.ui.apps.AppInfo;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.ui.app.AppInfo;
+import top.bogey.touch_tool.utils.AppUtils;
 
 public class MainViewModel extends AndroidViewModel {
     public final MutableLiveData<Boolean> showSystem = new MutableLiveData<>(false);
@@ -36,8 +38,12 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public List<AppInfo> searchAppList(String findString) {
+        return searchAppList(findString, true);
+    }
+
+    public List<AppInfo> searchAppList(String findString, boolean includeCommon) {
         List<AppInfo> apps = new ArrayList<>();
-        if (findString.isEmpty()) {
+        if (findString.isEmpty() && includeCommon) {
             apps.add(new AppInfo(getApplication().getString(R.string.common_name), getApplication().getString(R.string.common_package_name), null));
         }
         PackageManager manager = getApplication().getPackageManager();
@@ -86,7 +92,10 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void setCopyTask(Task task) {
-        if (task != null) copyTask.setValue(new Task(task));
-        else copyTask.setValue(null);
+        if (task != null) {
+            Task copy = AppUtils.copy(task);
+            copy.setId(UUID.randomUUID().toString());
+            copyTask.setValue(copy);
+        } else copyTask.setValue(null);
     }
 }

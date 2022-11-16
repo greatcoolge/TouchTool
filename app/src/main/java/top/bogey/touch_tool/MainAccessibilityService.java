@@ -1,8 +1,10 @@
 package top.bogey.touch_tool;
 
 import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.accessibilityservice.GestureDescription;
 import android.app.Activity;
+import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,32 +21,30 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.tencent.mmkv.MMKV;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
-import top.bogey.touch_tool.room.bean.Task;
-import top.bogey.touch_tool.room.bean.TaskStatus;
-import top.bogey.touch_tool.room.data.FindRunnable;
-import top.bogey.touch_tool.room.data.TaskCallable;
-import top.bogey.touch_tool.room.data.TaskRepository;
-import top.bogey.touch_tool.room.data.TaskWorker;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.TaskType;
+import top.bogey.touch_tool.database.bean.condition.NotificationCondition;
+import top.bogey.touch_tool.database.bean.condition.TimeCondition;
+import top.bogey.touch_tool.database.data.FindRunnable;
+import top.bogey.touch_tool.database.data.TaskRepository;
+import top.bogey.touch_tool.database.data.TaskRunnable;
+import top.bogey.touch_tool.database.data.TaskWorker;
 import top.bogey.touch_tool.ui.setting.LogLevel;
-import top.bogey.touch_tool.ui.setting.RunningUtils;
+import top.bogey.touch_tool.ui.setting.LogUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.ResultCallback;
-import top.bogey.touch_tool.utils.RunStateCallback;
-import top.bogey.touch_tool.utils.TaskCallback;
+import top.bogey.touch_tool.utils.TaskRunningCallback;
 
 public class MainAccessibilityService extends AccessibilityService {
-    private static final String SERVICE_ENABLED = "service_enabled";
-
     // 服务
     private boolean serviceConnected = false;
     public static final MutableLiveData<Boolean> serviceEnabled = new MutableLiveData<>(false);
@@ -55,15 +55,18 @@ public class MainAccessibilityService extends AccessibilityService {
     private ServiceConnection connection = null;
 
     // 任务
-    public String currPkgName = "";
     private final ExecutorService findService;
-    private FindRunnable findRunnable = null;
     public final ExecutorService taskService;
-    private final List<TaskCallable> tasks = new ArrayList<>();
-    private final List<RunStateCallback> runStates = new ArrayList<>();
+    private FindRunnable findRunnable = null;
+    public String currPkgName = "";
+    // 运行中的任务
+    private final List<TaskRunnable> taskRunnableList = new ArrayList<>();
+    // 外部任务监视器
+    private final List<TaskRunningCallback> taskOverSee = new ArrayList<>();
+
 
     public MainAccessibilityService() {
-        findService = Executors.newFixedThreadPool(2);
+        findService = new ThreadPoolExecutor(2, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
         taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
     }
 
@@ -71,9 +74,53 @@ public class MainAccessibilityService extends AccessibilityService {
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event != null && isServiceEnabled()) {
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED) {
+                // 窗口变更事件，拿不到包名，所以开启一个线程去拿取
                 if (findRunnable != null) findRunnable.stop();
                 findRunnable = new FindRunnable(this, currPkgName);
                 findService.execute(findRunnable);
+            } else if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+                // 需要是正常的通知
+                if (!Notification.class.getName().contentEquals(event.getClassName())) return;
+
+                // 且通知里带了文本
+                List<CharSequence> eventText = event.getText();
+                if (eventText == null || eventText.size() == 0) return;
+
+                // 获取所有可执行的任务
+                String packageName = String.valueOf(event.getPackageName());
+                stopTaskByType(TaskType.NEW_NOTIFICATION, false);
+                List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.NEW_NOTIFICATION);
+                if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_new_notification, packageName, eventText));
+
+                for (Task task : tasks) {
+                    if (task.getType() == TaskType.NEW_NOTIFICATION) {
+                        NotificationCondition condition = (NotificationCondition) task.getCondition();
+                        Pattern pattern = Pattern.compile(condition.getText());
+                        for (CharSequence charSequence : eventText) {
+                            if (pattern.matcher(charSequence).find()) {
+                                runTask(task, packageName, null);
+                                LogUtils.log(LogLevel.HIGH, getString(R.string.log_run_new_notification_task, task.getTitle()));
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+                String packageName = String.valueOf(event.getPackageName());
+                // 非当前应用的内容变更都无效
+                if (!packageName.equals(currPkgName)) return;
+                stopTaskByType(TaskType.CONTENT_CHANGED, false);
+                List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.CONTENT_CHANGED);
+                if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_content_changed, packageName));
+                    // 当前应用没有内容变更任务，所以不开启内容变更事件
+                else setContentEvent(false);
+                for (Task task : tasks) {
+                    // 任务没在运行
+                    if (task.getType() == TaskType.CONTENT_CHANGED && !isTaskRunning(task)) {
+                        runTask(task, packageName, null);
+                        LogUtils.log(LogLevel.HIGH, getString(R.string.log_run_content_changed_task, task.getTitle()));
+                    }
+                }
             }
         }
     }
@@ -87,8 +134,9 @@ public class MainAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
         serviceConnected = true;
         MainApplication.setService(this);
+        setEventTimeout();
 
-        setServiceEnabled(MMKV.defaultMMKV().decodeBool(SERVICE_ENABLED, false));
+        setServiceEnabled(SettingSave.getInstance().isServiceEnabled());
     }
 
     @Override
@@ -118,16 +166,31 @@ public class MainAccessibilityService extends AccessibilityService {
         WorkManager.getInstance(this).cancelAllWork();
     }
 
+    public void setEventTimeout() {
+        AccessibilityServiceInfo info = getServiceInfo();
+        if (info == null) return;
+        info.notificationTimeout = SettingSave.getInstance().getEventTimeout();
+        setServiceInfo(info);
+    }
+
+    public void setContentEvent(boolean open) {
+        AccessibilityServiceInfo info = getServiceInfo();
+        if (info == null) return;
+        if (open) info.eventTypes = AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED | AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED | AccessibilityEvent.TYPE_WINDOWS_CHANGED;
+        else info.eventTypes = AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED | AccessibilityEvent.TYPE_WINDOWS_CHANGED;
+        setServiceInfo(info);
+    }
+
     public boolean isServiceConnected() {
         return serviceConnected;
     }
 
     public void setServiceEnabled(boolean enabled) {
         serviceEnabled.setValue(enabled);
-        MMKV.defaultMMKV().encode(SERVICE_ENABLED, enabled);
+        SettingSave.getInstance().setServiceEnabled(enabled);
 
         if (isServiceEnabled()) {
-            List<Task> tasks = TaskRepository.getInstance(this).getTasksByStatus(TaskStatus.TIME);
+            List<Task> tasks = TaskRepository.getInstance().getTasksByType(TaskType.IT_IS_TIME);
             if (tasks != null) {
                 for (Task task : tasks) {
                     addWork(task);
@@ -192,100 +255,131 @@ public class MainAccessibilityService extends AccessibilityService {
         return isServiceConnected() && Boolean.TRUE.equals(captureEnabled.getValue());
     }
 
-    public List<TaskCallable> getRunningTasks(RunStateCallback callback) {
-        if (!runStates.contains(callback)) runStates.add(callback);
-        return tasks;
+    public List<TaskRunnable> getRunningTasks(TaskRunningCallback callback) {
+        if (!taskOverSee.contains(callback)) taskOverSee.add(callback);
+        return taskRunnableList;
     }
 
-    public TaskCallable runTask(Task task, TaskCallback callback) {
+    public void removeRunStateCallback(TaskRunningCallback callback) {
+        taskOverSee.remove(callback);
+    }
+
+    public TaskRunnable runTask(Task task, String pkgName, TaskRunningCallback callback) {
         if (task == null || !isServiceEnabled()) return null;
-
-        TaskCallable callable = new TaskCallable(this, task, currPkgName);
-        callable.setCallback(new TaskCallback() {
+        TaskRunnable runnable = new TaskRunnable(task, this, pkgName);
+        runnable.addCallback(callback);
+        runnable.addCallback(new TaskRunningCallback() {
             @Override
-            public void onStart() {
-                if (callback != null) callback.onStart();
-                tasks.add(callable);
-                for (int i = runStates.size() - 1; i >= 0; i--) {
-                    RunStateCallback runStateCallback = runStates.get(i);
-                    if (runStateCallback != null) runStateCallback.onNewTask(callable);
-                    else runStates.remove(i);
-                }
+            public void onStart(TaskRunnable runnable) {
+                taskRunnableList.add(runnable);
             }
 
             @Override
-            public void onEnd(boolean succeed) {
-                if (callback != null) callback.onEnd(succeed);
-
-                for (int i = runStates.size() - 1; i >= 0; i--) {
-                    RunStateCallback runStateCallback = runStates.get(i);
-                    if (runStateCallback != null) runStateCallback.onTaskEnd(callable);
-                    else runStates.remove(i);
-                }
-
-                synchronized (tasks) {
-                    tasks.remove(callable);
-                }
-
+            public void onProgress(TaskRunnable runnable, int percent) {
             }
 
             @Override
-            public void onProgress(int percent) {
-                if (callback != null) callback.onProgress(percent);
-                for (int i = runStates.size() - 1; i >= 0; i--) {
-                    RunStateCallback runStateCallback = runStates.get(i);
-                    if (runStateCallback != null) runStateCallback.onTaskProgress(callable, percent);
-                    else runStates.remove(i);
+            public void onEnd(TaskRunnable runnable, boolean succeed) {
+                synchronized (taskRunnableList) {
+                    taskRunnableList.remove(runnable);
                 }
             }
         });
-        taskService.submit(callable);
-        return callable;
+        runnable.addCallbacks(taskOverSee);
+        taskService.submit(runnable);
+        return runnable;
     }
 
-    public void stopTask(TaskCallable callable) {
-        stopTask(callable, false);
+    private boolean isTaskRunning(Task task) {
+        for (TaskRunnable runnable : taskRunnableList) {
+            if (runnable.getTask().getId().equals(task.getId())) return true;
+        }
+        return false;
     }
 
-    public void stopTask(TaskCallable callable, boolean force) {
-        if (callable == null || !isServiceEnabled()) return;
-        callable.stop(force);
+    public TaskRunnable runTask(Task task, TaskRunningCallback callback) {
+        return runTask(task, currPkgName, callback);
     }
 
-    public void stopAllTask(boolean force) {
-        synchronized (tasks) {
-            for (int i = tasks.size() - 1; i >= 0; i--) {
-                stopTask(tasks.get(i), force);
+    public void stopTask(TaskRunnable runnable, boolean force) {
+        runnable.stop(force);
+    }
+
+    public void stopTaskByType(TaskType type, boolean force) {
+        for (TaskRunnable runnable : taskRunnableList) {
+            if (runnable.getTask().getType() == type) stopTask(runnable, force);
+        }
+    }
+
+    public void stopAllTask(boolean force){
+        for (TaskRunnable runnable : taskRunnableList) {
+            stopTask(runnable, force);
+        }
+    }
+
+    public List<Task> getAllTasksByPkgNameAndType(String pkgName, TaskType type) {
+        List<Task> comTasks = TaskRepository.getInstance().getTasksByPkgName(getString(R.string.common_package_name));
+        for (int i = comTasks.size() - 1; i >= 0; i--) {
+            if (comTasks.get(i).getType() != type) {
+                comTasks.remove(i);
             }
         }
+        if (pkgName != null && !"null".equals(pkgName)) {
+            List<Task> pkgTasks = TaskRepository.getInstance().getTasksByPkgName(pkgName);
+            for (int i = pkgTasks.size() - 1; i >= 0; i--) {
+                if (pkgTasks.get(i).getType() != type) {
+                    pkgTasks.remove(i);
+                }
+            }
+
+            if (comTasks.isEmpty()) comTasks.addAll(pkgTasks);
+            else {
+                for (Task pkgTask : pkgTasks) {
+                    for (Task comTask : comTasks) {
+                        if (!pkgTask.getId().equals(comTask.getId())) {
+                            comTasks.add(pkgTask);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return comTasks;
     }
 
     public void addWork(Task task) {
         if (task == null || !isServiceEnabled()) return;
-        long timeMillis = System.currentTimeMillis();
-        if (task.getStatus() == TaskStatus.TIME) {
+
+        if (task.getType() == TaskType.IT_IS_TIME) {
+            TimeCondition timeCondition = (TimeCondition) task.getCondition();
+            if (timeCondition == null) return;
+
             WorkManager workManager = WorkManager.getInstance(this);
-            if (task.getPeriodic() > 0) {
+            long timeMillis = System.currentTimeMillis();
+
+            String startTime = getString(R.string.date, AppUtils.formatDateLocalDate(this, timeCondition.getStartTime()), AppUtils.formatDateLocalTime(this, timeCondition.getStartTime()));
+            startTime = getString(R.string.time_condition_start_time, startTime);
+            if (timeCondition.getPeriodic() > 0) {
                 // 尽量小延迟的执行间隔任务
-                PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(TaskWorker.class, task.getPeriodic(), TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
-                        .setInitialDelay(task.getTime() - timeMillis, TimeUnit.MILLISECONDS)
+                PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(TaskWorker.class, timeCondition.getPeriodic(), TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
+                        .setInitialDelay(timeCondition.getStartTime() - timeMillis, TimeUnit.MILLISECONDS)
                         .setInputData(new Data.Builder()
                                 .putString("id", task.getId())
-                                .putString("title", task.getTitle())
                                 .build())
                         .build();
                 workManager.enqueueUniquePeriodicWork(task.getId(), ExistingPeriodicWorkPolicy.REPLACE, workRequest);
-                RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_periodic_job, task.getTitle(), AppUtils.formatDateMinute(task.getTime()), task.getPeriodic() / 60, task.getPeriodic() % 60));
-            } else if (task.getTime() > timeMillis) {
+                startTime += getString(R.string.time_condition_periodic, AppUtils.formatDateLocalDuration(this, ((long) timeCondition.getPeriodic()) * 60 * 1000));
+                LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_periodic_time_work, task.getTitle(), startTime));
+
+            } else if (timeCondition.getStartTime() > timeMillis) {
                 OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TaskWorker.class)
-                        .setInitialDelay(task.getTime() - timeMillis, TimeUnit.MILLISECONDS)
+                        .setInitialDelay(timeCondition.getStartTime() - timeMillis, TimeUnit.MILLISECONDS)
                         .setInputData(new Data.Builder()
                                 .putString("id", task.getId())
-                                .putString("title", task.getTitle())
                                 .build())
                         .build();
                 workManager.enqueueUniqueWork(task.getId(), ExistingWorkPolicy.REPLACE, workRequest);
-                RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_job, task.getTitle(), AppUtils.formatDateMinute(task.getTime())));
+                LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_add_time_work, task.getTitle(), startTime));
             } else {
                 // 所有条件都未达到，任务无效，尝试移除已有的任务
                 removeWork(task);
@@ -294,14 +388,40 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public void removeWork(Task task) {
-        if (task == null || !isServiceEnabled()) return;
         WorkManager workManager = WorkManager.getInstance(this);
-        workManager.cancelUniqueWork(task.getId());
-        RunningUtils.log(LogLevel.MIDDLE, getString(R.string.log_remove_job, task.getTitle()));
+        workManager.cancelUniqueWork(task.getId()).getResult().addListener(() -> LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_remove_time_work, task.getTitle())), taskService);
     }
 
     public void runGesture(Path path, int time, ResultCallback callback) {
         dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription(path, 0, time)).build(), new GestureResultCallback() {
+            @Override
+            public void onCompleted(GestureDescription gestureDescription) {
+                super.onCompleted(gestureDescription);
+                if (callback != null) callback.onResult(true);
+            }
+
+            @Override
+            public void onCancelled(GestureDescription gestureDescription) {
+                super.onCancelled(gestureDescription);
+                if (callback != null) callback.onResult(false);
+            }
+        }, null);
+    }
+
+    public void runGesture(List<Path> paths, int time, ResultCallback callback) {
+        if (paths == null || paths.isEmpty()) {
+            if (callback != null) callback.onResult(false);
+            return;
+        }
+        if (paths.size() == 1) {
+            runGesture(paths.get(0), time, callback);
+            return;
+        }
+        GestureDescription.Builder builder = new GestureDescription.Builder();
+        for (Path path : paths) {
+            builder.addStroke(new GestureDescription.StrokeDescription(path, 0, time));
+        }
+        dispatchGesture(builder.build(), new GestureResultCallback() {
             @Override
             public void onCompleted(GestureDescription gestureDescription) {
                 super.onCompleted(gestureDescription);

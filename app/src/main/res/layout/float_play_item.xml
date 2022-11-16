@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    style="?attr/materialCardViewFilledStyle"
-    app:cardBackgroundColor="?attr/colorSurface"
-    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">
+    android:layout_height="wrap_content">
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/play_button"
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewFilledStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:max="100"
-        app:indicatorInset="0dp"
-        app:indicatorSize="32dp"
-        app:trackThickness="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:trackCornerRadius="2dp" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/percent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="11sp"
-        android:textColor="?attr/colorPrimary" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/oversee"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:alpha="0.2"
+            android:src="@drawable/icon_setting_oversee"
+            android:tint="?attr/colorPrimary" />
 
-</com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/play_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="100"
+            app:indicatorInset="0dp"
+            app:indicatorSize="40dp"
+            app:trackCornerRadius="2dp"
+            app:trackThickness="4dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="13sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

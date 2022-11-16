@@ -16,22 +16,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.tencent.mmkv.MMKV;
-
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.ViewHomeBinding;
-import top.bogey.touch_tool.ui.setting.OverSeeFloatView;
-import top.bogey.touch_tool.ui.setting.OverseeMode;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.SelectCallback;
-import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class HomeView extends Fragment {
     private ViewHomeBinding binding;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        binding.ignoreBatteryBox.setVisibility(AppUtils.isIgnoredBattery(requireContext()) ? View.GONE : View.VISIBLE);
+    }
 
     @Nullable
     @Override
@@ -52,17 +53,7 @@ public class HomeView extends Fragment {
                 });
             }
         });
-        MainAccessibilityService.serviceEnabled.observe(getViewLifecycleOwner(), aBoolean -> {
-            setServiceChecked(aBoolean);
-            String string = MMKV.defaultMMKV().decodeString(OverSeeFloatView.OVERSEE_MODE);
-            if (string != null) {
-                int i = Integer.parseInt(string);
-                if (i > 0) {
-                    if (aBoolean) new OverSeeFloatView(requireContext(), OverseeMode.values()[i]).show();
-                    else EasyFloat.dismiss(OverSeeFloatView.class.getCanonicalName());
-                }
-            }
-        });
+        MainAccessibilityService.serviceEnabled.observe(getViewLifecycleOwner(), this::setServiceChecked);
 
         binding.captureServiceButton.setOnClickListener(view -> {
             MainActivity activity = MainApplication.getActivity();
@@ -85,6 +76,9 @@ public class HomeView extends Fragment {
         });
         MainAccessibilityService.captureEnabled.observe(getViewLifecycleOwner(), this::setCaptureChecked);
 
+        binding.ignoreBatteryBox.setVisibility(AppUtils.isIgnoredBattery(requireContext()) ? View.GONE : View.VISIBLE);
+        binding.ignoreBatteryButton.setOnClickListener(v -> AppUtils.gotoBatterySetting(requireContext()));
+
         binding.openBackgroundPopButton.setOnClickListener(v -> AppUtils.gotoAppDetailSetting(requireActivity()));
         binding.autoRunButton.setOnClickListener(v -> AppUtils.gotoAppDetailSetting(requireActivity()));
 
@@ -95,7 +89,7 @@ public class HomeView extends Fragment {
             }
         });
 
-        binding.bookButton.setOnClickListener(v -> {
+        binding.tutorialButton.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.qq.com/doc/p/0f4de9e03534db3780876b90965e9373e4af93f0"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
