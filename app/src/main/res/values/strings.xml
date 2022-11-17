@@ -16,6 +16,7 @@
     <string name="hour">%d时</string>
     <string name="minute">%d分</string>
     <string name="second">%d秒</string>
+    <string name="millisecond">%d毫秒</string>
     <string name="hours">%d小时</string>
     <string name="minutes">%d分钟</string>
 
@@ -217,6 +218,8 @@
     <string name="setting_running_state_oversee_tips">显示运行中任务的悬浮窗。一些任务可能因为多种原因而无法结束运行，可以在这强制结束</string>
     <string name="setting_running_log">任务日志</string>
     <string name="setting_running_log_tips">记录应用执行的信息，日常使用时建议关闭\n点击显示任务执行的实时日志</string>
+    <string name="setting_running_log_search_tips">输入文字来筛选日志</string>
+    <string name="setting_running_log_search_hint">按返回按钮继续监听日志</string>
     <string name="setting_running_task_info">任务统计</string>
     <string name="setting_running_task_info_tips">记录任务执行成功失败与否\n查看任务执行情况统计</string>
 

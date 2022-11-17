@@ -3,6 +3,7 @@ package top.bogey.touch_tool.database.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.database.bean.Behavior;
@@ -44,16 +45,23 @@ public class TaskRunnable implements Runnable {
     }
 
     public boolean isRunning() {
-        return runningInfo.isRunning();
+        return runningInfo.isRunning() && !Thread.interrupted();
     }
 
     @Override
     public void run() {
-        runningInfo.onStart(this);
-        boolean result = runTask(task, task, service, runningInfo);
-        runningInfo.onEnd(this, result);
-        LogUtils.run(service, task, runningInfo.getPkgName(), result);
-        runningInfo.setRunning(false);
+        boolean result = false;
+        try {
+            runningInfo.onStart(this);
+            result = runTask(task, task, service, runningInfo);
+            runningInfo.setRunning(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtils.log(LogLevel.HIGH, e.toString());
+        } finally {
+            runningInfo.onEnd(this, result);
+            LogUtils.run(service, task, runningInfo.getPkgName(), result);
+        }
     }
 
     public static boolean runTask(Task baseTask, Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
@@ -115,21 +123,27 @@ public class TaskRunnable implements Runnable {
                     break;
 
                 case PARALLEL:
-                    CountDownLatch latch = new CountDownLatch(actions.size());
-                    for (Action action : actions) {
-                        Behavior finalRunBehavior = runBehavior;
-                        service.taskService.submit(() -> {
-                            boolean flag = doAction(service, baseTask, finalRunBehavior, action, runningInfo);
-                            if (condition.getType() == ActionType.NUMBER) ((NumberAction) condition).addCurrNum(flag);
-                            latch.countDown();
-                        });
-                    }
-                    try {
-                        latch.await();
-                        result = condition.checkCondition(service);
-                        LogUtils.log(LogLevel.LOW, service, result, baseTask, runningInfo, condition.getConditionContent(service, baseTask, runBehavior));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (condition.getType() == ActionType.NUMBER) {
+                        NumberAction numberAction = (NumberAction) condition;
+                        CountDownLatch latch = new CountDownLatch(numberAction.getTargetNum());
+                        List<Future<?>> futures = new ArrayList<>();
+                        for (Action action : actions) {
+                            Behavior finalRunBehavior = runBehavior;
+                            Future<?> future = service.taskService.submit(() -> {
+                                boolean flag = doAction(service, baseTask, finalRunBehavior, action, runningInfo);
+                                if (condition.getType() == ActionType.NUMBER) numberAction.addCurrNum(flag);
+                                latch.countDown();
+                            });
+                            futures.add(future);
+                        }
+                        try {
+                            latch.await();
+                            result = condition.checkCondition(service);
+                            LogUtils.log(LogLevel.LOW, service, result, baseTask, runningInfo, condition.getConditionContent(service, baseTask, runBehavior));
+                            futures.forEach(future -> future.cancel(true));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     break;
             }

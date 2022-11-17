@@ -160,15 +160,14 @@ public class AppUtils {
         return  builder.toString();
     }
 
-    public static String formatDateLocalSecond(Context context, long dateTime){
+    public static String formatDateLocalMillisecond(Context context, long dateTime){
         Calendar timeCalendar = Calendar.getInstance();
         timeCalendar.setTimeInMillis(dateTime);
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(context.getString(R.string.hour, timeCalendar.get(Calendar.HOUR_OF_DAY)));
-        if (timeCalendar.get(Calendar.MINUTE) != 0) builder.append(context.getString(R.string.minute, timeCalendar.get(Calendar.MINUTE)));
-        if (timeCalendar.get(Calendar.SECOND) != 0) builder.append(context.getString(R.string.second, timeCalendar.get(Calendar.SECOND)));
-        return  builder.toString();
+        return context.getString(R.string.hour, timeCalendar.get(Calendar.HOUR_OF_DAY)) +
+                context.getString(R.string.minute, timeCalendar.get(Calendar.MINUTE)) +
+                context.getString(R.string.second, timeCalendar.get(Calendar.SECOND)) +
+                context.getString(R.string.millisecond, timeCalendar.get(Calendar.MILLISECOND));
     }
 
     public static String formatDateLocalDuration(Context context, long dateTime){

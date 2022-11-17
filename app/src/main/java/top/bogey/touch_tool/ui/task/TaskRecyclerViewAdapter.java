@@ -10,7 +10,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,39 +31,20 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     private boolean isCheck = false;
     private final Map<String, Task> selectTasks = new HashMap<>();
 
-    private final TaskRepository repository = TaskRepository.getInstance();
-    private SortType sortType = SettingSave.getInstance().getSortType();
-    private final Comparator<Task> comparator = (o1, o2) -> {
-        TaskConfig config1 = repository.getTaskConfig(o1.getId());
-        TaskConfig config2 = repository.getTaskConfig(o2.getId());
-        switch (sortType) {
-            case CREATE_TIME_ASC:
-                return (config1.getCreateTime() - config2.getCreateTime()) > 0 ? 1 : -1;
-            case CREATE_TIME_DESC:
-                return (config1.getCreateTime() - config2.getCreateTime()) > 0 ? -1 : 1;
-            case MODIFY_TIME_ASC:
-                return (config1.getModifyTime() - config2.getModifyTime()) > 0 ? 1 : -1;
-            case MODIFY_TIME_DESC:
-                return (config1.getModifyTime() - config2.getModifyTime()) > 0 ? -1 : 1;
-        }
-        return 0;
-    };
-
     private final String ALL;
     private final String NO;
 
     public TaskRecyclerViewAdapter(TaskView parent) {
         this.parent = parent;
         tasks.addAll(TaskRepository.getInstance().getAllTasks());
-        tasks.sort(comparator);
+        tasks.sort(SettingSave.getInstance().getComparator());
         ALL = parent.getString(R.string.tag_all);
         NO = parent.getString(R.string.tag_no);
     }
 
     public void setSortType(SortType type) {
-        sortType = type;
-        SettingSave.getInstance().setSortType(sortType);
-        tasks.sort(comparator);
+        SettingSave.getInstance().setSortType(type);
+        tasks.sort(SettingSave.getInstance().getComparator());
         notifyItemRangeChanged(0, tasks.size());
     }
 
@@ -100,7 +80,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         }
         if (flag) {
             tasks.add(task);
-            tasks.sort(comparator);
+            tasks.sort(SettingSave.getInstance().getComparator());
             notifyItemInserted(tasks.indexOf(task));
         }
     }
@@ -128,7 +108,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             return;
         }
 
-        newTasks.sort(comparator);
+        newTasks.sort(SettingSave.getInstance().getComparator());
 
         for (int i = tasks.size() - 1; i >= 0; i--) {
             Task task = tasks.get(i);
@@ -247,7 +227,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             binding.taskName.setText(task.getTitle());
             binding.taskDes.setText(task.getDescription(context));
             TaskConfig config = TaskRepository.getInstance().getTaskConfig(task.getId());
-            binding.timeText.setText(AppUtils.formatDateLocalDate(context, sortType.ordinal() < 2 ? config.getCreateTime() : config.getModifyTime()));
+            binding.timeText.setText(AppUtils.formatDateLocalDate(context, SettingSave.getInstance().getSortType().ordinal() < 2 ? config.getCreateTime() : config.getModifyTime()));
             binding.getRoot().setChecked(selectTasks.containsKey(task.getId()));
             binding.taskTag.setText(config.getTag());
 

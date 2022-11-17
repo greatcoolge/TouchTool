@@ -20,8 +20,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/close_button"
             style="@style/Theme.TouchTool.Button.IconOnly"
-            android:layout_width="40dp"
-            android:layout_height="30dp"
+            android:layout_width="36dp"
+            android:layout_height="28dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             app:icon="@drawable/icon_up" />

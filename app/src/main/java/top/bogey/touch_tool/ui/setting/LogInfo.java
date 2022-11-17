@@ -49,7 +49,7 @@ public class LogInfo implements Parcelable {
     }
 
     public String getDateString(Context context) {
-        return context.getString(R.string.date, AppUtils.formatDateLocalDate(context, date), AppUtils.formatDateLocalSecond(context, date));
+        return context.getString(R.string.date, AppUtils.formatDateLocalDate(context, date), AppUtils.formatDateLocalMillisecond(context, date));
     }
 
     public String getId() {

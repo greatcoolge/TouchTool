@@ -55,7 +55,7 @@ public class RunningInfo implements Parcelable {
     }
 
     public String getDateString(Context context) {
-        return context.getString(R.string.date, AppUtils.formatDateLocalDate(context, date), AppUtils.formatDateLocalSecond(context, date));
+        return context.getString(R.string.date, AppUtils.formatDateLocalDate(context, date), AppUtils.formatDateLocalTime(context, date));
     }
 
     public static final Creator<RunningInfo> CREATOR = new Creator<RunningInfo>() {

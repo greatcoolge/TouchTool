@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
@@ -125,8 +126,11 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
             @Override
             public void afterTextChanged(Editable s) {
                 adapter.setSearchText(String.valueOf(s));
+                if (s.length() > 0) binding.include.textInputLayout.setHint(R.string.setting_running_log_search_hint);
+                else binding.include.textInputLayout.setHint(R.string.setting_running_log_search_tips);
             }
         });
+        binding.include.textInputLayout.setHint(R.string.setting_running_log_search_tips);
     }
 
     @Override

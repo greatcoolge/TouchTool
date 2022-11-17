@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:max="100"
             app:indicatorInset="0dp"
-            app:indicatorSize="40dp"
+            app:indicatorSize="36dp"
             app:trackCornerRadius="2dp"
             app:trackThickness="4dp" />
 

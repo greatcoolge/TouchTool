@@ -41,7 +41,7 @@ public class Behavior implements Parcelable {
         actions = Collections.singletonList(action);
     }
 
-    public Behavior(BehaviorMode behaviorMode){
+    public Behavior(BehaviorMode behaviorMode) {
         this.behaviorMode = behaviorMode;
     }
 
@@ -99,7 +99,7 @@ public class Behavior implements Parcelable {
                 builder.append(context.getString(R.string.parallel_title_1));
                 for (Action action : actions) {
                     builder.append(getActionTitle(context, task, action));
-                    builder.append("\n");
+                    if (actions.indexOf(action) != actions.size() - 1) builder.append("\n");
                 }
                 if (condition != null) {
                     builder.append(condition.getDescription(context, task, this));

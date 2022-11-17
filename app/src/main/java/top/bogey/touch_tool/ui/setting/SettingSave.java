@@ -11,8 +11,13 @@ import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 import com.tencent.mmkv.MMKV;
 
+import java.util.Comparator;
+
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.TaskConfig;
+import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.ui.play.OverseeMode;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
 import top.bogey.touch_tool.ui.task.SortType;
@@ -79,7 +84,25 @@ public class SettingSave {
         settingMMKV.encode(SORT_TYPE, sortType);
     }
 
-    
+    public Comparator<Task> getComparator(){
+        TaskRepository repository = TaskRepository.getInstance();
+        SortType sortType = getSortType();
+        return (o1, o2) -> {
+            TaskConfig config1 = repository.getTaskConfig(o1.getId());
+            TaskConfig config2 = repository.getTaskConfig(o2.getId());
+            switch (sortType) {
+                case CREATE_TIME_ASC:
+                    return (config1.getCreateTime() - config2.getCreateTime()) < 0 ? -1 : 1;
+                case CREATE_TIME_DESC:
+                    return (config1.getCreateTime() - config2.getCreateTime()) > 0 ? -1 : 1;
+                case MODIFY_TIME_ASC:
+                    return (config1.getModifyTime() - config2.getModifyTime()) < 0 ? -1 : 1;
+                case MODIFY_TIME_DESC:
+                    return (config1.getModifyTime() - config2.getModifyTime()) > 0 ? -1 : 1;
+            }
+            return 0;
+        };
+    }
 
     public boolean isKeepAlive() {
         return settingMMKV.decodeBool(KEEP_ALIVE, false);

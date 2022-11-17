@@ -52,12 +52,12 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface, Ta
                     binding.buttonBox.setVisibility(GONE);
                     binding.closeButton.setIconResource(R.drawable.icon_down);
 
-                    params.height = DisplayUtils.dp2px(context, 40);
+                    params.height = DisplayUtils.dp2px(context, 36);
                 } else {
                     binding.buttonBox.setVisibility(VISIBLE);
                     binding.closeButton.setIconResource(R.drawable.icon_up);
 
-                    params.height = DisplayUtils.dp2px(context, 30);
+                    params.height = DisplayUtils.dp2px(context, 28);
                 }
                 binding.closeButton.setLayoutParams(params);
             }
@@ -149,6 +149,8 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface, Ta
             Task task = comTasks.get(i);
             if (task.getType() != TaskType.MANUAL) comTasks.remove(i);
         }
+
+        comTasks.sort(SettingSave.getInstance().getComparator());
 
         return comTasks;
     }
