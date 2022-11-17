@@ -45,7 +45,7 @@ public class TaskRunnable implements Runnable {
     }
 
     public boolean isRunning() {
-        return runningInfo.isRunning() && !Thread.interrupted();
+        return runningInfo.isRunning();
     }
 
     @Override

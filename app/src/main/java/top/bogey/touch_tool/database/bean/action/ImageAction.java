@@ -87,7 +87,7 @@ public class ImageAction extends Action {
     @Override
     public String getDescription(Context context, Task task, Behavior behavior) {
         if (context == null) return String.valueOf(value);
-        String touch = context.getString(timeArea.getMax() > 100 ? R.string.long_touch : R.string.touch);
+        String touch = context.getString(timeArea.getMin() > 500 ? R.string.long_touch : R.string.touch);
         return context.getString(R.string.action_image, touch);
     }
 

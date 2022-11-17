@@ -147,19 +147,20 @@ public class TextAction extends Action {
         List<AccessibilityNodeInfo> nodes = searchNodes(root);
         AccessibilityNodeInfo nodeInfo = searchClickableNode(nodes);
         if (nodeInfo == null) return false;
-        if (getTimeArea().getMax() <= 100) {
+        int time = getTimeArea().getRandomTime();
+        if (time <= 500) {
             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
         } else {
             nodeInfo.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
         }
-        sleep(getTimeArea().getRandomTime());
+        sleep(time);
         return true;
     }
 
     @Override
     public String getDescription(Context context, Task task, Behavior behavior) {
         if (context == null) return text;
-        String touch = context.getString(timeArea.getMax() > 100 ? R.string.long_touch : R.string.touch);
+        String touch = context.getString(timeArea.getMin() > 500 ? R.string.long_touch : R.string.touch);
         return context.getString(R.string.action_text, touch, text);
     }
 

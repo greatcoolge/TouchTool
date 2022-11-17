@@ -206,7 +206,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                     notifyItemChanged(index);
                 } else {
                     NavController controller = Navigation.findNavController(MainApplication.getActivity(), R.id.con_view);
-                    controller.navigate(TaskViewDirections.actionTaskToTaskInfo(task));
+                    controller.navigate(TaskViewDirections.actionTaskToTaskInfo(task.getId()));
                 }
             });
 

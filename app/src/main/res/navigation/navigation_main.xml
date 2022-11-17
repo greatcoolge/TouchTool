@@ -27,7 +27,7 @@
         android:name="top.bogey.touch_tool.ui.task_info.TaskInfoView"
         tools:layout="@layout/view_task_info" >
         <argument
-            android:name="task"
-            app:argType="top.bogey.touch_tool.database.bean.Task" />
+            android:name="taskId"
+            app:argType="string" />
     </fragment>
 </navigation>

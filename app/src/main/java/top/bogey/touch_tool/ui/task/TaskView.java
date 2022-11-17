@@ -70,7 +70,7 @@ public class TaskView extends Fragment implements TaskChangedCallback {
             Task task = new Task(requireContext());
             TaskRepository.getInstance().saveTask(task);
             NavController controller = Navigation.findNavController(MainApplication.getActivity(), R.id.con_view);
-            controller.navigate(TaskViewDirections.actionTaskToTaskInfo(task));
+            controller.navigate(TaskViewDirections.actionTaskToTaskInfo(task.getId()));
         });
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
@@ -211,7 +211,7 @@ public class TaskView extends Fragment implements TaskChangedCallback {
         return binding.getRoot();
     }
 
-    public void setSelectTaskType(TaskType type){
+    public void setSelectTaskType(TaskType type) {
         TaskRepository repository = TaskRepository.getInstance();
         for (Task task : adapter.getSelectTasks()) {
             task.setType(type);
@@ -246,7 +246,7 @@ public class TaskView extends Fragment implements TaskChangedCallback {
         }
     }
 
-    private void showTabView(){
+    private void showTabView() {
         TagView tagView = new TagView(this);
         tagView.show(requireActivity().getSupportFragmentManager(), null);
     }

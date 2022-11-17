@@ -63,7 +63,8 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         if (getArguments() != null) {
-            task = getArguments().getParcelable("task");
+            String taskId = getArguments().getString("taskId");
+            task = TaskRepository.getInstance().getTaskById(taskId);
         }
 
         adapter = new TaskInfoRecyclerViewAdapter(task);

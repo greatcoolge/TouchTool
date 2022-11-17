@@ -31,7 +31,7 @@ public class TaskRunningInfo implements TaskRunningCallback {
     }
 
     public boolean isRunning() {
-        return isRunning;
+        return isRunning && !Thread.interrupted();
     }
 
     public void setRunning(boolean running) {

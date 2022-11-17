@@ -1,7 +1,5 @@
 package top.bogey.touch_tool.utils;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,15 +15,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tencent.mmkv.MMKV;
 
 import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
-import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.R;
 
 public class AppUtils {
@@ -61,12 +54,12 @@ public class AppUtils {
     }
 
     public static void gotoApp(Context context, String pkgName) {
-            try {
-                PackageManager manager = context.getPackageManager();
-                Intent intent = manager.getLaunchIntentForPackage(pkgName);
-                if (intent != null) context.startActivity(intent);
-            } catch (Exception ignored) {
-            }
+        try {
+            PackageManager manager = context.getPackageManager();
+            Intent intent = manager.getLaunchIntentForPackage(pkgName);
+            if (intent != null) context.startActivity(intent);
+        } catch (Exception ignored) {
+        }
     }
 
     public static boolean checkFloatPermission(Context context) {
@@ -94,12 +87,12 @@ public class AppUtils {
         wakeLock.release();
     }
 
-    public static boolean isIgnoredBattery(Context context){
+    public static boolean isIgnoredBattery(Context context) {
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return powerManager.isIgnoringBatteryOptimizations(context.getPackageName());
     }
 
-    public static void gotoBatterySetting(Context context){
+    public static void gotoBatterySetting(Context context) {
         try {
             Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -108,10 +101,10 @@ public class AppUtils {
         } catch (Exception ignored) {
         }
     }
-    
-    public static <T extends Parcelable> T copy(T input){
+
+    public static <T extends Parcelable> T copy(T input) {
         Parcel parcel = null;
-        try{
+        try {
             parcel = Parcel.obtain();
             parcel.writeParcelable(input, 0);
             parcel.setDataPosition(0);
@@ -121,9 +114,9 @@ public class AppUtils {
         }
     }
 
-    public static <T extends Parcelable> boolean equals(T a, T b){
+    public static <T extends Parcelable> boolean equals(T a, T b) {
         Parcel aParcel = null, bParcel = null;
-        try{
+        try {
             aParcel = Parcel.obtain();
             aParcel.writeParcelable(a, 0);
             byte[] aMarshall = aParcel.marshall();
@@ -137,7 +130,7 @@ public class AppUtils {
         }
     }
 
-    public static String formatDateLocalDate(Context context, long dateTime){
+    public static String formatDateLocalDate(Context context, long dateTime) {
         Calendar timeCalendar = Calendar.getInstance();
         timeCalendar.setTimeInMillis(dateTime);
 
@@ -150,17 +143,18 @@ public class AppUtils {
         builder.append(context.getString(R.string.day, timeCalendar.get(Calendar.DAY_OF_MONTH)));
         return builder.toString();
     }
-    public static String formatDateLocalTime(Context context, long dateTime){
+
+    public static String formatDateLocalTime(Context context, long dateTime) {
         Calendar timeCalendar = Calendar.getInstance();
         timeCalendar.setTimeInMillis(dateTime);
 
         StringBuilder builder = new StringBuilder();
         builder.append(context.getString(R.string.hour, timeCalendar.get(Calendar.HOUR_OF_DAY)));
         if (timeCalendar.get(Calendar.MINUTE) != 0) builder.append(context.getString(R.string.minute, timeCalendar.get(Calendar.MINUTE)));
-        return  builder.toString();
+        return builder.toString();
     }
 
-    public static String formatDateLocalMillisecond(Context context, long dateTime){
+    public static String formatDateLocalMillisecond(Context context, long dateTime) {
         Calendar timeCalendar = Calendar.getInstance();
         timeCalendar.setTimeInMillis(dateTime);
 
@@ -170,7 +164,7 @@ public class AppUtils {
                 context.getString(R.string.millisecond, timeCalendar.get(Calendar.MILLISECOND));
     }
 
-    public static String formatDateLocalDuration(Context context, long dateTime){
+    public static String formatDateLocalDuration(Context context, long dateTime) {
         int hours = (int) (dateTime / 1000 / 60 / 60);
         int minute = (int) (dateTime / 1000 / 60 % 60);
 
