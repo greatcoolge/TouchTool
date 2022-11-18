@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import top.bogey.touch_tool.MainActivity;
+import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.action.Action;
@@ -93,6 +95,8 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
             dismiss();
         });
 
+        binding.cancelButton.setOnClickListener(v -> dismiss());
+
         binding.delayButton.setOnClickListener(v -> addAction(new DelayAction()));
         binding.wordButton.setOnClickListener(v -> addAction(new TextAction()));
         binding.imageButton.setOnClickListener(v -> addAction(new ImageAction()));
@@ -111,7 +115,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
                 .setTag(RecordFloatView.class.getCanonicalName())
                 .setDragEnable(true)
                 .setGravity(FloatGravity.BOTTOM_CENTER, 0, (behaviors != null && !behaviors.isEmpty()) ? 0 : -DisplayUtils.dp2px(getContext(), 40))
-                .setCallback(new FloatBaseCallback())
+                .setCallback(new RecordFloatCallback())
                 .show();
     }
 
@@ -154,6 +158,30 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
                 isToLeft = true;
                 isToRight = true;
             }
+        }
+    }
+
+    protected class RecordFloatCallback extends FloatBaseCallback {
+        private final boolean isFront;
+
+        public RecordFloatCallback() {
+            isFront = isActivityInFront();
+        }
+
+        private boolean isActivityInFront() {
+            MainActivity activity = MainApplication.getActivity();
+            if (activity == null) return false;
+            return activity.isFront();
+        }
+
+        @Override
+        public void onDismiss() {
+            if (isFront) super.onDismiss();
+        }
+
+        @Override
+        public void onShow(String tag) {
+            super.onShow(tag);
         }
     }
 }

@@ -37,14 +37,20 @@ public class SettingView extends Fragment {
         binding.actionRecordDelaySlider.addOnChangeListener((slider, value, fromUser) -> {
             if (fromUser) SettingSave.getInstance().setActionRecordDelay((int) value);
         });
-        binding.actionRecordDelaySlider.setLabelFormatter(value -> requireContext().getString(R.string.setting_action_record_delay_format, (int) value));
+        binding.actionRecordDelaySlider.setLabelFormatter(value -> requireContext().getString(R.string.millisecond, (int) value));
         binding.actionRecordDelaySlider.setValue(SettingSave.getInstance().getActionRecordDelay());
 
         binding.eventTimeoutSlider.addOnChangeListener((slider, value, fromUser) -> {
             if (fromUser) SettingSave.getInstance().setEventTimeout((int) value);
         });
-        binding.eventTimeoutSlider.setLabelFormatter(value -> requireContext().getString(R.string.setting_event_timeout_format, (int) value));
+        binding.eventTimeoutSlider.setLabelFormatter(value -> requireContext().getString(R.string.millisecond, (int) value));
         binding.eventTimeoutSlider.setValue(SettingSave.getInstance().getEventTimeout());
+
+        binding.keyEventMenuTimeout.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) SettingSave.getInstance().setKeyEventMenuTimeout((int) value);
+        });
+        binding.keyEventMenuTimeout.setLabelFormatter(value -> requireContext().getString(R.string.millisecond, (int) value));
+        binding.keyEventMenuTimeout.setValue(SettingSave.getInstance().getKeyEventMenuTimeout());
 
         binding.overseeModeGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {

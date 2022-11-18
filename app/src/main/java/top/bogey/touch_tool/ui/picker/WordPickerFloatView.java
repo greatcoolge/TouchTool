@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.amrdeveloper.treeview.TreeNode;
 import com.amrdeveloper.treeview.TreeNodeManager;
@@ -28,7 +29,7 @@ import top.bogey.touch_tool.utils.FloatBaseCallback;
 
 @SuppressLint("ViewConstructor")
 public class WordPickerFloatView extends BasePickerFloatView {
-    private final FloatPickerWordBinding binding;
+    protected final FloatPickerWordBinding binding;
     private final TextAction textNode;
 
     private TreeNodeManager manager;
@@ -80,14 +81,17 @@ public class WordPickerFloatView extends BasePickerFloatView {
         return "";
     }
 
-    private void markAll() {
+    protected void markAll() {
         MainAccessibilityService service = MainApplication.getService();
         if (service != null) {
+            if (manager == null) {
+                manager = new TreeNodeManager();
+                WordPickerTreeAdapter adapter = new WordPickerTreeAdapter(manager, this);
+                binding.wordRecyclerView.setAdapter(adapter);
+            }
             rootNode = service.getRootInActiveWindow();
-            manager = new TreeNodeManager();
-            WordPickerTreeAdapter adapter = new WordPickerTreeAdapter(manager, this);
-            binding.wordRecyclerView.setAdapter(adapter);
-            adapter.setRoot(rootNode);
+            WordPickerTreeAdapter adapter = (WordPickerTreeAdapter) binding.wordRecyclerView.getAdapter();
+            if (adapter != null) adapter.setRoot(rootNode);
         }
     }
 
@@ -249,7 +253,7 @@ public class WordPickerFloatView extends BasePickerFloatView {
             super.onCreate(succeed);
             if (succeed) {
                 markAll();
-                showWordView(textNode.searchClickableNode(textNode.searchNodes(rootNode)), true);
+                if (textNode != null) showWordView(textNode.searchClickableNode(textNode.searchNodes(rootNode)), true);
             }
         }
     }

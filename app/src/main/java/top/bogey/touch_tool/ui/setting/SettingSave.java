@@ -32,9 +32,12 @@ public class SettingSave {
     private final static String ACTION_TOUCH_OFFSET = "ACTION_TOUCH_OFFSET";
     private final static String ACTION_RECORD_DELAY = "ACTION_RECORD_DELAY";
     private final static String EVENT_TIMEOUT = "EVENT_TIMEOUT";
+    private final static String KEY_EVENT_MENU_TIMEOUT = "KEY_EVENT_MENU_TIMEOUT";
+
     private final static String RUNNING_OVERSEE_MODE = "RUNNING_OVERSEE_MODE";
     private final static String RUNNING_LOG = "RUNNING_LOG";
     private final static String RUNNING_TASK_INFO = "RUNNING_TASK_INFO";
+
     private final static String NIGHT_MODE = "NIGHT_MODE";
     private final static String DYNAMIC_COLOR = "DYNAMIC_COLOR";
 
@@ -50,29 +53,30 @@ public class SettingSave {
         if (settingSave == null) settingSave = new SettingSave();
         return settingSave;
     }
+
     public SettingSave() {
         settingMMKV = MMKV.defaultMMKV();
     }
 
-    public void init(Context context){
+    public void init(Context context) {
         setKeepAlive(context, isKeepAlive());
         setRunningOverseeMode(getRunningOverseeMode());
         setNightMode(getNightMode());
     }
 
-    public boolean isFirstRun(){
+    public boolean isFirstRun() {
         return settingMMKV.decodeBool(FIRST_RUN, false);
     }
 
-    public void setFirstRun(){
+    public void setFirstRun() {
         settingMMKV.encode(FIRST_RUN, true);
     }
 
-    public boolean isServiceEnabled(){
+    public boolean isServiceEnabled() {
         return settingMMKV.decodeBool(SERVICE_ENABLED, false);
     }
 
-    public void setServiceEnabled(boolean enabled){
+    public void setServiceEnabled(boolean enabled) {
         settingMMKV.encode(SERVICE_ENABLED, enabled);
     }
 
@@ -84,7 +88,7 @@ public class SettingSave {
         settingMMKV.encode(SORT_TYPE, sortType);
     }
 
-    public Comparator<Task> getComparator(){
+    public Comparator<Task> getComparator() {
         TaskRepository repository = TaskRepository.getInstance();
         SortType sortType = getSortType();
         return (o1, o2) -> {
@@ -147,6 +151,15 @@ public class SettingSave {
         }
     }
 
+    public int getKeyEventMenuTimeout() {
+        return settingMMKV.decodeInt(KEY_EVENT_MENU_TIMEOUT, 0);
+    }
+
+    public void setKeyEventMenuTimeout(int delay) {
+        settingMMKV.encode(KEY_EVENT_MENU_TIMEOUT, delay);
+    }
+
+
     public OverseeMode getRunningOverseeMode() {
         return settingMMKV.decodeParcelable(RUNNING_OVERSEE_MODE, OverseeMode.class, OverseeMode.CLOSED);
     }
@@ -182,12 +195,12 @@ public class SettingSave {
         AppCompatDelegate.setDefaultNightMode(nightMode.getModeValue());
     }
 
-    public boolean isDynamicColor(){
+    public boolean isDynamicColor() {
         return settingMMKV.decodeBool(DYNAMIC_COLOR, isDynamicColor);
     }
 
-    public void setDynamicColor(Context context, boolean enabled){
-        if (!isAppliedDynamicColor){
+    public void setDynamicColor(Context context, boolean enabled) {
+        if (!isAppliedDynamicColor) {
             isAppliedDynamicColor = true;
             isDynamicColor = enabled;
             DynamicColors.applyToActivitiesIfAvailable((Application) context.getApplicationContext(), options);

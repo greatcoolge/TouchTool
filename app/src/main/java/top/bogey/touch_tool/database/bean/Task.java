@@ -39,10 +39,6 @@ public class Task implements Parcelable {
     // 任务长度
     private transient int length;
 
-    public Task() {
-        id = UUID.randomUUID().toString();
-    }
-
     public Task(Context context) {
         id = UUID.randomUUID().toString();
         type = TaskType.CLOSED;

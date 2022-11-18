@@ -32,6 +32,7 @@ import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ActivityMainBinding;
 import top.bogey.touch_tool.ui.play.PlayFloatView;
+import top.bogey.touch_tool.ui.record.RecordFloatView;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.LogUtils;
 import top.bogey.touch_tool.ui.setting.SettingSave;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
+    private boolean isFront = false;
 
     private ActivityResultLauncher<Intent> intentLauncher;
     private ActivityResultLauncher<String> permissionLauncher;
@@ -118,6 +120,22 @@ public class MainActivity extends AppCompatActivity {
         SettingSave.getInstance().init(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isFront = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isFront = false;
+    }
+
+    public boolean isFront() {
+        return isFront;
+    }
+
     public void showBottomNavigation() {
         binding.menuView.setVisibility(View.VISIBLE);
     }
@@ -169,6 +187,11 @@ public class MainActivity extends AppCompatActivity {
         boolean dismissFloat = intent.getBooleanExtra("DismissFloat", false);
         if (dismissFloat) {
             dismissPlayFloatView();
+        }
+
+        boolean showQuickMenu = intent.getBooleanExtra("ShowQuickMenu", false);
+        if (showQuickMenu) {
+            showQuickMenu();
         }
 
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
@@ -280,5 +303,15 @@ public class MainActivity extends AppCompatActivity {
     public void dismissPlayFloatView() {
         PlayFloatView view = (PlayFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
         if (view != null) view.setNeedRemove(true);
+    }
+
+    public void showQuickMenu() {
+        binding.getRoot().post(() -> {
+            RecordFloatView view = (RecordFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
+            if (view == null) {
+                Task task = new Task(this);
+                new RecordFloatView(this, task, task, result -> TaskRepository.getInstance().saveTask(task)).show();
+            }
+        });
     }
 }

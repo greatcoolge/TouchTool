@@ -205,10 +205,10 @@
     <string name="setting_action_touch_offset_format">%1$d 像素</string>
     <string name="setting_action_record_delay">录制延迟</string>
     <string name="setting_action_record_delay_tips">录制动作的时候在每个新动作之后添加一个延迟动作，0为不添加</string>
-    <string name="setting_action_record_delay_format">%1$d 毫秒</string>
     <string name="setting_event_timeout">检测间隔</string>
     <string name="setting_event_timeout_tips">任务触发条件的检测间隔时间，间隔越短越耗电，间隔越长相同事件触发频率越低</string>
-    <string name="setting_event_timeout_format">%1$d 毫秒</string>
+    <string name="setting_key_event_menu_timeout">快速录制</string>
+    <string name="setting_key_event_menu_timeout_tips">双击 音量减按键 快速开启任务录制，配置的时间为双击间隔，间隔越长越容易触发，但也意味着容易误触。间隔0为关闭此功能。</string>
 
     <string name="setting_app_running">运行状况</string>
     <string name="setting_running_state_oversee">状态监视</string>

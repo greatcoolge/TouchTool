@@ -14,7 +14,7 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 @SuppressLint("ViewConstructor")
 public class BasePickerFloatView extends FrameLayout implements FloatViewInterface {
-    protected final String tag;
+    protected String tag;
     protected final PickerCallback pickerCallback;
     protected FloatBaseCallback floatCallback = new FloatBaseCallback();
 
@@ -38,6 +38,6 @@ public class BasePickerFloatView extends FrameLayout implements FloatViewInterfa
 
     @Override
     public void dismiss() {
-        EasyFloat.dismiss(AppUtils.getIdentityCode(this));
+        EasyFloat.dismiss(tag);
     }
 }

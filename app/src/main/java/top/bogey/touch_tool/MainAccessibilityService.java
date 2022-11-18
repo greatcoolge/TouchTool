@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Path;
 import android.os.IBinder;
+import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
@@ -63,6 +64,8 @@ public class MainAccessibilityService extends AccessibilityService {
     private final List<TaskRunnable> taskRunnableList = new ArrayList<>();
     // 外部任务监视器
     private final List<TaskRunningCallback> taskOverSee = new ArrayList<>();
+
+    private long eventTime = 0;
 
 
     public MainAccessibilityService() {
@@ -176,8 +179,12 @@ public class MainAccessibilityService extends AccessibilityService {
     public void setContentEvent(boolean open) {
         AccessibilityServiceInfo info = getServiceInfo();
         if (info == null) return;
-        if (open) info.eventTypes = AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED | AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED | AccessibilityEvent.TYPE_WINDOWS_CHANGED;
-        else info.eventTypes = AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED | AccessibilityEvent.TYPE_WINDOWS_CHANGED;
+        if (open) {
+            if ((info.eventTypes & AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) return;
+        } else {
+            if ((info.eventTypes & AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) == 0) return;
+        }
+        info.eventTypes = info.eventTypes ^ AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
         setServiceInfo(info);
     }
 
@@ -311,7 +318,7 @@ public class MainAccessibilityService extends AccessibilityService {
         }
     }
 
-    public void stopAllTask(boolean force){
+    public void stopAllTask(boolean force) {
         for (TaskRunnable runnable : taskRunnableList) {
             stopTask(runnable, force);
         }
@@ -434,5 +441,37 @@ public class MainAccessibilityService extends AccessibilityService {
                 if (callback != null) callback.onResult(false);
             }
         }, null);
+    }
+
+    @Override
+    protected boolean onKeyEvent(KeyEvent event) {
+        int timeout = SettingSave.getInstance().getKeyEventMenuTimeout();
+        boolean handled = false;
+        if (timeout > 0) {
+            // 双击声音下键
+            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (eventTime == 0) eventTime = event.getEventTime();
+                else {
+                    // 触发间隔小于需要的间隔
+                    if (event.getEventTime() - eventTime <= timeout) {
+                        MainActivity activity = MainApplication.getActivity();
+                        if (activity != null) {
+                            activity.showQuickMenu();
+                        } else {
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.putExtra("IsBackground", true);
+                            intent.putExtra("ShowQuickMenu", true);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                        eventTime = 0;
+                        handled = true;
+                    } else {
+                        eventTime = event.getEventTime();
+                    }
+                }
+            }
+        }
+        return handled;
     }
 }
