@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
+
 import java.util.List;
 
 import top.bogey.touch_tool.R;
@@ -74,6 +76,8 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
         binding.taskButton.setOnClickListener(v -> adapter.addNode(new TaskAction()));
         binding.inputButton.setOnClickListener(v -> adapter.addNode(new InputAction()));
         binding.recyclerView.setAdapter(adapter);
+        ItemTouchHelper helper = new ItemTouchHelper(new ActionsRecyclerViewAdapter.ActionHelperCallback(adapter));
+        helper.attachToRecyclerView(binding.recyclerView);
 
         conditionAdapter = new ArrayAdapter<>(context, R.layout.float_action_spinner_item);
 

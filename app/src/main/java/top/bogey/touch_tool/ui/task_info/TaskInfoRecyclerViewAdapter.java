@@ -6,11 +6,13 @@ import android.content.res.ColorStateList;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -34,8 +36,10 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
     private final MainViewModel viewModel;
     private final Task baseTask;
     private final List<Task> tasks = new ArrayList<>();
+    private final TaskInfoView parent;
 
-    public TaskInfoRecyclerViewAdapter(Task task) {
+    public TaskInfoRecyclerViewAdapter(TaskInfoView parent, Task task) {
+        this.parent = parent;
         baseTask = task;
         tasks.add(task);
         if (task.getSubTasks() != null) tasks.addAll(task.getSubTasks());
@@ -78,8 +82,12 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
             this.binding = binding;
             context = binding.getRoot().getContext();
 
-            adapter = new BehaviorRecyclerViewAdapter(baseTask);
+            viewModel.copyBehavior.observe(parent.getViewLifecycleOwner(), behavior -> binding.pasteButton.setVisibility(behavior == null ? View.GONE : View.VISIBLE));
+
+            adapter = new BehaviorRecyclerViewAdapter(parent, baseTask);
+            ItemTouchHelper helper = new ItemTouchHelper(new BehaviorRecyclerViewAdapter.BehaviorHelperCallback(adapter));
             binding.behaviorBox.setAdapter(adapter);
+            helper.attachToRecyclerView(binding.behaviorBox);
 
             binding.titleEdit.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
@@ -123,6 +131,19 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
                 int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 viewModel.setCopyTask(task);
+            });
+
+            binding.pasteButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Task task = tasks.get(index);
+                task.addBehavior(viewModel.getCopyBehavior());
+                notifyItemChanged(index);
+                TaskRepository.getInstance().saveTask(baseTask);
+            });
+
+            binding.pasteButton.setOnLongClickListener(v -> {
+                viewModel.setCopyBehavior(null);
+                return true;
             });
 
             binding.addButton.setOnClickListener(v -> {

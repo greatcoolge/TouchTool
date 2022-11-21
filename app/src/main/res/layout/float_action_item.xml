@@ -1,64 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="?attr/materialCardViewFilledStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp">
+    android:layout_marginBottom="1dp"
+    app:cardCornerRadius="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginVertical="2dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/linear_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/title_text"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/up_button"
-                style="@style/Theme.TouchTool.Button.IconOnly"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/icon_up" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/down_button"
-                style="@style/Theme.TouchTool.Button.IconOnly"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/icon_down" />
-
-        </LinearLayout>
+            android:paddingStart="0dp"
+            android:paddingEnd="4dp"
+            android:textColor="?attr/colorPrimary" />
 
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/time_include"
-            app:layout_constraintStart_toEndOf="@+id/linear_layout"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_weight="1">
 
             <top.bogey.touch_tool.ui.custom.DelayActionItemView
                 android:id="@+id/delay_include"
@@ -101,10 +69,7 @@
             android:id="@+id/time_include"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/delete_button"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginEnd="4dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_button"
@@ -113,11 +78,8 @@
             android:layout_height="32dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            app:icon="@drawable/icon_delete"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:icon="@drawable/icon_delete" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

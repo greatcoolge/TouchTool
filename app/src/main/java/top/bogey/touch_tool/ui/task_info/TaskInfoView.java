@@ -67,7 +67,7 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
             task = TaskRepository.getInstance().getTaskById(taskId);
         }
 
-        adapter = new TaskInfoRecyclerViewAdapter(task);
+        adapter = new TaskInfoRecyclerViewAdapter(this, task);
         binding.tasksBox.setAdapter(adapter);
 
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
@@ -122,8 +122,13 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
             task.addSubTask(copyTask);
             adapter.taskChanged(copyTask);
             TaskRepository.getInstance().saveTask(task);
-            viewModel.setCopyTask(null);
         });
+
+        binding.pasteButton.setOnLongClickListener(v -> {
+            viewModel.setCopyTask(null);
+            return true;
+        });
+
         viewModel.copyTask.observe(getViewLifecycleOwner(), task -> {
             if (task == null) binding.pasteButton.hide();
             else binding.pasteButton.show();

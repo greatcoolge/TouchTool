@@ -8,10 +8,12 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -55,12 +57,15 @@ public class TaskView extends Fragment implements TaskChangedCallback {
 
     private List<String> tags = new ArrayList<>();
 
+    private float lastX, lastY;
+
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         refreshSpawnCount();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -187,16 +192,37 @@ public class TaskView extends Fragment implements TaskChangedCallback {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
         selectTab(0);
+
+        binding.tasksBox.setOnTouchListener((v, event) -> {
+            float x = event.getX();
+            float y = event.getY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    lastX = x;
+                    lastY = y;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    float dx = lastX - x;
+                    float dy = lastY - y;
+                    // 横向滑动更多
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        // 向左划，显示下一个
+                        if (dx > 0) {
+                            selectTab(binding.tabBox.getSelectedTabPosition() + 1);
+                        } else {
+                            selectTab(binding.tabBox.getSelectedTabPosition() - 1);
+                        }
+                    }
+                    break;
+            }
+            return false;
+        });
 
         binding.folderButton.setOnClickListener(v -> showTabView());
 

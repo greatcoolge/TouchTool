@@ -115,6 +115,8 @@
     <string name="behavior_mode_parallel">并行</string>
 
     <string name="behavior_custom_title_tips">自定义行为名称</string>
+    <string name="behavior_delete_tips">行为已删除</string>
+    <string name="behavior_delete_reset">撤销</string>
 
     <string name="condition_title_1">如果%1$s\n则</string>
     <string name="condition_title_2">否则</string>

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.ui.app.AppInfo;
 import top.bogey.touch_tool.utils.AppUtils;
@@ -24,6 +25,7 @@ public class MainViewModel extends AndroidViewModel {
     private final List<PackageInfo> allApp = new ArrayList<>();
 
     public final MutableLiveData<Task> copyTask = new MutableLiveData<>(null);
+    public final MutableLiveData<Behavior> copyBehavior = new MutableLiveData<>(null);
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -88,14 +90,24 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public Task getCopyTask() {
-        return copyTask.getValue();
+        Task task = copyTask.getValue();
+        if (task == null) return null;
+        Task copy = AppUtils.copy(task);
+        copy.setId(UUID.randomUUID().toString());
+        return copy;
     }
 
     public void setCopyTask(Task task) {
-        if (task != null) {
-            Task copy = AppUtils.copy(task);
-            copy.setId(UUID.randomUUID().toString());
-            copyTask.setValue(copy);
-        } else copyTask.setValue(null);
+        copyTask.setValue(task);
+    }
+
+    public Behavior getCopyBehavior() {
+        Behavior behavior = copyBehavior.getValue();
+        if (behavior == null) return null;
+        return AppUtils.copy(behavior);
+    }
+
+    public void setCopyBehavior(Behavior behavior) {
+        copyBehavior.setValue(behavior);
     }
 }

@@ -24,14 +24,16 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/folder_button"
-                style="@style/Theme.TouchTool.Button.OutlinedButton"
+                style="@style/Theme.TouchTool.Button"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_gravity="center"
+                android:layout_gravity="center_vertical"
                 android:layout_marginHorizontal="8dp"
+                android:backgroundTint="?attr/colorPrimaryContainer"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                app:icon="@drawable/icon_folder" />
+                app:icon="@drawable/icon_folder"
+                app:iconTint="@color/container_tint_check" />
 
         </LinearLayout>
 

@@ -2,35 +2,42 @@ package top.bogey.touch_tool.ui.behavior;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskInfoBehaviorBinding;
+import top.bogey.touch_tool.ui.task_info.TaskInfoView;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRecyclerViewAdapter.ViewHolder> {
+    private final TaskInfoView parent;
     private final Task baseTask;
     private Task currTask;
     private List<Behavior> behaviors = new ArrayList<>();
 
-    public BehaviorRecyclerViewAdapter(Task baseTask) {
+    public BehaviorRecyclerViewAdapter(TaskInfoView parent, Task baseTask) {
+        this.parent = parent;
         this.baseTask = baseTask;
     }
 
@@ -68,10 +75,13 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
         notifyItemInserted(behaviors.size() - 1);
     }
 
+    private void saveTask() {
+        TaskRepository.getInstance().saveTask(baseTask);
+    }
+
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewTaskInfoBehaviorBinding binding;
         private final Context context;
-        private boolean isDeleteMode = false;
 
         @SuppressLint("PrivateResource")
         public ViewHolder(ViewTaskInfoBehaviorBinding binding) {
@@ -84,11 +94,25 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                 Behavior behavior = behaviors.get(index);
                 new BehaviorFloatView(context, baseTask, currTask, behavior, result -> {
                     notifyItemChanged(index);
-                    TaskRepository.getInstance().saveTask(baseTask);
+                    saveTask();
                 }).show();
             });
 
-            binding.getRoot().setOnLongClickListener(v -> {
+            binding.enabledToggle.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                Behavior behavior = behaviors.get(index);
+                behavior.setEnable(!behavior.isEnable());
+                setChecked(binding.enabledToggle, behavior.isEnable());
+                saveTask();
+            });
+
+            binding.copyButton.setOnClickListener(v -> {
+                int index = getBindingAdapterPosition();
+                MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+                viewModel.setCopyBehavior(behaviors.get(index));
+            });
+
+            binding.editButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 Behavior behavior = behaviors.get(index);
 
@@ -100,68 +124,14 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                         .setPositiveButton(R.string.enter, (dialog, which) -> {
                             Editable text = editText.getText();
                             if (text != null) behavior.setTitle(String.valueOf(text));
-                            TaskRepository.getInstance().saveTask(baseTask);
-                            binding.titleText.setText(text);
+                            saveTask();
+                            binding.titleText.setText(behavior.getTitle(context, currTask));
                             dialog.dismiss();
                         })
                         .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                         .setView(view)
                         .setTitle(R.string.behavior_custom_title_tips)
                         .show();
-
-                return true;
-            });
-
-            binding.enabledToggle.setOnClickListener(v -> {
-                int index = getBindingAdapterPosition();
-                Behavior behavior = behaviors.get(index);
-                behavior.setEnable(!behavior.isEnable());
-                setChecked(binding.enabledToggle, behavior.isEnable());
-                TaskRepository.getInstance().saveTask(baseTask);
-            });
-
-            binding.upButton.setOnClickListener(v -> {
-                int index = getBindingAdapterPosition();
-                int newIndex = Math.max(0, index - 1);
-                behaviors.add(newIndex, behaviors.remove(index));
-                notifyItemRangeChanged(newIndex, 2);
-                TaskRepository.getInstance().saveTask(baseTask);
-            });
-
-            binding.downButton.setOnClickListener(v -> {
-                int index = getBindingAdapterPosition();
-                int newIndex = Math.min(behaviors.size() - 1, index + 1);
-                behaviors.add(newIndex, behaviors.remove(index));
-                notifyItemRangeChanged(index, 2);
-                TaskRepository.getInstance().saveTask(baseTask);
-            });
-
-            binding.deleteButton.setOnClickListener(v -> {
-                if (isDeleteMode) {
-                    int index = getBindingAdapterPosition();
-                    behaviors.remove(index);
-                    notifyItemRemoved(index);
-                    if (!behaviors.isEmpty()) {
-                        if (index == 0) {
-                            notifyItemChanged(0);
-                        } else if (index == behaviors.size()) {
-                            notifyItemChanged(index - 1);
-                        } else {
-                            notifyItemChanged(index - 1);
-                            notifyItemChanged(index);
-                        }
-                    }
-                    TaskRepository.getInstance().saveTask(baseTask);
-                } else {
-                    isDeleteMode = true;
-                    binding.deleteButton.setIconTint(ColorStateList.valueOf(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorError, 0)));
-                    binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorErrorContainer, 0)));
-                    binding.deleteButton.postDelayed(() -> {
-                        binding.deleteButton.setIconTintResource(com.google.android.material.R.color.m3_text_button_foreground_color_selector);
-                        binding.deleteButton.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(android.R.color.transparent, null)));
-                        isDeleteMode = false;
-                    }, 3000);
-                }
             });
         }
 
@@ -183,6 +153,60 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
             setChecked(binding.enabledToggle, behavior.isEnable());
             binding.enabledToggle.setText(String.valueOf(position + 1));
             binding.modeImage.setImageResource(behavior.getBehaviorMode().getTypeResource());
+        }
+    }
+
+    public static class BehaviorHelperCallback extends ItemTouchHelper.Callback {
+
+        private static final int DRAG_FLAGS = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+        private static final int SWIPE_FLAGS = ItemTouchHelper.START | ItemTouchHelper.END;
+
+        private final BehaviorRecyclerViewAdapter adapter;
+
+        public BehaviorHelperCallback(BehaviorRecyclerViewAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(DRAG_FLAGS, SWIPE_FLAGS);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            int startIndex = viewHolder.getBindingAdapterPosition();
+            int targetIndex = target.getBindingAdapterPosition();
+
+            Behavior behavior = adapter.behaviors.get(startIndex);
+            adapter.behaviors.set(startIndex, adapter.behaviors.get(targetIndex));
+            adapter.behaviors.set(targetIndex, behavior);
+            adapter.notifyItemMoved(startIndex, targetIndex);
+            adapter.saveTask();
+
+            ((ViewHolder) viewHolder).binding.enabledToggle.setText(String.valueOf(targetIndex + 1));
+            ((ViewHolder) target).binding.enabledToggle.setText(String.valueOf(startIndex + 1));
+
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            int index = viewHolder.getBindingAdapterPosition();
+            Behavior behavior = adapter.behaviors.remove(index);
+            adapter.notifyItemRemoved(index);
+            if (adapter.behaviors.size() > index) {
+                adapter.notifyItemRangeChanged(index, adapter.behaviors.size() - index + 1);
+            }
+            adapter.saveTask();
+            Snackbar.make(adapter.parent.requireView(), R.string.behavior_delete_tips, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.behavior_delete_reset, v -> {
+                        adapter.behaviors.add(index, behavior);
+                        adapter.notifyItemInserted(index);
+                        if (adapter.behaviors.size() > index + 1) {
+                            adapter.notifyItemRangeChanged(index + 1, adapter.behaviors.size() - index);
+                        }
+                        adapter.saveTask();
+                    }).show();
         }
     }
 }

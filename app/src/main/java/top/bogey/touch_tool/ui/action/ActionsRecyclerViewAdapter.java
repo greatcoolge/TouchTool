@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -249,7 +250,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 new InputPickerFloatView(context, picker -> {
                     InputPickerFloatView inputPicker = (InputPickerFloatView) picker;
                     String word = inputPicker.getInput().getId();
-                    if (word != null){
+                    if (word != null) {
                         inputAction.setId(word);
                         binding.inputInclude.textBaseInclude.titleEdit.setText(word);
                     }
@@ -339,20 +340,6 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 String extras = systemAction.getExtras();
                 if (extras == null || extras.isEmpty()) return;
                 AppUtils.gotoApp(context, extras);
-            });
-
-            binding.upButton.setOnClickListener(v -> {
-                int index = getBindingAdapterPosition();
-                int newIndex = Math.max(0, index - 1);
-                actions.add(newIndex, actions.remove(index));
-                notifyItemRangeChanged(newIndex, 2);
-            });
-
-            binding.downButton.setOnClickListener(v -> {
-                int index = getBindingAdapterPosition();
-                int newIndex = Math.min(actions.size() - 1, index + 1);
-                actions.add(newIndex, actions.remove(index));
-                notifyItemRangeChanged(index, 2);
             });
         }
 
@@ -503,5 +490,39 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 listener.onItemSelected(spinner, spinner.getSelectedView(), 0, adapter.getItemId(0));
             }
         }
+    }
+
+
+    public static class ActionHelperCallback extends ItemTouchHelper.Callback {
+
+        private static final int DRAG_FLAGS = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+        private static final int SWIPE_FLAGS = 0;
+
+        private final ActionsRecyclerViewAdapter adapter;
+
+        public ActionHelperCallback(ActionsRecyclerViewAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(DRAG_FLAGS, SWIPE_FLAGS);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            int startIndex = viewHolder.getBindingAdapterPosition();
+            int targetIndex = target.getBindingAdapterPosition();
+
+            Action action = adapter.actions.get(startIndex);
+            adapter.actions.set(startIndex, adapter.actions.get(targetIndex));
+            adapter.actions.set(targetIndex, action);
+            adapter.notifyItemMoved(startIndex, targetIndex);
+
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
     }
 }
