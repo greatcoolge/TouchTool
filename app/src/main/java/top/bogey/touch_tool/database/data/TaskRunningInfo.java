@@ -36,6 +36,7 @@ public class TaskRunningInfo implements TaskRunningCallback {
 
     public void setRunning(boolean running) {
         if (isRunning) isRunning = running;
+        if (!isRunning) Thread.currentThread().interrupt();
     }
 
     public synchronized void addProgress(Task task, Action action, boolean skip) {

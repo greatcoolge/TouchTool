@@ -93,8 +93,10 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
                 taskTreeNode.setValue(new TreeNodeInfo(taskEntry.getKey(), taskCount, successCount));
                 pkgTreeNode.addChild(taskTreeNode);
             }
-            pkgTreeNode.setValue(new TreeNodeInfo(pkgName, totalTaskCount, totalSuccessCount));
-            treeNodes.add(pkgTreeNode);
+            if (totalTaskCount > 0) {
+                pkgTreeNode.setValue(new TreeNodeInfo(pkgName, totalTaskCount, totalSuccessCount));
+                treeNodes.add(pkgTreeNode);
+            }
         }
         updateTreeNodes(treeNodes);
     }

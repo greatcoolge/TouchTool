@@ -285,7 +285,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                             systemAction.setSystemActionType(systemActionType);
                         }
 
-                        if (systemActionType == SystemAction.SystemActionType.GOTO) {
+                        if (systemActionType == SystemAction.SystemActionType.GOTO_APP) {
                             binding.spinnerInclude.pickerButton.setVisibility(View.VISIBLE);
                             binding.spinnerInclude.image.setVisibility(View.VISIBLE);
 
@@ -436,11 +436,13 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                                 SystemAction.SystemActionType.BACK,
                                 SystemAction.SystemActionType.HOME,
                                 SystemAction.SystemActionType.TASK,
-                                SystemAction.SystemActionType.NOTI,
-                                SystemAction.SystemActionType.WEAK,
-                                SystemAction.SystemActionType.LOCK,
-                                SystemAction.SystemActionType.SNAP,
-                                SystemAction.SystemActionType.GOTO,
+                                SystemAction.SystemActionType.NOTIFICATION,
+                                SystemAction.SystemActionType.SCREEN_WEAK,
+                                SystemAction.SystemActionType.SCREEN_LOCK,
+                                SystemAction.SystemActionType.TAKE_SCREENSHOT,
+                                SystemAction.SystemActionType.GOTO_APP,
+                                SystemAction.SystemActionType.OPEN_CAPTURE,
+                                SystemAction.SystemActionType.CLOSE_CAPTURE,
                         };
                         for (SystemAction.SystemActionType systemActionType : types) {
                             adapter.add(new TaskAction(systemActionType.name(), systemActionType.getDescription(context, "")));

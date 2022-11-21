@@ -54,6 +54,7 @@ public class MainAccessibilityService extends AccessibilityService {
     public static final MutableLiveData<Boolean> captureEnabled = new MutableLiveData<>(false);
     public MainCaptureService.CaptureServiceBinder binder = null;
     private ServiceConnection connection = null;
+    private ResultCallback captureResultCallback;
 
     // 任务
     private final ExecutorService findService;
@@ -156,6 +157,11 @@ public class MainAccessibilityService extends AccessibilityService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainApplication.setService(this);
+
+        boolean startCaptureService = intent.getBooleanExtra("StartCaptureService", false);
+        boolean isBackground = intent.getBooleanExtra("IsBackground", false);
+        if (startCaptureService) startCaptureService(isBackground, captureResultCallback);
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -241,7 +247,12 @@ public class MainAccessibilityService extends AccessibilityService {
                     }
                 }));
             } else {
-                if (callback != null) callback.onResult(false);
+                captureResultCallback = callback;
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("IsBackground", true);
+                intent.putExtra("StartCaptureService", true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         } else {
             if (callback != null) callback.onResult(true);

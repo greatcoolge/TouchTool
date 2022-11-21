@@ -60,7 +60,7 @@ public class SystemAction extends Action {
             case TASK:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
                 break;
-            case LOCK:
+            case SCREEN_LOCK:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
                 } else {
@@ -68,10 +68,10 @@ public class SystemAction extends Action {
                     result = false;
                 }
                 break;
-            case WEAK:
+            case SCREEN_WEAK:
                 AppUtils.wakeScreen(service);
                 break;
-            case SNAP:
+            case TAKE_SCREENSHOT:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
                 } else {
@@ -79,11 +79,25 @@ public class SystemAction extends Action {
                     result = false;
                 }
                 break;
-            case GOTO:
+            case GOTO_APP:
                 AppUtils.gotoApp(service, extras);
                 break;
-            case NOTI:
+            case NOTIFICATION:
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS);
+                break;
+            case OPEN_CAPTURE:
+                Boolean[] booleans = new Boolean[1];
+                service.startCaptureService(true, result1 -> booleans[0] = result1);
+                int count = 0;
+                while (booleans[0] == null && count < 200) {
+                    sleep(50);
+                    count++;
+                }
+                if (booleans[0] != null) result = booleans[0];
+                else result = false;
+                break;
+            case CLOSE_CAPTURE:
+                service.stopCaptureService();
                 break;
         }
         sleep(timeArea.getRandomTime());
@@ -123,11 +137,13 @@ public class SystemAction extends Action {
         BACK,
         HOME,
         TASK,
-        WEAK,
-        LOCK,
-        SNAP,
-        GOTO,
-        NOTI;
+        SCREEN_WEAK,
+        SCREEN_LOCK,
+        TAKE_SCREENSHOT,
+        GOTO_APP,
+        NOTIFICATION,
+        OPEN_CAPTURE,
+        CLOSE_CAPTURE;
 
         public String getDescription(Context context, String extras) {
             int key = 0;
@@ -141,24 +157,30 @@ public class SystemAction extends Action {
                 case TASK:
                     key = R.string.action_system_task;
                     break;
-                case WEAK:
-                    key = R.string.action_system_weak;
+                case SCREEN_WEAK:
+                    key = R.string.action_system_screen_weak;
                     break;
-                case LOCK:
-                    key = R.string.action_system_lock;
+                case SCREEN_LOCK:
+                    key = R.string.action_system_screen_lock;
                     break;
-                case SNAP:
-                    key = R.string.action_system_snap;
+                case TAKE_SCREENSHOT:
+                    key = R.string.action_system_take_screen_shot;
                     break;
-                case NOTI:
+                case NOTIFICATION:
                     key = R.string.action_system_notification;
                     break;
-                case GOTO:
-                    key = R.string.action_system_goto;
+                case OPEN_CAPTURE:
+                    key = R.string.action_system_open_capture;
+                    break;
+                case CLOSE_CAPTURE:
+                    key = R.string.action_system_close_capture;
+                    break;
+                case GOTO_APP:
+                    key = R.string.action_system_goto_app;
                     break;
             }
             if (key != 0) {
-                if (this == GOTO) {
+                if (this == GOTO_APP) {
                     MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(extras);
                     if (appInfo != null) return context.getString(key, appInfo.appName);

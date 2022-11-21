@@ -3,6 +3,7 @@ package top.bogey.touch_tool.ui.app;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -110,7 +111,9 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
         public void refreshView(AppInfo appInfo) {
             info = appInfo;
+            Log.d("TAG", "refreshView: " + getBindingAdapterPosition());
             binding.appName.setText(appInfo.appName);
+            binding.pkgName.setText(appInfo.packageName);
             PackageManager manager = context.getPackageManager();
             Drawable drawable = icons.get(appInfo.packageName);
             if (drawable == null){

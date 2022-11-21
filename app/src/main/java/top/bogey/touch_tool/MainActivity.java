@@ -194,6 +194,14 @@ public class MainActivity extends AppCompatActivity {
             showQuickMenu();
         }
 
+        boolean startCaptureService = intent.getBooleanExtra("StartCaptureService", false);
+        if (startCaptureService) {
+            Intent serviceIntent = new Intent(this, MainAccessibilityService.class);
+            serviceIntent.putExtra("StartCaptureService", true);
+            serviceIntent.putExtra("IsBackground", isBackground);
+            startService(serviceIntent);
+        }
+
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
             if ("text/plain".equals(intent.getType())) {
                 Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);

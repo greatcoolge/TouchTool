@@ -35,6 +35,17 @@
             android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
             app:layout_constraintTop_toBottomOf="@+id/icon" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/pkg_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="start"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="9sp"
+            app:layout_constraintTop_toBottomOf="@+id/icon" />
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
