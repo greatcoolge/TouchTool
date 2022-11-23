@@ -10,7 +10,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.amrdeveloper.treeview.TreeNode;
 import com.amrdeveloper.treeview.TreeNodeManager;
@@ -154,7 +153,7 @@ public class WordPickerFloatView extends BasePickerFloatView {
         float y = event.getRawY();
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            AccessibilityNodeInfo node = getClickableNodeIn((int) x, (int) y);
+            AccessibilityNodeInfo node = getNodeIn((int) x, (int) y);
             if (node != null) {
                 showWordView(node, true);
             }
@@ -215,10 +214,10 @@ public class WordPickerFloatView extends BasePickerFloatView {
     }
 
     @Nullable
-    private AccessibilityNodeInfo getClickableNodeIn(int x, int y) {
+    private AccessibilityNodeInfo getNodeIn(int x, int y) {
         if (rootNode == null) return null;
         Map<Integer, AccessibilityNodeInfo> deepNodeInfo = new HashMap<>();
-        findClickableNodeIn(deepNodeInfo, 1, rootNode, x, y);
+        findNodeIn(deepNodeInfo, 1, rootNode, x, y);
         int max = 0;
         AccessibilityNodeInfo node = null;
         for (Map.Entry<Integer, AccessibilityNodeInfo> entry : deepNodeInfo.entrySet()) {
@@ -230,7 +229,7 @@ public class WordPickerFloatView extends BasePickerFloatView {
         return node;
     }
 
-    private void findClickableNodeIn(Map<Integer, AccessibilityNodeInfo> deepNodeInfo, int deep, @NonNull AccessibilityNodeInfo nodeInfo, int x, int y) {
+    private void findNodeIn(Map<Integer, AccessibilityNodeInfo> deepNodeInfo, int deep, @NonNull AccessibilityNodeInfo nodeInfo, int x, int y) {
         if (nodeInfo.getChildCount() == 0) return;
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             AccessibilityNodeInfo child = nodeInfo.getChild(i);
@@ -238,10 +237,8 @@ public class WordPickerFloatView extends BasePickerFloatView {
                 Rect rect = new Rect();
                 child.getBoundsInScreen(rect);
                 if (rect.contains(x, y)) {
-                    if (child.isClickable()) {
-                        deepNodeInfo.put(deep, child);
-                    }
-                    findClickableNodeIn(deepNodeInfo, deep + 1, child, x, y);
+                    deepNodeInfo.put(deep, child);
+                    findNodeIn(deepNodeInfo, deep + 1, child, x, y);
                 }
             }
         }

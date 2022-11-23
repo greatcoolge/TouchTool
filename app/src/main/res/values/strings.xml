@@ -118,11 +118,11 @@
     <string name="behavior_delete_tips">行为已删除</string>
     <string name="behavior_delete_reset">撤销</string>
 
-    <string name="condition_title_1">如果%1$s\n则</string>
-    <string name="condition_title_2">否则</string>
-    <string name="loop_title_1">尝试执行%1$d次\n</string>
-    <string name="loop_title_2">直到%1$s</string>
-    <string name="parallel_title_1">同时执行动作\n</string>
+    <string name="condition_title">如果%1$s\n则</string>
+    <string name="condition_or_title">否则</string>
+    <string name="loop_title">尝试执行%1$d次\n</string>
+    <string name="parallel_title">同时执行动作\n</string>
+    <string name="loop_parallel_end_title">直到%1$s</string>
 
     <!-- 动作 -->
     <string name="action_type_none">无</string>
@@ -145,8 +145,8 @@
     <string name="condition_null_for_loop_tips">不中断</string>
     <string name="condition_number_for_success_loop_tips">完成循环次数</string>
     <string name="condition_number_for_fail_loop_tips">循环失败次数</string>
-    <string name="condition_number_for_success_parallel_tips">成功任务个数</string>
-    <string name="condition_number_for_fail_parallel_tips">失败任务个数</string>
+    <string name="condition_number_for_success_parallel_tips">成功动作个数</string>
+    <string name="condition_number_for_fail_parallel_tips">失败动作个数</string>
     <string name="condition_text_tips">出现文本</string>
     <string name="condition_image_tips">出现图片</string>
 
@@ -154,8 +154,8 @@
     <string name="condition_null_for_loop">不中断</string>
     <string name="condition_number_success_for_loop">完成%1$d次循环</string>
     <string name="condition_number_fail_for_loop">循环失败%1$d次</string>
-    <string name="condition_number_success_for_parallel">成功%1$d个任务</string>
-    <string name="condition_number_fail_for_parallel">失败%1$d个任务</string>
+    <string name="condition_number_success_for_parallel">动作成功%1$d个</string>
+    <string name="condition_number_fail_for_parallel">动作失败%1$d个</string>
     <string name="condition_text">出现 %1$s</string>
     <string name="condition_image">出现图片</string>
 

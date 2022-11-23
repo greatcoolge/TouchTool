@@ -27,7 +27,6 @@ import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskInfoItemBinding;
 import top.bogey.touch_tool.ui.behavior.BehaviorFloatView;
 import top.bogey.touch_tool.ui.behavior.BehaviorRecyclerViewAdapter;
-import top.bogey.touch_tool.ui.record.QuickRecordFloatView;
 import top.bogey.touch_tool.ui.record.RecordFloatView;
 import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.DisplayUtils;
@@ -37,6 +36,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
     private final Task baseTask;
     private final List<Task> tasks = new ArrayList<>();
     private final TaskInfoView parent;
+    private boolean isExchange = false;
 
     public TaskInfoRecyclerViewAdapter(TaskInfoView parent, Task task) {
         this.parent = parent;
@@ -66,6 +66,9 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
         if (!tasks.contains(task)) {
             tasks.add(task);
             notifyItemInserted(tasks.size() - 1);
+        } else if (tasks.indexOf(task) == 0 && isExchange) {
+            notifyItemRangeChanged(0, tasks.size());
+            isExchange = false;
         }
     }
 
@@ -165,15 +168,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
                 }).show();
             });
 
-            binding.recordSmartButton.setOnClickListener(v -> {
-                int index = getBindingAdapterPosition();
-                new QuickRecordFloatView(context, tasks.get(index), result -> {
-                    notifyItemChanged(index);
-                    TaskRepository.getInstance().saveTask(baseTask);
-                }).show();
-            });
-
-            binding.mainButton.setOnClickListener(v -> {
+            binding.textInputLayout.setEndIconOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
                 if (index == 0) return;
                 Task mainTask = tasks.get(0);
@@ -188,6 +183,8 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
 
                 notifyItemChanged(0);
                 notifyItemChanged(index);
+
+                isExchange = true;
                 TaskRepository.getInstance().saveTask(baseTask);
             });
         }
@@ -197,7 +194,15 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
             adapter.setTask(task);
             binding.titleEdit.setText(task.getTitle());
             binding.getRoot().setCardBackgroundColor(DisplayUtils.getAttrColor(context, (index == 0) ? com.google.android.material.R.attr.colorSurfaceVariant : com.google.android.material.R.attr.colorOnSurfaceInverse, 0));
-            binding.mainButton.setIconResource(index == 0 ? R.drawable.icon_radio_checked : R.drawable.icon_radio_unchecked);
+            if (index == 0) {
+                binding.textInputLayout.setEndIconDrawable(R.drawable.icon_radio_checked);
+            } else {
+                if (baseTask.includeTaskAction(baseTask, task.getId())) {
+                    binding.textInputLayout.setEndIconDrawable(R.drawable.icon_radio_selected);
+                } else {
+                    binding.textInputLayout.setEndIconDrawable(R.drawable.icon_radio_unchecked);
+                }
+            }
         }
     }
 }

@@ -36,12 +36,12 @@ public class TouchAction extends Action {
         offset = new Point(0, 0);
     }
 
-    public TouchAction(Context context, TouchPath path) {
+    public TouchAction(Context context, List<TouchPath> paths) {
         super(ActionType.TOUCH);
         screen = DisplayUtils.getScreen(context);
         gravity = FloatGravity.TOP_LEFT;
         offset = new Point(0, 0);
-        this.paths.add(path);
+        this.paths.addAll(paths);
     }
 
     public TouchAction(Context context, FloatGravity gravity, Point offset, List<TouchPath> paths) {

@@ -220,7 +220,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_margin="8dp"
-                            android:src="@drawable/icon_setting_oversee"
+                            android:src="@drawable/icon_record_smart"
                             android:tint="?attr/colorPrimary" />
 
                         <LinearLayout

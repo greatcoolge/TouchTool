@@ -206,7 +206,8 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                             adapter.notifyItemRangeChanged(index + 1, adapter.behaviors.size() - index);
                         }
                         adapter.saveTask();
-                    }).show();
+                    })
+                    .show();
         }
     }
 }

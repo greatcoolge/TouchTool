@@ -46,7 +46,7 @@ public class Task implements Parcelable {
         acrossApp = false;
     }
 
-    public Task(Behavior behavior){
+    public Task(Behavior behavior) {
         id = UUID.randomUUID().toString();
         behaviors = Collections.singletonList(behavior);
     }
@@ -97,7 +97,7 @@ public class Task implements Parcelable {
         return builder.toString().trim();
     }
 
-    public Task getSubTaskById(String id){
+    public Task getSubTaskById(String id) {
         if (subTasks == null) return null;
         for (Task task : subTasks) {
             if (task.getId().equals(id)) return task;
@@ -105,15 +105,15 @@ public class Task implements Parcelable {
         return null;
     }
 
-    public void addSubTask(Task task){
+    public void addSubTask(Task task) {
         if (subTasks == null) subTasks = new ArrayList<>();
         subTasks.add(task);
     }
 
-    public void removeSubTask(Task task){
+    public void removeSubTask(Task task) {
         if (subTasks == null) return;
         for (int i = 0; i < subTasks.size(); i++) {
-            if (subTasks.get(i).getId().equals(task.getId())){
+            if (subTasks.get(i).getId().equals(task.getId())) {
                 subTasks.remove(i);
                 break;
             }
@@ -121,18 +121,12 @@ public class Task implements Parcelable {
         if (subTasks.size() == 0) subTasks = null;
     }
 
-    public void addBehavior(Behavior behavior){
-        if (behaviors == null) behaviors= new ArrayList<>();
+    public void addBehavior(Behavior behavior) {
+        if (behaviors == null) behaviors = new ArrayList<>();
         behaviors.add(behavior);
     }
 
-    public void removeBehavior(int index){
-        if (behaviors == null || behaviors.size() < index) return;
-        behaviors.remove(index);
-        if (behaviors.size() == 0) behaviors = null;
-    }
-
-    public List<Task> getSafeSubTasks(String id){
+    public List<Task> getSafeSubTasks(String id) {
         if (subTasks == null || subTasks.isEmpty()) return null;
         List<Task> tasks = new ArrayList<>();
         for (Task subTask : subTasks) {
@@ -145,7 +139,7 @@ public class Task implements Parcelable {
         return tasks;
     }
 
-    private boolean includeTaskAction(Task task, String id){
+    public boolean includeTaskAction(Task task, String id) {
         if (task == null) return false;
         List<Behavior> subTaskBehaviors = task.getBehaviors();
         if (subTaskBehaviors == null || subTaskBehaviors.isEmpty()) return false;
@@ -166,7 +160,7 @@ public class Task implements Parcelable {
         return false;
     }
 
-    public boolean includeCaptureAction(){
+    public boolean includeCaptureAction() {
         List<Task> tasks = new ArrayList<>();
         tasks.add(this);
         if (subTasks != null) tasks.addAll(subTasks);

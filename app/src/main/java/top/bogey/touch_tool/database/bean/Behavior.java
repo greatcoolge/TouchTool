@@ -72,23 +72,23 @@ public class Behavior implements Parcelable {
         switch (behaviorMode) {
             case CONDITION:
                 if (condition != null && condition.getType() != ActionType.NULL) {
-                    builder.append(context.getString(R.string.condition_title_1, getConditionTitle(context, task, condition)));
+                    builder.append(context.getString(R.string.condition_title, getConditionTitle(context, task, condition)));
                 }
                 builder.append(getActionTitle(context, task, actions.get(0)));
                 if (actions.size() > 1) {
                     builder.append("\n");
-                    builder.append(context.getString(R.string.condition_title_2));
+                    builder.append(context.getString(R.string.condition_or_title));
                     builder.append(getActionTitle(context, task, actions.get(1)));
                 }
                 break;
             case LOOP:
-                builder.append(context.getString(R.string.loop_title_1, getTimes()));
+                builder.append(context.getString(R.string.loop_title, getTimes()));
                 for (int i = 0; i < actions.size(); i++) {
                     builder.append(getActionTitle(context, task, actions.get(i)));
                     if (i == actions.size() - 1) {
                         if (condition != null && condition.getType() != ActionType.NULL) {
                             builder.append("\n");
-                            builder.append(context.getString(R.string.loop_title_2, getConditionTitle(context, task, condition)));
+                            builder.append(context.getString(R.string.loop_parallel_end_title, getConditionTitle(context, task, condition)));
                         }
                     } else {
                         builder.append("\n");
@@ -96,13 +96,14 @@ public class Behavior implements Parcelable {
                 }
                 break;
             case PARALLEL:
-                builder.append(context.getString(R.string.parallel_title_1));
+                builder.append(context.getString(R.string.parallel_title));
                 for (Action action : actions) {
                     builder.append(getActionTitle(context, task, action));
                     if (actions.indexOf(action) != actions.size() - 1) builder.append("\n");
                 }
                 if (condition != null) {
-                    builder.append(condition.getDescription(context, task, this));
+                    builder.append("\n");
+                    builder.append(context.getString(R.string.loop_parallel_end_title, getConditionTitle(context, task, condition)));
                 }
                 break;
         }

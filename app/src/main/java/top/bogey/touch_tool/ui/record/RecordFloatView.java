@@ -97,6 +97,11 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.cancelButton.setOnClickListener(v -> dismiss());
 
+        binding.recordSmartButton.setOnClickListener(v -> {
+            int count = adapter.getItemCount();
+            new QuickRecordFloatView(context, adapter.behaviors, result -> adapter.notifyItemRangeInserted(count, adapter.getItemCount() - count)).show();
+        });
+
         binding.delayButton.setOnClickListener(v -> addAction(new DelayAction()));
         binding.wordButton.setOnClickListener(v -> addAction(new TextAction()));
         binding.imageButton.setOnClickListener(v -> addAction(new ImageAction()));
@@ -161,7 +166,7 @@ public class RecordFloatView extends FrameLayout implements FloatViewInterface {
         }
     }
 
-    protected class RecordFloatCallback extends FloatBaseCallback {
+    protected static class RecordFloatCallback extends FloatBaseCallback {
         private final boolean isFront;
 
         public RecordFloatCallback() {
