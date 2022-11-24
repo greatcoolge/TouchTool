@@ -25,6 +25,9 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.action.Action;
+import top.bogey.touch_tool.database.bean.action.ActionType;
+import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskInfoBehaviorBinding;
 import top.bogey.touch_tool.ui.task_info.TaskInfoView;
@@ -71,12 +74,37 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
         }
     }
 
-    public void notifyNew() {
-        notifyItemInserted(behaviors.size() - 1);
-    }
-
     private void saveTask() {
         TaskRepository.getInstance().saveTask(baseTask);
+    }
+
+    public void addBehavior(Behavior behavior) {
+        currTask.addBehavior(behavior);
+        notifyItemInserted(behaviors.size() - 1);
+        saveTask();
+        checkTaskAction(behavior);
+    }
+
+    public Behavior removeBehavior(int index) {
+        Behavior behavior = behaviors.remove(index);
+        notifyItemRemoved(index);
+        if (behaviors.size() > index) {
+            notifyItemRangeChanged(index, behaviors.size() - index + 1);
+        }
+        saveTask();
+        checkTaskAction(behavior);
+        return behavior;
+    }
+
+    private void checkTaskAction(Behavior behavior) {
+        List<Action> actions = behavior.getActions();
+        if (actions != null && !actions.isEmpty()) {
+            for (Action action : actions) {
+                if (action.getType() == ActionType.TASK) {
+                    parent.onTaskActionChanged((TaskAction) action);
+                }
+            }
+        }
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
@@ -192,21 +220,9 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int index = viewHolder.getBindingAdapterPosition();
-            Behavior behavior = adapter.behaviors.remove(index);
-            adapter.notifyItemRemoved(index);
-            if (adapter.behaviors.size() > index) {
-                adapter.notifyItemRangeChanged(index, adapter.behaviors.size() - index + 1);
-            }
-            adapter.saveTask();
+            Behavior behavior = adapter.removeBehavior(index);
             Snackbar.make(adapter.parent.requireView(), R.string.behavior_delete_tips, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.behavior_delete_reset, v -> {
-                        adapter.behaviors.add(index, behavior);
-                        adapter.notifyItemInserted(index);
-                        if (adapter.behaviors.size() > index + 1) {
-                            adapter.notifyItemRangeChanged(index + 1, adapter.behaviors.size() - index);
-                        }
-                        adapter.saveTask();
-                    })
+                    .setAction(R.string.behavior_delete_reset, v -> adapter.addBehavior(behavior))
                     .show();
         }
     }

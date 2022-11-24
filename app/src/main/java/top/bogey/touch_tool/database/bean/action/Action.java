@@ -7,9 +7,12 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
+import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.LogUtils;
 
 public abstract class Action implements Parcelable {
     protected final ActionType type;
@@ -94,6 +97,7 @@ public abstract class Action implements Parcelable {
         // 任务只在它执行的区域执行
         boolean result = service.currPkgName.equals(runningInfo.getPkgName()) || task.isAcrossAppTask();
         if (!result) {
+            LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_across_app_condition_fail));
             sleep(timeArea.getRandomTime());
         }
         return result;

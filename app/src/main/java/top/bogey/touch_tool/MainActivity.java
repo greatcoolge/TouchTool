@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showQuickMenu() {
         binding.getRoot().post(() -> {
-            RecordFloatView view = (RecordFloatView) EasyFloat.getView(PlayFloatView.class.getCanonicalName());
+            RecordFloatView view = (RecordFloatView) EasyFloat.getView(RecordFloatView.class.getCanonicalName());
             if (view == null) {
                 Task task = new Task(this);
                 new RecordFloatView(this, task, task, result -> TaskRepository.getInstance().saveTask(task)).show();

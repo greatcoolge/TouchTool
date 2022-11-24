@@ -23,6 +23,7 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskInfoItemBinding;
 import top.bogey.touch_tool.ui.behavior.BehaviorFloatView;
@@ -62,7 +63,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
         return tasks.size();
     }
 
-    public void taskChanged(Task task) {
+    public void onTaskChanged(Task task) {
         if (!tasks.contains(task)) {
             tasks.add(task);
             notifyItemInserted(tasks.size() - 1);
@@ -70,6 +71,13 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
             notifyItemRangeChanged(0, tasks.size());
             isExchange = false;
         }
+    }
+
+    public void onTaskActionChanged(TaskAction taskAction) {
+        Task subTask = baseTask.getSubTaskById(taskAction.getId());
+        if (subTask == null) return;
+        int index = baseTask.getSubTasks().indexOf(subTask);
+        notifyItemChanged(index + 1);
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
@@ -153,11 +161,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
                 int index = getBindingAdapterPosition();
                 Task task = tasks.get(index);
                 Behavior behavior = new Behavior();
-                new BehaviorFloatView(context, baseTask, task, behavior, result -> {
-                    task.addBehavior(behavior);
-                    TaskRepository.getInstance().saveTask(baseTask);
-                    adapter.notifyNew();
-                }).show();
+                new BehaviorFloatView(context, baseTask, task, behavior, result -> adapter.addBehavior(behavior)).show();
             });
 
             binding.recordButton.setOnClickListener(v -> {

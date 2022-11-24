@@ -3,16 +3,18 @@ package top.bogey.touch_tool.database.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
 
 import top.bogey.touch_tool.MainAccessibilityService;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.action.Action;
 import top.bogey.touch_tool.database.bean.action.ActionType;
 import top.bogey.touch_tool.database.bean.action.NumberAction;
+import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.LogUtils;
+import top.bogey.touch_tool.utils.AppUtils;
 import top.bogey.touch_tool.utils.TaskRunningCallback;
 
 public class TaskRunnable implements Runnable {
@@ -30,7 +32,7 @@ public class TaskRunnable implements Runnable {
         runningInfo.addCallback(callback);
     }
 
-    public void addCallbacks(List<TaskRunningCallback> callbacks){
+    public void addCallbacks(List<TaskRunningCallback> callbacks) {
         runningInfo.addCallbacks(callbacks);
     }
 
@@ -39,13 +41,13 @@ public class TaskRunnable implements Runnable {
     }
 
     public void stop(boolean force) {
-        if (force) runningInfo.setRunning(false);
-        else if (task.isAcrossAppTask()) runningInfo.setRunning(true);
-        runningInfo.setRunning(false);
+        if (force) runningInfo.setRunning(task, false);
+        else if (task.isAcrossAppTask()) runningInfo.setRunning(task, true);
+        runningInfo.setRunning(task, false);
     }
 
     public boolean isRunning() {
-        return runningInfo.isRunning();
+        return runningInfo.isRunning(task);
     }
 
     @Override
@@ -54,7 +56,6 @@ public class TaskRunnable implements Runnable {
         try {
             runningInfo.onStart(this);
             result = runTask(task, task, service, runningInfo);
-            runningInfo.setRunning(false);
         } catch (Exception e) {
             e.printStackTrace();
             LogUtils.log(LogLevel.HIGH, e.toString());
@@ -65,6 +66,8 @@ public class TaskRunnable implements Runnable {
     }
 
     public static boolean runTask(Task baseTask, Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        runningInfo.setRunning(task, true);
+
         // 获取任务中有效的行为
         List<Behavior> behaviors = new ArrayList<>();
         for (Behavior behavior : task.getBehaviors()) {
@@ -74,25 +77,26 @@ public class TaskRunnable implements Runnable {
         boolean result = true;
         Behavior runBehavior = behaviors.remove(0);
         while (runBehavior != null) {
-            if (!runningInfo.isRunning()) return false;
+            if (!(runningInfo.isRunning(baseTask) && runningInfo.isRunning(task))) return false;
 
             List<Action> actions = runBehavior.getActions();
-            Action condition = runBehavior.getCondition();
+            // 条件换成新对象，防止重入
+            Action condition = AppUtils.copy(runBehavior.getCondition());
             switch (runBehavior.getBehaviorMode()) {
 
                 case CONDITION:
                     Action firstAction = actions.get(0);
                     Action secondAction = actions.size() > 1 ? actions.get(1) : null;
                     if (condition == null || condition.checkCondition(service)) {
-                        result &= doAction(service, baseTask, runBehavior, firstAction, runningInfo);
+                        result &= doAction(service, baseTask, task, runBehavior, firstAction, runningInfo);
                         if (secondAction != null) runningInfo.addProgress(baseTask, secondAction, true);
                     } else {
                         if (secondAction != null) {
-                            result &= doAction(service, baseTask, runBehavior, secondAction, runningInfo);
+                            result &= doAction(service, baseTask, task, runBehavior, secondAction, runningInfo);
                         } else {
                             result = false;
                             runningInfo.addProgress(baseTask, firstAction, true);
-                            LogUtils.log(LogLevel.LOW, service, false, baseTask, runningInfo, condition.getConditionContent(service, baseTask, runBehavior));
+                            LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_behavior_condition_fail, condition.getConditionContent(service, baseTask, runBehavior), task.getTitle()));
                         }
                     }
                     break;
@@ -100,16 +104,15 @@ public class TaskRunnable implements Runnable {
                 case LOOP:
                     int finishTimes = 0;
                     while (finishTimes < runBehavior.getTimes()) {
-                        if (!runningInfo.isRunning()) return false;
+                        if (!(runningInfo.isRunning(baseTask) && runningInfo.isRunning(task))) return false;
 
                         boolean flag = true;
                         for (int i = 0; i < actions.size(); i++) {
-                            flag &= doAction(service, baseTask, runBehavior, actions.get(i), runningInfo);
+                            flag &= doAction(service, baseTask, task, runBehavior, actions.get(i), runningInfo);
                         }
                         if (condition != null) {
-                            if (condition.getType() == ActionType.NUMBER){
+                            if (condition.getType() == ActionType.NUMBER) {
                                 ((NumberAction) condition).addCurrNum(flag);
-                                LogUtils.log(LogLevel.LOW, service, condition.checkCondition(service), baseTask, runningInfo, condition.getConditionContent(service, baseTask, runBehavior));
                             }
                             if (condition.getType() != ActionType.NULL && condition.checkCondition(service))
                                 break;
@@ -119,31 +122,41 @@ public class TaskRunnable implements Runnable {
                     // 有结束条件, 循环却运行到末尾，代表循环执行失败
                     if (condition != null && condition.getType() != ActionType.NULL && finishTimes == runBehavior.getTimes()) {
                         result = false;
+                        LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_behavior_condition_fail, condition.getConditionContent(service, baseTask, runBehavior), task.getTitle()));
                     }
                     break;
 
                 case PARALLEL:
                     if (condition.getType() == ActionType.NUMBER) {
+                        int start = runningInfo.getProgress();
                         NumberAction numberAction = (NumberAction) condition;
                         CountDownLatch latch = new CountDownLatch(numberAction.getTargetNum());
-                        List<Future<?>> futures = new ArrayList<>();
+                        Behavior finalRunBehavior = runBehavior;
+                        List<Action> actionList = new ArrayList<>();
                         for (Action action : actions) {
-                            Behavior finalRunBehavior = runBehavior;
-                            Future<?> future = service.taskService.submit(() -> {
-                                boolean flag = doAction(service, baseTask, finalRunBehavior, action, runningInfo);
+                            Action finalAction = AppUtils.copy(action);
+                            service.taskService.submit(() -> {
+                                boolean flag = doFinalAction(service, baseTask, task, finalRunBehavior, finalAction, runningInfo);
                                 if (condition.getType() == ActionType.NUMBER) numberAction.addCurrNum(flag);
                                 latch.countDown();
                             });
-                            futures.add(future);
+                            actionList.add(finalAction);
                         }
                         try {
                             latch.await();
                             result = condition.checkCondition(service);
-                            LogUtils.log(LogLevel.LOW, service, result, baseTask, runningInfo, condition.getConditionContent(service, baseTask, runBehavior));
-                            futures.forEach(future -> future.cancel(true));
+                            actionList.forEach(action -> {
+                                if (action.getType() == ActionType.TASK) {
+                                    Task subTask = ((TaskAction) action).getSubTask();
+                                    if (subTask != null) runningInfo.setRunning(subTask, false);
+                                }
+                            });
+
+                            if (!result) LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_behavior_condition_fail, condition.getConditionContent(service, baseTask, runBehavior), task.getTitle()));
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        runningInfo.jumpProgress(start, baseTask, actions);
                     }
                     break;
             }
@@ -152,13 +165,24 @@ public class TaskRunnable implements Runnable {
             else runBehavior = null;
         }
 
+        runningInfo.setRunning(task, false);
         return result;
     }
 
-    private static boolean doAction(MainAccessibilityService service, Task baseTask, Behavior behavior, Action action, TaskRunningInfo runningInfo){
+    private static boolean doAction(MainAccessibilityService service, Task baseTask, Task currTask, Behavior behavior, Action action, TaskRunningInfo runningInfo) {
+        Action finalAction = AppUtils.copy(action);
+        return doFinalAction(service, baseTask, currTask, behavior, finalAction, runningInfo);
+    }
+
+    // 因为有并行执行，所有action都需要是单独的动作，防止重入
+    private static boolean doFinalAction(MainAccessibilityService service, Task baseTask, Task currTask, Behavior behavior, Action action, TaskRunningInfo runningInfo) {
         boolean flag = action.doAction(baseTask, service, runningInfo);
-        runningInfo.addProgress(baseTask, action, false);
-        LogUtils.log(action.getType() == ActionType.DELAY || !flag ? LogLevel.LOW : LogLevel.HIGH, service, flag, baseTask, runningInfo, action.getDescription(service, baseTask, behavior));
+        addProgress(service, baseTask, currTask, behavior, action, runningInfo, flag);
         return flag;
+    }
+
+    private synchronized static void addProgress(MainAccessibilityService service, Task baseTask, Task currTask, Behavior behavior, Action action, TaskRunningInfo runningInfo, boolean flag) {
+        runningInfo.addProgress(baseTask, action, false);
+        LogUtils.log(action.getType() == ActionType.DELAY || !flag ? LogLevel.LOW : LogLevel.HIGH, service, flag, baseTask, currTask, runningInfo, action.getDescription(service, baseTask, behavior));
     }
 }

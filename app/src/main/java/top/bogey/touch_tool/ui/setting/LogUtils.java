@@ -79,8 +79,8 @@ public class LogUtils {
         }
     }
 
-    public static void log(LogLevel level, Context context, boolean result, Task task, TaskRunningInfo info, String content) {
-        String format = String.format("%s - %s\n[%s]%s", task.getTitle(), info.getPkgName(), info.getProgress(), content);
+    public static void log(LogLevel level, Context context, boolean result, Task baseTask, Task currTask, TaskRunningInfo info, String content) {
+        String format = String.format("%s - %s\n[%s]%s - %s", baseTask.getTitle(), info.getPkgName(), info.getProgressString(), currTask.getTitle(), content);
         log(level, context.getString(result ? R.string.log_run_task_result_success : R.string.log_run_task_result_fail, format));
     }
 

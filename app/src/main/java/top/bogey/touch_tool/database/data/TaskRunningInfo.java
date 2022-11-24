@@ -1,7 +1,9 @@
 package top.bogey.touch_tool.database.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import top.bogey.touch_tool.database.bean.Task;
@@ -17,7 +19,7 @@ public class TaskRunningInfo implements TaskRunningCallback {
     private final int maxProgress;
     private final TaskRunnable runnable;
 
-    private boolean isRunning = true;
+    private final Map<Task, Boolean> runningState = new HashMap<>();
     private int progress = 0;
 
     public TaskRunningInfo(TaskRunnable runnable, String pkgName, int maxProgress) {
@@ -30,35 +32,50 @@ public class TaskRunningInfo implements TaskRunningCallback {
         return pkgName;
     }
 
-    public boolean isRunning() {
-        return isRunning && !Thread.interrupted();
+    public Boolean hasRunning(Task task) {
+        return runningState.get(task);
     }
 
-    public void setRunning(boolean running) {
-        if (isRunning) isRunning = running;
-        if (!isRunning) Thread.currentThread().interrupt();
+    public boolean isRunning(Task task) {
+        return Boolean.TRUE.equals(hasRunning(task));
     }
 
-    public synchronized void addProgress(Task task, Action action, boolean skip) {
-        if (action.getType() != ActionType.TASK) {
-            progress++;
-        } else {
-            if (skip){
-                Task subTask = task.getSubTaskById(((TaskAction) action).getId());
-                if (subTask != null) progress += subTask.getLength();
-            } else {
-                progress++;
+    public void setRunning(Task task, boolean running) {
+        Boolean hasRunning = hasRunning(task);
+        if (hasRunning == null || Boolean.TRUE.equals(hasRunning)) {
+            runningState.put(task, running);
+        }
+    }
+
+    public void addProgress(Task baseTask, Action action, boolean skip) {
+        if (action.getType() == ActionType.TASK && skip) {
+            Task task = baseTask.getSubTaskById(((TaskAction) action).getId());
+            if (task != null) {
+                progress += task.getLength();
             }
         }
+        progress++;
+
         onProgress(runnable, getTaskPercent());
+    }
+
+    public void jumpProgress(int start, Task baseTask, List<Action> actions) {
+        progress = start;
+        for (Action action : actions) {
+            addProgress(baseTask, action, true);
+        }
     }
 
     public int getTaskPercent() {
         return progress * 100 / maxProgress;
     }
 
-    public String getProgress() {
+    public String getProgressString() {
         return progress + "/" + maxProgress;
+    }
+
+    public int getProgress() {
+        return progress;
     }
 
     public void addCallback(TaskRunningCallback callback) {

@@ -46,12 +46,6 @@ public class SettingView extends Fragment {
         binding.eventTimeoutSlider.setLabelFormatter(value -> requireContext().getString(R.string.millisecond, (int) value));
         binding.eventTimeoutSlider.setValue(SettingSave.getInstance().getEventTimeout());
 
-        binding.keyEventMenuTimeout.addOnChangeListener((slider, value, fromUser) -> {
-            if (fromUser) SettingSave.getInstance().setKeyEventMenuTimeout((int) value);
-        });
-        binding.keyEventMenuTimeout.setLabelFormatter(value -> requireContext().getString(R.string.millisecond, (int) value));
-        binding.keyEventMenuTimeout.setValue(SettingSave.getInstance().getKeyEventMenuTimeout());
-
         binding.overseeModeGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
                 View view = group.findViewById(checkedId);

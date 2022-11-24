@@ -11,10 +11,12 @@ import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunnable;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
+import top.bogey.touch_tool.utils.AppUtils;
 
 public class TaskAction extends Action {
     private String id;
     private transient String title;
+    private transient Task subTask;
 
     public TaskAction() {
         super(ActionType.TASK);
@@ -43,10 +45,14 @@ public class TaskAction extends Action {
 
     @Override
     public boolean doAction(Task task, MainAccessibilityService service, TaskRunningInfo runningInfo) {
+        subTask = null;
         if (!super.doAction(task, service, runningInfo)) return false;
-        Task subTask = task.getSubTaskById(id);
+        subTask = task.getSubTaskById(id);
         if (subTask == null) return false;
-        return TaskRunnable.runTask(task, subTask, service, runningInfo);
+        subTask = AppUtils.copy(subTask);
+        boolean result = TaskRunnable.runTask(task, subTask, service, runningInfo);
+        subTask = null;
+        return result;
     }
 
     @Override
@@ -77,6 +83,10 @@ public class TaskAction extends Action {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Task getSubTask() {
+        return subTask;
     }
 
     @NonNull

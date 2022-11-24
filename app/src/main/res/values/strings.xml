@@ -201,6 +201,8 @@
     <string name="search_apps">搜索应用</string>
 
     <!-- 设置 -->
+    <string name="setting_tile_quick_record">快速录制</string>
+
     <string name="setting_app_config">应用设置</string>
     <string name="setting_keep_alive">前台服务</string>
     <string name="setting_keep_alive_tips">如果开启自启动和锁定后台之后，应用还是被频繁关闭，可开启前台服务保持应用运行</string>
@@ -211,8 +213,6 @@
     <string name="setting_action_record_delay_tips">录制动作的时候在每个新动作之后添加一个延迟动作，0为不添加</string>
     <string name="setting_event_timeout">检测间隔</string>
     <string name="setting_event_timeout_tips">任务触发条件的检测间隔时间，间隔越短越耗电，间隔越长相同事件触发频率越低</string>
-    <string name="setting_key_event_menu_timeout">快速录制</string>
-    <string name="setting_key_event_menu_timeout_tips">双击 音量减按键 快速开启任务录制，配置的时间为双击间隔，间隔越长越容易触发，但也意味着容易误触。间隔0为关闭此功能。</string>
 
     <string name="setting_app_running">运行状况</string>
     <string name="setting_running_state_oversee">状态监视</string>
@@ -239,6 +239,9 @@
     <string name="setting_version">版本</string>
     <string name="setting_version_format">%1$s(%2$d)</string>
     <string name="setting_source_code">在GitHub查看源码</string>
+
+    <string name="log_run_behavior_condition_fail">未达成条件 %1$s，任务 %2$s 的行为执行失败</string>
+    <string name="log_run_across_app_condition_fail">检测到处于非关联应用内，动作执行失败</string>
 
     <string name="log_run_manual">显示手动任务浮窗</string>
     <string name="log_run_manual_task">执行手动任务 %1$s</string>

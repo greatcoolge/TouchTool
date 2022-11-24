@@ -70,6 +70,20 @@
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
+        <service
+            android:name=".ui.record.QuickRecordService"
+            android:exported="true"
+            android:enabled="true"
+            android:icon="@drawable/icon_tile"
+            android:label="@string/setting_tile_quick_record"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+
+        </service>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.file_provider"

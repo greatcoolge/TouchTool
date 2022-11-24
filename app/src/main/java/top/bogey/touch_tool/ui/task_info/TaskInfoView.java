@@ -40,6 +40,7 @@ import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.TaskType;
+import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.database.bean.condition.NotificationCondition;
 import top.bogey.touch_tool.database.bean.condition.TimeCondition;
 import top.bogey.touch_tool.database.data.TaskRepository;
@@ -81,11 +82,13 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
                     menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                     materialSwitch.setChecked(task.isAcrossApp());
                     materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        task.setAcrossApp(isChecked);
-                        TaskRepository.getInstance().saveTask(task);
-                        actionBar.setSubtitle(task.isAcrossApp() ? R.string.across_app_task : R.string.normal_task);
+                        if (task.isAcrossApp() != isChecked) {
+                            task.setAcrossApp(isChecked);
+                            TaskRepository.getInstance().saveTask(task);
+                            actionBar.setSubtitle(task.isAcrossAppTask() ? R.string.across_app_task : R.string.normal_task);
+                        }
                     });
-                    actionBar.setSubtitle(task.isAcrossApp() ? R.string.across_app_task : R.string.normal_task);
+                    actionBar.setSubtitle(task.isAcrossAppTask() ? R.string.across_app_task : R.string.normal_task);
                 }
 
                 @Override
@@ -113,14 +116,14 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
         binding.addButton.setOnClickListener(v -> {
             Task subTask = new Task(requireContext());
             task.addSubTask(subTask);
-            adapter.taskChanged(subTask);
+            adapter.onTaskChanged(subTask);
             TaskRepository.getInstance().saveTask(task);
         });
 
         binding.pasteButton.setOnClickListener(v -> {
             Task copyTask = viewModel.getCopyTask();
             task.addSubTask(copyTask);
-            adapter.taskChanged(copyTask);
+            adapter.onTaskChanged(copyTask);
             TaskRepository.getInstance().saveTask(task);
         });
 
@@ -330,10 +333,14 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
         }
     }
 
+    public void onTaskActionChanged(TaskAction taskAction) {
+        adapter.onTaskActionChanged(taskAction);
+    }
+
     @Override
     public void onChanged(Task task) {
         if (adapter != null && task.getId().equals(this.task.getId())) {
-            adapter.taskChanged(task);
+            adapter.onTaskChanged(task);
             refreshApps();
         }
     }

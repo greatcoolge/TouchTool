@@ -32,7 +32,6 @@ public class SettingSave {
     private final static String ACTION_TOUCH_OFFSET = "ACTION_TOUCH_OFFSET";
     private final static String ACTION_RECORD_DELAY = "ACTION_RECORD_DELAY";
     private final static String EVENT_TIMEOUT = "EVENT_TIMEOUT";
-    private final static String KEY_EVENT_MENU_TIMEOUT = "KEY_EVENT_MENU_TIMEOUT";
 
     private final static String RUNNING_OVERSEE_MODE = "RUNNING_OVERSEE_MODE";
     private final static String RUNNING_LOG = "RUNNING_LOG";
@@ -149,14 +148,6 @@ public class SettingSave {
         if (service != null && service.isServiceConnected()) {
             service.setEventTimeout();
         }
-    }
-
-    public int getKeyEventMenuTimeout() {
-        return settingMMKV.decodeInt(KEY_EVENT_MENU_TIMEOUT, 0);
-    }
-
-    public void setKeyEventMenuTimeout(int delay) {
-        settingMMKV.encode(KEY_EVENT_MENU_TIMEOUT, delay);
     }
 
 

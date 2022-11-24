@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 
 public class AppUtils {
     public static final String ACTION_TOUCH_OFFSET = "action_touch_offset";
@@ -76,7 +77,7 @@ public class AppUtils {
     }
 
     public static Point getFixedPosition(int x, int y) {
-        int offset = MMKV.defaultMMKV().decodeInt(ACTION_TOUCH_OFFSET, 0);
+        int offset = SettingSave.getInstance().getActionTouchOffset();
         return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
     }
 
@@ -103,6 +104,7 @@ public class AppUtils {
     }
 
     public static <T extends Parcelable> T copy(T input) {
+        if (input == null) return null;
         Parcel parcel = null;
         try {
             parcel = Parcel.obtain();

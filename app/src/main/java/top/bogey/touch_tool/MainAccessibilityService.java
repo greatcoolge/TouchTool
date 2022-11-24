@@ -24,9 +24,7 @@ import androidx.work.WorkManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -35,8 +33,10 @@ import top.bogey.touch_tool.database.bean.TaskType;
 import top.bogey.touch_tool.database.bean.condition.NotificationCondition;
 import top.bogey.touch_tool.database.bean.condition.TimeCondition;
 import top.bogey.touch_tool.database.data.FindRunnable;
+import top.bogey.touch_tool.database.data.TaskQueue;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.database.data.TaskRunnable;
+import top.bogey.touch_tool.database.data.TaskThreadPoolExecutor;
 import top.bogey.touch_tool.database.data.TaskWorker;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.LogUtils;
@@ -68,10 +68,9 @@ public class MainAccessibilityService extends AccessibilityService {
 
     private long eventTime = 0;
 
-
     public MainAccessibilityService() {
-        findService = new ThreadPoolExecutor(2, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
-        taskService = new ThreadPoolExecutor(3, 20, 60L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
+        findService = new TaskThreadPoolExecutor(3, 20, 10L, TimeUnit.SECONDS, new TaskQueue<>(20));
+        taskService = new TaskThreadPoolExecutor(3, 30, 30L, TimeUnit.SECONDS, new TaskQueue<>(20));
     }
 
     @Override
@@ -431,10 +430,6 @@ public class MainAccessibilityService extends AccessibilityService {
             if (callback != null) callback.onResult(false);
             return;
         }
-        if (paths.size() == 1) {
-            runGesture(paths.get(0), time, callback);
-            return;
-        }
         GestureDescription.Builder builder = new GestureDescription.Builder();
         for (Path path : paths) {
             builder.addStroke(new GestureDescription.StrokeDescription(path, 0, time));
@@ -452,37 +447,5 @@ public class MainAccessibilityService extends AccessibilityService {
                 if (callback != null) callback.onResult(false);
             }
         }, null);
-    }
-
-    @Override
-    protected boolean onKeyEvent(KeyEvent event) {
-        int timeout = SettingSave.getInstance().getKeyEventMenuTimeout();
-        boolean handled = false;
-        if (timeout > 0) {
-            // 双击声音下键
-            if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
-                if (eventTime == 0) eventTime = event.getEventTime();
-                else {
-                    // 触发间隔小于需要的间隔
-                    if (event.getEventTime() - eventTime <= timeout) {
-                        MainActivity activity = MainApplication.getActivity();
-                        if (activity != null) {
-                            activity.showQuickMenu();
-                        } else {
-                            Intent intent = new Intent(this, MainActivity.class);
-                            intent.putExtra("IsBackground", true);
-                            intent.putExtra("ShowQuickMenu", true);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
-                        eventTime = 0;
-                        handled = true;
-                    } else {
-                        eventTime = event.getEventTime();
-                    }
-                }
-            }
-        }
-        return handled;
     }
 }

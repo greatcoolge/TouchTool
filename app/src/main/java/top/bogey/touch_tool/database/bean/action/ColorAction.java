@@ -81,7 +81,7 @@ public class ColorAction extends Action {
         for (Rect rect : rectList) {
             Path path = new Path();
             Point fixedPosition = AppUtils.getFixedPosition(rect.centerX(), rect.centerY());
-            path.moveTo(fixedPosition.x, fixedPosition.y);
+            path.moveTo(Math.max(fixedPosition.x, 0), Math.max(fixedPosition.y, 0));
             service.runGesture(path, 100, null);
             sleep(getTimeArea().getRandomTime());
         }

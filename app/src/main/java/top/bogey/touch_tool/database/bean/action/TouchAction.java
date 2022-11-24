@@ -204,9 +204,9 @@ public class TouchAction extends Action {
                 if (fixed) point = AppUtils.getFixedPosition(point.x, point.y);
                 if (tmp == null) {
                     tmp = new Path();
-                    tmp.moveTo(point.x, point.y);
+                    tmp.moveTo(Math.max(point.x, 0), Math.max(point.y, 0));
                 } else {
-                    tmp.lineTo(point.x, point.y);
+                    tmp.lineTo(Math.max(point.x, 0), Math.max(point.y, 0));
                 }
             }
             return tmp;
