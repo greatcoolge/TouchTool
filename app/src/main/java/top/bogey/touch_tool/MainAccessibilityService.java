@@ -156,8 +156,8 @@ public class MainAccessibilityService extends AccessibilityService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainApplication.setService(this);
 
-        boolean startCaptureService = intent.getBooleanExtra("StartCaptureService", false);
-        boolean isBackground = intent.getBooleanExtra("IsBackground", false);
+        boolean startCaptureService = intent.getBooleanExtra(MainActivity.INTENT_KEY_START_CAPTURE, false);
+        boolean isBackground = intent.getBooleanExtra(MainActivity.INTENT_KEY_BACKGROUND, false);
         if (startCaptureService) startCaptureService(isBackground, captureResultCallback);
 
         return super.onStartCommand(intent, flags, startId);
@@ -248,8 +248,8 @@ public class MainAccessibilityService extends AccessibilityService {
             } else {
                 captureResultCallback = callback;
                 Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("IsBackground", true);
-                intent.putExtra("StartCaptureService", true);
+                intent.putExtra(MainActivity.INTENT_KEY_BACKGROUND, true);
+                intent.putExtra(MainActivity.INTENT_KEY_START_CAPTURE, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

@@ -132,7 +132,6 @@ public class TaskRepository {
         if (originTask == null || !(task.getType() == originTask.getType() && Objects.equals(task.getCondition(), originTask.getCondition()))) {
             MainAccessibilityService service = MainApplication.getService();
             if (service != null) {
-                if (originTask != null) service.removeWork(originTask);
                 service.addWork(task);
             }
         }

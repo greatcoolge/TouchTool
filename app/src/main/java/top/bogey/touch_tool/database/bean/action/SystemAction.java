@@ -3,6 +3,7 @@ package top.bogey.touch_tool.database.bean.action;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
 import android.os.Build;
+import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.Toast;
@@ -99,6 +100,11 @@ public class SystemAction extends Action {
             case CLOSE_CAPTURE:
                 service.stopCaptureService();
                 break;
+            case TOAST:
+                Looper.prepare();
+                Toast.makeText(service, extras, Toast.LENGTH_SHORT).show();
+                Looper.loop();
+                break;
         }
         sleep(timeArea.getRandomTime());
         return result;
@@ -143,7 +149,8 @@ public class SystemAction extends Action {
         GOTO_APP,
         NOTIFICATION,
         OPEN_CAPTURE,
-        CLOSE_CAPTURE;
+        CLOSE_CAPTURE,
+        TOAST;
 
         public String getDescription(Context context, String extras) {
             int key = 0;
@@ -175,6 +182,9 @@ public class SystemAction extends Action {
                 case CLOSE_CAPTURE:
                     key = R.string.action_system_close_capture;
                     break;
+                case TOAST:
+                    key = R.string.action_system_toast;
+                    break;
                 case GOTO_APP:
                     key = R.string.action_system_goto_app;
                     break;
@@ -184,6 +194,9 @@ public class SystemAction extends Action {
                     MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
                     AppInfo appInfo = viewModel.getAppInfoByPkgName(extras);
                     if (appInfo != null) return context.getString(key, appInfo.appName);
+                    return context.getString(key, extras).trim();
+                }
+                if (this == TOAST) {
                     return context.getString(key, extras).trim();
                 }
                 return context.getString(key);

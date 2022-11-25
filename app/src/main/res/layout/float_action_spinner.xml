@@ -21,39 +21,59 @@
             android:dropDownWidth="wrap_content"
             android:popupBackground="@drawable/shape_spinner"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/image"
+            app:layout_constraintEnd_toStartOf="@+id/button_box"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/image"
-            android:layout_width="36dp"
-            android:layout_height="32dp"
-            android:visibility="gone"
-            android:scaleType="fitCenter"
-            android:paddingStart="4dp"
-            android:paddingEnd="0dp"
-            app:strokeWidth="0.75dp"
-            app:strokeColor="?attr/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/picker_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icon_action_image"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/picker_button"
-            style="@style/Theme.TouchTool.Button.OutlinedButton"
-            android:layout_width="36dp"
-            android:layout_height="32dp"
-            android:visibility="gone"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:insetLeft="4dp"
-            app:icon="@drawable/icon_action_task"
+        <FrameLayout
+            android:id="@+id/button_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include
+                android:id="@+id/text_include"
+                layout="@layout/float_action_text_base"
+                android:layout_width="72dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/button_include"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
+                android:visibility="gone">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/image"
+                    android:layout_width="36dp"
+                    android:layout_height="32dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="0dp"
+                    android:scaleType="fitCenter"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                    app:srcCompat="@drawable/icon_action_image"
+                    app:strokeColor="?attr/colorPrimary"
+                    app:strokeWidth="0.75dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/picker_button"
+                    style="@style/Theme.TouchTool.Button.OutlinedButton"
+                    android:layout_width="36dp"
+                    android:layout_height="32dp"
+                    android:insetLeft="4dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/icon_action_task" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

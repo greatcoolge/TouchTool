@@ -127,7 +127,7 @@ public class AppUtils {
 
         StringBuilder builder = new StringBuilder();
         if (timeCalendar.get(Calendar.YEAR) != currCalendar.get(Calendar.YEAR)) builder.append(context.getString(R.string.year, timeCalendar.get(Calendar.YEAR)));
-        builder.append(context.getString(R.string.month, timeCalendar.get(Calendar.MONTH)));
+        builder.append(context.getString(R.string.month, timeCalendar.get(Calendar.MONTH) + 1));
         builder.append(context.getString(R.string.day, timeCalendar.get(Calendar.DAY_OF_MONTH)));
         return builder.toString();
     }

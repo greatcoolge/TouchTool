@@ -88,8 +88,8 @@ public class FindRunnable implements Runnable {
                             activity.showPlayFloatView(packageName);
                         } else {
                             Intent intent = new Intent(service, MainActivity.class);
-                            intent.putExtra("IsBackground", true);
-                            intent.putExtra("FloatPackageName", packageName);
+                            intent.putExtra(MainActivity.INTENT_KEY_BACKGROUND, true);
+                            intent.putExtra(MainActivity.INTENT_KEY_PLAY_PACKAGE, packageName);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             service.startActivity(intent);
                         }

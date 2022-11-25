@@ -44,8 +44,13 @@ import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class MainActivity extends AppCompatActivity {
     static {
-        System.loadLibrary("auto_touch");
+        System.loadLibrary("touch_tool");
     }
+
+    public static final String INTENT_KEY_BACKGROUND = "INTENT_KEY_BACKGROUND";
+    public static final String INTENT_KEY_PLAY_PACKAGE = "INTENT_KEY_PLAY_PACKAGE";
+    public static final String INTENT_KEY_QUICK_MENU = "INTENT_KEY_QUICK_MENU";
+    public static final String INTENT_KEY_START_CAPTURE = "INTENT_KEY_START_CAPTURE";
 
     private ActivityMainBinding binding;
     private boolean isFront = false;
@@ -169,36 +174,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleIntent(Intent intent) {
-        String pkgName = getIntent().getStringExtra("Goto");
-        if (pkgName != null && !pkgName.isEmpty()) {
-            AppUtils.gotoApp(this, pkgName);
-        }
-
-        boolean isBackground = intent.getBooleanExtra("IsBackground", false);
+        boolean isBackground = intent.getBooleanExtra(INTENT_KEY_BACKGROUND, false);
         if (isBackground) {
             moveTaskToBack(true);
         }
 
-        pkgName = getIntent().getStringExtra("FloatPackageName");
+        String pkgName = getIntent().getStringExtra(INTENT_KEY_PLAY_PACKAGE);
         if (pkgName != null && !pkgName.isEmpty()) {
             showPlayFloatView(pkgName);
         }
 
-        boolean dismissFloat = intent.getBooleanExtra("DismissFloat", false);
-        if (dismissFloat) {
-            dismissPlayFloatView();
-        }
-
-        boolean showQuickMenu = intent.getBooleanExtra("ShowQuickMenu", false);
+        boolean showQuickMenu = intent.getBooleanExtra(INTENT_KEY_QUICK_MENU, false);
         if (showQuickMenu) {
             showQuickMenu();
         }
 
-        boolean startCaptureService = intent.getBooleanExtra("StartCaptureService", false);
+        boolean startCaptureService = intent.getBooleanExtra(INTENT_KEY_START_CAPTURE, false);
         if (startCaptureService) {
             Intent serviceIntent = new Intent(this, MainAccessibilityService.class);
-            serviceIntent.putExtra("StartCaptureService", true);
-            serviceIntent.putExtra("IsBackground", isBackground);
+            serviceIntent.putExtra(INTENT_KEY_START_CAPTURE, true);
+            serviceIntent.putExtra(INTENT_KEY_BACKGROUND, isBackground);
             startService(serviceIntent);
         }
 

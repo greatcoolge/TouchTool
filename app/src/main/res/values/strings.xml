@@ -184,6 +184,7 @@
     <string name="action_system_notification">打开 通知 界面</string>
     <string name="action_system_open_capture">申请屏幕录制</string>
     <string name="action_system_close_capture">关闭屏幕录制</string>
+    <string name="action_system_toast">弹出提示 %1$s</string>
     <string name="action_task">执行内嵌任务 %1$s</string>
 
     <string name="action_device_not_support_lock">当前设备不支持调用锁屏功能</string>

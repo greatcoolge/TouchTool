@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18.1)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_library(auto_touch SHARED native-lib.cpp)
+add_library(touch_tool SHARED native-lib.cpp)
 
 add_library(opencv_core STATIC IMPORTED)
 add_library(opencv_imgproc STATIC IMPORTED)
@@ -18,7 +18,7 @@ find_library(log-lib log)
 find_library(jnigraphics-lib jnigraphics)
 
 target_link_libraries(
-        auto_touch
+        touch_tool
 
         opencv_imgproc
         opencv_core

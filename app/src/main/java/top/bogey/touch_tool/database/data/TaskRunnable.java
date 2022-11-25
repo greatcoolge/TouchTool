@@ -3,6 +3,7 @@ package top.bogey.touch_tool.database.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
@@ -130,7 +131,7 @@ public class TaskRunnable implements Runnable {
                     if (condition.getType() == ActionType.NUMBER) {
                         int start = runningInfo.getProgress();
                         NumberAction numberAction = (NumberAction) condition;
-                        CountDownLatch latch = new CountDownLatch(numberAction.getTargetNum());
+                        CountDownLatch latch = new CountDownLatch(1);
                         Behavior finalRunBehavior = runBehavior;
                         List<Action> actionList = new ArrayList<>();
                         for (Action action : actions) {
@@ -138,13 +139,14 @@ public class TaskRunnable implements Runnable {
                             service.taskService.submit(() -> {
                                 boolean flag = doFinalAction(service, baseTask, task, finalRunBehavior, finalAction, runningInfo);
                                 if (condition.getType() == ActionType.NUMBER) numberAction.addCurrNum(flag);
-                                latch.countDown();
+                                if (numberAction.checkCondition(service)) latch.countDown();
                             });
                             actionList.add(finalAction);
                         }
                         try {
-                            latch.await();
-                            result = condition.checkCondition(service);
+                            // 等待10分钟
+                            result = latch.await(10, TimeUnit.MINUTES);
+                            if (!result) LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_behavior_condition_fail, condition.getConditionContent(service, baseTask, runBehavior), task.getTitle()));
                             actionList.forEach(action -> {
                                 if (action.getType() == ActionType.TASK) {
                                     Task subTask = ((TaskAction) action).getSubTask();
@@ -152,7 +154,6 @@ public class TaskRunnable implements Runnable {
                                 }
                             });
 
-                            if (!result) LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_behavior_condition_fail, condition.getConditionContent(service, baseTask, runBehavior), task.getTitle()));
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

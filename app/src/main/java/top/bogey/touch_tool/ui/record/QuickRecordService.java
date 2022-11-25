@@ -27,8 +27,8 @@ public class QuickRecordService extends TileService {
                 activity.showQuickMenu();
             } else {
                 Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("IsBackground", true);
-                intent.putExtra("ShowQuickMenu", true);
+                intent.putExtra(MainActivity.INTENT_KEY_BACKGROUND, true);
+                intent.putExtra(MainActivity.INTENT_KEY_QUICK_MENU, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

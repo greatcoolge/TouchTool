@@ -278,7 +278,11 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                     Action action = actions.get(index);
                     TaskAction taskInfo = adapter.getItem(position);
 
+                    binding.spinnerInclude.buttonInclude.setVisibility(View.GONE);
+                    binding.spinnerInclude.textInclude.getRoot().setVisibility(View.GONE);
+
                     if (action.getType() == ActionType.SYSTEM) {
+
                         SystemAction systemAction = (SystemAction) action;
                         SystemAction.SystemActionType systemActionType = SystemAction.SystemActionType.valueOf(taskInfo.getId());
                         if (systemActionType != systemAction.getSystemActionType()) {
@@ -286,8 +290,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         }
 
                         if (systemActionType == SystemAction.SystemActionType.GOTO_APP) {
-                            binding.spinnerInclude.pickerButton.setVisibility(View.VISIBLE);
-                            binding.spinnerInclude.image.setVisibility(View.VISIBLE);
+                            binding.spinnerInclude.buttonInclude.setVisibility(View.VISIBLE);
 
                             MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
                             if (systemAction.getExtras() != null) {
@@ -297,11 +300,15 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                                     binding.spinnerInclude.image.setImageDrawable(info.info.applicationInfo.loadIcon(manager));
                                 }
                             }
-
-                        } else {
-                            binding.spinnerInclude.pickerButton.setVisibility(View.GONE);
-                            binding.spinnerInclude.image.setVisibility(View.GONE);
                         }
+
+                        if (systemActionType == SystemAction.SystemActionType.TOAST) {
+                            binding.spinnerInclude.textInclude.getRoot().setVisibility(View.VISIBLE);
+                            if (systemAction.getExtras() != null) {
+                                binding.spinnerInclude.textInclude.titleEdit.setText(systemAction.getExtras());
+                            }
+                        }
+
                     } else if (action.getType() == ActionType.TASK) {
                         TaskAction taskAction = (TaskAction) action;
                         taskAction.setId(taskInfo.getId());
@@ -340,6 +347,15 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 String extras = systemAction.getExtras();
                 if (extras == null || extras.isEmpty()) return;
                 AppUtils.gotoApp(context, extras);
+            });
+
+            binding.spinnerInclude.textInclude.titleEdit.addTextChangedListener(new TextChangedListener() {
+                @Override
+                public void afterTextChanged(Editable s) {
+                    int index = getBindingAdapterPosition();
+                    SystemAction systemAction = (SystemAction) actions.get(index);
+                    systemAction.setExtras(String.valueOf(s));
+                }
             });
         }
 
@@ -443,6 +459,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                                 SystemAction.SystemActionType.GOTO_APP,
                                 SystemAction.SystemActionType.OPEN_CAPTURE,
                                 SystemAction.SystemActionType.CLOSE_CAPTURE,
+                                SystemAction.SystemActionType.TOAST
                         };
                         for (SystemAction.SystemActionType systemActionType : types) {
                             adapter.add(new TaskAction(systemActionType.name(), systemActionType.getDescription(context, "")));
