@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Path;
 import android.os.IBinder;
-import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
@@ -66,8 +65,6 @@ public class MainAccessibilityService extends AccessibilityService {
     // 外部任务监视器
     private final List<TaskRunningCallback> taskOverSee = new ArrayList<>();
 
-    private long eventTime = 0;
-
     public MainAccessibilityService() {
         findService = new TaskThreadPoolExecutor(3, 20, 10L, TimeUnit.SECONDS, new TaskQueue<>(20));
         taskService = new TaskThreadPoolExecutor(3, 30, 30L, TimeUnit.SECONDS, new TaskQueue<>(20));
@@ -93,7 +90,8 @@ public class MainAccessibilityService extends AccessibilityService {
                 String packageName = String.valueOf(event.getPackageName());
                 stopTaskByType(TaskType.NEW_NOTIFICATION, false);
                 List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.NEW_NOTIFICATION);
-                if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_new_notification, packageName, eventText));
+                if (tasks.size() > 0)
+                    LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_new_notification, packageName, eventText));
 
                 for (Task task : tasks) {
                     if (task.getType() == TaskType.NEW_NOTIFICATION) {
@@ -114,7 +112,8 @@ public class MainAccessibilityService extends AccessibilityService {
                 if (!packageName.equals(currPkgName)) return;
                 stopTaskByType(TaskType.CONTENT_CHANGED, false);
                 List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.CONTENT_CHANGED);
-                if (tasks.size() > 0) LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_content_changed, packageName));
+                if (tasks.size() > 0)
+                    LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_content_changed, packageName));
                     // 当前应用没有内容变更任务，所以不开启内容变更事件
                 else setContentEvent(false);
                 for (Task task : tasks) {
@@ -185,7 +184,8 @@ public class MainAccessibilityService extends AccessibilityService {
         AccessibilityServiceInfo info = getServiceInfo();
         if (info == null) return;
         if (open) {
-            if ((info.eventTypes & AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) return;
+            if ((info.eventTypes & AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)
+                return;
         } else {
             if ((info.eventTypes & AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) == 0) return;
         }
@@ -335,33 +335,19 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public List<Task> getAllTasksByPkgNameAndType(String pkgName, TaskType type) {
-        List<Task> comTasks = TaskRepository.getInstance().getTasksByPkgName(getString(R.string.common_package_name));
-        for (int i = comTasks.size() - 1; i >= 0; i--) {
-            if (comTasks.get(i).getType() != type) {
-                comTasks.remove(i);
+        String commonPkgName = getString(R.string.common_package_name);
+        List<Task> tasks = TaskRepository.getInstance().getTasksByType(type);
+        for (int i = tasks.size() - 1; i >= 0; i--) {
+            Task task = tasks.get(i);
+            List<String> pkgNames = task.getPkgNames();
+            if (pkgNames == null || pkgNames.isEmpty()) {
+                tasks.remove(i);
+            } else {
+                // 包含通用再包含自己就是排除自己
+                if (pkgNames.contains(commonPkgName) && pkgNames.contains(pkgName)) tasks.remove(i);
             }
         }
-        if (pkgName != null && !"null".equals(pkgName)) {
-            List<Task> pkgTasks = TaskRepository.getInstance().getTasksByPkgName(pkgName);
-            for (int i = pkgTasks.size() - 1; i >= 0; i--) {
-                if (pkgTasks.get(i).getType() != type) {
-                    pkgTasks.remove(i);
-                }
-            }
-
-            if (comTasks.isEmpty()) comTasks.addAll(pkgTasks);
-            else {
-                for (Task pkgTask : pkgTasks) {
-                    for (Task comTask : comTasks) {
-                        if (!pkgTask.getId().equals(comTask.getId())) {
-                            comTasks.add(pkgTask);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return comTasks;
+        return tasks;
     }
 
     public void addWork(Task task) {

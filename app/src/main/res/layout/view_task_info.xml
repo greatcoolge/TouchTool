@@ -25,9 +25,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:backgroundTint="@color/background_error_tint_check"
+                app:backgroundTint="@color/button_outline_background_error_check"
                 app:icon="@drawable/icon_task_close"
-                app:iconTint="@color/container_tint_check" />
+                app:iconTint="@color/button_outline_container_check" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/manual_button"
@@ -87,13 +87,56 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/app_icon_box"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginHorizontal="4dp"
-                android:layout_weight="1"
-                android:orientation="horizontal" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/include_apps_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/include_apps" />
+
+                    <LinearLayout
+                        android:id="@+id/include_app_icon_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/exclude_app_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/exclude_apps_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/exclude_apps" />
+
+                    <LinearLayout
+                        android:id="@+id/exclude_app_icon_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/app_button"
@@ -105,9 +148,9 @@
                 android:checkable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                app:backgroundTint="@color/background_error_tint_check"
+                app:backgroundTint="@color/button_outline_background_error_check"
                 app:icon="@drawable/icon_action_task"
-                app:iconTint="@color/container_tint_check" />
+                app:iconTint="@color/button_outline_container_check" />
 
         </LinearLayout>
 
@@ -178,8 +221,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingBottom="80dp"
             android:clipToPadding="false"
+            android:paddingBottom="80dp"
             android:scrollbars="none"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:spanCount="2"

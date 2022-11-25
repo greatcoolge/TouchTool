@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,7 +11,6 @@ import android.os.PowerManager;
 import android.provider.Settings;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.tencent.mmkv.MMKV;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -20,11 +18,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import top.bogey.touch_tool.R;
-import top.bogey.touch_tool.ui.setting.SettingSave;
 
 public class AppUtils {
-    public static final String ACTION_TOUCH_OFFSET = "action_touch_offset";
-
     public static native MatchResult nativeMatchTemplate(Bitmap bitmap, Bitmap temp, int method);
 
     public static native List<MatchResult> nativeMatchColor(Bitmap bitmap, int[] hsvColor);
@@ -63,31 +58,6 @@ public class AppUtils {
         }
     }
 
-    public static boolean checkFloatPermission(Context context) {
-        try {
-            Method canDrawOverlays = Settings.class.getDeclaredMethod("canDrawOverlays", Context.class);
-            return Boolean.TRUE.equals(canDrawOverlays.invoke(null, context));
-        } catch (Exception ignored) {
-        }
-        return false;
-    }
-
-    public static String getIdentityCode(Object obj) {
-        return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
-    }
-
-    public static Point getFixedPosition(int x, int y) {
-        int offset = SettingSave.getInstance().getActionTouchOffset();
-        return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
-    }
-
-    public static void wakeScreen(Context context) {
-        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, context.getString(R.string.common_package_name));
-        wakeLock.acquire(100);
-        wakeLock.release();
-    }
-
     public static boolean isIgnoredBattery(Context context) {
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         return powerManager.isIgnoringBatteryOptimizations(context.getPackageName());
@@ -101,6 +71,22 @@ public class AppUtils {
             context.startActivity(intent);
         } catch (Exception ignored) {
         }
+    }
+
+    public static boolean checkFloatPermission(Context context) {
+        try {
+            Method canDrawOverlays = Settings.class.getDeclaredMethod("canDrawOverlays", Context.class);
+            return Boolean.TRUE.equals(canDrawOverlays.invoke(null, context));
+        } catch (Exception ignored) {
+        }
+        return false;
+    }
+
+    public static void wakeScreen(Context context) {
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, context.getString(R.string.common_package_name));
+        wakeLock.acquire(100);
+        wakeLock.release();
     }
 
     public static <T extends Parcelable> T copy(T input) {

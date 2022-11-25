@@ -19,7 +19,7 @@ import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
-import top.bogey.touch_tool.utils.AppUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class ImageAction extends Action {
@@ -76,7 +76,7 @@ public class ImageAction extends Action {
         if (rect == null) return false;
 
         Path path = new Path();
-        Point fixedPosition = AppUtils.getFixedPosition(rect.centerX(), rect.centerY());
+        Point fixedPosition = SettingSave.getInstance().getOffsetPosition(rect.centerX(), rect.centerY());
         path.moveTo(fixedPosition.x, fixedPosition.y);
         int time = getTimeArea().getRandomTime();
         service.runGesture(path, time, null);

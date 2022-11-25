@@ -33,7 +33,7 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/icon_folder"
-                app:iconTint="@color/container_tint_check" />
+                app:iconTint="@color/button_outline_container_check" />
 
         </LinearLayout>
 

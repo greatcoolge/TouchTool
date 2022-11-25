@@ -38,6 +38,10 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
+
         </activity>
 
         <service
@@ -72,9 +76,9 @@
 
         <service
             android:name=".ui.record.QuickRecordService"
-            android:exported="true"
             android:enabled="true"
-            android:icon="@drawable/icon_tile"
+            android:exported="true"
+            android:icon="@drawable/icon_record_smart"
             android:label="@string/setting_tile_quick_record"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
 

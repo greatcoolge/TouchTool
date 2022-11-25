@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -31,7 +30,6 @@ import top.bogey.touch_tool.database.bean.action.TaskAction;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewTaskInfoBehaviorBinding;
 import top.bogey.touch_tool.ui.task_info.TaskInfoView;
-import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRecyclerViewAdapter.ViewHolder> {
     private final TaskInfoView parent;
@@ -130,7 +128,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
                 int index = getBindingAdapterPosition();
                 Behavior behavior = behaviors.get(index);
                 behavior.setEnable(!behavior.isEnable());
-                setChecked(binding.enabledToggle, behavior.isEnable());
+                binding.enabledToggle.setChecked(behavior.isEnable());
                 saveTask();
             });
 
@@ -163,22 +161,9 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
             });
         }
 
-        @SuppressLint("PrivateResource")
-        private void setChecked(MaterialButton button, boolean checked) {
-            if (checked) {
-                button.setTextColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorOnPrimary, 0));
-                button.setBackgroundColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorPrimary, 0));
-                button.setRippleColorResource(com.google.android.material.R.color.m3_button_ripple_color_selector);
-            } else {
-                button.setTextColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, 0));
-                button.setBackgroundColor(DisplayUtils.getAttrColor(context, com.google.android.material.R.attr.colorSecondaryContainer, 0));
-                button.setRippleColorResource(com.google.android.material.R.color.m3_tonal_button_ripple_color_selector);
-            }
-        }
-
         public void refreshItem(Behavior behavior, int position) {
             binding.titleText.setText(behavior.getTitle(context, baseTask));
-            setChecked(binding.enabledToggle, behavior.isEnable());
+            binding.enabledToggle.setChecked(behavior.isEnable());
             binding.enabledToggle.setText(String.valueOf(position + 1));
             binding.modeImage.setImageResource(behavior.getBehaviorMode().getTypeResource());
         }

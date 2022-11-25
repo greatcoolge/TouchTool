@@ -21,7 +21,7 @@ public class BasePickerFloatView extends FrameLayout implements FloatViewInterfa
     public BasePickerFloatView(@NonNull Context context, PickerCallback pickerCallback) {
         super(context);
         this.pickerCallback = pickerCallback;
-        tag = AppUtils.getIdentityCode(this);
+        tag = this.getClass().getCanonicalName();
     }
 
     @Override

@@ -32,6 +32,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -277,36 +278,57 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
     }
 
     public void refreshApps() {
-        binding.appIconBox.postDelayed(() -> {
-            binding.appIconBox.removeAllViews();
+        binding.appBox.postDelayed(() -> {
+            binding.includeAppIconBox.removeAllViews();
+            binding.excludeAppIconBox.removeAllViews();
+            binding.excludeAppBox.setVisibility(View.GONE);
+
             List<String> pkgNames = task.getPkgNames();
             binding.appButton.setChecked(pkgNames == null || pkgNames.isEmpty());
+            if (pkgNames == null || pkgNames.isEmpty()) return;
 
-            if (pkgNames == null) return;
+            PackageManager manager = requireContext().getPackageManager();
+            String commonPkgName = getString(R.string.common_package_name);
+            boolean includeCommon = pkgNames.contains(commonPkgName);
 
-            int boxWidth = binding.appIconBox.getWidth();
+            LinearLayout appIconBox = binding.includeAppIconBox;
+            if (includeCommon) {
+                Drawable drawable = requireContext().getApplicationInfo().loadIcon(manager);
+                ShapeableImageView imageView = (ShapeableImageView) LayoutInflater.from(requireContext()).inflate(R.layout.view_task_info_app, binding.includeAppIconBox, false);
+                imageView.setImageDrawable(drawable);
+                appIconBox.addView(imageView);
+
+                appIconBox = binding.excludeAppIconBox;
+                if (pkgNames.size() == 1) return;
+                binding.excludeAppBox.setVisibility(View.VISIBLE);
+            }
+
             int iconSize = DisplayUtils.dp2px(requireContext(), 32);
+            int buttonSize = DisplayUtils.dp2px(requireContext(), 40);
+            int boxWidth;
+            if (includeCommon) {
+                boxWidth = binding.appBox.getWidth() - binding.includeAppsText.getWidth() - binding.excludeAppsText.getWidth() - buttonSize - iconSize;
+            } else {
+                boxWidth = binding.appBox.getWidth() - binding.includeAppsText.getWidth() - buttonSize;
+            }
             float margin = 0;
             if (iconSize * pkgNames.size() > boxWidth) margin = (boxWidth - iconSize * pkgNames.size()) * 1f / (pkgNames.size() - 1);
 
-            PackageManager manager = requireContext().getPackageManager();
-            for (String pkgName : pkgNames) {
+            ArrayList<String> arrayList = new ArrayList<>(pkgNames);
+            arrayList.remove(commonPkgName);
+
+            for (String pkgName : arrayList) {
                 AppInfo info = viewModel.getAppInfoByPkgName(pkgName);
                 if (info != null){
-                    Drawable drawable;
-                    if (info.packageName.equals(requireContext().getString(R.string.common_package_name))) {
-                        drawable = requireContext().getApplicationInfo().loadIcon(manager);
-                    } else {
-                        drawable = info.info.applicationInfo.loadIcon(manager);
-                    }
-                    ShapeableImageView imageView = (ShapeableImageView) LayoutInflater.from(requireContext()).inflate(R.layout.view_task_info_app, binding.appIconBox, false);
+                    Drawable drawable = info.info.applicationInfo.loadIcon(manager);
+                    ShapeableImageView imageView = (ShapeableImageView) LayoutInflater.from(requireContext()).inflate(R.layout.view_task_info_app, appIconBox, false);
                     imageView.setImageDrawable(drawable);
-                    if (pkgNames.indexOf(pkgName) != 0){
+                    if (arrayList.indexOf(pkgName) != 0){
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                         params.setMargins((int) Math.floor(margin), 0, 0, 0);
                         imageView.setLayoutParams(params);
                     }
-                    binding.appIconBox.addView(imageView);
+                    appIconBox.addView(imageView);
                 }
             }
         }, 100);

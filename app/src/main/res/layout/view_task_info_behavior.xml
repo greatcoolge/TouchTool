@@ -22,9 +22,12 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
+                android:backgroundTint="@color/button_background_check"
+                android:checkable="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:padding="0dp" />
+                android:padding="0dp"
+                android:textColor="@color/button_container_check" />
 
             <FrameLayout
                 android:layout_width="0dp"

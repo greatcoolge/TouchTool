@@ -29,7 +29,6 @@ import top.bogey.touch_tool.utils.easy_float.FloatViewInterface;
 
 @SuppressLint("ViewConstructor")
 public class QuickRecordFloatView extends FrameLayout implements FloatViewInterface {
-    private final FloatQuickRecordBinding binding;
     private final List<Behavior> behaviors = new ArrayList<>();
     private final Paint paint;
     private final int[] location = new int[2];
@@ -40,7 +39,7 @@ public class QuickRecordFloatView extends FrameLayout implements FloatViewInterf
 
     public QuickRecordFloatView(Context context, List<Behavior> baseBehaviors, ResultCallback callback) {
         super(context);
-        binding = FloatQuickRecordBinding.inflate(LayoutInflater.from(getContext()), this, true);
+        FloatQuickRecordBinding binding = FloatQuickRecordBinding.inflate(LayoutInflater.from(getContext()), this, true);
 
         binding.saveButton.setOnClickListener(v -> {
             baseBehaviors.addAll(behaviors);

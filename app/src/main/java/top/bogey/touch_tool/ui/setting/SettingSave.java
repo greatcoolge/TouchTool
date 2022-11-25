@@ -3,6 +3,7 @@ package top.bogey.touch_tool.ui.setting;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -124,6 +125,11 @@ public class SettingSave {
 
     public int getActionTouchOffset() {
         return settingMMKV.decodeInt(ACTION_TOUCH_OFFSET, 10);
+    }
+
+    public Point getOffsetPosition(int x, int y) {
+        int offset = getActionTouchOffset();
+        return new Point((int) (Math.random() * offset * 2 + x - offset), (int) (Math.random() * offset * 2 + y - offset));
     }
 
     public void setActionTouchOffset(int offset) {

@@ -17,7 +17,7 @@ import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
-import top.bogey.touch_tool.utils.AppUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 import top.bogey.touch_tool.utils.DisplayUtils;
 import top.bogey.touch_tool.utils.easy_float.FloatGravity;
 
@@ -201,7 +201,7 @@ public class TouchAction extends Action {
         public Path getPath(boolean fixed) {
             Path tmp = null;
             for (Point point : points) {
-                if (fixed) point = AppUtils.getFixedPosition(point.x, point.y);
+                if (fixed) point = SettingSave.getInstance().getOffsetPosition(point.x, point.y);
                 if (tmp == null) {
                     tmp = new Path();
                     tmp.moveTo(Math.max(point.x, 0), Math.max(point.y, 0));

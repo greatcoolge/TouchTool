@@ -4,6 +4,6 @@
     android:layout_width="32dp"
     android:layout_height="32dp"
     android:padding="0.25dp"
-    app:strokeColor="?attr/colorOutline"
     app:shapeAppearanceOverlay="@style/Theme.TouchTool.ShapeAppearance.Corner.Full"
+    app:strokeColor="?attr/colorOutline"
     app:strokeWidth="0.75dp" />

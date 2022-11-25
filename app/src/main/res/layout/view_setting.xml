@@ -281,8 +281,8 @@
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
                                     android:text="@string/setting_oversee_close"
-                                    android:textColor="@color/container_tint_check"
-                                    app:backgroundTint="@color/background_tint_check"
+                                    android:textColor="@color/button_outline_container_check"
+                                    app:backgroundTint="@color/button_outline_background_check"
                                     app:strokeWidth="0.75dp" />
 
                                 <com.google.android.material.button.MaterialButton
@@ -293,8 +293,8 @@
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
                                     android:text="@string/setting_oversee_across_app"
-                                    android:textColor="@color/container_tint_check"
-                                    app:backgroundTint="@color/background_tint_check"
+                                    android:textColor="@color/button_outline_container_check"
+                                    app:backgroundTint="@color/button_outline_background_check"
                                     app:strokeWidth="0.75dp" />
 
                                 <com.google.android.material.button.MaterialButton
@@ -305,8 +305,8 @@
                                     android:layout_weight="1"
                                     android:paddingHorizontal="0dp"
                                     android:text="@string/setting_oversee_not_manual"
-                                    android:textColor="@color/container_tint_check"
-                                    app:backgroundTint="@color/background_tint_check"
+                                    android:textColor="@color/button_outline_container_check"
+                                    app:backgroundTint="@color/button_outline_background_check"
                                     app:strokeWidth="0.75dp" />
 
                             </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -464,8 +464,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="@string/setting_night_auto"
-                                    android:textColor="@color/container_tint_check"
-                                    app:backgroundTint="@color/background_tint_check"
+                                    android:textColor="@color/button_outline_container_check"
+                                    app:backgroundTint="@color/button_outline_background_check"
                                     app:strokeWidth="0.75dp" />
 
                                 <com.google.android.material.button.MaterialButton
@@ -475,8 +475,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="@string/setting_night_open"
-                                    android:textColor="@color/container_tint_check"
-                                    app:backgroundTint="@color/background_tint_check"
+                                    android:textColor="@color/button_outline_container_check"
+                                    app:backgroundTint="@color/button_outline_background_check"
                                     app:strokeWidth="0.75dp" />
 
                                 <com.google.android.material.button.MaterialButton
@@ -486,8 +486,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="@string/setting_night_close"
-                                    android:textColor="@color/container_tint_check"
-                                    app:backgroundTint="@color/background_tint_check"
+                                    android:textColor="@color/button_outline_container_check"
+                                    app:backgroundTint="@color/button_outline_background_check"
                                     app:strokeWidth="0.75dp" />
 
                             </com.google.android.material.button.MaterialButtonToggleGroup>

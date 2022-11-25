@@ -15,7 +15,7 @@ import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
 import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.data.TaskRunningInfo;
-import top.bogey.touch_tool.utils.AppUtils;
+import top.bogey.touch_tool.ui.setting.SettingSave;
 import top.bogey.touch_tool.utils.DisplayUtils;
 
 public class ColorAction extends Action {
@@ -80,7 +80,7 @@ public class ColorAction extends Action {
 
         for (Rect rect : rectList) {
             Path path = new Path();
-            Point fixedPosition = AppUtils.getFixedPosition(rect.centerX(), rect.centerY());
+            Point fixedPosition = SettingSave.getInstance().getOffsetPosition(rect.centerX(), rect.centerY());
             path.moveTo(Math.max(fixedPosition.x, 0), Math.max(fixedPosition.y, 0));
             service.runGesture(path, 100, null);
             sleep(getTimeArea().getRandomTime());

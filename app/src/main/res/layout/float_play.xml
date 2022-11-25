@@ -15,6 +15,7 @@
             android:id="@+id/button_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity=""
             android:orientation="vertical" />
 
         <com.google.android.material.button.MaterialButton

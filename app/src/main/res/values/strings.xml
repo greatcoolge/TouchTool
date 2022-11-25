@@ -101,13 +101,16 @@
 
     <string name="time_condition_start_time">于%1$s开始执行</string>
     <string name="time_condition_periodic">，间隔%1$s</string>
-    <string name="time_condition_periodic_tips">小于15分钟为取消间隔，00:00点为间隔24小时</string>
+    <string name="time_condition_periodic_tips">小于15分钟为取消间隔，00:00为间隔24小时</string>
 
     <string name="notification_condition_tips">通知内包含的文本</string>
     <string name="notification_condition_des">通知内包含文本 %1$s 时执行</string>
 
     <string name="normal_task">普通任务</string>
     <string name="across_app_task">跨应用任务</string>
+
+    <string name="include_apps">关联：</string>
+    <string name="exclude_apps">排除：</string>
 
     <!-- 行为 -->
     <string name="behavior_mode_condition">条件</string>
@@ -201,7 +204,8 @@
     <string name="search_apps">搜索应用</string>
 
     <!-- 设置 -->
-    <string name="setting_tile_quick_record">快速录制</string>
+    <string name="setting_tile_quick_record">录制-点击助手</string>
+    <string name="setting_tile_quick_record_normal">快速录制</string>
 
     <string name="setting_app_config">应用设置</string>
     <string name="setting_keep_alive">前台服务</string>

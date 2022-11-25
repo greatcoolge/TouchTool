@@ -7,6 +7,7 @@ import android.view.View;
 
 import top.bogey.touch_tool.MainActivity;
 import top.bogey.touch_tool.MainApplication;
+import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.utils.easy_float.EasyFloat;
 
 public class QuickRecordService extends TileService {
@@ -41,6 +42,7 @@ public class QuickRecordService extends TileService {
         super.onStartListening();
         Tile tile = getQsTile();
         if (tile == null) return;
+        tile.setLabel(getString(R.string.setting_tile_quick_record_normal));
         View view = EasyFloat.getView(RecordFloatView.class.getCanonicalName());
         tile.setState(view == null ? Tile.STATE_INACTIVE : Tile.STATE_ACTIVE);
         tile.updateTile();
