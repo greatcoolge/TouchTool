@@ -42,9 +42,14 @@ public class TaskRunnable implements Runnable {
     }
 
     public void stop(boolean force) {
-        if (force) runningInfo.setRunning(task, false);
-        else if (task.isAcrossAppTask()) runningInfo.setRunning(task, true);
-        runningInfo.setRunning(task, false);
+        if (!runningInfo.isRunning(task)) {
+            runningInfo.onEnd(this, false);
+            return;
+        }
+
+        boolean running = task.isAcrossAppTask();
+        if (force) running = false;
+        runningInfo.setRunning(task, running);
     }
 
     public boolean isRunning() {
@@ -61,6 +66,7 @@ public class TaskRunnable implements Runnable {
             e.printStackTrace();
             LogUtils.log(LogLevel.HIGH, e.toString());
         } finally {
+            runningInfo.setRunning(task, false);
             runningInfo.onEnd(this, result);
             LogUtils.run(service, task, runningInfo.getPkgName(), result);
         }
@@ -83,6 +89,7 @@ public class TaskRunnable implements Runnable {
             List<Action> actions = runBehavior.getActions();
             // 条件换成新对象，防止重入
             Action condition = AppUtils.copy(runBehavior.getCondition());
+            int start;
             switch (runBehavior.getBehaviorMode()) {
 
                 case CONDITION:
@@ -104,6 +111,7 @@ public class TaskRunnable implements Runnable {
 
                 case LOOP:
                     int finishTimes = 0;
+                    start = runningInfo.getProgress();
                     while (finishTimes < runBehavior.getTimes()) {
                         if (!(runningInfo.isRunning(baseTask) && runningInfo.isRunning(task))) return false;
 
@@ -115,8 +123,10 @@ public class TaskRunnable implements Runnable {
                             if (condition.getType() == ActionType.NUMBER) {
                                 ((NumberAction) condition).addCurrNum(flag);
                             }
-                            if (condition.getType() != ActionType.NULL && condition.checkCondition(service))
+                            if (condition.getType() != ActionType.NULL && condition.checkCondition(service)) {
+                                runningInfo.jumpProgress(start, baseTask, actions, runBehavior.getTimes());
                                 break;
+                            }
                         }
                         finishTimes++;
                     }
@@ -129,7 +139,7 @@ public class TaskRunnable implements Runnable {
 
                 case PARALLEL:
                     if (condition.getType() == ActionType.NUMBER) {
-                        int start = runningInfo.getProgress();
+                        start = runningInfo.getProgress();
                         NumberAction numberAction = (NumberAction) condition;
                         CountDownLatch latch = new CountDownLatch(1);
                         Behavior finalRunBehavior = runBehavior;
@@ -147,17 +157,17 @@ public class TaskRunnable implements Runnable {
                             // 等待10分钟
                             result = latch.await(10, TimeUnit.MINUTES);
                             if (!result) LogUtils.log(LogLevel.LOW, service.getString(R.string.log_run_behavior_condition_fail, condition.getConditionContent(service, baseTask, runBehavior), task.getTitle()));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } finally {
                             actionList.forEach(action -> {
                                 if (action.getType() == ActionType.TASK) {
                                     Task subTask = ((TaskAction) action).getSubTask();
                                     if (subTask != null) runningInfo.setRunning(subTask, false);
                                 }
                             });
-
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            runningInfo.jumpProgress(start, baseTask, actions);
                         }
-                        runningInfo.jumpProgress(start, baseTask, actions);
                     }
                     break;
             }

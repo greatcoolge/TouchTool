@@ -319,7 +319,14 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public void stopTask(TaskRunnable runnable, boolean force) {
+        if (runnable == null) return;
         runnable.stop(force);
+        if (force && !runnable.isRunning()) {
+            synchronized (taskRunnableList) {
+                taskRunnableList.remove(runnable);
+
+            }
+        }
     }
 
     public void stopTaskByType(TaskType type, boolean force) {
@@ -343,8 +350,11 @@ public class MainAccessibilityService extends AccessibilityService {
             if (pkgNames == null || pkgNames.isEmpty()) {
                 tasks.remove(i);
             } else {
-                // 包含通用再包含自己就是排除自己
-                if (pkgNames.contains(commonPkgName) && pkgNames.contains(pkgName)) tasks.remove(i);
+                if (pkgNames.contains(commonPkgName) || pkgNames.contains(pkgName)) {
+                    if (pkgNames.contains(commonPkgName) && pkgNames.contains(pkgName)) {
+                        tasks.remove(i);
+                    }
+                } else tasks.remove(i);
             }
         }
         return tasks;
@@ -363,9 +373,15 @@ public class MainAccessibilityService extends AccessibilityService {
             String startTime = getString(R.string.date, AppUtils.formatDateLocalDate(this, timeCondition.getStartTime()), AppUtils.formatDateLocalTime(this, timeCondition.getStartTime()));
             startTime = getString(R.string.time_condition_start_time, startTime);
             if (timeCondition.getPeriodic() > 0) {
+                long nextStartTime = getNextStartTime(timeCondition.getStartTime(), (long) timeCondition.getPeriodic() * 60 * 1000);
+                startTime = getString(R.string.date, AppUtils.formatDateLocalDate(this, nextStartTime), AppUtils.formatDateLocalTime(this, nextStartTime));
+
+                final int flexInterval = 5;
+                // 带间隔的定时任务需要在初始的时间在间隔前
+                long initDelay = nextStartTime - timeMillis - (long) (timeCondition.getPeriodic() - flexInterval) * 60 * 1000;
                 // 尽量小延迟的执行间隔任务
-                PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(TaskWorker.class, timeCondition.getPeriodic(), TimeUnit.MINUTES, 5, TimeUnit.MINUTES)
-                        .setInitialDelay(timeCondition.getStartTime() - timeMillis, TimeUnit.MILLISECONDS)
+                PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(TaskWorker.class, timeCondition.getPeriodic(), TimeUnit.MINUTES, flexInterval, TimeUnit.MINUTES)
+                        .setInitialDelay(initDelay, TimeUnit.MILLISECONDS)
                         .setInputData(new Data.Builder()
                                 .putString("id", task.getId())
                                 .build())
@@ -388,6 +404,14 @@ public class MainAccessibilityService extends AccessibilityService {
                 removeWork(task);
             }
         }
+    }
+
+    private long getNextStartTime(long startTime, long periodic) {
+        long currTime = System.currentTimeMillis();
+        long l = currTime - startTime;
+        if (l < 0) return startTime;
+        int loop = (int) Math.ceil(l * 1f / periodic);
+        return startTime + loop * periodic;
     }
 
     public void removeWork(Task task) {

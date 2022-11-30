@@ -120,9 +120,13 @@ public class WordPickerTreeAdapter extends TreeViewAdapter {
             String resourceName = node.getViewIdResourceName();
             if (resourceName != null && !resourceName.isEmpty()) {
                 String[] split = resourceName.split(":");
-                builder.append(" [ ");
-                builder.append(split[1]);
-                builder.append(" ]");
+                if (split.length > 1) {
+                    builder.append(" [ ");
+                    builder.append(split[1]);
+                    builder.append(" ]");
+                } else {
+                    builder.append(resourceName);
+                }
             }
 
             return builder.toString();

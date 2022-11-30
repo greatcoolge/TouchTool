@@ -126,6 +126,11 @@ public class Task implements Parcelable {
         behaviors.add(behavior);
     }
 
+    public void addBehavior(int index, Behavior behavior) {
+        if (behaviors == null) behaviors = new ArrayList<>();
+        behaviors.add(index, behavior);
+    }
+
     public List<Task> getSafeSubTasks(String id) {
         if (subTasks == null || subTasks.isEmpty()) return null;
         List<Task> tasks = new ArrayList<>();
@@ -254,10 +259,6 @@ public class Task implements Parcelable {
 
     public List<Task> getSubTasks() {
         return subTasks;
-    }
-
-    public void setSubTasks(List<Task> subTasks) {
-        this.subTasks = subTasks;
     }
 
     @Override

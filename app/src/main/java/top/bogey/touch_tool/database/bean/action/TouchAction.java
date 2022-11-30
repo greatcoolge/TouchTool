@@ -62,7 +62,10 @@ public class TouchAction extends Action {
     }
 
     public int getPathLen() {
-        return paths.size();
+        for (TouchPath path : paths) {
+            if (path.getPoints().size() > 2) return path.getPoints().size();
+        }
+        return paths.size() > 0 ? 1 : 0;
     }
 
     public List<TouchPath> getPaths(Context context) {

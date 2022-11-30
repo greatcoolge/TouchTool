@@ -3,6 +3,7 @@ package top.bogey.touch_tool.database.bean.action;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -98,12 +99,10 @@ public class SystemAction extends Action {
                 else result = false;
                 break;
             case CLOSE_CAPTURE:
-                service.stopCaptureService();
+                new Handler(Looper.getMainLooper()).post(service::stopCaptureService);
                 break;
             case TOAST:
-                Looper.prepare();
-                Toast.makeText(service, extras, Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(service, extras, Toast.LENGTH_SHORT).show());
                 break;
         }
         sleep(timeArea.getRandomTime());

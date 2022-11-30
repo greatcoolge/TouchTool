@@ -35,6 +35,7 @@ public class PlayFloatViewItem extends FrameLayout implements TaskRunningCallbac
 
     public PlayFloatViewItem(Context context, TaskRunnable runnable) {
         super(context);
+        this.runnable = runnable;
         task = runnable.getTask();
         isOversee = true;
 
@@ -75,6 +76,14 @@ public class PlayFloatViewItem extends FrameLayout implements TaskRunningCallbac
             } else {
                 startPlay();
             }
+        });
+
+        binding.playButton.setOnLongClickListener(v -> {
+            MainAccessibilityService service = MainApplication.getService();
+            if (service != null && !service.isCaptureEnabled()) {
+                service.stopTask(runnable, true);
+            }
+            return true;
         });
 
         refreshProgress(0);

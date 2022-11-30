@@ -66,6 +66,15 @@ public class TaskRunningInfo implements TaskRunningCallback {
         }
     }
 
+    public void jumpProgress(int start, Task baseTask, List<Action> actions, int times) {
+        progress = start;
+        for (int i = 0; i < times; i++) {
+            for (Action action : actions) {
+                addProgress(baseTask, action, true);
+            }
+        }
+    }
+
     public int getTaskPercent() {
         return progress * 100 / maxProgress;
     }

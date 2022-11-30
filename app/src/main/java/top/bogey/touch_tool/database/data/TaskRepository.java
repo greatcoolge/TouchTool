@@ -65,11 +65,6 @@ public class TaskRepository {
         }
     }
 
-    public List<Task> getAllTasks(TaskChangedCallback callback) {
-        addCallback(callback);
-        return getAllTasks();
-    }
-
     public List<Task> getTasksByTag(String tag) {
         List<Task> tasks = new ArrayList<>();
         String[] keys = configMMKV.allKeys();

@@ -232,9 +232,11 @@ public class MainActivity extends AppCompatActivity {
         if (tasks != null) {
             for (Task task : tasks) {
                 List<String> taskPkgNames = new ArrayList<>();
-                for (String pkgName : task.getPkgNames()) {
-                    if (pkgNames.contains(pkgName)) {
-                        taskPkgNames.add(pkgName);
+                if (task.getPkgNames() != null) {
+                    for (String pkgName : task.getPkgNames()) {
+                        if (pkgNames.contains(pkgName)) {
+                            taskPkgNames.add(pkgName);
+                        }
                     }
                 }
                 task.setPkgNames(taskPkgNames);

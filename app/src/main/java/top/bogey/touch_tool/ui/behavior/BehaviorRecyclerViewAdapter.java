@@ -83,6 +83,14 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
         checkTaskAction(behavior);
     }
 
+    public void addBehavior(int index, Behavior behavior) {
+        currTask.addBehavior(index, behavior);
+        notifyItemInserted(index);
+        notifyItemRangeChanged(index + 1, behaviors.size() - index - 1);
+        saveTask();
+        checkTaskAction(behavior);
+    }
+
     public Behavior removeBehavior(int index) {
         Behavior behavior = behaviors.remove(index);
         notifyItemRemoved(index);
@@ -207,7 +215,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
             int index = viewHolder.getBindingAdapterPosition();
             Behavior behavior = adapter.removeBehavior(index);
             Snackbar.make(adapter.parent.requireView(), R.string.behavior_delete_tips, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.behavior_delete_reset, v -> adapter.addBehavior(behavior))
+                    .setAction(R.string.behavior_delete_reset, v -> adapter.addBehavior(index, behavior))
                     .show();
         }
     }

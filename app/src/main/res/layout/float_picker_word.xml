@@ -87,9 +87,11 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="600dp"
+        android:alpha="0.2"
         app:behavior_hideable="false"
         app:behavior_peekHeight="32dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
