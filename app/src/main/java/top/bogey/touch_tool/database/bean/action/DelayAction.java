@@ -2,6 +2,8 @@ package top.bogey.touch_tool.database.bean.action;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;

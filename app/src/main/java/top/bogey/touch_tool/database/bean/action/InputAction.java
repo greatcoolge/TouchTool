@@ -133,4 +133,24 @@ public class InputAction extends Action {
     public void setText(String text) {
         this.text = text;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        InputAction that = (InputAction) o;
+
+        if (!id.equals(that.id)) return false;
+        return text.equals(that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + id.hashCode();
+        result = 31 * result + text.hashCode();
+        return result;
+    }
 }

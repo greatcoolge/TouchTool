@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
@@ -154,6 +155,32 @@ public class TouchAction extends Action {
         dest.writeByte((byte) (touchOffset ? 1 : 0));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        TouchAction action = (TouchAction) o;
+
+        if (screen != action.screen) return false;
+        if (touchOffset != action.touchOffset) return false;
+        if (gravity != action.gravity) return false;
+        if (!offset.equals(action.offset)) return false;
+        return Objects.equals(paths, action.paths);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + screen;
+        result = 31 * result + gravity.hashCode();
+        result = 31 * result + offset.hashCode();
+        result = 31 * result + (paths != null ? paths.hashCode() : 0);
+        result = 31 * result + (touchOffset ? 1 : 0);
+        return result;
+    }
+
     public static class TouchPath implements Parcelable {
         private transient int pointerId = -1;
         private List<Point> points = new ArrayList<>();
@@ -239,6 +266,21 @@ public class TouchAction extends Action {
 
         public void setPoints(List<Point> points) {
             this.points = points;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TouchPath path = (TouchPath) o;
+
+            return points.equals(path.points);
+        }
+
+        @Override
+        public int hashCode() {
+            return points.hashCode();
         }
     }
 }

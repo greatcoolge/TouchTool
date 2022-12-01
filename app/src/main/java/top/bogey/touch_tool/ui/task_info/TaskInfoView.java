@@ -103,6 +103,7 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
             if (isChecked) {
                 int index = group.indexOfChild(group.findViewById(checkedId));
                 TaskType taskType = TaskType.values()[index];
+                if (taskType == task.getType()) return;
                 task.setType(taskType);
                 TaskRepository.getInstance().saveTask(task);
                 if (actionBar != null) {
@@ -261,6 +262,8 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
             List<String> pkgNames = task.getPkgNames();
             binding.appButton.setChecked(pkgNames == null || pkgNames.isEmpty());
         });
+
+        refreshUI();
 
         return binding.getRoot();
     }

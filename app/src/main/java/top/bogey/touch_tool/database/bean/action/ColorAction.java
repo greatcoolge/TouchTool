@@ -8,6 +8,7 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 import top.bogey.touch_tool.MainAccessibilityService;
@@ -139,5 +140,29 @@ public class ColorAction extends Action {
 
     public int getMaxsize(Context context) {
         return (int) (getSize(context) * maxPercent / 100f);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ColorAction that = (ColorAction) o;
+
+        if (screen != that.screen) return false;
+        if (minPercent != that.minPercent) return false;
+        if (maxPercent != that.maxPercent) return false;
+        if (size != that.size) return false;
+        return Arrays.equals(color, that.color);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = screen;
+        result = 31 * result + Arrays.hashCode(color);
+        result = 31 * result + minPercent;
+        result = 31 * result + maxPercent;
+        result = 31 * result + size;
+        return result;
     }
 }

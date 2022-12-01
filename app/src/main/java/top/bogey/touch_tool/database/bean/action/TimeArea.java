@@ -79,4 +79,22 @@ public class TimeArea implements Parcelable {
         dest.writeInt(min);
         dest.writeInt(max);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeArea timeArea = (TimeArea) o;
+
+        if (min != timeArea.min) return false;
+        return max == timeArea.max;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = min;
+        result = 31 * result + max;
+        return result;
+    }
 }

@@ -121,7 +121,7 @@ public class TaskRepository {
         Task originTask = getTaskById(task.getId());
 
         // 内容完全一致就不保存了
-        if (AppUtils.equals(task, originTask)) return;
+        if (Objects.equals(task, originTask)) return;
 
         // 如果与时间相关的值不相等，尝试更新定时任务
         if (originTask == null || !(task.getType() == originTask.getType() && Objects.equals(task.getCondition(), originTask.getCondition()))) {

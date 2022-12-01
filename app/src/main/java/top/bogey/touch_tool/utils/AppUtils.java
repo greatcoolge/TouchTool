@@ -102,22 +102,6 @@ public class AppUtils {
         }
     }
 
-    public static <T extends Parcelable> boolean equals(T a, T b) {
-        Parcel aParcel = null, bParcel = null;
-        try {
-            aParcel = Parcel.obtain();
-            aParcel.writeParcelable(a, 0);
-            byte[] aMarshall = aParcel.marshall();
-            bParcel = Parcel.obtain();
-            bParcel.writeParcelable(b, 0);
-            byte[] bMarshall = bParcel.marshall();
-            return Arrays.equals(aMarshall, bMarshall);
-        } finally {
-            if (aParcel != null) aParcel.recycle();
-            if (bParcel != null) bParcel.recycle();
-        }
-    }
-
     public static String formatDateLocalDate(Context context, long dateTime) {
         Calendar timeCalendar = Calendar.getInstance();
         timeCalendar.setTimeInMillis(dateTime);

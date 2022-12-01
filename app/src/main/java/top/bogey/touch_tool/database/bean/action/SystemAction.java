@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.Objects;
+
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
@@ -136,6 +138,26 @@ public class SystemAction extends Action {
 
     public void setExtras(String extras) {
         this.extras = extras;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SystemAction that = (SystemAction) o;
+
+        if (systemActionType != that.systemActionType) return false;
+        return Objects.equals(extras, that.extras);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + systemActionType.hashCode();
+        result = 31 * result + (extras != null ? extras.hashCode() : 0);
+        return result;
     }
 
     public enum SystemActionType implements Parcelable {

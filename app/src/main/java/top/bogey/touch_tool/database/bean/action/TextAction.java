@@ -187,4 +187,22 @@ public class TextAction extends Action {
     public void setText(String text) {
         this.text = text;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        TextAction that = (TextAction) o;
+
+        return text.equals(that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + text.hashCode();
+        return result;
+    }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.action.Action;
@@ -192,5 +193,33 @@ public class Behavior implements Parcelable {
         else dest.writeInt(1);
 
         dest.writeString(title);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Behavior behavior = (Behavior) o;
+
+        if (enable != behavior.enable) return false;
+        if (times != behavior.times) return false;
+        if (behaviorMode != behavior.behaviorMode) return false;
+        if (!Objects.equals(actions, behavior.actions))
+            return false;
+        if (!Objects.equals(condition, behavior.condition))
+            return false;
+        return Objects.equals(title, behavior.title);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = behaviorMode.hashCode();
+        result = 31 * result + (enable ? 1 : 0);
+        result = 31 * result + (actions != null ? actions.hashCode() : 0);
+        result = 31 * result + (condition != null ? condition.hashCode() : 0);
+        result = 31 * result + times;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        return result;
     }
 }

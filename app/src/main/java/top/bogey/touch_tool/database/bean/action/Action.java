@@ -128,4 +128,22 @@ public abstract class Action implements Parcelable {
         dest.writeParcelable(type, flags);
         dest.writeParcelable(timeArea, flags);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Action action = (Action) o;
+
+        if (type != action.type) return false;
+        return timeArea.equals(action.timeArea);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + timeArea.hashCode();
+        return result;
+    }
 }

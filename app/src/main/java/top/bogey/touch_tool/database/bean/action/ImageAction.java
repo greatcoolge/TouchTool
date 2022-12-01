@@ -13,6 +13,7 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Objects;
 
 import top.bogey.touch_tool.MainAccessibilityService;
 import top.bogey.touch_tool.R;
@@ -165,5 +166,29 @@ public class ImageAction extends Action {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        ImageAction that = (ImageAction) o;
+
+        if (Float.compare(that.scale, scale) != 0) return false;
+        if (screen != that.screen) return false;
+        if (value != that.value) return false;
+        return Objects.equals(image, that.image);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (scale != +0.0f ? Float.floatToIntBits(scale) : 0);
+        result = 31 * result + screen;
+        result = 31 * result + (image != null ? image.hashCode() : 0);
+        result = 31 * result + value;
+        return result;
     }
 }

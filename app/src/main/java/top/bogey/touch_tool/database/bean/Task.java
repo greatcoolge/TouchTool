@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import top.bogey.touch_tool.R;
@@ -284,5 +285,40 @@ public class Task implements Parcelable {
         else dest.writeParcelable(null, flags);
 
         dest.writeTypedList(subTasks);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        if (acrossApp != task.acrossApp) return false;
+        if (length != task.length) return false;
+        if (!id.equals(task.id)) return false;
+        if (type != task.type) return false;
+        if (!title.equals(task.title)) return false;
+        if (!Objects.equals(pkgNames, task.pkgNames))
+            return false;
+        if (!Objects.equals(behaviors, task.behaviors))
+            return false;
+        if (!Objects.equals(condition, task.condition))
+            return false;
+        return Objects.equals(subTasks, task.subTasks);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + type.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + (acrossApp ? 1 : 0);
+        result = 31 * result + (pkgNames != null ? pkgNames.hashCode() : 0);
+        result = 31 * result + (behaviors != null ? behaviors.hashCode() : 0);
+        result = 31 * result + (condition != null ? condition.hashCode() : 0);
+        result = 31 * result + (subTasks != null ? subTasks.hashCode() : 0);
+        result = 31 * result + length;
+        return result;
     }
 }
