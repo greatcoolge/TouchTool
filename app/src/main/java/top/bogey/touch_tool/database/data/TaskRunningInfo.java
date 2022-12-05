@@ -32,8 +32,8 @@ public class TaskRunningInfo implements TaskRunningCallback {
         return pkgName;
     }
 
-    public Boolean hasRunning(Task task) {
-        return runningState.get(task);
+    public boolean hasRunning(Task task) {
+        return Boolean.TRUE.equals(runningState.get(task));
     }
 
     public boolean isRunning(Task task) {
@@ -41,8 +41,9 @@ public class TaskRunningInfo implements TaskRunningCallback {
     }
 
     public void setRunning(Task task, boolean running) {
-        Boolean hasRunning = hasRunning(task);
-        if (hasRunning == null || Boolean.TRUE.equals(hasRunning)) {
+        if (task == null) return;
+        boolean hasRunning = hasRunning(task);
+        if (hasRunning) {
             runningState.put(task, running);
         }
     }

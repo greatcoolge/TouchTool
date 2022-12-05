@@ -2,12 +2,18 @@ package top.bogey.touch_tool;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+
 import com.tencent.mmkv.MMKV;
 
+import java.util.Arrays;
+
 import top.bogey.touch_tool.ui.setting.KeepAliveService;
+import top.bogey.touch_tool.ui.setting.LogLevel;
+import top.bogey.touch_tool.ui.setting.LogUtils;
 import top.bogey.touch_tool.ui.setting.SettingSave;
 
-public class MainApplication extends Application {
+public class MainApplication extends Application implements Thread.UncaughtExceptionHandler {
     private static MainActivity activity;
     private static MainAccessibilityService service;
 
@@ -18,6 +24,7 @@ public class MainApplication extends Application {
         super.onCreate();
         MMKV.initialize(this);
         SettingSave.getInstance().setDynamicColor(this, SettingSave.getInstance().isDynamicColor());
+        Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     public static MainActivity getActivity() {
@@ -42,5 +49,12 @@ public class MainApplication extends Application {
 
     public static void setAliveService(KeepAliveService aliveService) {
         MainApplication.aliveService = aliveService;
+    }
+
+    @Override
+    public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+        LogUtils.log(LogLevel.HIGH, e + "\n" + Arrays.toString(e.getStackTrace()));
+        e.printStackTrace();
+        System.exit(996);
     }
 }

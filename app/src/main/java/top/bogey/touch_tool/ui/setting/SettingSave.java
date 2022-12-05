@@ -41,6 +41,8 @@ public class SettingSave {
     private final static String NIGHT_MODE = "NIGHT_MODE";
     private final static String DYNAMIC_COLOR = "DYNAMIC_COLOR";
 
+    private final static String PLAY_VIEW_STATE = "PLAY_VIEW_STATE";
+
     private static SettingSave settingSave;
 
     private boolean isAppliedDynamicColor = false;
@@ -208,5 +210,14 @@ public class SettingSave {
             }
         }
         settingMMKV.encode(DYNAMIC_COLOR, enabled);
+    }
+
+
+    public boolean isPlayViewExpand() {
+        return settingMMKV.decodeBool(PLAY_VIEW_STATE, false);
+    }
+
+    public void setPlayViewExpand(boolean expand) {
+        settingMMKV.encode(PLAY_VIEW_STATE, expand);
     }
 }

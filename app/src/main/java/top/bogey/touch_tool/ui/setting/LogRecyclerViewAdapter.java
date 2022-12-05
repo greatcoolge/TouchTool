@@ -74,7 +74,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         }
     }
 
-    private void addLog(LogInfo log){
+    private void addLog(LogInfo log) {
         if (((1 << log.getLevel().ordinal()) & this.level) > 0) {
             Pattern pattern = Pattern.compile(searchText);
             Matcher matcher = pattern.matcher(log.getLog());
@@ -84,6 +84,15 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
                 if (recyclerView != null) recyclerView.scrollToPosition(showLogs.size() - 1);
             }
         }
+    }
+
+    public String getShowLogs() {
+        StringBuilder builder = new StringBuilder();
+        for (LogInfo log : showLogs) {
+            builder.append(log.getLog());
+            builder.append("\n");
+        }
+        return builder.toString();
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {

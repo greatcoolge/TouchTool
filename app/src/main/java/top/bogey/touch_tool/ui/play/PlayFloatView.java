@@ -47,23 +47,27 @@ public class PlayFloatView extends FrameLayout implements FloatViewInterface, Ta
             else {
                 clickFirst = true;
                 postDelayed(() -> clickFirst = false, 500);
-                ViewGroup.LayoutParams params = binding.closeButton.getLayoutParams();
-                if (binding.buttonBox.getVisibility() == VISIBLE) {
-                    binding.buttonBox.setVisibility(GONE);
-                    binding.closeButton.setIconResource(R.drawable.icon_down);
-
-                    params.height = DisplayUtils.dp2px(context, 36);
-                } else {
-                    binding.buttonBox.setVisibility(VISIBLE);
-                    binding.closeButton.setIconResource(R.drawable.icon_up);
-
-                    params.height = DisplayUtils.dp2px(context, 28);
-                }
-                binding.closeButton.setLayoutParams(params);
+                refreshExpandState(binding.buttonBox.getVisibility() == GONE);
             }
         });
 
         setPkgName(pkgName);
+        refreshExpandState(SettingSave.getInstance().isPlayViewExpand());
+    }
+
+    private void refreshExpandState(boolean expand) {
+        ViewGroup.LayoutParams params = binding.closeButton.getLayoutParams();
+        if (!expand) {
+            binding.buttonBox.setVisibility(GONE);
+            binding.closeButton.setIconResource(R.drawable.icon_down);
+            params.height = DisplayUtils.dp2px(getContext(), 36);
+        } else {
+            binding.buttonBox.setVisibility(VISIBLE);
+            binding.closeButton.setIconResource(R.drawable.icon_up);
+            params.height = DisplayUtils.dp2px(getContext(), 28);
+        }
+        binding.closeButton.setLayoutParams(params);
+        SettingSave.getInstance().setPlayViewExpand(expand);
     }
 
     @Override

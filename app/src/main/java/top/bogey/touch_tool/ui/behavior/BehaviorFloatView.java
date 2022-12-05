@@ -148,6 +148,10 @@ public class BehaviorFloatView extends FrameLayout implements FloatViewInterface
         binding.numberInclude.textBaseInclude.titleEdit.addTextChangedListener(new TextChangedListener() {
             @Override
             public void afterTextChanged(Editable s) {
+                if (s == null || s.length() == 0) {
+                    ((NumberAction) condition).setTargetNum(0);
+                    return;
+                }
                 ((NumberAction) condition).setTargetNum(Integer.parseInt(String.valueOf(s)));
             }
         });

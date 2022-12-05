@@ -2,22 +2,28 @@ package top.bogey.touch_tool.ui.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Point;
+import android.net.Uri;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.tencent.mmkv.MMKV;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.databinding.FloatLogBinding;
@@ -82,6 +88,31 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
 
         binding.closeButton.setOnClickListener(v -> dismiss());
 
+        binding.closeButton.setOnLongClickListener(v -> {
+            String SAVE_FILE = "error.txt";
+            try (FileOutputStream fileOutputStream = context.openFileOutput(SAVE_FILE, Context.MODE_PRIVATE)) {
+                fileOutputStream.write(adapter.getShowLogs().getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            File file = new File(context.getFilesDir(), SAVE_FILE);
+            Uri fileUri = null;
+            try {
+                fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".file_provider", file);
+            } catch (IllegalArgumentException ignored) {
+            }
+            if (fileUri != null) {
+                intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                String type = context.getContentResolver().getType(fileUri);
+                intent.setType(type);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                context.startActivity(Intent.createChooser(intent, context.getString(R.string.export_task_tips)));
+            }
+            return true;
+        });
+
         binding.expandButton.setOnClickListener(v -> {
             isExpand = !isExpand;
             refreshUI();
@@ -126,8 +157,10 @@ public class LogFloatView extends FrameLayout implements FloatViewInterface {
             @Override
             public void afterTextChanged(Editable s) {
                 adapter.setSearchText(String.valueOf(s));
-                if (s.length() > 0) binding.include.textInputLayout.setHint(R.string.setting_running_log_search_hint);
-                else binding.include.textInputLayout.setHint(R.string.setting_running_log_search_tips);
+                if (s.length() > 0)
+                    binding.include.textInputLayout.setHint(R.string.setting_running_log_search_hint);
+                else
+                    binding.include.textInputLayout.setHint(R.string.setting_running_log_search_tips);
             }
         });
         binding.include.textInputLayout.setHint(R.string.setting_running_log_search_tips);

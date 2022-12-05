@@ -281,6 +281,10 @@ public class MainAccessibilityService extends AccessibilityService {
         taskOverSee.remove(callback);
     }
 
+    public TaskRunnable runTask(Task task, TaskRunningCallback callback) {
+        return runTask(task, currPkgName, callback);
+    }
+
     public TaskRunnable runTask(Task task, String pkgName, TaskRunningCallback callback) {
         if (task == null || !isServiceEnabled()) return null;
         TaskRunnable runnable = new TaskRunnable(task, this, pkgName);
@@ -288,7 +292,9 @@ public class MainAccessibilityService extends AccessibilityService {
         runnable.addCallback(new TaskRunningCallback() {
             @Override
             public void onStart(TaskRunnable runnable) {
-                taskRunnableList.add(runnable);
+                synchronized (taskRunnableList) {
+                    taskRunnableList.add(runnable);
+                }
             }
 
             @Override
@@ -308,14 +314,14 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     private boolean isTaskRunning(Task task) {
-        for (TaskRunnable runnable : taskRunnableList) {
-            if (runnable.getTask().getId().equals(task.getId())) return true;
+        if (task == null) return false;
+        synchronized (taskRunnableList) {
+            for (TaskRunnable runnable : taskRunnableList) {
+                Task runnableTask = runnable.getTask();
+                if (runnableTask != null && runnableTask.getId().equals(task.getId())) return true;
+            }
         }
         return false;
-    }
-
-    public TaskRunnable runTask(Task task, TaskRunningCallback callback) {
-        return runTask(task, currPkgName, callback);
     }
 
     public void stopTask(TaskRunnable runnable, boolean force) {
@@ -330,14 +336,18 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public void stopTaskByType(TaskType type, boolean force) {
-        for (TaskRunnable runnable : taskRunnableList) {
-            if (runnable.getTask().getType() == type) stopTask(runnable, force);
+        synchronized (taskRunnableList) {
+            for (TaskRunnable runnable : taskRunnableList) {
+                if (runnable.getTask().getType() == type) stopTask(runnable, force);
+            }
         }
     }
 
     public void stopAllTask(boolean force) {
-        for (TaskRunnable runnable : taskRunnableList) {
-            stopTask(runnable, force);
+        synchronized (taskRunnableList) {
+            for (TaskRunnable runnable : taskRunnableList) {
+                stopTask(runnable, force);
+            }
         }
     }
 
