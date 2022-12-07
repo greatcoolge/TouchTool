@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Path;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
@@ -123,6 +124,8 @@ public class MainAccessibilityService extends AccessibilityService {
                         LogUtils.log(LogLevel.HIGH, getString(R.string.log_run_content_changed_task, task.getTitle()));
                     }
                 }
+            } else {
+                Log.d("TAG", "onAccessibilityEvent: " + event);
             }
         }
     }
@@ -324,20 +327,20 @@ public class MainAccessibilityService extends AccessibilityService {
         return false;
     }
 
-    public void stopTask(TaskRunnable runnable, boolean force) {
+    public synchronized void stopTask(TaskRunnable runnable, boolean force) {
         if (runnable == null) return;
         runnable.stop(force);
         if (force && !runnable.isRunning()) {
             synchronized (taskRunnableList) {
                 taskRunnableList.remove(runnable);
-
             }
         }
     }
 
     public void stopTaskByType(TaskType type, boolean force) {
         synchronized (taskRunnableList) {
-            for (TaskRunnable runnable : taskRunnableList) {
+            for (int i = taskRunnableList.size() - 1; i >= 0; i--) {
+                TaskRunnable runnable = taskRunnableList.get(i);
                 if (runnable.getTask().getType() == type) stopTask(runnable, force);
             }
         }
@@ -345,7 +348,8 @@ public class MainAccessibilityService extends AccessibilityService {
 
     public void stopAllTask(boolean force) {
         synchronized (taskRunnableList) {
-            for (TaskRunnable runnable : taskRunnableList) {
+            for (int i = taskRunnableList.size() - 1; i >= 0; i--) {
+                TaskRunnable runnable = taskRunnableList.get(i);
                 stopTask(runnable, force);
             }
         }
