@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.amrdeveloper.treeview.TreeNode;
 import com.amrdeveloper.treeview.TreeNodeManager;
@@ -18,14 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
+import top.bogey.touch_tool.database.bean.Task;
+import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.databinding.ViewSettingRunningAppItemBinding;
 import top.bogey.touch_tool.databinding.ViewSettingRunningItemBinding;
 import top.bogey.touch_tool.databinding.ViewSettingRunningTaskItemBinding;
-import top.bogey.touch_tool.database.bean.Task;
-import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.ui.app.AppInfo;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.LogUtils;
@@ -34,11 +32,14 @@ import top.bogey.touch_tool.ui.setting.TreeNodeInfo;
 public class RunningInfoTreeAdapter extends TreeViewAdapter {
     private final TreeNodeManager manager;
     private final MainViewModel viewModel;
+    private final RunningInfoView parent;
 
-    public RunningInfoTreeAdapter(TreeNodeManager manager) {
+    public RunningInfoTreeAdapter(RunningInfoView parent, TreeNodeManager manager) {
         super(null, manager);
         this.manager = manager;
-        viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+        this.parent = parent;
+
+        viewModel = MainViewModel.getInstance();
         initRoot();
     }
 
@@ -67,7 +68,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
         Map<String, Map<String, List<RunningInfo>>> pkgMap = LogUtils.getRunningInfo();
         for (Map.Entry<String, Map<String, List<RunningInfo>>> pkgEntry : pkgMap.entrySet()) {
             String pkgName = pkgEntry.getKey();
-            if (viewModel.getAppInfoByPkgName(pkgName) == null) {
+            if (viewModel.getAppInfoByPkgName(parent.requireContext(), pkgName) == null) {
                 continue;
             }
 
@@ -134,7 +135,7 @@ public class RunningInfoTreeAdapter extends TreeViewAdapter {
             PackageManager manager = context.getPackageManager();
             if (level == 0) {
                 TreeNodeInfo nodeInfo = (TreeNodeInfo) node.getValue();
-                AppInfo appInfo = viewModel.getAppInfoByPkgName(nodeInfo.getKey());
+                AppInfo appInfo = viewModel.getAppInfoByPkgName(context, nodeInfo.getKey());
                 appBinding.appName.setText(appInfo.appName);
                 if (appInfo.packageName.equals(context.getString(R.string.common_package_name))) {
                     appBinding.icon.setImageDrawable(context.getApplicationInfo().loadIcon(manager));

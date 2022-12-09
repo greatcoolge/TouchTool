@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +18,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
@@ -142,7 +140,7 @@ public class BehaviorRecyclerViewAdapter extends RecyclerView.Adapter<BehaviorRe
 
             binding.copyButton.setOnClickListener(v -> {
                 int index = getBindingAdapterPosition();
-                MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+                MainViewModel viewModel = MainViewModel.getInstance();
                 viewModel.setCopyBehavior(behaviors.get(index));
             });
 

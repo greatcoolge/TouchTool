@@ -10,12 +10,10 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Objects;
 
 import top.bogey.touch_tool.MainAccessibilityService;
-import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
@@ -212,8 +210,8 @@ public class SystemAction extends Action {
             }
             if (key != 0) {
                 if (this == GOTO_APP) {
-                    MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
-                    AppInfo appInfo = viewModel.getAppInfoByPkgName(extras);
+                    MainViewModel viewModel = MainViewModel.getInstance();
+                    AppInfo appInfo = viewModel.getAppInfoByPkgName(context, extras);
                     if (appInfo != null) return context.getString(key, appInfo.appName);
                     return context.getString(key, extras).trim();
                 }

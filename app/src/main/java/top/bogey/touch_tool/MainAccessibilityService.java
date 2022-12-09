@@ -11,7 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Path;
 import android.os.IBinder;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.lifecycle.MutableLiveData;
@@ -32,12 +32,12 @@ import top.bogey.touch_tool.database.bean.Task;
 import top.bogey.touch_tool.database.bean.TaskType;
 import top.bogey.touch_tool.database.bean.condition.NotificationCondition;
 import top.bogey.touch_tool.database.bean.condition.TimeCondition;
-import top.bogey.touch_tool.database.data.FindRunnable;
 import top.bogey.touch_tool.database.data.TaskQueue;
 import top.bogey.touch_tool.database.data.TaskRepository;
 import top.bogey.touch_tool.database.data.TaskRunnable;
 import top.bogey.touch_tool.database.data.TaskThreadPoolExecutor;
 import top.bogey.touch_tool.database.data.TaskWorker;
+import top.bogey.touch_tool.ui.play.OverseeMode;
 import top.bogey.touch_tool.ui.setting.LogLevel;
 import top.bogey.touch_tool.ui.setting.LogUtils;
 import top.bogey.touch_tool.ui.setting.SettingSave;
@@ -57,40 +57,99 @@ public class MainAccessibilityService extends AccessibilityService {
     private ResultCallback captureResultCallback;
 
     // 任务
-    private final ExecutorService findService;
     public final ExecutorService taskService;
-    private FindRunnable findRunnable = null;
-    public String currPkgName = "";
+
+    public CharSequence currPkgName;
+    public CharSequence currActivity;
+
     // 运行中的任务
     private final List<TaskRunnable> taskRunnableList = new ArrayList<>();
     // 外部任务监视器
     private final List<TaskRunningCallback> taskOverSee = new ArrayList<>();
 
     public MainAccessibilityService() {
-        findService = new TaskThreadPoolExecutor(3, 20, 10L, TimeUnit.SECONDS, new TaskQueue<>(20));
         taskService = new TaskThreadPoolExecutor(3, 30, 30L, TimeUnit.SECONDS, new TaskQueue<>(20));
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event != null && isServiceEnabled()) {
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOWS_CHANGED) {
+            CharSequence packageName = event.getPackageName();
+            CharSequence className = event.getClassName();
+            if (packageName == null) return;
+
+            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
                 // 窗口变更事件，拿不到包名，所以开启一个线程去拿取
-                if (findRunnable != null) findRunnable.stop();
-                findRunnable = new FindRunnable(this, currPkgName);
-                findService.execute(findRunnable);
+                if (MainViewModel.getInstance().isActivityClass(packageName, className)) {
+                    MainActivity activity = MainApplication.getActivity();
+                    if (TextUtils.equals(packageName, getPackageName())) {
+                        if (activity != null) activity.dismissPlayFloatView();
+                        stopAllTask(false);
+                        currPkgName = packageName;
+                        return;
+                    }
+
+                    // 应用切换
+                    if (!TextUtils.equals(packageName, currPkgName)) {
+                        LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_app_changed, currPkgName, packageName));
+                        stopTaskByType(TaskType.APP_CHANGED, false);
+
+                        // 应用切换，开启内容检测看看有没有检测的任务
+                        stopTaskByType(TaskType.CONTENT_CHANGED, false);
+                        setContentEvent(true);
+
+                        List<Task> tasks = getAllTasksByPkgNameAndType(packageName.toString(), TaskType.APP_CHANGED);
+                        for (Task task : tasks) {
+                            if (task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
+                                runTask(task, packageName.toString(),  null);
+                                LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_app_changed_task, task.getTitle()));
+                            }
+                        }
+
+                        tasks = getAllTasksByPkgNameAndType(packageName.toString(), TaskType.MANUAL);
+                        if (tasks.size() > 0 || SettingSave.getInstance().getRunningOverseeMode() != OverseeMode.CLOSED) {
+                            if (activity != null) {
+                                activity.showPlayFloatView(packageName.toString());
+                            } else {
+                                Intent intent = new Intent(this, MainActivity.class);
+                                intent.putExtra(MainActivity.INTENT_KEY_BACKGROUND, true);
+                                intent.putExtra(MainActivity.INTENT_KEY_PLAY_PACKAGE, packageName.toString());
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        } else {
+                            if (activity != null) activity.dismissPlayFloatView();
+                        }
+                    }
+
+                    // 界面切换
+                    if (!TextUtils.equals(className, currActivity)) {
+                        currActivity = className;
+                        stopTaskByType(TaskType.VIEW_CHANGED, false);
+                        List<Task> tasks = getAllTasksByPkgNameAndType(packageName.toString(), TaskType.VIEW_CHANGED);
+                        if (tasks.size() > 0)
+                            LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_view_changed, packageName));
+                        for (Task task : tasks) {
+                            if (task.getType() == TaskType.CONTENT_CHANGED && task.getBehaviors() != null && !task.getBehaviors().isEmpty()) {
+                                // 窗口变动时执行
+                                runTask(task, packageName.toString(),null);
+                                LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_view_changed_task, task.getTitle()));
+                            }
+                        }
+                    }
+                    currPkgName = packageName;
+                }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
                 // 需要是正常的通知
-                if (!Notification.class.getName().contentEquals(event.getClassName())) return;
+                if (!Notification.class.getName().contentEquals(className)) return;
 
                 // 且通知里带了文本
                 List<CharSequence> eventText = event.getText();
                 if (eventText == null || eventText.size() == 0) return;
 
                 // 获取所有可执行的任务
-                String packageName = String.valueOf(event.getPackageName());
                 stopTaskByType(TaskType.NEW_NOTIFICATION, false);
-                List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.NEW_NOTIFICATION);
+                List<Task> tasks = getAllTasksByPkgNameAndType(packageName.toString(), TaskType.NEW_NOTIFICATION);
                 if (tasks.size() > 0)
                     LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_new_notification, packageName, eventText));
 
@@ -100,7 +159,7 @@ public class MainAccessibilityService extends AccessibilityService {
                         Pattern pattern = Pattern.compile(condition.getText());
                         for (CharSequence charSequence : eventText) {
                             if (pattern.matcher(charSequence).find()) {
-                                runTask(task, packageName, null);
+                                runTask(task, packageName.toString(), null);
                                 LogUtils.log(LogLevel.HIGH, getString(R.string.log_run_new_notification_task, task.getTitle()));
                                 break;
                             }
@@ -108,11 +167,10 @@ public class MainAccessibilityService extends AccessibilityService {
                     }
                 }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-                String packageName = String.valueOf(event.getPackageName());
                 // 非当前应用的内容变更都无效
-                if (!packageName.equals(currPkgName)) return;
+                if (TextUtils.equals(packageName, currPkgName)) return;
                 stopTaskByType(TaskType.CONTENT_CHANGED, false);
-                List<Task> tasks = getAllTasksByPkgNameAndType(packageName, TaskType.CONTENT_CHANGED);
+                List<Task> tasks = getAllTasksByPkgNameAndType(packageName.toString(), TaskType.CONTENT_CHANGED);
                 if (tasks.size() > 0)
                     LogUtils.log(LogLevel.MIDDLE, getString(R.string.log_run_content_changed, packageName));
                     // 当前应用没有内容变更任务，所以不开启内容变更事件
@@ -120,12 +178,10 @@ public class MainAccessibilityService extends AccessibilityService {
                 for (Task task : tasks) {
                     // 任务没在运行
                     if (task.getType() == TaskType.CONTENT_CHANGED && !isTaskRunning(task)) {
-                        runTask(task, packageName, null);
+                        runTask(task, packageName.toString(), null);
                         LogUtils.log(LogLevel.HIGH, getString(R.string.log_run_content_changed_task, task.getTitle()));
                     }
                 }
-            } else {
-                Log.d("TAG", "onAccessibilityEvent: " + event);
             }
         }
     }
@@ -158,11 +214,11 @@ public class MainAccessibilityService extends AccessibilityService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MainApplication.setService(this);
-
-        boolean startCaptureService = intent.getBooleanExtra(MainActivity.INTENT_KEY_START_CAPTURE, false);
-        boolean isBackground = intent.getBooleanExtra(MainActivity.INTENT_KEY_BACKGROUND, false);
-        if (startCaptureService) startCaptureService(isBackground, captureResultCallback);
-
+        if (intent != null) {
+            boolean startCaptureService = intent.getBooleanExtra(MainActivity.INTENT_KEY_START_CAPTURE, false);
+            boolean isBackground = intent.getBooleanExtra(MainActivity.INTENT_KEY_BACKGROUND, false);
+            if (startCaptureService) startCaptureService(isBackground, captureResultCallback);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -285,7 +341,8 @@ public class MainAccessibilityService extends AccessibilityService {
     }
 
     public TaskRunnable runTask(Task task, TaskRunningCallback callback) {
-        return runTask(task, currPkgName, callback);
+        if (currPkgName == null) return null;
+        return runTask(task, currPkgName.toString(), callback);
     }
 
     public TaskRunnable runTask(Task task, String pkgName, TaskRunningCallback callback) {

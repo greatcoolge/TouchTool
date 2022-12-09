@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -35,12 +34,12 @@ public class AppView extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewAppBinding binding = ViewAppBinding.inflate(inflater, container, false);
-        MainViewModel viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        MainViewModel viewModel = MainViewModel.getInstance();
 
         List<AppInfo> appInfoList = new ArrayList<>();
         if (selectApps != null) {
             for (String pkgName : selectApps) {
-                appInfoList.add(viewModel.getAppInfoByPkgName(pkgName));
+                appInfoList.add(viewModel.getAppInfoByPkgName(requireContext(), pkgName));
             }
         }
 
@@ -53,19 +52,18 @@ public class AppView extends BottomSheetDialogFragment {
             TaskRepository.getInstance().saveTask(task);
         }, appInfoList);
         binding.appBox.setAdapter(adapter);
-        adapter.refreshApps(viewModel.searchAppList(searchText));
+        adapter.refreshApps(viewModel.searchAppList(requireContext(), searchText));
 
         binding.refreshButton.setOnClickListener(v -> {
             viewModel.showSystem.setValue(Boolean.FALSE.equals(viewModel.showSystem.getValue()));
-            viewModel.refreshAppList();
-            adapter.refreshApps(viewModel.searchAppList(searchText));
+            adapter.refreshApps(viewModel.searchAppList(requireContext(), searchText));
         });
 
         binding.titleEdit.addTextChangedListener(new TextChangedListener() {
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
-                adapter.refreshApps(viewModel.searchAppList(searchText));
+                adapter.refreshApps(viewModel.searchAppList(requireContext(), searchText));
             }
         });
 

@@ -7,7 +7,6 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.List;
@@ -33,23 +32,22 @@ public class AppPickerFloatView extends BasePickerFloatView implements SelectApp
     public AppPickerFloatView(Context context, PickerCallback pickerCallback) {
         super(context, pickerCallback);
         binding = FloatPickerAppBinding.inflate(LayoutInflater.from(context), this, true);
-        viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+        viewModel = MainViewModel.getInstance();
         adapter = new AppRecyclerViewAdapter(this, null);
         binding.appsView.setAdapter(adapter);
         refreshSpawnCount();
-        adapter.refreshApps(viewModel.searchAppList(searchText, false));
+        adapter.refreshApps(viewModel.searchAppList(context, searchText, false));
 
         binding.refreshButton.setOnClickListener(v -> {
             viewModel.showSystem.setValue(Boolean.FALSE.equals(viewModel.showSystem.getValue()));
-            viewModel.refreshAppList();
-            adapter.refreshApps(viewModel.searchAppList(searchText, false));
+            adapter.refreshApps(viewModel.searchAppList(context, searchText, false));
         });
 
         binding.titleEdit.addTextChangedListener(new TextChangedListener() {
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
-                adapter.refreshApps(viewModel.searchAppList(searchText, false));
+                adapter.refreshApps(viewModel.searchAppList(context, searchText, false));
             }
         });
     }
@@ -87,7 +85,7 @@ public class AppPickerFloatView extends BasePickerFloatView implements SelectApp
 
     @Override
     public void onSelectApps(List<AppInfo> apps) {
-        if (apps != null && apps.size() > 0){
+        if (apps != null && apps.size() > 0) {
             selectApp = apps.get(0);
             pickerCallback.onComplete(this);
             dismiss();

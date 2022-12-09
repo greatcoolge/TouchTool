@@ -20,7 +20,7 @@ public class RunningInfoView extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewSettingRunningBinding binding = ViewSettingRunningBinding.inflate(inflater);
-        RunningInfoTreeAdapter adapter = new RunningInfoTreeAdapter(new TreeNodeManager());
+        RunningInfoTreeAdapter adapter = new RunningInfoTreeAdapter(this, new TreeNodeManager());
         binding.taskBox.setAdapter(adapter);
 
         return binding.getRoot();

@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -77,7 +76,7 @@ public class TaskView extends Fragment implements TaskChangedCallback {
             controller.navigate(TaskViewDirections.actionTaskToTaskInfo(task.getId()));
         });
 
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        viewModel = MainViewModel.getInstance();
         binding.pasteButton.setOnClickListener(v -> {
             Task task = viewModel.getCopyTask();
             TaskRepository.getInstance().saveTask(task);
@@ -262,8 +261,10 @@ public class TaskView extends Fragment implements TaskChangedCallback {
         if (tab != null) {
             if (adapter.isCheck()) {
                 for (Task task : adapter.getSelectTasks()) {
-                    if (index == 0 || index == tags.size() - 1) TaskRepository.getInstance().setTaskConfig(task.getId(), null);
-                    else TaskRepository.getInstance().setTaskConfig(task.getId(), String.valueOf(tab.getText()));
+                    if (index == 0 || index == tags.size() - 1)
+                        TaskRepository.getInstance().setTaskConfig(task.getId(), null);
+                    else
+                        TaskRepository.getInstance().setTaskConfig(task.getId(), String.valueOf(tab.getText()));
                 }
                 hideBottomBar();
                 adapter.showTasksByTag(String.valueOf(tab.getText()));

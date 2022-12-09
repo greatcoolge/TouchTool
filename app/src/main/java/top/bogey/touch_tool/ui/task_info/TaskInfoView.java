@@ -20,7 +20,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -62,7 +61,7 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = ViewTaskInfoBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        viewModel = MainViewModel.getInstance();
 
         if (getArguments() != null) {
             String taskId = getArguments().getString("taskId");
@@ -315,18 +314,19 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
                 boxWidth = binding.appBox.getWidth() - binding.includeAppsText.getWidth() - buttonSize;
             }
             float margin = 0;
-            if (iconSize * pkgNames.size() > boxWidth) margin = (boxWidth - iconSize * pkgNames.size()) * 1f / (pkgNames.size() - 1);
+            if (iconSize * pkgNames.size() > boxWidth)
+                margin = (boxWidth - iconSize * pkgNames.size()) * 1f / (pkgNames.size() - 1);
 
             ArrayList<String> arrayList = new ArrayList<>(pkgNames);
             arrayList.remove(commonPkgName);
 
             for (String pkgName : arrayList) {
-                AppInfo info = viewModel.getAppInfoByPkgName(pkgName);
-                if (info != null){
+                AppInfo info = viewModel.getAppInfoByPkgName(requireContext(), pkgName);
+                if (info != null) {
                     Drawable drawable = info.info.applicationInfo.loadIcon(manager);
                     ShapeableImageView imageView = (ShapeableImageView) LayoutInflater.from(requireContext()).inflate(R.layout.view_task_info_app, appIconBox, false);
                     imageView.setImageDrawable(drawable);
-                    if (arrayList.indexOf(pkgName) != 0){
+                    if (arrayList.indexOf(pkgName) != 0) {
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                         params.setMargins((int) Math.floor(margin), 0, 0, 0);
                         imageView.setLayoutParams(params);
@@ -388,7 +388,7 @@ public class TaskInfoView extends Fragment implements TaskChangedCallback {
         super.onDestroy();
         TaskRepository.getInstance().removeCallback(this);
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (actionBar != null){
+        if (actionBar != null) {
             actionBar.setSubtitle(null);
         }
     }

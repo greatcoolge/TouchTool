@@ -15,7 +15,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -168,7 +167,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 public void afterTextChanged(Editable s) {
                     int index = getBindingAdapterPosition();
                     Action action = actions.get(index);
-                    if (action.getType() == ActionType.TEXT) ((TextAction) action).setText(String.valueOf(s));
+                    if (action.getType() == ActionType.TEXT)
+                        ((TextAction) action).setText(String.valueOf(s));
                 }
             });
 
@@ -265,7 +265,8 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                 public void afterTextChanged(Editable s) {
                     int index = getBindingAdapterPosition();
                     Action action = actions.get(index);
-                    if (action.getType() == ActionType.INPUT) ((InputAction) action).setText(String.valueOf(s));
+                    if (action.getType() == ActionType.INPUT)
+                        ((InputAction) action).setText(String.valueOf(s));
                 }
             });
 
@@ -292,9 +293,9 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
                         if (systemActionType == SystemAction.SystemActionType.GOTO_APP) {
                             binding.spinnerInclude.buttonInclude.setVisibility(View.VISIBLE);
 
-                            MainViewModel viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+                            MainViewModel viewModel = MainViewModel.getInstance();
                             if (systemAction.getExtras() != null) {
-                                AppInfo info = viewModel.getAppInfoByPkgName(systemAction.getExtras());
+                                AppInfo info = viewModel.getAppInfoByPkgName(context, systemAction.getExtras());
                                 if (info != null) {
                                     PackageManager manager = context.getPackageManager();
                                     binding.spinnerInclude.image.setImageDrawable(info.info.applicationInfo.loadIcon(manager));
@@ -542,6 +543,7 @@ public class ActionsRecyclerViewAdapter extends RecyclerView.Adapter<ActionsRecy
         }
 
         @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+        }
     }
 }

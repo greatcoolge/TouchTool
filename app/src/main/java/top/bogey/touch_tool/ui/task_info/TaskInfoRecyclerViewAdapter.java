@@ -11,14 +11,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import top.bogey.touch_tool.MainApplication;
 import top.bogey.touch_tool.MainViewModel;
 import top.bogey.touch_tool.R;
 import top.bogey.touch_tool.database.bean.Behavior;
@@ -44,7 +42,7 @@ public class TaskInfoRecyclerViewAdapter extends RecyclerView.Adapter<TaskInfoRe
         baseTask = task;
         tasks.add(task);
         if (task.getSubTasks() != null) tasks.addAll(task.getSubTasks());
-        viewModel = new ViewModelProvider(MainApplication.getActivity()).get(MainViewModel.class);
+        viewModel = MainViewModel.getInstance();
     }
 
     @NonNull

@@ -17,7 +17,6 @@ import android.view.WindowManager;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -96,7 +95,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        binding.getRoot().post(() -> handleIntent(getIntent()));
+        binding.getRoot().post(() -> {
+            handleIntent(getIntent());
+            setIntent(null);
+        });
 
         runFirstTimes();
     }
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         isFront = true;
+        MainViewModel.getInstance().refreshAppList(this);
     }
 
     @Override
@@ -174,12 +177,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleIntent(Intent intent) {
+        if (intent == null) return;
+
         boolean isBackground = intent.getBooleanExtra(INTENT_KEY_BACKGROUND, false);
         if (isBackground) {
             moveTaskToBack(true);
         }
 
-        String pkgName = getIntent().getStringExtra(INTENT_KEY_PLAY_PACKAGE);
+        String pkgName = intent.getStringExtra(INTENT_KEY_PLAY_PACKAGE);
         if (pkgName != null && !pkgName.isEmpty()) {
             showPlayFloatView(pkgName);
         }
@@ -226,8 +231,7 @@ public class MainActivity extends AppCompatActivity {
         parcel.setDataPosition(0);
         List<Task> tasks = parcel.createTypedArrayList(Task.CREATOR);
 
-        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        List<String> pkgNames = viewModel.getAllPkgNames();
+        List<String> pkgNames = MainViewModel.getInstance().getAllPkgNames(this);
 
         if (tasks != null) {
             for (Task task : tasks) {
